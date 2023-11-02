@@ -1,0 +1,43 @@
+<ng-template #modal>
+
+    <div class="modal-header">
+
+      <h5 class="modal-title">{{ modalTitle }}</h5>
+
+      <button type="button" id="close-modal" class="btn-close"  *ngIf="showCloseIcon" (click)="close()"></button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <ng-content></ng-content>
+
+    </div>
+
+    <div class="modal-footer" *ngIf="showCancelBtn || showSaveBtn">
+
+      <div class="form-check form-switch" *ngIf="toggleBtn">
+
+        <input class="form-check-input" type="checkbox" role="switch" id="toggle">
+
+        <label class="form-check-label cursor-pointer text-primary" for="toggle">{{toggleBtnTxt}}</label>
+
+      </div>
+      
+      <div class="button-group text-center d-flex">
+        
+        <button *ngIf="showCancelBtn" type="button" class="btn btn-light me-2" (click)="close()"> {{ closeBtnTxt | titlecase }}  </button>
+  
+        <button *ngIf="showSaveBtn" type="button" class="btn btn-success me-2"  (click)="submit()" [disabled]="isDisable"> {{ saveBtnTxt | titlecase }} </button>
+
+        <button *ngIf="isPrint" type="button" class="btn btn-sm btn-primary" (click)="print()">
+
+          <i class="bi bi-printer"></i> Print  
+           
+        </button>
+
+      </div>
+      
+    </div>
+    
+</ng-template>

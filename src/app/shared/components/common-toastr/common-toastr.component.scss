@@ -1,0 +1,75 @@
+* {
+    --theme-color: #fff;
+    --success-foreground: #78C091;
+    --success-background: #e0fae9;
+    --error-foreground: #e08d8d;
+    --error-background: #f8e7e7;
+    --warn-foreground: #FF9770;
+    --warn-background: #fee7df;
+    --info-foreground: #7EE2FF;
+    --info-background: #eff9fc
+}
+
+::ng-deep{
+
+    .cdk-overlay-container {
+        z-index: 1050 !important;
+    }
+    
+    // Snackbar background color
+    .mat-mdc-snack-bar-container {
+        min-width: 380px;
+        max-width: 40vw;
+
+        .mdc-snackbar__surface  {
+            background : #fff !important;
+        }
+        .text-secondary {
+            font-size: 0.85rem;
+            max-width: 300px;
+        }
+        
+    }
+
+    // Image position
+    .iconImage{
+        position: absolute !important;
+        top: 5.5px !important;
+        font-size: 1.5rem !important;
+        left: 5.5px !important;
+    }
+
+    .imgContainer{
+        width: 35px !important;
+        height: 35px !important;
+        vertical-align: middle !important;
+        border-radius: 50% !important;
+        position: relative;
+    }
+
+    // *** Message Type Styles ***
+    
+    .success{
+        background-color  : var(--success-background);
+        color             : var(--success-foreground);
+    }
+    .error{
+        background-color  : var(--error-background);
+        color             : var(--error-foreground);
+    }
+    .warn{
+        background-color  : var(--warn-background);
+        color             : var(--warn-foreground);
+    }
+    .info{
+        background-color  : var(--info-background);
+        color             : var(--info-foreground);
+    }
+}
+
+.btn-close {
+    outline: none !important;
+    box-shadow: none !important;
+    width: .5rem !important;
+    height: .5rem !important;
+}

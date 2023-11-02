@@ -1,0 +1,25 @@
+<div class="row mx-0 pagination">
+    
+    <div class="col-sm-7 px-0 d-flex align-items-center justify-content-end">
+
+        <p class="small me-2 nowrap">Items Per page:</p>
+    
+        <ng-select class="sm-dropdown me-3" [searchable]="false" [clearable]="false" [(ngModel)]="size" (change)="changePageSize()">
+    
+            <ng-option *ngFor="let item of pageSizeOptions" [value]="item"> {{ item }} </ng-option>
+    
+        </ng-select>
+
+    </div>
+    
+    <div class="col-sm-5 px-0 d-flex align-items-center justify-content-end mt-md-0 mt-2">
+
+        <p class="small me-1 nowrap">Page {{ index + 1 }} of {{ totalPages }}</p>
+
+        <i class='bx bx-chevron-left arrow-icon mx-1' matRipple [matRippleCentered]="true" [matRippleDisabled]="index==0" (click)="pageChanged(-1)"></i>
+
+        <i class='bx bx-chevron-right arrow-icon mx-1' matRipple [matRippleCentered]="true" [matRippleDisabled]="index+1 == totalPages" (click)="pageChanged(1)"></i>
+
+    </div>
+
+</div>

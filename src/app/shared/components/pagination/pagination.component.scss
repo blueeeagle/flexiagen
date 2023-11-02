@@ -1,0 +1,17 @@
+.arrow-icon {
+    font-size: 1.6rem;
+    margin-top: 0.25rem;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
+::ng-deep .pagination .ng-select {
+
+    .ng-select-container { font-size: .78rem !important; }
+
+    .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+        font-size: .78rem !important;
+        padding: 0 10px !important;
+    }
+
+}

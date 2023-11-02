@@ -1,0 +1,76 @@
+// ** Alter Image Icon Color schemes
+
+.close:hover{
+    background : #eaedf1 !important;
+}
+
+.btn{
+    padding: 4px 16px !important;
+    font-size: 0.85rem;
+}
+
+.btn-close{
+    padding: 10px;
+    border-radius: 50%;
+    width: 0.85rem;
+    height: 0.85rem;
+    color: #aeb3b7 !important;
+
+    &:hover, &:focus, &:active{
+        color: #aeb3b7 !important;
+    }
+} 
+
+.btn-close:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.confirm-img.error{
+    color       :  var(--error-foreground) !important;
+    background  :  var(--error-background) !important;
+}
+
+.confirm-img.basic{
+    color       :  var(--basic-foreground) !important;
+    background  :  var(--basic-background) !important;
+}
+
+.confirm-img.info{
+    color       :  var(--info-foreground) !important;
+    background  :  var(--info-background) !important;
+}
+
+.confirm-img.success{
+    color       :  var(--success-foreground) !important;
+    background  :  var(--success-background) !important;
+}
+
+.confirm-img.warn{
+    color       :  var(--warn-foreground) !important;
+    background  :  var(--warn-background) !important;
+}
+
+.modal-body {
+    min-height: 130px;
+}
+
+.modal-footer{
+    border-bottom-right-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+    background : #fff !important;
+}
+
+.confirmationModal .modal-content{
+    border-radius: 5px !important;
+    border: 0 !important;
+    max-width: 380px !important;
+    box-shadow: 0px 0px 8px 0px;
+    vertical-align: middle !important;
+}
+
+@media (min-width: 960px){
+    ::ng-deep .confirmationModal .modal-content{
+        min-width: 512px;
+    }
+}
