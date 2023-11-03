@@ -1,0 +1,156 @@
+////////////////////////// Home Page Styles Starts //////////////////////////
+
+.header {
+    min-height: 100px;
+    background-color: #fff;
+    padding: 1rem 0;
+}
+
+section {
+    padding: 3.5rem 0 3rem 0;
+}
+
+// Hero Section Styles
+
+.hero-section {
+    background-color: #EFF5FF;
+    font-family: Poppins;
+
+    .banner-content {
+
+        h1 {
+            font-size: 3.5rem;
+        }
+    }
+}
+
+// Features Section Styles
+
+.business-features-section {
+
+    font-family: Poppins;
+
+    .card {
+        background-color: #EFF5FF;
+        border: none;
+        padding: 1.5rem 1rem;
+        margin-top: 1.5rem;
+
+        .img-container {
+
+            text-align: center;
+            margin-bottom: 1.5rem;
+    
+            img {
+                background-color: #fff;
+                box-shadow: 1px 1px 4px rgba(11, 37, 129, 0.19);
+                padding: 1rem;
+                border-radius: 100%;
+            }
+    
+        }        
+
+        .card-content {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+    }
+
+}
+
+// Partner Section Styles
+
+.partner-solution-section {
+    font-family: Poppins;
+    background-color: #EFF5FF;
+}
+
+// Commitment Section Styles
+
+.commitment-section {
+    font-family: Poppins;
+
+    .card {
+        background: #ecf2ff; 
+        border-radius: 7px; 
+        border: 3px solid #c5c6fb;
+        margin-bottom: 3rem;
+    }
+
+    .email-container {
+        background: url(/assets/images/double-circle-down.svg),url(/assets/images/double-circle-up.svg);
+        background-repeat: no-repeat;
+        background-color: #ecf3ff;
+        padding: 4rem;
+        background-position: 10% 0%,90% 100%;
+        border-radius: 10px;
+
+        .email-input-container {
+            background-color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+
+            .form-control {
+                font-size: 1.1rem;
+                box-shadow: none !important;
+                border: none !important;
+            }
+
+            .demo-btn {
+                font-size: 1.15rem;
+                font-weight: 500;
+                border-radius: 4px;
+                width: 100%;
+                padding: 0.75rem 1rem;
+                margin-top: 0rem;
+            }
+
+        }
+
+    }
+}
+
+// Footer Section Styles
+
+.footer-section {
+    background-color: #1E4894;
+    padding-bottom: 1rem;
+
+    .logo {
+        width: 100px;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background-color: #ffffffa3;
+        border-radius: 0.25rem;
+    }
+
+    .divider {
+        width: 100%; 
+        height: 100%; 
+        opacity: 0.50; 
+        border-bottom: 1px #F1EEEE solid;
+    }
+
+    .social-button {
+        margin: 0 0.5rem;
+        display: inline-block;
+        cursor: pointer;
+        width: 3.125rem;
+        height: 3.125rem;
+        border: 0.125rem solid #18bfff;
+        text-align: center;
+        color: #1e4894;
+        font-size: 1.5rem;
+        line-height: 2em;
+        border-radius: 1.6875rem;
+        transition: all 0.5s ease;
+        background: #fff;
+
+        &:hover, :focus {
+            color: #55acee;
+            transform: rotate(360deg);
+        }
+    }
+}
+
+////////////////////////// Home Page Styles Ends //////////////////////////

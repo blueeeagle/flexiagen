@@ -1,1 +1,72 @@
-<p>login works!</p>
+<div class="auth-page">
+
+    <div class="container min-vh-100">
+
+        <div class="row min-vh-100">
+
+            <div class="col-lg-6 col-md-5 d-flex align-self-center justify-content-center d-none d-md-block">
+
+                <img src="assets/images/home/banner-img.png" alt="" class="mw-100">
+
+            </div>
+
+            <div class="col-lg-6 col-md-7 d-flex align-self-center justify-content-center ps-2 ps-md-5 pe-2 pe-md-0">
+
+                <div class="login-card">
+
+                    <div class="img-container text-center mb-4">
+    
+                        <img src="assets/images/logo.png" alt="">
+        
+                    </div>
+                    
+                    <h2 class="fw-700">Welcome Back</h2>
+
+                    <h5 class="text-light">Welcome back! Please enter your details </h5>
+
+                    <form [formGroup]="loginForm" class="py-4">
+
+                        <div class="form-group mb-3">
+
+                            <label for="email" class="fw-600">Email</label>
+
+                            <input type="email" class="form-control" id="email" formControlName="email" [ngClass]="{ 'is-invalid': formSubmitted && f.email.errors }">
+
+                            <div *ngIf="formSubmitted && f.email.errors" class="invalid-feedback">
+
+                                <div *ngIf="f.email.errors.required && !f.email.errors.email">Email is required</div>
+
+                                <div *ngIf="f.email.errors.email && !f.email.errors.required">Email must be a valid email address</div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group mb-3">
+
+                            <label for="password" class="fw-600">Password</label>
+
+                            <input type="password" class="form-control" id="password" formControlName="password" [ngClass]="{ 'is-invalid': formSubmitted && f.password.errors }">
+
+                            <div *ngIf="formSubmitted && f.password.errors" class="invalid-feedback">
+
+                                <div *ngIf="f.password.errors.required">Password is required</div>
+
+                            </div>
+
+                        </div>         
+                        
+                        <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="loginForm.invalid" (click)="formSubmitted = true">SIGN IN</button>
+
+                    </form>
+
+                </div>
+
+            </div>                
+
+
+        </div>
+
+    </div>
+
+</div>
