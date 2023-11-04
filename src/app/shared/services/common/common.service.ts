@@ -20,7 +20,7 @@ export class CommonService {
 
   public isLoading = new BehaviorSubject(false);
   public loaderApiUrls = new BehaviorSubject<any>([]);
-  public imgSrc = APP_CONFIG.imgSrc;
+  public imgBasePath = APP_CONFIG.imgBasePath;
 
   constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {}
 
@@ -52,61 +52,67 @@ export class CommonService {
 
   // POST API Method While Pass JSON Data
   
-  postService({ url = "", payload = {}, params = {}, loaderState = false} : {url: string, payload?: any, params?: any, loaderState?: boolean}): any {
+  postService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {
 
-    if (loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
 
-    return this.apiservice.postService(url, payload, params);
+    return this.apiservice.postService({ url, payload, params, options });
     
   }
 
   // PATCH API Method
 
-  patchService({ url = "", payload = {}, params = {}} : {url: string, payload?: any, params?: any}): any {
+  patchService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {
 
-    return this.apiservice.patchService(url, payload, params);
+    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+
+    return this.apiservice.patchService({ url, payload, params, options });
 
   }
 
   // PUT API Method
 
-  putService(url: string, data?: any, params?: any): any {
+  putService({ url = "", payload = {}, params = {}, options = {} }: { url: string, payload?: any, params?: any, options?: any }): any {
 
-    return this.apiservice.putService(url, data, params);
+    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });    
+
+    return this.apiservice.putService({ url, payload, params, options });
 
   }
 
   // GET API Method  
 
-  getService({ url = "", params = {}, loaderState = false } : { url: string, params?: any, loaderState?: boolean }): any {
+  getService({ url = "", params = {}, options = {} } : { url: string, params?: any, options?: any }): any {
 
-    if (loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
 
-    return this.apiservice.getService(url,params);
+    return this.apiservice.getService({ url, params, options });
 
   }
 
   // DELETE API Method
 
-  deleteService(url: string,params?: any): any {
+  deleteService({ url = "", params = {} } : { url: string, params?: any }): any {
 
-    return this.apiservice.deleteService(url, params);
+    return this.apiservice.deleteService({ url, params });
 
   }
 
   // POST Method While Pass Form Data
 
-  postFile(url: string, formData: any): any {
+  postFile({ url = "", formData = {}, params = {}, options = {} }: { url: string, formData: any, params?: any, options?: any }): any {
 
-    return this.apiservice.postFile(url, formData);
+    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+
+    return this.apiservice.postFile({ url, formData, params, options });
 
   }
 
   // GET Method While Getting File
 
-  getFile(url: string): Observable<Blob> {
+  getFile({ url = "" }: { url: string }): Observable<Blob> {
 
-    return this.apiservice.getFile(url);
+    return this.apiservice.getFile({ url });
 
   }  
 
@@ -118,7 +124,7 @@ export class CommonService {
     
     toastData['data']['type'] = toastData?.data?.type !== undefined ? toastData?.data?.type : 'info';
 
-    toastData['duration']= toastData?.duration !== undefined ? toastData?.duration : 2500;
+    toastData['duration']= toastData?.duration !== undefined ? toastData?.duration : 2500 ;
 
     toastData['horizontalPosition'] = toastData?.horizontalPosition !== undefined ? toastData?.horizontalPosition : "center";
 

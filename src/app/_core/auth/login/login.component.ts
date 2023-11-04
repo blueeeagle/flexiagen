@@ -42,4 +42,24 @@ export class LoginComponent {
 
   get f(): any { return this.loginForm.controls }
 
+  // Login user
+
+  login(): any {
+    
+    if(this.loginForm.invalid) return this.formSubmitted = true;
+
+    this.service.postService({ "url": "/users/login", 'payload': this.loginForm.value, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
+
+      if(res.status==200) {
+
+        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
+
+        this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
+
+      }
+
+    });
+
+  }
+
 }

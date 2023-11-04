@@ -1,6 +1,6 @@
 * {
     --theme-color: #fff;
-    --success-foreground: #78C091;
+    --success-foreground: #73D338;
     --success-background: #e0fae9;
     --error-foreground: #e08d8d;
     --error-background: #f8e7e7;
@@ -23,25 +23,24 @@
 
         .mdc-snackbar__surface  {
             background : #fff !important;
+            width: 100%;
+            padding-right: 0px;
         }
         .text-secondary {
-            font-size: 0.85rem;
-            max-width: 300px;
+            font-size: 1rem;
+            font-family: 'Poppins';
         }
         
     }
 
     // Image position
     .iconImage{
-        position: absolute !important;
-        top: 5.5px !important;
         font-size: 1.5rem !important;
-        left: 5.5px !important;
     }
 
     .imgContainer{
-        width: 35px !important;
-        height: 35px !important;
+        width: 38px !important;
+        height: 38px !important;
         vertical-align: middle !important;
         border-radius: 50% !important;
         position: relative;

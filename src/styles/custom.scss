@@ -19,7 +19,7 @@ section {
     .banner-content {
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
         }
     }
 }
@@ -154,3 +154,36 @@ section {
 }
 
 ////////////////////////// Home Page Styles Ends //////////////////////////
+
+
+////////////////////////// Login & Register Page Styles Starts //////////////////////////
+
+.auth-page {
+    min-height: 100vh;
+    background: linear-gradient(to left, #ffffff 50%, #f3f5f9 50%);
+
+    .login-card {
+        max-width: 480px;
+        width: 100%;
+
+        .form-control {
+            height: 3rem;
+            padding: 0.5rem 0.75rem 0.65rem 0.75rem;
+        }
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .auth-page {
+        background: linear-gradient(to left, #ffffff 55%, #f3f5f9 50%)
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .auth-page {
+        background: #fff
+    }
+    
+}
+
+////////////////////////// Login & Register Page Styles Ends //////////////////////////
