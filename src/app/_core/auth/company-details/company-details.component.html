@@ -1,0 +1,189 @@
+<div class="auth-page">
+
+    <div class="container min-vh-100">
+
+        <div class="row min-vh-100">
+
+            <div class="col-lg-6 col-md-5 d-flex align-self-center justify-content-center d-none d-md-block ">
+
+                <img src="assets/images/home/banner-img.png" alt="" class="mw-100">
+
+            </div>
+
+            <div class="col-lg-6 col-md-7 d-flex justify-content-center align-self-center px-4 px-md-0 ps-md-5 mb-0 mb-md-5">
+
+                <div class="login-card">
+
+                    <div class="img-container text-center mb-5">
+    
+                        <img src="assets/images/logo.png" alt="">
+        
+                    </div>
+                    
+                    <h2 class="fw-700">Company Details</h2>
+
+                    <h5 class="text-light">Enter Company Details </h5>
+
+                    <div class="py-4">
+
+                        <form [formGroup]="companyForm" *ngIf="!showPreview">
+
+                            <div class="form-group">
+    
+                                <label for="companyName" class="fw-600">Company Name</label>
+    
+                                <input type="companyName" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+    
+                                <div *ngIf="formSubmitted && f.companyName.errors" class="invalid-feedback">
+    
+                                    <div *ngIf="f.companyName.errors.required">Company Name is required</div>
+    
+                                </div>
+    
+                            </div>                        
+    
+                            <div class="form-group">
+    
+                                <label for="ownerName" class="fw-600">Owner Name</label>
+    
+                                <input type="ownerName" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
+    
+                                <div *ngIf="formSubmitted && f.ownerName.errors" class="invalid-feedback">
+    
+                                    <div *ngIf="f.ownerName.errors.required">Owner Name is required</div>
+    
+                                </div>
+    
+                            </div>   
+    
+                            <div class="form-group">
+    
+                                <label for="address" class="fw-600">Address</label>
+    
+                                <input type="address" class="form-control" id="address" formControlName="address" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.address.errors }">
+    
+                                <div *ngIf="formSubmitted && f.address.errors" class="invalid-feedback">
+    
+                                    <div *ngIf="f.address.errors.required">Address is required</div>
+    
+                                </div>
+    
+                            </div>                                          
+                            
+                            <div class="row">
+    
+                                <div class="col-md-6 pe-2 pe-md-1">
+    
+                                    <div class="form-group">
+    
+                                        <label for="area" class="fw-600">Area</label>
+            
+                                        <select class="form-select" formControlName="area" aria-label="Default select example" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
+            
+                                            <option [value]="null" selected>Select</option>
+            
+                                            <option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.title | uppercase }}</option>
+            
+                                        </select>
+            
+                                        <div *ngIf="formSubmitted && f.area.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.area.errors.required">Area is required</div>
+            
+                                        </div>
+            
+                                    </div>                                
+    
+                                </div>                            
+    
+                                <div class="col-md-6 ps-2 ps-md-1">
+    
+                                    <div class="form-group">
+    
+                                        <label for="city" class="fw-600">City</label>
+            
+                                        <select class="form-select" formControlName="city" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }">
+            
+                                            <option [value]="null" selected>Select</option>
+            
+                                            <option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.title | uppercase }}</option>
+            
+                                        </select>
+            
+                                        <div *ngIf="formSubmitted && f.city.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.city.errors.required">City is required</div>
+            
+                                        </div>
+            
+                                    </div>                                
+    
+                                </div>
+    
+                                <div class="col-md-6 pe-2 pe-md-1">
+    
+                                    <div class="form-group">
+    
+                                        <label for="country" class="fw-600">Country</label>
+            
+                                        <select class="form-select" formControlName="country" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
+            
+                                            <option [value]="null" selected>Select</option>
+            
+                                            <option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">{{ countryDet.title | uppercase }}</option>
+            
+                                        </select>
+            
+                                        <div *ngIf="formSubmitted && f.country.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.country.errors.required">Country is required</div>
+            
+                                        </div>
+            
+                                    </div>
+    
+                                </div>
+    
+                                <div class="col-md-6 ps-2 ps-md-1">
+    
+                                    <div class="form-group">
+    
+                                        <label for="zipCode" class="fw-600">Zip Code</label>
+            
+                                        <input type="zipCode" class="form-control" id="zipCode" formControlName="zipCode" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.zipCode.errors }">
+            
+                                        <div *ngIf="formSubmitted && f.zipCode.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.zipCode.errors.required">Zip Code is required</div>
+            
+                                        </div>
+            
+                                    </div>                                    
+    
+                                </div>
+    
+                            </div>                                              
+                            
+                            <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && companyForm.invalid" (click)="showCompanyDetails()" >Preview Details</button>
+    
+                        </form>
+
+                        <ng-container *ngIf="showPreview">
+
+                            
+
+                        </ng-container>
+                        
+
+                    </div>
+
+                </div>
+
+            </div>                
+
+
+        </div>
+
+    </div>
+
+</div>

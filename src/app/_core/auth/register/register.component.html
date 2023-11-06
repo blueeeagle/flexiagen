@@ -24,7 +24,7 @@
 
                     <h5 class="text-light">Login as a partner! Please  enter your details</h5>
 
-                    <form [formGroup]="loginForm" class="py-4">
+                    <form [formGroup]="registerForm" class="py-4">
 
                         <div class="form-group">
 
@@ -46,11 +46,29 @@
 
                             <label for="mobile" class="fw-600">Mobile Number</label>
 
-                            <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.mobile.errors }">
+                            <div class="input-group">
 
-                            <div *ngIf="formSubmitted && f.mobile.errors" class="invalid-feedback">
+                                <div class="input-group-prepend me-1">
+    
+                                    <ng-select formControlName="dialingCode" [clearable]="false" placeholder="+91">
 
-                                <div *ngIf="f.mobile.errors.required">Mobile number is required</div>
+                                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet._id">
+                                            
+                                            <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['ISO3666Code'] }}.svg"/> {{ countryDet.teleCode }}
+                                    
+                                        </ng-option>
+
+                                    </ng-select>
+    
+                                </div>
+    
+                                <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.mobile.errors }">
+    
+                                <div *ngIf="formSubmitted && f.mobile.errors" class="invalid-feedback">
+    
+                                    <div *ngIf="f.mobile.errors.required">Mobile number is required</div>
+    
+                                </div>
 
                             </div>
 
@@ -102,7 +120,7 @@
                             
                             <div class="form-check ms-4">
 
-                                <input class="form-check-input" type="checkbox" id="online" formControlName="online" (change)="loginForm.patchValue({ 'mLogistic': f.online.value })">
+                                <input class="form-check-input" type="checkbox" id="online" formControlName="online" (change)="registerForm.patchValue({ 'mLogistic': f.online.value })">
 
                                 <label for="online" class="form-check-label">Online</label>
 
@@ -118,7 +136,7 @@
 
                         </div>
                         
-                        <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && loginForm.invalid" (click)="login()">SUBMIT</button>
+                        <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && registerForm.invalid" (click)="submit()">SUBMIT</button>
 
                     </form>
 
