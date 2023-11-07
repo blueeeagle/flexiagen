@@ -161,25 +161,106 @@ section {
 .auth-page {
     min-height: 100vh;
     background: linear-gradient(to left, #ffffff 50%, #f3f5f9 50%);
+    font-family: 'Poppins';
 
     .login-card {
-        max-width: 480px;
+        max-width: 500px;
         width: 100%;
+
+        .input-group {
+
+            .input-group-prepend {
+
+                .ng-select.ng-select-single {
+
+                    .ng-select-container {
+                        height: 48px;
+                        border-radius: 0;
+                        border-top-left-radius: 0.25rem;
+                        border-bottom-left-radius: 0.25rem;                             
+
+                        .ng-value-container .ng-input {
+                            top: 10px;
+                            padding-right: 30px;
+                            padding-left: 0.75rem;
+                        }                        
+                    }
+
+                    .ng-value-label {
+                        display: flex;
+                        align-items: center;
+                    }
+
+                }
+
+                .country-flag {
+                    height: 16px !important;
+                    margin-right: 2px;
+                }
+
+                .ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
+                    box-shadow: none;
+                    border-color: #1e4894;   
+                }
+
+                .ng-select.ng-select-opened>.ng-select-container {
+                    border-color: #1e4894;               
+                }
+
+                .ng-dropdown-panel.ng-select-bottom {
+                    top: 102%;
+                }
+                
+                .ng-select {
+
+                    .ng-select-container {
+                        min-width: 100px;
+                        border: 2px solid #dee2e6
+                    }                    
+
+                    .ng-dropdown-panel {
+                        border: 2px solid #dee2e6;
+                        border-bottom-left-radius: 0.25rem;
+                        border-bottom-right-radius: 0.25rem;
+                    }                    
+
+                }
+    
+            }
+
+        }
+
+        .otp-input-groups {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            .form-control {
+                max-width: 60px;
+                text-align: center;
+                margin: 0 0.75rem;
+            }
+
+        }
 
         .form-control {
             height: 3rem;
             padding: 0.5rem 0.75rem 0.65rem 0.75rem;
         }
+
+        .form-select {
+            height: 3rem;
+        }
     }
 }
+
+// @media screen and (max-width: 991px) {
+//     .auth-page {
+//         background: linear-gradient(to left, #ffffff 55%, #f3f5f9 50%)
+//     }
+// }
 
 @media screen and (max-width: 991px) {
-    .auth-page {
-        background: linear-gradient(to left, #ffffff 55%, #f3f5f9 50%)
-    }
-}
-
-@media screen and (max-width: 767px) {
     .auth-page {
         background: #fff
     }

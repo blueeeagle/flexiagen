@@ -8,7 +8,9 @@
     --bs-border-radius: 0.3rem;
     --bs-border-width: 2px;
     --bs-form-invalid-color: #d72828;
-    --bs-form-invalid-border-color: #d72828;    
+    --bs-form-invalid-border-color: #d72828;
+    --bs-success: #4aba53;
+    --bs-success-rgb: 74, 186, 83;
 }
 
 html, body { height: 100%; }
@@ -81,7 +83,7 @@ a {
     }
 }
 
-.form-control {
+.form-control, .form-select {
 
     font-weight: 500;
 
@@ -99,6 +101,11 @@ a {
 .is-invalid~.invalid-feedback, .is-invalid~.invalid-tooltip, .was-validated :invalid~.invalid-feedback, .was-validated :invalid~.invalid-tooltip {
     text-align: right;
     font-weight: 500;
+}
+
+.form-select.is-invalid:not([multiple]):not([size]), .form-select.is-invalid:not([multiple])[size="1"], .was-validated .form-select:invalid:not([multiple]):not([size]), .was-validated .form-select:invalid:not([multiple])[size="1"] {
+
+    --bs-form-select-bg-icon: url(/assets/images/input-error-icon.svg);
 }
 
 .form-check {

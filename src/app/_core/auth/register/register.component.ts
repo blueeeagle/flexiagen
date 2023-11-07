@@ -159,6 +159,10 @@ export class RegisterComponent {
 
       }
 
+    },(err: any)=>{
+
+      this.service.showToastr({ "data": { "message": _.get(err, 'error.message', 'Something went wrong'), "type": "error" } });
+
     });
 
   }

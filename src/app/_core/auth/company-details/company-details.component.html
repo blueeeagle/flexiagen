@@ -4,13 +4,13 @@
 
         <div class="row min-vh-100">
 
-            <div class="col-lg-6 col-md-5 d-flex align-self-center justify-content-center d-none d-md-block ">
+            <div class="col-lg-6 d-flex align-self-center justify-content-center d-none d-lg-block ">
 
                 <img src="assets/images/home/banner-img.png" alt="" class="mw-100">
 
             </div>
 
-            <div class="col-lg-6 col-md-7 d-flex justify-content-center align-self-center px-4 px-md-0 ps-md-5 mb-0 mb-md-5">
+            <div class="col-lg-6 d-flex justify-content-center align-self-center px-4 px-lg-0 ps-lg-5 mb-0 mb-lg-5">
 
                 <div class="login-card">
 
@@ -19,14 +19,14 @@
                         <img src="assets/images/logo.png" alt="">
         
                     </div>
-                    
-                    <h2 class="fw-700">Company Details</h2>
 
-                    <h5 class="text-light">Enter Company Details </h5>
+                    <ng-container *ngIf="!showPreview">
 
-                    <div class="py-4">
+                        <h2 class="fw-700">Company Details</h2>
 
-                        <form [formGroup]="companyForm" *ngIf="!showPreview">
+                        <h5 class="text-light">Enter Company Details </h5>                        
+
+                        <form class="py-4" [formGroup]="companyForm">
 
                             <div class="form-group">
     
@@ -70,55 +70,7 @@
     
                             </div>                                          
                             
-                            <div class="row">
-    
-                                <div class="col-md-6 pe-2 pe-md-1">
-    
-                                    <div class="form-group">
-    
-                                        <label for="area" class="fw-600">Area</label>
-            
-                                        <select class="form-select" formControlName="area" aria-label="Default select example" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
-            
-                                            <option [value]="null" selected>Select</option>
-            
-                                            <option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.title | uppercase }}</option>
-            
-                                        </select>
-            
-                                        <div *ngIf="formSubmitted && f.area.errors" class="invalid-feedback">
-            
-                                            <div *ngIf="f.area.errors.required">Area is required</div>
-            
-                                        </div>
-            
-                                    </div>                                
-    
-                                </div>                            
-    
-                                <div class="col-md-6 ps-2 ps-md-1">
-    
-                                    <div class="form-group">
-    
-                                        <label for="city" class="fw-600">City</label>
-            
-                                        <select class="form-select" formControlName="city" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }">
-            
-                                            <option [value]="null" selected>Select</option>
-            
-                                            <option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.title | uppercase }}</option>
-            
-                                        </select>
-            
-                                        <div *ngIf="formSubmitted && f.city.errors" class="invalid-feedback">
-            
-                                            <div *ngIf="f.city.errors.required">City is required</div>
-            
-                                        </div>
-            
-                                    </div>                                
-    
-                                </div>
+                            <div class="row">                            
     
                                 <div class="col-md-6 pe-2 pe-md-1">
     
@@ -130,7 +82,7 @@
             
                                             <option [value]="null" selected>Select</option>
             
-                                            <option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">{{ countryDet.title | uppercase }}</option>
+                                            <option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">{{ countryDet.title | uppercase }}</option>
             
                                         </select>
             
@@ -143,39 +95,222 @@
                                     </div>
     
                                 </div>
+
+                                <div class="col-md-6 ps-2 ps-md-1">
+    
+                                    <div class="form-group">
+    
+                                        <label for="state" class="fw-600">State</label>
+            
+                                        <select class="form-select" formControlName="state" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
+            
+                                            <option [value]="null" selected>Select</option>
+            
+                                            <option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</option>
+            
+                                        </select>
+            
+                                        <div *ngIf="formSubmitted && f.state.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.state.errors.required">State is required</div>
+            
+                                        </div>
+            
+                                    </div>
+    
+                                </div>
+                                
+                                <div class="col-md-6 pe-2 pe-md-1">
+    
+                                    <div class="form-group">
+    
+                                        <label for="city" class="fw-600">City</label>
+            
+                                        <select class="form-select" formControlName="city" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }">
+            
+                                            <option [value]="null" selected>Select</option>
+            
+                                            <option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</option>
+            
+                                        </select>
+            
+                                        <div *ngIf="formSubmitted && f.city.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.city.errors.required">City is required</div>
+            
+                                        </div>
+            
+                                    </div>                                
+    
+                                </div>                                
     
                                 <div class="col-md-6 ps-2 ps-md-1">
     
                                     <div class="form-group">
     
-                                        <label for="zipCode" class="fw-600">Zip Code</label>
+                                        <label for="area" class="fw-600">Area</label>
             
-                                        <input type="zipCode" class="form-control" id="zipCode" formControlName="zipCode" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.zipCode.errors }">
+                                        <select class="form-select" formControlName="area" aria-label="Default select example" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
             
-                                        <div *ngIf="formSubmitted && f.zipCode.errors" class="invalid-feedback">
+                                            <option [value]="null" selected>Select</option>
             
-                                            <div *ngIf="f.zipCode.errors.required">Zip Code is required</div>
+                                            <option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</option>
+            
+                                        </select>
+            
+                                        <div *ngIf="formSubmitted && f.area.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="f.area.errors.required">Area is required</div>
             
                                         </div>
             
-                                    </div>                                    
+                                    </div>                                
+    
+                                </div>                                
+    
+                            </div>        
+                            
+                            <div class="form-group">
+    
+                                <label for="zipcode" class="fw-600">Zip Code</label>
+    
+                                <input type="zipcode" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.zipcode.errors }">
+    
+                                <div *ngIf="formSubmitted && f.zipcode.errors" class="invalid-feedback">
+    
+                                    <div *ngIf="f.zipcode.errors.required">Zipcode is required</div>
     
                                 </div>
     
-                            </div>                                              
+                            </div>                            
                             
                             <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && companyForm.invalid" (click)="showCompanyDetails()" >Preview Details</button>
     
                         </form>
 
-                        <ng-container *ngIf="showPreview">
+                    </ng-container>
 
+                    <ng-container *ngIf="showPreview">
+
+                        <div class="my-4 mat-elevation-z3 rounded-4">
+
+                            <div class="px-4 py-3 border-bottom">
+
+                                <h5 class="fw-600 text-primary">Company Information</h5> 
+
+                                <div class="d-flex mt-2" *ngIf="companyForm.value as formValue">
+
+                                    <i class="bx bx-map fs-4 mt-1 me-2"></i>
+
+                                    <p class="mb-0">
+
+                                        {{ formValue.address }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
+                                        
+                                        {{ formValue.stateName }}, {{ formValue.countryName }} - {{ formValue.zipcode }}
+
+                                    </p>                                    
+                                    
+                                </div>
+
+                            </div>
+
+                            <div class="px-4 py-3 border-bottom">
+
+                                <h5 class="fw-600 text-primary">Contact Details</h5> 
+
+                                <div class="row">
+
+                                    <div class="col-xl-5 pe-2 pe-xl-1 mt-2">
+
+                                        <div class="d-flex align-items-center">
+
+                                            <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">+9588495545</p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-xl-7 ps-2 ps-xl-1 mt-2">
+
+                                        <div class="d-flex align-items-center">
+
+                                            <i class="bx bx-envelope fs-4 me-2"></i> <p class="mb-0">fabona1333@aramask.com</p>                                            
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
                             
+                            <div class="px-4 py-3 border-bottom">
 
-                        </ng-container>
-                        
+                                <h5 class="fw-600 text-primary">Services</h5> 
 
-                    </div>
+                                <div class="d-flex align-items-center mt-2">
+
+                                    <p class="mb-0">POS</p>
+
+                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
+
+                                    <div class="bg-light border border-1 ms-2 p-1">5% Charge</div>
+
+                                </div>
+
+                                <div class="d-flex align-items-center mt-2">
+
+                                    <p class="mb-0">Online</p>
+
+                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
+
+                                    <div class="bg-light border border-1 ms-2 p-1">5% Charge</div>
+
+                                </div>
+
+                                <div class="d-flex align-items-center mt-2">
+
+                                    <p class="mb-0">M Logistics</p>
+
+                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
+
+                                    <div class="bg-light border border-1 ms-2 p-1">5% Charge</div>
+
+                                </div>
+
+                            </div>
+                            
+                            <div class="px-4 py-3 pb-4">
+
+                                <h5 class="fw-600 text-primary">Subscription Amount</h5> 
+
+                                <div class="d-flex align-items-center flex-wrap">
+
+                                    <h4 class="mb-0 fw-700 mt-2 me-2">3.000 BHD</h4>
+
+                                    <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
+
+                                </div>
+
+                                <div class="d-flex">
+
+                                    <div class="position-relative d-flex justify-content-center ms-0 ms-lg-3">
+
+                                        <img src="assets/images/subscription-rectangle.png" alt="">
+
+                                        <p class="small mb-0 position-absolute" style="top: 20px"> Subscrption Fee to use the app </p>                                        
+
+                                    </div>  
+
+                                </div>
+
+                            </div>                            
+
+                        </div>
+
+                        <button class="btn btn-primary btn-lg w-100" (click)="submit()">Continue</button>
+
+                    </ng-container>
 
                 </div>
 
