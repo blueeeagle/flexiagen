@@ -6,7 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbActiveModal, NgbModule,  } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { MainInterceptor } from './_core/interceptor/main.interceptor';
+import { MainInterceptor } from '@core/interceptor/main.interceptor';
 import { SharedModule } from '@shared/shared.module';
 
 @NgModule({

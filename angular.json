@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/flexi-clean-agent-potal-frontend",
+            "outputPath": "dist/Flexi Clean Agent Potal Frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
