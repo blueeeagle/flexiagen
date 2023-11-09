@@ -30,7 +30,7 @@
 
                             <label for="email" class="fw-600">Email</label>
 
-                            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter your email" [ngClass]="{ 'is-invalid': formSubmitted && f.email.errors }">
+                            <input type="text" class="form-control" id="email" formControlName="email" placeholder="Enter your email" [ngClass]="{ 'is-invalid': formSubmitted && f.email.errors }">
 
                             <div *ngIf="formSubmitted && f.email.errors" class="invalid-feedback">
 
@@ -50,9 +50,9 @@
 
                                 <div class="input-group-prepend me-1">
     
-                                    <ng-select formControlName="dialingCode" [clearable]="false" placeholder="+91">
+                                    <ng-select formControlName="dialingCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.dialingCode.errors }">
 
-                                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet._id">
+                                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.id">
                                             
                                             <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['ISO3666Code'] }}.svg"/> {{ countryDet.teleCode }}
                                     
@@ -62,7 +62,7 @@
     
                                 </div>
     
-                                <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.mobile.errors }">
+                                <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.mobile.errors }" numbersOnly>
     
                                 <div *ngIf="formSubmitted && f.mobile.errors" class="invalid-feedback">
     
@@ -78,7 +78,13 @@
 
                             <label for="password" class="fw-600">Password</label>
 
-                            <input type="password" class="form-control" id="password" formControlName="password" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.password.errors }">
+                            <div class="password-input-group">
+
+                                <input type="password" class="form-control" id="password" #password formControlName="password" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.password.errors }">
+
+                                <i class="bi" [ngClass]="password.type == 'text' ? 'bi-eye' : 'bi-eye-slash'" (click)="password.type = password.type == 'text' ? 'password' : 'text'"></i>
+
+                            </div>                              
 
                             <div *ngIf="formSubmitted && f.password.errors" class="invalid-feedback">
 
@@ -92,11 +98,19 @@
 
                             <label for="confirmPassword" class="fw-600">Confirm Password</label>
 
-                            <input type="confirmPassword" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.confirmPassword.errors }">
+                            <div class="password-input-group">
+
+                                <input type="password" class="form-control" #confirmPassword id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.confirmPassword.errors }">
+
+                                <i class="bi" [ngClass]="confirmPassword.type == 'text' ? 'bi-eye' : 'bi-eye-slash'" (click)="confirmPassword.type = confirmPassword.type == 'text' ? 'password' : 'text'"></i>
+
+                            </div>                            
 
                             <div *ngIf="formSubmitted && f.confirmPassword.errors" class="invalid-feedback">
 
-                                <div *ngIf="f.confirmPassword.errors.required">Confirm password is required</div>
+                                <div *ngIf="f.confirmPassword.errors.required && !f.confirmPassword.errors.confirmedValidator">Confirm password is required</div>
+
+                                <div *ngIf="f.confirmPassword.errors.confirmedValidator && !f.confirmPassword.errors.required">Passwords do not match.</div>
 
                             </div>
 
@@ -130,20 +144,29 @@
 
                         <div class="form-check form-switch ps-0 w-fit-content">
 
-                            <label class="form-check-label text-dark" for="mLogistic">M Logistic Support</label>
+                            <label class="form-check-label text-dark" for="mLogistic">Flexi Clean Logistic</label>
                             
                             <input class="form-check-input" type="checkbox" role="switch" id="mLogistic"  formControlName="mLogistic">
 
                         </div>
                         
-                        <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && registerForm.invalid" (click)="submit()">SUBMIT</button>
+                        <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="(formSubmitted && registerForm.invalid) || isLoading" (click)="submit()">
+                            
+                            <ng-container *ngIf="!isLoading">SUBMIT</ng-container>
+
+                            <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+
+                                <span class="visually-hidden">Loading...</span>
+
+                            </div>                            
+                        
+                        </button>
 
                     </form>
 
                 </div>
 
             </div>                
-
 
         </div>
 

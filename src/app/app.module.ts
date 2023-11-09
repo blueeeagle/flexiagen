@@ -8,6 +8,7 @@ import { NgbActiveModal, NgbModule,  } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MainInterceptor } from '@core/interceptor/main.interceptor';
 import { SharedModule } from '@shared/shared.module';
+import { CommonService } from '@shared/services/common/common.service';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { SharedModule } from '@shared/shared.module';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: MainInterceptor, multi: true },
+    CommonService,
     NgbActiveModal
   ],
   bootstrap: [AppComponent]

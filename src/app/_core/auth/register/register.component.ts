@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 
@@ -11,13 +11,14 @@ import * as _ from 'lodash';
 export class RegisterComponent {
 
   registerForm!: FormGroup;
-  formSubmitted = false;
+  formSubmitted: boolean = false;
+  isLoading: boolean = false;
   countryList: Array<any> = [];
 
   countryDetailsList: Array<any> = [
     {
       "English short name": "Qatar",
-      "Alpha-2 code": "QA",
+      "ISO3666Code": "QA",
       "Alpha-3 code": "QAT",
       "Numeric code": 634,
       "ISO 3166-2 Code": "QA",
@@ -25,7 +26,7 @@ export class RegisterComponent {
     },
     {
       "English short name": "Saudi Arabia",
-      "Alpha-2 code": "SA",
+      "ISO3666Code": "SA",
       "Alpha-3 code": "SAU",
       "Numeric code": 682,
       "ISO 3166-2 Code": "SA",
@@ -33,7 +34,7 @@ export class RegisterComponent {
     },
     {
       "English short name": "United Arab Emirates",
-      "Alpha-2 code": "AE",
+      "ISO3666Code": "AE",
       "Alpha-3 code": "ARE",
       "Numeric code": 784,
       "ISO 3166-2 Code": "AE",
@@ -41,7 +42,7 @@ export class RegisterComponent {
     },
     {
       "English short name": "Kuwait",
-      "Alpha-2 code": "KW",
+      "ISO3666Code": "KW",
       "Alpha-3 code": "KWT",
       "Numeric code": 414,
       "ISO 3166-2 Code": "KW",
@@ -49,7 +50,7 @@ export class RegisterComponent {
     },
     {
       "English short name": "Bahrain",
-      "Alpha-2 code": "BH",
+      "ISO3666Code": "BH",
       "Alpha-3 code": "BHR",
       "Numeric code": 48,
       "ISO 3166-2 Code": "BH",
@@ -57,7 +58,7 @@ export class RegisterComponent {
     },
     {
       "English short name": "India",
-      "Alpha-2 code": "IN",
+      "ISO3666Code": "IN",
       "Alpha-3 code": "IND",
       "Numeric code": 356,
       "ISO 3166-2 Code": "IN",
@@ -65,7 +66,7 @@ export class RegisterComponent {
     },
     {
       "English short name": "Russia",
-      "Alpha-2 code": "RU",
+      "ISO3666Code": "RU",
       "Alpha-3 code": "RUS",
       "Numeric code": 643,
       "ISO 3166-2 Code": "RU",
@@ -99,7 +100,7 @@ export class RegisterComponent {
 
           if(_.isEmpty(countryDetails) || _.find(this.countryList, { 'Alpha-3 code': countryDet.isoCode })) return;
 
-          this.countryList.push({ ...countryDet, "ISO3666Code": countryDetails["Alpha-2 code"] });
+          this.countryList.push({ ...countryDet, "ISO3666Code": countryDetails["ISO3666Code"] });
 
         });
 
@@ -123,15 +124,19 @@ export class RegisterComponent {
 
       'mobile': ['', [Validators.required]],
 
-      'pos': ['', [Validators.required]],
+      'pos': false,
 
-      'online': ['', [Validators.required]],
+      'online': false,
 
       'password': ['',[Validators.required]],
 
       'confirmPassword': ['',[Validators.required]],
 
-      'mLogistic': ['',[Validators.required]],
+      'mLogistic': false,
+
+    },{
+
+      validator: this.matchValidator('password', 'confirmPassword')
 
     });
 
@@ -144,12 +149,20 @@ export class RegisterComponent {
   // Register user
 
   submit(): any {
-    
+
     if(this.registerForm.invalid) return this.formSubmitted = true;
+
+    let payload: any = _.omit(this.registerForm.value,['confirmPassword']);
+
+    payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
+
+    if(!payload.pos && !payload.online) return this.service.showToastr({ "data": { "message": "Please select atleast one service", "type": "error" } });
+
+    this.isLoading = true;
 
     this.service.postService({ "url": "/users/register", 'payload': this.registerForm.value, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-      if(res.status==200) {
+      if(res.status==201) {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
 
@@ -157,13 +170,55 @@ export class RegisterComponent {
 
         this.service.navigate({ "url": '/auth/company-details' });
 
+        this.isLoading = false;
+
       }
 
     },(err: any)=>{
 
-      this.service.showToastr({ "data": { "message": _.get(err, 'error.message', 'Something went wrong'), "type": "error" } });
+      if(err.status == 409) {
+        
+        this.service.navigate({ "url": '/auth/login' });
+
+        this.service.showToastr({ "data": { "type": "info", "message": "You have already registered!" } });
+
+      } else this.service.showToastr({ "data": { "message": _.get(err, 'error.message', 'Something went wrong'), "type": "error" } });
+
+      this.isLoading = false;
 
     });
+
+  }
+
+  // Validate Password and Confirm Password
+
+  matchValidator(controlName: string, matchingControlName: string): any {
+
+    return (formGroup: FormGroup) => {
+
+        const control = formGroup.get(controlName);
+        
+        const matchingControl = formGroup.get(matchingControlName);
+        
+        if (matchingControl!.errors && !matchingControl!.errors?.['confirmedValidator']) return null;
+
+        if (control!.value !== matchingControl!.value) {
+
+          const error = { confirmedValidator: 'Passwords do not match.' };
+
+          matchingControl!.setErrors(error);
+
+          return error;
+
+        } else {
+
+          matchingControl!.setErrors(null);
+
+          return null;
+
+        }
+
+    }
 
   }
 

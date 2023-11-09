@@ -10,15 +10,19 @@ import * as _ from 'lodash';
 export class CompanyDetailsComponent {
 
   companyForm!: FormGroup;
-  formSubmitted = false;
+  formSubmitted: boolean = false;
+  isLoading: boolean = false;
   masterList: any = {
     countryList: [],
+    stateList: [],
     cityList: [],
     areaList: []
   };
   showPreview: boolean = false;
+  appServiceList: any = [];
+  _: any = _;
 
-  constructor(private service: CommonService) { 
+  constructor(public service: CommonService) { 
 
   }
 
@@ -29,6 +33,35 @@ export class CompanyDetailsComponent {
     this.loadForm();
 
     this.getCountries();
+
+    this.getApplicationServiceList();
+
+  }
+
+  // Get Application Service List
+
+  getApplicationServiceList() {
+
+    this.appServiceList = [
+      {
+        "serviceName": "POS",
+        "charges": "5%"
+      },
+      {
+        "serviceName": "Online",
+        "charges": "5%"
+      },
+      {
+        "serviceName": "M Logistics",
+        "charges": "5%"
+      }
+    ];
+
+    // this.service.getService({ "url": "/master/application-services" }).subscribe((res: any) => {
+
+    //   this.appServiceList = res.status==200 ? res.data : [];
+
+    // });
 
   }
 
@@ -103,7 +136,7 @@ export class CompanyDetailsComponent {
 
       'ownerName': ['', [Validators.required]],
 
-      'address': ['', [Validators.required]],
+      'address1': ['', [Validators.required]],
 
       'area': [null, [Validators.required]],  
 
@@ -113,7 +146,7 @@ export class CompanyDetailsComponent {
 
       'cityName': '',
 
-      'state': [null, [Validators.required]],
+      'state': [null],
 
       'stateName': '',      
 
@@ -125,42 +158,22 @@ export class CompanyDetailsComponent {
 
     });
 
-    /** Temporarily set default values for testing */
-
-    this.companyForm.patchValue({
-
-      "companyName": "Bubbles Dry Cleaners",
-      "ownerName": "Gowtham",
-      "address": "Ganapthy",
-      "area": "64f4a0632797311d33d0718e",
-      "areaName": "Gutur",
-      "city": "64f9d6d80ee655dbcadbacbd",
-      "cityName": "Chennai",
-      "state": "64f47b8e2797311d33d070e8",
-      "stateName": "Tamilnadu",
-      "country": "64f46cf05c078933a12f59ed",
-      "countryName": "India",
-      "zipcode": "600010"
-
-    });
-
-    this.getStates(); // Get States based on Country
-
-    this.getCities({ 'fieldName': 'state' }); // Get Cities based on State
-
-    this.getAreas(); // Get Areas based on City
-
-    /** Temporarily set default values for testing */
-
     // Listen to Country changes and update State, City, Area and Zipcode
 
     this.companyForm.controls['country'].valueChanges.subscribe((value: any) => {
 
-      this.masterList['areaList'] = []; // Reset Area List
+      this.masterList = {
+        ...this.masterList,
+        stateList: [],
+        cityList: [],
+        areaList: []
+      };
+
+      let countryDet = _.find(this.masterList['countryList'], { 'id': value });
 
       this.companyForm.patchValue({ 
 
-        'countryName': _.find(this.masterList['countryList'], { 'id': value })?.title,
+        'countryName': countryDet?.title,
         
         'city': null, 'cityName': '',
         
@@ -172,7 +185,15 @@ export class CompanyDetailsComponent {
       
       }, { emitEvent: false });
 
-      this.getStates(); // Get States based on Country      
+      if(countryDet.hasState == 1) {
+
+        this.companyForm.controls['state'].setValidators([Validators.required]);
+
+        this.getStates(); // Get States based on Country        
+
+      } else this.companyForm.controls['state'].setValidators([]);
+
+      this.companyForm.controls['state'].updateValueAndValidity({ emitEvent: false });
 
       this.getCities({ 'fieldName': 'country' }); // Get Cities based on Country
 
@@ -244,21 +265,39 @@ export class CompanyDetailsComponent {
     
     if(this.companyForm.invalid) return this.formSubmitted = true;
 
+    this.isLoading = true
+
     let payload = _.omit(this.companyForm.value,['countryName','stateName','cityName','areaName']);
 
-    // this.service.postService({ "url": "/users/register", 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
+    this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-    //   if(res.status==200) {
+      if(res.status==200) {
 
-    //     this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
+        this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 
-    //   }
+        this.isLoading = false;
 
-    // },(err: any)=>{
+        this.service.getUserDetails().subscribe((resOne: any) => {
 
-    //   this.service.showToastr({ "data": { "message": _.get(err, 'error.message', 'Something went wrong'), "type": "error" } });
+          this.service.userDetails = resOne.status== 200 ? resOne.data : res.data;
 
-    // });
+          this.service.session({ 'method': 'set', 'key': 'CompanyStatus', 'value': 'Created' });
+
+          this.service.navigate({ 'url': '/pages/dashboard' });
+
+        });
+
+        this.service.navigate({ 'url': '/pages/dashboard' });
+
+      }
+
+    },(err: any)=>{
+
+      this.isLoading = false;
+
+      this.service.showToastr({ "data": { "message": _.get(err, 'error.message', 'Something went wrong'), "type": "error" } });
+
+    });
 
   }
 

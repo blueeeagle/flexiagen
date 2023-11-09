@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { CommonService } from '@shared/services/common/common.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,8 @@ import { CommonService } from '@shared/services/common/common.service';
 export class LoginComponent {
 
   loginForm!: FormGroup;
-  formSubmitted = false;
+  formSubmitted: boolean = false;
+  isLoading: boolean = false;
 
   constructor(private service: CommonService) { }
 
@@ -48,15 +50,53 @@ export class LoginComponent {
     
     if(this.loginForm.invalid) return this.formSubmitted = true;
 
+    this.isLoading = true;
+
     this.service.postService({ "url": "/users/login", 'payload': this.loginForm.value, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
       if(res.status==200) {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
 
-        this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
+        this.service.getUserDetails().subscribe((res: any) => {
+
+          if(res.status == 200) {
+
+            this.isLoading = false;
+
+            this.service.userDetails = res.data;
+
+            if(_.isEmpty(this.service.userDetails.companyName)) { // Check the user already created company details
+
+              this.service.navigate({ 'url': '/auth/company-details' });
+
+              this.service.showToastr({ "data": { "message": "Please complete your company details", "type": "info" } });
+
+            } else if(this.service.userDetails.pos && false)  { // Check for payment status
+
+              this.service.navigate({ 'url': '/auth/payment' });
+
+              this.service.showToastr({ "data": { "message": "Please complete your payment", "type": "info" } });
+
+            } else {
+
+              this.service.session({ "method": "set", "key": "CompanyStatus", "value": "Created" });
+
+              this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
+
+              this.service.navigate({ 'url': '/pages/dashboard' });
+
+            }
+
+          }
+
+        });
 
       }
+
+    },(err: any)=>{
+
+      this.isLoading = false;
 
     });
 

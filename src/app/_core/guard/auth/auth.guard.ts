@@ -10,11 +10,17 @@ export class AuthGuard implements CanActivate {
 
   constructor(private service: CommonService) { }
 
-  canActivate( route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
     if(!(this.service.session({ "method": "get", "key": "AuthToken" }))) {
 
-      this.service.navigate({ "url": "/auth"});
+      this.service.navigate({ "url": "/auth" });
+    
+      return false;
+
+    } else if(!(this.service.session({ "method": "get", "key": "CompanyStatus" }))) {
+
+      this.service.navigate({ "url": "/auth/company-details" });
     
       return false;
 

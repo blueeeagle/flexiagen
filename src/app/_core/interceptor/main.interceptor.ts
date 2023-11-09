@@ -28,7 +28,7 @@ export class MainInterceptor implements HttpInterceptor {
 
       const AuthRequest = request.clone({ headers });
 
-      this.service.loaderApiUrls.subscribe(data => {
+      this.service.loaderApiUrls.subscribe((data: any) => {
 
         if (data.includes(request.url)) {
 
@@ -46,7 +46,7 @@ export class MainInterceptor implements HttpInterceptor {
 
           if (event instanceof HttpResponse) {
           
-            this.service.loaderApiUrls.subscribe(data => {
+            this.service.loaderApiUrls.subscribe((data: any) => {
               
               if (data.includes(request.url)) {
 
@@ -72,7 +72,7 @@ export class MainInterceptor implements HttpInterceptor {
 
           }
 
-          this.service.loaderApiUrls.subscribe(data => {
+          this.service.loaderApiUrls.subscribe((data: any) => {
 
             if (data.includes(request.url)) {
 
@@ -86,7 +86,7 @@ export class MainInterceptor implements HttpInterceptor {
           
         }, () => {
 
-          this.service.loaderApiUrls.subscribe(data => {
+          this.service.loaderApiUrls.subscribe((data: any) => {
 
             if (data.includes(request.url)) {
 
@@ -104,7 +104,7 @@ export class MainInterceptor implements HttpInterceptor {
 
         return () => {
 
-          this.service.loaderApiUrls.subscribe(data => {
+          this.service.loaderApiUrls.subscribe((data: any) => {
 
             if (data.includes(request.url)) {
 
@@ -132,7 +132,7 @@ export class MainInterceptor implements HttpInterceptor {
   
   removeRequest(req: HttpRequest<any>) {
 
-    this.service.loaderApiUrls.subscribe(data => {
+    this.service.loaderApiUrls.subscribe((data: any) => {
 
       if (data.includes(req.url)) {
 

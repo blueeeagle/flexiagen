@@ -15,6 +15,7 @@ export class ForgotPasswordComponent {
   _: any = _;
   seconds: number = 60;
   otpVerified: boolean = false;
+  isLoading: boolean = false;
 
   constructor(private service: CommonService) { 
 
@@ -74,6 +75,8 @@ export class ForgotPasswordComponent {
     
     if(_.size(_.pickBy(this.otp)) < 4) return this.formSubmitted = true;
 
+    this.isLoading = true;
+
     this.service.showToastr({ "data": { "message": "OTP Verified Successfully", "type": "success" } });
 
     this.otpVerified = true;
@@ -85,6 +88,8 @@ export class ForgotPasswordComponent {
     //     this.service.showToastr({ "data": { "message": "OTP Verified Successfully", "type": "success" } });
 
     //     this.otpVerified = true;
+
+    //     this.isLoading = false;
 
     //   }
 

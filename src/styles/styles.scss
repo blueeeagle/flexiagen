@@ -86,6 +86,7 @@ a {
 .form-control, .form-select {
 
     font-weight: 500;
+    background-image: none !important;
 
     &:focus {
         border-color: #1e4894;

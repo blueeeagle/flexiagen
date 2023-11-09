@@ -10,6 +10,30 @@ section {
     padding: 3.5rem 0 3rem 0;
 }
 
+.ng-select.form-control {
+    padding: 0 !important;
+
+    .ng-select-container {
+        height: 100% !important;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+    }
+}
+
+.ng-select.form-control.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
+    box-shadow: none !important;
+    border-color: #1e4894 !important;
+}
+
+.ng-select.form-control.is-invalid>.ng-select-container, 
+.ng-select.form-control.was-validated>.ng-select-container 
+.ng-select.form-control.form-control:invalid>.ng-select-container {
+    border-color: var(--bs-form-invalid-border-color);
+}
+
+ng-select.form-control {
+    border: none !important;
+}
+
 // Hero Section Styles
 
 .hero-section {
@@ -252,13 +276,20 @@ section {
             height: 3rem;
         }
     }
-}
 
-// @media screen and (max-width: 991px) {
-//     .auth-page {
-//         background: linear-gradient(to left, #ffffff 55%, #f3f5f9 50%)
-//     }
-// }
+    .password-input-group {
+        position: relative;
+    
+        .bi {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.65rem;
+            font-size: 1.15rem;
+            cursor: pointer;
+        }
+    }
+    
+}
 
 @media screen and (max-width: 991px) {
     .auth-page {

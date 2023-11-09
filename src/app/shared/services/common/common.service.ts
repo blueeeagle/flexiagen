@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DatePipe, DecimalPipe} from '@angular/common';
+import { DecimalPipe} from '@angular/common';
 import { Router } from '@angular/router';
 import { APP_CONFIG } from '@env/environment';
 import { ApiService } from '../api/api.service';
@@ -22,7 +22,38 @@ export class CommonService {
   public loaderApiUrls = new BehaviorSubject<any>([]);
   public imgBasePath = APP_CONFIG.imgBasePath;
 
-  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {}
+  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {
+
+
+    // Get User Details
+
+    setTimeout(()=>{ // To Avoid Circular Dependency Error
+
+      if(this.session({ method: "get", key: "AuthToken" })) {
+
+        this.getUserDetails().subscribe((res: any) => {
+
+          if(res.status == 200) {
+    
+            this.userDetails = res.data;
+    
+          }
+    
+        });
+
+      }
+
+    },1000)
+
+  }
+
+  getUserDetails() {
+
+    this.userDetails = {};
+
+    return this.getService({ "url": "/users/me" });
+
+  }
 
   // Set/Get/Remove for Session storage
 

@@ -11,6 +11,7 @@ import {
   NumberDirective,
   HoverClassDirective,
   TextareaAutoresizeDirective,
+  NoNumericOnlyDirective,
 } from './directives';
 
 import { 
@@ -52,6 +53,7 @@ export const MY_FORMATS = {
     NumberDirective,
     HoverClassDirective,
     TextareaAutoresizeDirective,
+    NoNumericOnlyDirective,
     // Pipes
     EnumeratePipe,
     DynamicPipe,
@@ -82,6 +84,7 @@ export const MY_FORMATS = {
     NumberDirective,
     HoverClassDirective,
     TextareaAutoresizeDirective,
+    NoNumericOnlyDirective,
     // Pipes
     EnumeratePipe,
     DynamicPipe,

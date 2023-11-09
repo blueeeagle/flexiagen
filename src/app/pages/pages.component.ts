@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { CommonService } from '@shared/services/common/common.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-pages',
+  templateUrl: './pages.component.html',
+  styleUrls: ['./pages.component.scss']
 })
-export class AppComponent {
+export class PagesComponent {
 
   constructor() {}
 

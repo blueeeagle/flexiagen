@@ -32,7 +32,7 @@
     
                                 <label for="companyName" class="fw-600">Company Name</label>
     
-                                <input type="companyName" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+                                <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
     
                                 <div *ngIf="formSubmitted && f.companyName.errors" class="invalid-feedback">
     
@@ -46,7 +46,7 @@
     
                                 <label for="ownerName" class="fw-600">Owner Name</label>
     
-                                <input type="ownerName" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
+                                <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }" noNumbers>
     
                                 <div *ngIf="formSubmitted && f.ownerName.errors" class="invalid-feedback">
     
@@ -58,13 +58,13 @@
     
                             <div class="form-group">
     
-                                <label for="address" class="fw-600">Address</label>
+                                <label for="address1" class="fw-600">Address</label>
     
-                                <input type="address" class="form-control" id="address" formControlName="address" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.address.errors }">
+                                <input type="text" class="form-control" id="address1" formControlName="address1" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.address1.errors }">
     
-                                <div *ngIf="formSubmitted && f.address.errors" class="invalid-feedback">
+                                <div *ngIf="formSubmitted && f.address1.errors" class="invalid-feedback">
     
-                                    <div *ngIf="f.address.errors.required">Address is required</div>
+                                    <div *ngIf="f.address1.errors.required">address1 is required</div>
     
                                 </div>
     
@@ -77,14 +77,16 @@
                                     <div class="form-group">
     
                                         <label for="country" class="fw-600">Country</label>
-            
-                                        <select class="form-select" formControlName="country" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
-            
-                                            <option [value]="null" selected>Select</option>
-            
-                                            <option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">{{ countryDet.title | uppercase }}</option>
-            
-                                        </select>
+
+                                        <ng-select formControlName="country" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
+
+                                            <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">
+                                                
+                                                {{ countryDet.title | uppercase }}
+                                        
+                                            </ng-option>
+    
+                                        </ng-select>
             
                                         <div *ngIf="formSubmitted && f.country.errors" class="invalid-feedback">
             
@@ -101,14 +103,12 @@
                                     <div class="form-group">
     
                                         <label for="state" class="fw-600">State</label>
-            
-                                        <select class="form-select" formControlName="state" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
-            
-                                            <option [value]="null" selected>Select</option>
-            
-                                            <option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</option>
-            
-                                        </select>
+
+                                        <ng-select formControlName="state" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.state.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+
+                                            <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</ng-option>
+    
+                                        </ng-select>
             
                                         <div *ngIf="formSubmitted && f.state.errors" class="invalid-feedback">
             
@@ -125,14 +125,12 @@
                                     <div class="form-group">
     
                                         <label for="city" class="fw-600">City</label>
-            
-                                        <select class="form-select" formControlName="city" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }">
-            
-                                            <option [value]="null" selected>Select</option>
-            
-                                            <option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</option>
-            
-                                        </select>
+
+                                        <ng-select formControlName="city" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+
+                                            <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</ng-option>
+    
+                                        </ng-select>
             
                                         <div *ngIf="formSubmitted && f.city.errors" class="invalid-feedback">
             
@@ -149,14 +147,13 @@
                                     <div class="form-group">
     
                                         <label for="area" class="fw-600">Area</label>
+
+                                        <ng-select formControlName="area" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.area.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+
+                                            <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</ng-option>
+    
+                                        </ng-select>                                        
             
-                                        <select class="form-select" formControlName="area" aria-label="Default select example" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
-            
-                                            <option [value]="null" selected>Select</option>
-            
-                                            <option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</option>
-            
-                                        </select>
             
                                         <div *ngIf="formSubmitted && f.area.errors" class="invalid-feedback">
             
@@ -174,7 +171,7 @@
     
                                 <label for="zipcode" class="fw-600">Zip Code</label>
     
-                                <input type="zipcode" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.zipcode.errors }">
+                                <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.zipcode.errors }">
     
                                 <div *ngIf="formSubmitted && f.zipcode.errors" class="invalid-feedback">
     
@@ -204,7 +201,7 @@
 
                                     <p class="mb-0">
 
-                                        {{ formValue.address }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
+                                        {{ formValue.address1 }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
                                         
                                         {{ formValue.stateName }}, {{ formValue.countryName }} - {{ formValue.zipcode }}
 
@@ -224,7 +221,7 @@
 
                                         <div class="d-flex align-items-center">
 
-                                            <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">+9588495545</p>
+                                            <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">{{ this.service.userDetails.mobile }}</p>
 
                                         </div>
 
@@ -232,9 +229,9 @@
 
                                     <div class="col-xl-7 ps-2 ps-xl-1 mt-2">
 
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center text-truncate">
 
-                                            <i class="bx bx-envelope fs-4 me-2"></i> <p class="mb-0">fabona1333@aramask.com</p>                                            
+                                            <i class="bx bx-envelope fs-4 me-2 "></i> <p class="mb-0">{{ this.service.userDetails.email }}</p>                                            
 
                                         </div>
 
@@ -246,43 +243,23 @@
                             
                             <div class="px-4 py-3 border-bottom">
 
-                                <h5 class="fw-600 text-primary">Services</h5> 
+                                <h5 class="fw-600 text-primary">Services opted for</h5> 
 
-                                <div class="d-flex align-items-center mt-2">
+                                <div class="d-flex align-items-center mt-2" *ngFor="let serviceDet of appServiceList">
 
-                                    <p class="mb-0">POS</p>
-
-                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
-
-                                    <div class="bg-light border border-1 ms-2 p-1">5% Charge</div>
-
-                                </div>
-
-                                <div class="d-flex align-items-center mt-2">
-
-                                    <p class="mb-0">Online</p>
+                                    <p class="mb-0">{{ serviceDet.serviceName }}</p>
 
                                     <i class="bi bi-check-circle-fill text-success ms-2"></i>
 
-                                    <div class="bg-light border border-1 ms-2 p-1">5% Charge</div>
-
-                                </div>
-
-                                <div class="d-flex align-items-center mt-2">
-
-                                    <p class="mb-0">M Logistics</p>
-
-                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
-
-                                    <div class="bg-light border border-1 ms-2 p-1">5% Charge</div>
+                                    <div class="bg-light border border-1 ms-2 p-1">{{ serviceDet.charges }} Charge</div>
 
                                 </div>
 
                             </div>
                             
-                            <div class="px-4 py-3 pb-4">
+                            <div class="px-4 py-3 pb-4" *ngIf="service.userDetails.pos">
 
-                                <h5 class="fw-600 text-primary">Subscription Amount</h5> 
+                                <h5 class="fw-600 text-primary">POS Subscription Amount</h5> 
 
                                 <div class="d-flex align-items-center flex-wrap">
 
@@ -308,7 +285,23 @@
 
                         </div>
 
-                        <button class="btn btn-primary btn-lg w-100" (click)="submit()">Continue</button>
+                        <div class="d-flex flex-wrap justify-content-between">
+
+                            <a class="btn btn-outline-primary btn-lg w-auto mt-2" (click)="showPreview = false"> Back </a>
+
+                            <button class="btn btn-primary btn-lg w-auto" [disabled]="isLoading" (click)="submit()">
+
+                                <ng-container *ngIf="!isLoading">CONTINUE</ng-container>
+    
+                                <div class="spinner-border text-white-50 mt-2" *ngIf="isLoading" role="status">
+    
+                                    <span class="visually-hidden">Loading...</span>
+    
+                                </div>
+    
+                            </button>                            
+
+                        </div>
 
                     </ng-container>
 
