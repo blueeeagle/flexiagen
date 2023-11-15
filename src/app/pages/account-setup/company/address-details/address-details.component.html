@@ -1,1 +1,146 @@
-<p>address-details works!</p>
+<!-- <div class="container-fluid p-5">
+
+    <h4 class="company-detail">Company Details</h4>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form  [formGroup]="addressDetailsFrom">
+    
+                <label for="validationCustom01" class="form-label company">COMPANY NAME</label>
+    
+                <input type="text" class="form-control company-input" formControlName="street" id="street" placeholder="Super Laundry & Dry Cleaning - Manama">
+                
+            </form>
+
+        </div>
+
+    </div>
+
+</div> -->
+
+
+<div class="dashboard-container">
+
+    <div class="row">
+
+        <div class="page-header col-sm-6">Address Details</div>
+    
+    </div>
+
+    <div class="row mt-2">
+
+        <form [formGroup]="addressDetailsFrom">
+
+            <div class="card col-xl-6 col-lg-7">
+
+                <div class="card-body">
+
+                    <div class="form-group">
+
+                        <label for="street">NO & STREET/ROAD *</label>
+        
+                        <input type="text" class="form-control form-control-lg" id="street" formControlName="street" placeholder="7th Street" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.street.errors }">
+        
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="appartment">APARTMENT, BUILDING, FLAT</label>
+        
+                        <input type="text" class="form-control form-control-lg" id="appartment" formControlName="appartment" placeholder="53/A Second Floor" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.appartment.errors }">
+        
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-6">
+
+                            <div class="form-group">
+
+                                <label for="area">AREA *</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="area" formControlName="area"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.area.errors }">
+                
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="form-group">
+
+                                <label for="city">CITY *</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="city" formControlName="city"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }">
+                
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="form-group">
+
+                                <label for="state">STATE *</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="state" formControlName="state"  placeholder="Select State / Province" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.state.errors }">
+                
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="form-group">
+
+                                <label for="country">COUNTRY *</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="country" formControlName="country"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
+                
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="form-group">
+
+                                <label for="pinCode">PINCODE *</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="pinCode" formControlName="pinCode"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.pinCode.errors }">
+                
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+    
+                        <div class="col-6">
+    
+                            <div class=" btn btn-block  btn-outline-primary d-block btn-md">CLEAR</div>
+    
+                        </div>
+    
+                        <div class="col-6">
+    
+                            <div class=" btn btn-block btn-primary d-block btn-md">SAVE</div>
+    
+                        </div>
+    
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            
+        </form>
+
+    </div>
+    
+</div>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AddressDetailsRoutingModule } from './address-details-routing.module';
 import { AddressDetailsComponent } from './address-details.component';
+import { SharedModule } from '@shared/shared.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { AddressDetailsComponent } from './address-details.component';
   ],
   imports: [
     CommonModule,
-    AddressDetailsRoutingModule
+    AddressDetailsRoutingModule,
+    SharedModule
   ]
 })
 export class AddressDetailsModule { }
