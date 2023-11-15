@@ -33,7 +33,7 @@
 
         <form [formGroup]="companyDetailsFrom">
 
-            <div class="card">
+            <div class="card col-xl-6 col-lg-7">
 
                 <div class="card-body">
 
@@ -41,7 +41,7 @@
 
                         <label for="companyName">Company Name</label>
         
-                        <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="KV Tech Private Ltd" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+                        <input type="text" class="form-control form-control-lg" id="companyName" formControlName="companyName" placeholder="KV Tech Private Ltd" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
         
                     </div>
 
@@ -49,7 +49,7 @@
 
                         <label for="ownerName">Owner Name</label>
         
-                        <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="Praveen Kumar" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
+                        <input type="text" class="form-control form-control-lg" id="ownerName" formControlName="ownerName" placeholder="Praveen Kumar" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
         
                     </div>
 
@@ -71,7 +71,7 @@
 
                         <label for="taxationNo">Taxation Name</label>
         
-                        <input type="text" class="form-control" id="taxationNo" formControlName="taxationNo" placeholder="100234" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNo.errors }">
+                        <input type="text" class="form-control form-control-lg" id="taxationNo" formControlName="taxationNo" placeholder="100234" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNo.errors }">
         
                     </div>
 
@@ -79,17 +79,35 @@
 
                         <label for="email">Company Logo </label>
         
-                        <div class="mt-1 mx-2 ">
+                        <div class="mt-1">
 
-                           <h4 class="text-primary border border-primary">Upload</h4>
+                           <h5 class="text-primary border border-primary rounded upload-img py-3 px-5 d-flex "><i class="fa-solid fa-file-arrow-up fs-5 mb-1"></i> <span class="mx-1">Upload</span>  </h5>
 
                         </div>
 
                     </div>
 
+                    <div class="row">
+    
+                        <div class="col-6">
+    
+                            <div class=" btn btn-block  btn-outline-primary d-block btn-md">CLEAR</div>
+    
+                        </div>
+    
+                        <div class="col-6">
+    
+                            <div class=" btn btn-block btn-primary d-block btn-md">SAVE</div>
+    
+                        </div>
+    
+                    </div>
+
                 </div>
 
             </div>
+
+
             
         </form>
 
