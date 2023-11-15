@@ -136,17 +136,13 @@ export class SidebarComponent implements OnInit {
     }
   ];
 
-  constructor(public service: CommonService, private router: Router) {
-
-      // this.logoUrl = service.getLogoImage({'parentCompanyId' : service.userDetails?.parentCompanyId, 'companyId' : service.userDetails?.companyId, 'imageName' : 'logo'});
-   }
+  constructor(public service: CommonService, private router: Router) {}
 
   ngOnInit(): void {
     
-    
     var url = this.router.url.split('/');
 
-    url.splice(0,1);
+    url.splice(0,2);
 
     this.selectMenuChanges(url);
 
@@ -156,7 +152,7 @@ export class SidebarComponent implements OnInit {
 
         let url = e.url.split('/');
 
-        url.splice(0,1);
+        url.splice(0,2);
         
         this.selectMenuChanges(url);
 
