@@ -11,7 +11,8 @@ export class OffcanvasComponent implements OnInit {
 
   @Input() showApplyBtn: boolean = true;
   @Input() showCancelBtn: boolean = true;
-  @Input() applyBtnTxt: string = "Apply";
+  @Input() applyBtnTxt: string = "SAVE";
+  @Input() cancelBtnTxt: string = "CLEAR";
   @Input() backdrop: boolean = true;
   @Input() keyboard: boolean = true;
   @Input() scroll: boolean = false;
