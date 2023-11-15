@@ -1,1 +1,98 @@
-<p>company-details works!</p>
+<!-- <div class="container-fluid p-5">
+
+    <h4 class="company-detail">Company Details</h4>
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <form  [formGroup]="companyDetailsFrom">
+    
+                <label for="validationCustom01" class="form-label company">COMPANY NAME</label>
+    
+                <input type="text" class="form-control company-input" formControlName="companyName" id="companyName" placeholder="Super Laundry & Dry Cleaning - Manama">
+                
+            </form>
+
+        </div>
+
+    </div>
+
+</div> -->
+
+
+<div class="dashboard-container">
+
+    <div class="row">
+
+        <div class="page-header col-sm-6">Company Details</div>
+    
+    </div>
+
+    <div class="row mt-2">
+
+        <form [formGroup]="companyDetailsFrom">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <div class="form-group">
+
+                        <label for="companyName">Company Name</label>
+        
+                        <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="KV Tech Private Ltd" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+        
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="ownerName">Owner Name</label>
+        
+                        <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="Praveen Kumar" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
+        
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="email">DO YOU HAVE TAX ? </label>
+        
+                        <div class="mt-1" >
+
+                            <button class="btn btn-outline-primary btn-md"> YES </button>
+
+                            <button class="btn btn-outline-primary btn-md mx-3"> NO </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="taxationNo">Taxation Name</label>
+        
+                        <input type="text" class="form-control" id="taxationNo" formControlName="taxationNo" placeholder="100234" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNo.errors }">
+        
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="email">Company Logo </label>
+        
+                        <div class="mt-1 mx-2 ">
+
+                           <h4 class="text-primary border border-primary">Upload</h4>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            
+        </form>
+
+    </div>
+    
+</div>
