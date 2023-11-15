@@ -1,1 +1,101 @@
-<p>company-details works!</p>
+<div class="dashboard-container">
+
+    <div class="row">
+
+        <div class="page-header col-sm-6">Company Details</div>
+    
+    </div>
+
+    <div class="row mt-2">
+
+        <form [formGroup]="companyDetailsFrom">
+
+            <div class="col-xl-6 col-lg-7">
+
+                <div class="card border-opacity-10 border-dark">
+
+                    <div class="card-body">
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="companyName">Company Name</label>
+            
+                            <input type="text" class="form-control form-control-lg" id="companyName" formControlName="companyName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+            
+                        </div>
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="ownerName">Owner Name</label>
+            
+                            <input type="text" class="form-control form-control-lg" id="ownerName" formControlName="ownerName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
+            
+                        </div>
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="email">DO YOU HAVE TAX ? </label>
+            
+                            <div class="mt-1" >
+    
+                                <button class="btn btn-outline-primary btn-md"> YES </button>
+    
+                                <button class="btn btn-outline-primary btn-md mx-3"> NO </button>
+    
+                            </div>
+    
+                        </div>
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="taxationNo">Taxation Name</label>
+            
+                            <input type="text" class="form-control form-control-lg" id="taxationNo" formControlName="taxationNo" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNo.errors }">
+            
+                        </div>
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="email">Company Logo </label>
+            
+                            <div class="mt-1">
+    
+                               <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img">
+                                
+                                    <i class="bi bi-file-earmark-plus fs-4"></i> 
+                                    
+                                    <span class="mx-1">Upload</span>  
+                                
+                               </a>
+    
+                            </div>
+    
+                        </div>
+    
+                    </div>
+    
+                </div>
+
+                <div class="row px-4 pt-4">
+        
+                    <div class="col-sm-6">
+
+                        <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+
+                    </div>
+
+                </div>                
+
+            </div>
+            
+        </form>
+
+    </div>
+    
+</div>

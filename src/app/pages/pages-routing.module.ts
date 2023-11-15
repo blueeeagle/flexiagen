@@ -12,6 +12,10 @@ const routes: Routes = [
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
       },
       {
+        path : "account-setup",
+        loadChildren: () => import('./account-setup/account-setup.module').then(m => m.AccountSetupModule)
+      },
+      {
         path: "**",
         redirectTo: "dashboard",
         pathMatch: "full"

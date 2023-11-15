@@ -1,9 +1,15 @@
 .main-content {
     margin-left: 260px;
+    margin-top: 60px;
     padding: 1.25rem 2rem;
     background: #F3F5F9;
     min-height: calc(100vh - 60px);
     font-family: 'Poppins' sans-serif;
+    -webkit-transition: all 0.6s ease-in-out;
+    -moz-transition: all 0.6s ease-in-out;
+    -ms-transition: all 0.6s ease-in-out;
+    -o-transition: all 0.6s ease-in-out;
+    transition: all 0.6s ease-in-out;    
 }
 
 .main-content.menu-closed {

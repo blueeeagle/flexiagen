@@ -31,7 +31,7 @@ export class CommonService {
 
       if(this.session({ method: "get", key: "AuthToken" })) {
 
-        this.getUserDetails().subscribe((res: any) => {
+        this.getUserDetails.subscribe((res: any) => {
 
           if(res.status == 200) {
     
@@ -47,7 +47,7 @@ export class CommonService {
 
   }
 
-  getUserDetails() {
+  get getUserDetails(): any {
 
     this.userDetails = {};
 
