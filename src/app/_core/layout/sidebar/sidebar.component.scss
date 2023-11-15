@@ -1,6 +1,6 @@
 .sidebar {
     position: fixed;
-    z-index: 1000;
+    z-index: 1031;
     top: 0;
     width: 260px;
     height: 100%;
@@ -10,11 +10,11 @@
     -ms-transition: all 0.6s ease-in-out;
     -o-transition: all 0.6s ease-in-out;
     transition: all 0.6s ease-in-out;
-    -webkit-box-shadow: 0px 16px 15px 5px rgb(0 0 0 / 7%);
-    -moz-box-shadow: 0px 16px 15px 5px rgba(0,0,0,0.07);
-    -ms-box-shadow: 0px 16px 15px 5px rgba(0,0,0,0.07);
-    -o-box-shadow: 0px 16px 15px 5px rgba(0,0,0,0.07);
-    box-shadow: 0px 16px 15px 5px rgb(0 0 0 / 7%);
+    // -webkit-box-shadow: 0px 16px 15px 5px rgb(0 0 0 / 7%);
+    // -moz-box-shadow: 0px 16px 15px 5px rgba(0,0,0,0.07);
+    // -ms-box-shadow: 0px 16px 15px 5px rgba(0,0,0,0.07);
+    // -o-box-shadow: 0px 16px 15px 5px rgba(0,0,0,0.07);
+    // box-shadow: 0px 16px 15px 5px rgb(0 0 0 / 7%);
 
     .sidebar-logo {
         padding: 2px 20px;
@@ -186,9 +186,12 @@
                                 i {
                                     font-size: 1rem
                                 }
+
                             }
 
                             >a.active {
+
+                                background: #F3F5F9;
 
                                 .bi-dash  {
                                     color: #2B539A;
