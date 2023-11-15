@@ -19,7 +19,7 @@ export class CompanyDetailsComponent {
     areaList: []
   };
   showPreview: boolean = false;
-  appServiceList: any = [];
+  appServiceChargeDet: any = [];
   _: any = _;
 
   constructor(public service: CommonService) { 
@@ -42,26 +42,26 @@ export class CompanyDetailsComponent {
 
   getApplicationServiceList() {
 
-    this.appServiceList = [
-      {
-        "serviceName": "POS",
-        "charges": "5%"
-      },
-      {
-        "serviceName": "Online",
-        "charges": "5%"
-      },
-      {
-        "serviceName": "M Logistics",
-        "charges": "5%"
-      }
-    ];
+    // this.appServiceList = [
+    //   {
+    //     "serviceName": "POS",
+    //     "charges": "5%"
+    //   },
+    //   {
+    //     "serviceName": "Online",
+    //     "charges": "5%"
+    //   },
+    //   {
+    //     "serviceName": "M Logistics",
+    //     "charges": "5%"
+    //   }
+    // ];
 
-    // this.service.getService({ "url": "/master/application-services" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/master/app-commissions" }).subscribe((res: any) => {
 
-    //   this.appServiceList = res.status==200 ? res.data : [];
+      this.appServiceChargeDet = res.status==200 ? res.data : [];
 
-    // });
+    });
 
   }
 
@@ -267,7 +267,9 @@ export class CompanyDetailsComponent {
 
     this.isLoading = true
 
-    let payload = _.omit(this.companyForm.value,['countryName','stateName','cityName','areaName']);
+    let payload: any = _.omit(this.companyForm.value,['countryName','stateName','cityName','areaName']);
+
+    payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
 
     this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 

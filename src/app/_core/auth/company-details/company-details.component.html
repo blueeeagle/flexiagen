@@ -221,7 +221,7 @@
 
                                         <div class="d-flex align-items-center">
 
-                                            <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">{{ this.service.userDetails.mobile }}</p>
+                                            <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">{{ service.userDetails.mobile }}</p>
 
                                         </div>
 
@@ -229,9 +229,9 @@
 
                                     <div class="col-xl-7 ps-2 ps-xl-1 mt-2">
 
-                                        <div class="d-flex align-items-center text-truncate">
+                                        <div class="d-flex align-items-center">
 
-                                            <i class="bx bx-envelope fs-4 me-2 "></i> <p class="mb-0">{{ this.service.userDetails.email }}</p>                                            
+                                            <i class="bx bx-envelope fs-4 me-2 "></i> <p class="mb-0 text-truncate"> {{ service.userDetails.email }}</p>                                            
 
                                         </div>
 
@@ -245,13 +245,31 @@
 
                                 <h5 class="fw-600 text-primary">Services opted for</h5> 
 
-                                <div class="d-flex align-items-center mt-2" *ngFor="let serviceDet of appServiceList">
+                                <div class="d-flex align-items-center mt-2">
 
-                                    <p class="mb-0">{{ serviceDet.serviceName }}</p>
+                                    <p class="mb-0">Online</p>
 
                                     <i class="bi bi-check-circle-fill text-success ms-2"></i>
 
-                                    <div class="bg-light border border-1 ms-2 p-1">{{ serviceDet.charges }} Charge</div>
+                                    <div class="bg-light border border-1 ms-2 p-1" *ngIf="!_.isEmpty(appServiceChargeDet)">
+                                        
+                                    {{ appServiceChargeDet?.platformOnlineCharge + (appServiceChargeDet?.platformOnlineChargeType == 'percentage' ? '%' : '') || '' }} Charge
+                                    
+                                    </div>
+
+                                </div>
+
+                                <div class="d-flex align-items-center mt-2">
+
+                                    <p class="mb-0">M Logistics</p>
+
+                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
+
+                                    <div class="bg-light border border-1 ms-2 p-1"  *ngIf="!_.isEmpty(appServiceChargeDet)">
+                                        
+                                        {{ appServiceChargeDet?.platformLogisticCharge + (appServiceChargeDet?.platformLogisticChargeType == 'percentage' ? '%' : '') || '' }} Charge
+                                    
+                                    </div>
 
                                 </div>
 
@@ -263,7 +281,7 @@
 
                                 <div class="d-flex align-items-center flex-wrap">
 
-                                    <h4 class="mb-0 fw-700 mt-2 me-2">3.000 BHD</h4>
+                                    <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet?.POSSubscriptionCharge || 0 | number: '1.3-3'}} BHD</h4>
 
                                     <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
 

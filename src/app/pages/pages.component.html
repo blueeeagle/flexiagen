@@ -1,1 +1,9 @@
-<router-outlet></router-outlet>
+<sidebar (menuEvent)="menuStatus = $event ? 'open' : 'close'"></sidebar>
+
+<top-navbar></top-navbar>
+
+<div class="main-content" [ngClass]="{ 'menu-closed': menuStatus == 'close' }">
+
+    <router-outlet></router-outlet>
+
+</div>

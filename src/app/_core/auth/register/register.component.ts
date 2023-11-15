@@ -154,8 +154,6 @@ export class RegisterComponent {
 
     let payload: any = _.omit(this.registerForm.value,['confirmPassword']);
 
-    payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
-
     if(!payload.pos && !payload.online) return this.service.showToastr({ "data": { "message": "Please select atleast one service", "type": "error" } });
 
     this.isLoading = true;

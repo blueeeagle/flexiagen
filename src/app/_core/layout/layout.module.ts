@@ -14,6 +14,10 @@ import { TopNavbarComponent } from './top-navbar/top-navbar.component';
   imports: [
     CommonModule,
     SharedModule
+  ],
+  exports: [
+    SidebarComponent,
+    TopNavbarComponent
   ]
 })
 export class LayoutModule { }

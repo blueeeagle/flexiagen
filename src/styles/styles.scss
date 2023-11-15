@@ -17,7 +17,7 @@ html, body { height: 100%; }
 
 body { 
     margin: 0; 
-    font-family: 'Poppins' sans-serif;
+    font-family: Poppins;
     color: #3F4154;
     font-size: 1rem;
     line-height: 1.5 !important;
@@ -152,10 +152,9 @@ a {
 }
 
 .btn {
-    font-size: 1.15rem;
     font-family: 'Poppins';
     font-weight: 500;
-    margin-top: 0.5rem;
+    --bs-btn-line-height: 1.2;
 }
 
 .btn:hover {

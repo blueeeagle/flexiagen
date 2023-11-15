@@ -1,0 +1,17 @@
+.main-content {
+    margin-left: 260px;
+    padding: 1.25rem 2rem;
+    background: #F3F5F9;
+    min-height: calc(100vh - 60px);
+    font-family: 'Poppins' sans-serif;
+}
+
+.main-content.menu-closed {
+    margin-left: 60px;
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0px !important;
+    }
+}
