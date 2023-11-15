@@ -1,11 +1,16 @@
 #offcanvas {
 
     visibility: visible;
+    min-width: 280px;
+    width: 50%;
+    max-width: 600px;
+    font-family: Poppins;
 
     .offcanvas-header {
 
-        background: var(  --primary-color );
-        padding: 0.5rem .75rem;
+        background: #EBEEF6;
+        padding: 1rem 1rem;
+        color: #000000;
 
     }
 
