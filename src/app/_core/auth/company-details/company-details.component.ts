@@ -27,6 +27,7 @@ export class CompanyDetailsComponent {
   }
 
   ngOnInit(): void {
+
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     
@@ -41,21 +42,6 @@ export class CompanyDetailsComponent {
   // Get Application Service List
 
   getApplicationServiceList() {
-
-    // this.appServiceList = [
-    //   {
-    //     "serviceName": "POS",
-    //     "charges": "5%"
-    //   },
-    //   {
-    //     "serviceName": "Online",
-    //     "charges": "5%"
-    //   },
-    //   {
-    //     "serviceName": "M Logistics",
-    //     "charges": "5%"
-    //   }
-    // ];
 
     this.service.getService({ "url": "/master/app-commissions" }).subscribe((res: any) => {
 
@@ -279,7 +265,7 @@ export class CompanyDetailsComponent {
 
         this.isLoading = false;
 
-        this.service.getUserDetails().subscribe((resOne: any) => {
+        this.service.getUserDetails.subscribe((resOne: any) => {
 
           this.service.userDetails = resOne.status== 200 ? resOne.data : res.data;
 

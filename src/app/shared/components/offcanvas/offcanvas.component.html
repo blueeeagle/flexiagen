@@ -1,0 +1,26 @@
+<div class="offcanvas offcanvas-{{position}}" id="offcanvas">
+
+    <div class="offcanvas-header mat-elevation-z2">
+
+        <span class="modal-title text-white mb-0">{{ canvasTitle }}</span>
+
+        <i class='bx bx-x close-btn text-white cursor-pointer' (click)="close()"></i>
+    
+    </div>
+
+    <div class="offcanvas-body">
+    
+        <ng-content></ng-content>
+
+    </div>
+
+    <div class="offcanvas-footer d-flex justify-content-between p-2 border-top">
+
+        <button *ngIf="showApplyBtn" type="button" class="btn btn-sm btn-primary ms-2" (click)="onSubmit.emit();offcanvas.hide()"> {{ applyBtnTxt | titlecase }} </button>
+
+        <button *ngIf="showCancelBtn" type="button" class="btn btn-sm btn-secondary mr-2" (click)="close()"> Close  </button>
+  
+    </div>
+
+</div>
+

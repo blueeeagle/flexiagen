@@ -24,7 +24,8 @@ import {
   ConfirmationDialogComponent,
   ModalComponent,
   PageTitleComponent,
-  PaginationComponent
+  PaginationComponent,
+  OffcanvasComponent
 } from './components';
 
 import { ConfirmationDialogService } from './components/confirmation-dialog/confirmation.service';
@@ -62,7 +63,8 @@ export const MY_FORMATS = {
     ConfirmationDialogComponent,
     ModalComponent,
     PageTitleComponent,
-    PaginationComponent
+    PaginationComponent,
+    OffcanvasComponent
   ],
   imports: [
     CommonModule,
@@ -93,7 +95,8 @@ export const MY_FORMATS = {
     ConfirmationDialogComponent,
     ModalComponent,
     PageTitleComponent,
-    PaginationComponent
+    PaginationComponent,
+    OffcanvasComponent
   ],
   providers: [
     ConfirmationDialogService,
