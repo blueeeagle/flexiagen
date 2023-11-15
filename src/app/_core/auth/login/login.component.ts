@@ -58,7 +58,7 @@ export class LoginComponent {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
 
-        this.service.getUserDetails().subscribe((res: any) => {
+        this.service.getUserDetails.subscribe((res: any) => {
 
           if(res.status == 200) {
 
