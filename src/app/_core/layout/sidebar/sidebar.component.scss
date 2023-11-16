@@ -320,12 +320,12 @@
     .sidebar {
         width: 260px;
         left: 0;
-        z-index: 1029;
+        z-index: 1031;
     }
 
     .sidebar.close {
         display: inline-block;
-        z-index: 99;
+        z-index: 1031;
         left: -300px;
         top: 0px;
     }

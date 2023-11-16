@@ -8,7 +8,7 @@ import { CommonService } from '@shared/services/common/common.service';
 })
 export class PagesComponent {
 
-  menuStatus: any = 'open';
+  isMenuOpen:Boolean = true;
 
   constructor() {}
 

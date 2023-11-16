@@ -1,5 +1,21 @@
 <div class="top-navbar bg-light border-bottom fixed-top">
 
+    <div class="sidebar-logo d-flex d-lg-none align-items-center justify-content-center">
+
+        <a class="header-logo">
+
+            <img src="/assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo" (error)="logImgErrorHandling()">
+            
+        </a>
+
+        <div class="menu-bt-sidebar">
+
+            <i class="bi bi-list wrapper-menu" (click)="isMenuOpen = !isMenuOpen; menuEvent.emit(isMenuOpen);"></i>
+
+        </div>
+
+    </div>    
+
     <div class="user-profile d-flex justify-content-center align-items-center">
 
         <i class="bi bi-bell bi bi-bell fs-5 me-3"></i>
