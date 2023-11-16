@@ -15,8 +15,8 @@ const routes: Routes = [
     loadChildren : () => import('./address-details/address-details.module').then(m=>m.AddressDetailsModule)
   },
   {
-    path:"account-details",
-    loadChildren : () => import('./account-details/account-details.module').then(m=>m.AccountDetailsModule)
+    path:"working-hours",
+    loadChildren : () => import('./working-hours/working-hours.module').then(m=>m.WorkingHoursModule)
   },
   {
     path: "",

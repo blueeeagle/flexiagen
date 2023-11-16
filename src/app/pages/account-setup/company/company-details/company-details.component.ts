@@ -4,9 +4,6 @@ import { Router } from "@angular/router";
 import { NgbAlert } from "@ng-bootstrap/ng-bootstrap";
 import { Subject, debounceTime } from "rxjs";
 
-
-
-
 @Component({
   selector: 'app-company-details',
   templateUrl: './company-details.component.html',

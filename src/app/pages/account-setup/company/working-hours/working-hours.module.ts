@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { WorkingHoursRoutingModule } from './working-hours-routing.module';
 import { WorkingHoursComponent } from './working-hours.component';
+import { SharedModule } from '@shared/shared.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { WorkingHoursComponent } from './working-hours.component';
   ],
   imports: [
     CommonModule,
-    WorkingHoursRoutingModule
+    WorkingHoursRoutingModule,
+    SharedModule
   ]
 })
 export class WorkingHoursModule { }
