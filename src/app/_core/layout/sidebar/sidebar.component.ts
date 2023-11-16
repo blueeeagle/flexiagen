@@ -67,13 +67,13 @@ export class SidebarComponent implements OnInit {
             {
               "label": "Service-Details",
               "allow": true,
-              "url": "account-setup/company/address-details",
+              "url": "account-setup/company/service-details",
               "icon": "bi bi-geo-alt"
             },
             {
               "label": "Address-Details",
               "allow": true,
-              "url": "account-setup/company/service-details",
+              "url": "account-setup/company/address-details",
               "icon": "bi bi-geo-alt"
             },
           ]
