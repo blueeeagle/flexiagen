@@ -15,5 +15,278 @@
         </div>
     
     </div>
+
+    <div class="container-fluid p-5">
+
+        <div class="row renewal-payment align-items-center mt-2 mb-4">
+
+            <div class="col-lg-5">
+                
+                <div class="row align-items-center">
+
+                    <div class="col-1">
+
+                        <div class="circle"></div>
+
+                    </div>
+
+                    <div class="col payment-pending">
+
+                        Renewal payment pending
+
+                    </div>
+                    
+                </div>
+
+            </div>
+
+            <div class="col-lg-7 text-end">
+
+                <div class="btn view-more ps-3 pe-3 me-2">view more</div>
+                
+                <div class="btn ms-2 rounded-pill"> <i class="bi bi-x-lg rounded-pill"></i> </div> 
+                
+            </div>
+
+        </div>
+
+        <div class="row mt-5">
+
+            <div class="col-xl-6 mb-4">
+
+                <div class="row text-center">
+
+                    <div class="col-lg-6 mb-3">
+
+                        <div class="total-order rounded-4">
+
+                            <img src="/./assets/images/dashbord/total-orders.png">
+
+                            <h4 class="mt-3 fs-21 p-1">Total Orders</h4>
+
+                            <h1 class="text-black text-xl">25</h1>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="complete-order rounded-4">
+
+                            <img src="/./assets/images/dashbord/complete-order.png">
+
+                            <h4 class="mt-3 fs-21 p-1">Completed Orders</h4>
+
+                            <h1 class="text-black text-xl">12</h1>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row mt-4 mb-3 text-black item-center">
+
+                    <div class="col">
+
+                        <h4 class="text-start poppins-semibold fs-20">New Orders</h4>
+
+                    </div>
+
+                    <div class="col">
+
+                        <h4 class="text-right worksans-semibold fs-14">See All</h4>
+
+                    </div>
+
+                </div>
+
+                <div class="card bg-white rounded-4 text-dark mt-2 mb-2" *ngFor="let order of newOrder">
+
+                    <div class="card-body">
+
+                        <div class="row item-center">
     
+                            <div class="col-md-2">
+    
+                                <img class="user w-50 h-50 rounded-pill" [src]="order.imgPath" alt="">
+    
+                            </div>
+    
+                            <div class="col-md-3 text-left fs-14"> {{order.name}} <br> <span class="order-num">{{order.orderNum}}</span> </div>
+    
+                            <div class="col-md-2 worksans-medium fs-14"> {{order.date}} </div>
+                                
+                            <div class="col-md-2 worksans-medium fs-14"> {{order.online}} </div>
+    
+                            <div class="col-md-3">
+    
+                                <div class="booked"> <i class="tick bi bi-check-lg border-pill"></i>&nbsp; {{order.Booking}} </div>
+    
+                            </div>
+    
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div class="col-xl-6">
+
+                <div class="row text-center">
+
+                    <div class="col-lg-6">
+
+                        <div class="pickup rounded-4 mb-4 p-4">
+
+                            <h4 class="fs-20 w-600 text-left ">Today's Pickup</h4>
+
+                            <img class="mb-12" src="/./assets/images/dashbord/total-picup.png">
+
+                            <div class="text-start p-3 fs-20 mt-2 mb-2 text-secondary bg-light">
+
+                                <div class="row item-center" *ngFor="let day of todayPicup">
+
+                                    <div class="col-1">
+
+                                        <i class="{{ day.icon }}"></i>
+
+                                    </div>&nbsp;
+
+                                    <div class="col-6"> {{day.text}} </div>
+
+                                    <div class="col-3 today-total"> {{day.number}} </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="pickup rounded-4 mb-4 p-4">
+
+                            <h4 class="fs-20 fw-600 text-left ">Today's Delivery</h4>
+
+                            <img class="mb-10" src="/./assets/images/dashbord/today-delivery.png">
+
+                            <div class="text-start p-3 fs-20 mt-2 mb-2 text-secondary bg-light">
+
+                                <div class="row item-center" *ngFor="let day of todayPicup">
+
+                                    <div class="col-1">
+
+                                        <i class="{{ day.icon }}"></i>
+
+                                    </div>&nbsp;
+
+                                    <div class="col-6"> {{day.text}} </div>
+
+                                    <div class="col-3 today-total"> {{day.number}} </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <h4 class="mt-2 mb-4 text-black fs-20">Check Status</h4>
+
+                <div class="check-status mb-4">
+
+                    <div class="row mt-3">
+
+                        <div class="col-lg-12">
+
+                            <div class="row poppins-medium item-start text-center">
+
+                                <div class="col-lg-8 mb-3">
+
+                                    <input class="status-code" type="text" placeholder="PLEASE ENTER STATUS CODE">
+
+                                </div>
+
+                                <div class="col-lg-4">
+
+                                    <div class="btn btn-check">Check</div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="order-check mt-4 mb-4">
+
+                                <div class="row">
+
+                                    <div class="col-lg-5">
+
+                                        <div class="row">
+
+                                            <div class="col-1">
+
+                                                <i class="bi bi-journal-text"></i>
+
+                                            </div>
+
+                                            <div class="col">
+
+                                                <div> <span class="fs-20 fw-600">Order Details</span>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-lg-6">
+
+                                        <div class="row">
+
+                                            <div class="col-1">
+
+                                                <i class="bi bi-gear"></i>
+
+                                            </div>
+
+                                            <div class="col">
+
+                                                <div><span class=" fs-20 fw-600"> Change </span> 
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
