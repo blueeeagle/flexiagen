@@ -1,1 +1,89 @@
-<p>service-details works!</p>
+<div class="serviceDetails-container">
+
+    <div class="row">
+
+        <div class="page-header col-sm-6">service Details</div>
+    
+    </div>
+
+    <div class="row mt-2">
+
+        <form [formGroup]="serviceDetailsFrom">
+
+            <div class="col-xl-6 col-lg-7">
+
+                <div class="card border-opacity-10 border-dark">
+
+                    <div class="card-body">
+
+                        <p> SERVICE SUPPORTED </p>
+    
+                        <div class="row justify-content-center align-items-center mt-5">
+
+                            <div class="col">
+
+                                <button class="btn btn-outline-primary w-75 pt-3 pb-3 fs-5"> <span> <i class="bi bi-printer fs-4 me-2 mt-2"></i> </span>  POS </button>
+
+                                
+                            </div>
+
+                            <div class="col">
+
+                                <button class="btn btn-light border w-75 pt-3 pb-3 fs-5"> <span> <i class="bi  bi-compass fs-4 me-2 mt-2"></i> </span> online </button>
+
+                                
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col text-start mt-4">
+                                
+                                <p class="fw-400"> FLEXICLEAN XNMAN SUPPORT </p>
+
+                                <p class="text-light"> Fees 20% </p>
+
+                            </div>
+
+                            <div class="col d-flex justify-content-start align-items-center ">
+                                
+                                <div class="col-md-6">
+
+                                    <input type="checkbox" id="toggle" class="toggle">
+
+                                    <label for="toggle"><span class="on">YES</span><span class="off">NO</span></label>
+                                    
+                                </div>
+
+                            </div>
+                           
+                        </div>
+    
+                    </div>
+    
+                </div>
+
+                <div class="row px-4 pt-4">
+        
+                    <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                        <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+
+                    </div>
+
+                </div>                
+
+            </div>
+            
+        </form>
+
+    </div>
+    
+</div>
