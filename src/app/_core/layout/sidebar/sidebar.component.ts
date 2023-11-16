@@ -76,6 +76,12 @@ export class SidebarComponent implements OnInit {
               "url": "account-setup/company/address-details",
               "icon": "bi bi-geo-alt"
             },
+            {
+              "label": "Working-Hours",
+              "allow": true,
+              "url": "account-setup/company/working-hours",
+              "icon": "bi bi-geo-alt"
+            },
           ]
         },
         {
