@@ -1,1 +1,89 @@
-<p>account-details works!</p>
+<div class="accountDetails-container">
+
+    <div class="row">
+
+        <div class="page-header col-sm-6">Account Details</div>
+    
+    </div>
+
+    <div class="row mt-2">
+
+        <form [formGroup]="accountDetailsFrom">
+
+            <div class="col-xl-6 col-lg-7">
+
+                <div class="card border-opacity-10 border-dark">
+
+                    <div class="card-body">
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="mobileNo"> Mobile No </label>
+            
+                            <input type="text" class="form-control form-control-lg" id="mobileNo" formControlName="mobileNo" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.mobileNo.errors }">
+            
+                        </div>
+    
+                        <div class="form-group mb-4">
+    
+                            <label for="emailId">Email Id</label>
+            
+                            <input type="text" class="form-control form-control-lg" id="emailId" formControlName="emailId" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.emailId.errors }">
+            
+                        </div>
+    
+                        <div class="row ">
+
+                            <div class="col">
+
+                                <div class="form-group mb-4">
+    
+                                    <label for="newPassword">New Password</label>
+                    
+                                    <input type="text" class="form-control form-control-lg" id="newPassword" formControlName="newPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.newPassword.errors }">
+                    
+                                </div>
+
+                            </div>
+
+                            <div class="col">
+
+                                <div class="form-group mb-4">
+    
+                                    <label for="conformPassword">Conform Password</label>
+                    
+                                    <input type="text" class="form-control form-control-lg" id="conformPassword" formControlName="conformPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.conformPassword.errors }">
+                    
+                                </div>
+                                
+                            </div>
+
+                        </div>
+    
+                    </div>
+    
+                </div>
+
+                <div class="row px-4 pt-4">
+        
+                    <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                        <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+
+                    </div>
+
+                </div>                
+
+            </div>
+            
+        </form>
+
+    </div>
+    
+</div>
