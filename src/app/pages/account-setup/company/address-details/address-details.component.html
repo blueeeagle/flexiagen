@@ -43,7 +43,7 @@
     
                             <label for="street">NO & STREET/ROAD *</label>
             
-                            <input type="text" class="form-control form-control-lg" id="street" formControlName="street" placeholder="7th Street" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.street.errors }">
+                            <input type="text" class="form-control form-control-lg" id="address1" formControlName="address1"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.address1?.errors }">
             
                         </div>
     
@@ -51,67 +51,112 @@
     
                             <label for="appartment">APARTMENT, BUILDING, FLAT</label>
             
-                            <input type="text" class="form-control form-control-lg" id="appartment" formControlName="appartment" placeholder="53/A Second Floor" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.appartment.errors }">
+                            <input type="text" class="form-control form-control-lg" id="address2" formControlName="address2"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.address2?.errors }">
             
                         </div>
     
                         <div class="row">
 
-                            <div class="col-sm-6">
+                            <div class="col-md-6 pe-2 pe-md-1">
     
                                 <div class="form-group">
-    
-                                    <label for="country">COUNTRY *</label>
-                    
-                                    <input type="text" class="form-control form-control-lg" id="country" formControlName="country"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
-                    
+
+                                    <label for="country">Country</label>
+
+                                    <ng-select formControlName="country" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.country?.touched && f.country?.errors }">
+
+                                        <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">
+                                            
+                                            {{ countryDet.title | uppercase }}
+                                    
+                                        </ng-option>
+
+                                    </ng-select>
+        
+                                    <div *ngIf="f.country?.touched && f.country?.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="f.country.errors.required">Country is required</div>
+        
+                                    </div>
+        
                                 </div>
-    
+
                             </div>
 
-                            <div class="col-sm-6">
+                            <div class="col-md-6 ps-2 ps-md-1">
     
                                 <div class="form-group">
-    
-                                    <label for="state">STATE *</label>
-                    
-                                    <input type="text" class="form-control form-control-lg" id="state" formControlName="state"  placeholder="Select State / Province" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.state.errors }">
-                    
+
+                                    <label for="state">State</label>
+
+                                    <ng-select formControlName="state" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.state.touched && f.state?.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+
+                                        <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</ng-option>
+
+                                    </ng-select>
+        
+                                    <div *ngIf="f.state.touched && f.state.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="f.state.errors.required">State is required</div>
+        
+                                    </div>
+        
                                 </div>
-    
+
                             </div>
 
-                            <div class="col-sm-6">
+                            <div class="col-md-6 pe-2 pe-md-1">
     
-                                <div class="form-group mb-4">
+                                <div class="form-group">
+
+                                    <label for="city">City</label>
+
+                                    <ng-select formControlName="city" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.city.touched && f.city?.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+
+                                        <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</ng-option>
+
+                                    </ng-select>
+        
+                                    <div *ngIf="f.city.touched && f.city.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="f.city.errors.required">City is required</div>
+        
+                                    </div>
+        
+                                </div>                                
+
+                            </div>   
     
-                                    <label for="city">CITY *</label>
-                    
-                                    <input type="text" class="form-control form-control-lg" id="city" formControlName="city"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }">
-                    
-                                </div>
+                            <div class="col-md-6 ps-2 ps-md-1">
     
-                            </div>
-    
-                            <div class="col-sm-6">
-    
-                                <div class="form-group mb-4">
-    
-                                    <label for="area">AREA *</label>
-                    
-                                    <input type="text" class="form-control form-control-lg" id="area" formControlName="area"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.area.errors }">
-                    
-                                </div>
-    
-                            </div>
+                                <div class="form-group">
+
+                                    <label for="area">Area</label>
+
+                                    <ng-select formControlName="area" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.area?.touched && f.area?.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+
+                                        <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</ng-option>
+
+                                    </ng-select>                                        
+        
+        
+                                    <div *ngIf="f.companyName?.touched && f.area.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="f.area.errors.required">Area is required</div>
+        
+                                    </div>
+        
+                                </div>                                
+
+                            </div> 
                             
                             <div class="col-sm-6">
     
                                 <div class="form-group">
     
-                                    <label for="pinCode">PINCODE *</label>
+                                    <label for="zipcode">PINCODE *</label>
                     
-                                    <input type="text" class="form-control form-control-lg" id="pinCode" formControlName="pinCode"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.pinCode.errors }">
+                                    <input type="text" class="form-control form-control-lg" id="zipcode" formControlName="zipcode"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.zipcode?.errors }">
                     
                                 </div>
     
@@ -133,7 +178,7 @@
 
                     <div class="col-sm-6">
 
-                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+                        <div class=" btn btn-block btn-lg w-100 btn-primary" (click)="submit()">SAVE</div>
 
                     </div>
 
