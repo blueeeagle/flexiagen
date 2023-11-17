@@ -3,7 +3,7 @@ import { DecimalPipe} from '@angular/common';
 import { Router } from '@angular/router';
 import { APP_CONFIG } from '@env/environment';
 import { ApiService } from '../api/api.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ToastrConfigData } from '@shared/components/common-toastr/toastr-data.interface';
 import { CommonToastrComponent } from '@shared/components';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -20,10 +20,10 @@ export class CommonService {
 
   public isLoading = new BehaviorSubject(false);
   public loaderApiUrls = new BehaviorSubject<any>([]);
+  public userDetailsObs = new Subject();
   public imgBasePath = APP_CONFIG.imgBasePath;
 
   constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {
-
 
     // Get User Details
 
@@ -36,6 +36,11 @@ export class CommonService {
           if(res.status == 200) {
     
             this.userDetails = res.data;
+
+            console.log(this.userDetails);
+            
+
+            this.userDetailsObs.next(this.userDetails)
     
           }
     
