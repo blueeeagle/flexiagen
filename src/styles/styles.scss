@@ -111,7 +111,12 @@ a {
     background-image: url(/assets/images/input-error-icon.svg)
 }
 
-.is-invalid~.invalid-feedback, .is-invalid~.invalid-tooltip, .was-validated :invalid~.invalid-feedback, .was-validated :invalid~.invalid-tooltip {
+// .is-invalid~.invalid-feedback, .is-invalid~.invalid-tooltip, .was-validated :invalid~.invalid-feedback, .was-validated :invalid~.invalid-tooltip {
+//     text-align: right;
+//     font-weight: 500;
+// }
+
+.invalid-feedback {
     text-align: right;
     font-weight: 500;
 }

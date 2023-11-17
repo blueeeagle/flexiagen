@@ -5,7 +5,7 @@ import { AccountDetailsComponent } from './account-details.component';
 const routes: Routes = [
   {
     path:"",
-    component:AccountDetailsComponent
+    component: AccountDetailsComponent
   }
 ];
 

@@ -195,6 +195,13 @@ ng-select.form-control {
 
             .input-group-prepend {
 
+                .ng-select.is-invalid {
+
+                    .ng-select-container {
+                        border-color: var(--bs-form-invalid-border-color);
+                    }
+                }
+
                 .ng-select.ng-select-single {
 
                     .ng-select-container {

@@ -59,29 +59,30 @@ export class SidebarComponent implements OnInit {
           "icon": "bi bi-building",
           "subMenu" : [ 
             {
-              "label": "Company-Details",
+              "label": "Company Details",
               "allow": true,
-              "url": "account-setup/company/company-details",
-              "icon": "bi bi-geo-alt"
+              "url": "account-setup/company/company-details"
             },
             {
-              "label": "Service-Details",
+              "label": "Address Details",
               "allow": true,
-              "url": "account-setup/company/service-details",
-              "icon": "bi bi-geo-alt"
+              "url": "account-setup/company/address-details"
             },
             {
-              "label": "Address-Details",
+              "label": "Service Details",
               "allow": true,
-              "url": "account-setup/company/address-details",
-              "icon": "bi bi-geo-alt"
+              "url": "account-setup/company/service-details"
+            },            
+            {
+              "label": "Working Hours",
+              "allow": true,
+              "url": "account-setup/company/working-hours"
             },
             {
-              "label": "Working-Hours",
+              "label": "Account Details",
               "allow": true,
-              "url": "account-setup/company/working-hours",
-              "icon": "bi bi-geo-alt"
-            },
+              "url": "account-setup/company/account-details"
+            },            
           ]
         },
         {

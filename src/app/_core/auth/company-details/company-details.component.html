@@ -32,9 +32,9 @@
     
                                 <label for="companyName" class="fw-600">Company Name</label>
     
-                                <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+                                <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': f.companyName.touched && f.companyName.errors }">
     
-                                <div *ngIf="formSubmitted && f.companyName.errors" class="invalid-feedback">
+                                <div *ngIf="f.companyName.touched && f.companyName.errors" class="invalid-feedback">
     
                                     <div *ngIf="f.companyName.errors.required">Company Name is required</div>
     
@@ -46,9 +46,9 @@
     
                                 <label for="ownerName" class="fw-600">Owner Name</label>
     
-                                <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }" noNumbers>
+                                <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': f.ownerName.touched && f.ownerName.errors }" noNumbers>
     
-                                <div *ngIf="formSubmitted && f.ownerName.errors" class="invalid-feedback">
+                                <div *ngIf="f.ownerName.touched && f.ownerName.errors" class="invalid-feedback">
     
                                     <div *ngIf="f.ownerName.errors.required">Owner Name is required</div>
     
@@ -60,9 +60,9 @@
     
                                 <label for="address1" class="fw-600">Address</label>
     
-                                <input type="text" class="form-control" id="address1" formControlName="address1" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.address1.errors }">
+                                <input type="text" class="form-control" id="address1" formControlName="address1" placeholder="Enter" [ngClass]="{ 'is-invalid': f.address1.touched && f.address1.errors }">
     
-                                <div *ngIf="formSubmitted && f.address1.errors" class="invalid-feedback">
+                                <div *ngIf="f.address1.touched && f.address1.errors" class="invalid-feedback">
     
                                     <div *ngIf="f.address1.errors.required">address1 is required</div>
     
@@ -78,7 +78,7 @@
     
                                         <label for="country" class="fw-600">Country</label>
 
-                                        <ng-select formControlName="country" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.country.errors }">
+                                        <ng-select formControlName="country" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.country.touched && f.country.errors }">
 
                                             <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">
                                                 
@@ -88,7 +88,7 @@
     
                                         </ng-select>
             
-                                        <div *ngIf="formSubmitted && f.country.errors" class="invalid-feedback">
+                                        <div *ngIf="f.country.touched && f.country.errors" class="invalid-feedback">
             
                                             <div *ngIf="f.country.errors.required">Country is required</div>
             
@@ -104,13 +104,13 @@
     
                                         <label for="state" class="fw-600">State</label>
 
-                                        <ng-select formControlName="state" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.state.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+                                        <ng-select formControlName="state" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.state.touched && f.state.errors }" [readonly]="_.size(masterList['stateList']) == 0">
 
                                             <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</ng-option>
     
                                         </ng-select>
             
-                                        <div *ngIf="formSubmitted && f.state.errors" class="invalid-feedback">
+                                        <div *ngIf="f.state.touched && f.state.errors" class="invalid-feedback">
             
                                             <div *ngIf="f.state.errors.required">State is required</div>
             
@@ -126,13 +126,13 @@
     
                                         <label for="city" class="fw-600">City</label>
 
-                                        <ng-select formControlName="city" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.city.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+                                        <ng-select formControlName="city" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.city.touched && f.city.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
 
                                             <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</ng-option>
     
                                         </ng-select>
             
-                                        <div *ngIf="formSubmitted && f.city.errors" class="invalid-feedback">
+                                        <div *ngIf="f.city.touched && f.city.errors" class="invalid-feedback">
             
                                             <div *ngIf="f.city.errors.required">City is required</div>
             
@@ -148,14 +148,14 @@
     
                                         <label for="area" class="fw-600">Area</label>
 
-                                        <ng-select formControlName="area" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': formSubmitted && f.area.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+                                        <ng-select formControlName="area" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': f.area.touched && f.area.errors }" [readonly]="_.size(masterList['areaList']) == 0">
 
                                             <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</ng-option>
     
                                         </ng-select>                                        
             
             
-                                        <div *ngIf="formSubmitted && f.area.errors" class="invalid-feedback">
+                                        <div *ngIf="f.companyName.touched && f.area.errors" class="invalid-feedback">
             
                                             <div *ngIf="f.area.errors.required">Area is required</div>
             
@@ -171,9 +171,9 @@
     
                                 <label for="zipcode" class="fw-600">Zip Code</label>
     
-                                <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': formSubmitted && f.zipcode.errors }">
+                                <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': f.zipcode.touched && f.zipcode.errors }">
     
-                                <div *ngIf="formSubmitted && f.zipcode.errors" class="invalid-feedback">
+                                <div *ngIf="f.zipcode.touched && f.zipcode.errors" class="invalid-feedback">
     
                                     <div *ngIf="f.zipcode.errors.required">Zipcode is required</div>
     
