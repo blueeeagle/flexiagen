@@ -1,8 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { NgbAlert } from "@ng-bootstrap/ng-bootstrap";
-import { Subject, debounceTime } from "rxjs";
+import { ChangeDetectorRef, Component } from "@angular/core";
+import { FormGroup, Validators } from "@angular/forms";
+import { CommonService } from "@shared/services/common/common.service";
 
 @Component({
   selector: 'app-working-hours',
@@ -22,10 +20,7 @@ export class WorkingHoursComponent {
     
   ];
 
-	// @ViewChild('staticAlert', { static: false }) staticAlert: NgbAlert;
-	@ViewChild('selfClosingAlert', { static: false }) selfClosingAlert!: NgbAlert;
-
-	constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef,) {}
+	constructor(private service: CommonService, private cdr: ChangeDetectorRef,) {}
 
 	ngOnInit() {
 
@@ -35,7 +30,7 @@ export class WorkingHoursComponent {
 
   loadForm() {
 
-    this.workingHoursFrom = this.fb.group({
+    this.workingHoursFrom = this.service.fb.group({
 
       'companyName': [ this.editData?.companyName || '', Validators.required ],
 

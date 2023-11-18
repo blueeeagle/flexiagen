@@ -1,10 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component } from "@angular/core";
+import { FormGroup, Validators } from "@angular/forms";
 import { CommonService } from '@shared/services/common/common.service';
-import { Router } from "@angular/router";
-import { NgbAlert } from "@ng-bootstrap/ng-bootstrap";
-import { Subject, debounceTime } from "rxjs";
-import { forkJoin } from 'rxjs';
 import * as _ from 'lodash';
 
 @Component({
@@ -31,7 +27,7 @@ export class AddressDetailsComponent {
 
     this.service.userDetailsObs.subscribe((value)=>{
 
-      if(_.isEmpty(value)) this.loadForm();
+      if(!_.isEmpty(value)) this.loadForm();
       
     })
 
@@ -136,17 +132,27 @@ export class AddressDetailsComponent {
 
       'address2': [this.service.userDetails.address2 || '', [Validators.required]],
 
-      'area': [null, [Validators.required]],  
+      'area': [this.service.userDetails.area?.id || null, [Validators.required]],  
       
-      'city': [null, [Validators.required]],
+      'city': [this.service.userDetails.city?.id || null, [Validators.required]],
 
-      'state': [null],
+      'state': [this.service.userDetails.state?.id || null],
 
-      'country': [null, [Validators.required]],
+      'country': [this.service.userDetails.country?.id || null, [Validators.required]],
 
-      'zipcode': ['', [Validators.required]],
+      'zipcode': [this.service.userDetails.zipcode || null, [Validators.required]],
 
     });
+
+    if(!_.isEmpty(this.service.userDetails)) {
+
+      this.getStates(); // Get States based on Country
+  
+      this.getCities({ 'fieldName': 'state' }); // Get Cities based on State
+
+      this.getAreas(); // Get Areas based on City
+
+    }
 
     // Listen to Country changes and update State, City, Area and zipcode
 

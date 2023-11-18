@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormGroup, Validators } from "@angular/forms";
 import { NgbAlert } from "@ng-bootstrap/ng-bootstrap";
+import { CommonService } from "@shared/services/common/common.service";
 
 @Component({
   selector: 'app-account-details',
@@ -16,7 +17,7 @@ export class AccountDetailsComponent {
 	// @ViewChild('staticAlert', { static: false }) staticAlert: NgbAlert;
 	@ViewChild('selfClosingAlert', { static: false }) selfClosingAlert!: NgbAlert;
 
-	constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef,) {}
+	constructor(private service: CommonService, private cdr: ChangeDetectorRef,) {}
 
 	ngOnInit() {
 
@@ -26,7 +27,7 @@ export class AccountDetailsComponent {
 
   loadForm() {
 
-    this.accountDetailsFrom = this.fb.group({
+    this.accountDetailsFrom = this.service.fb.group({
 
       'mobileNo': [ this.editData?.accountName || '', Validators.required ],
 

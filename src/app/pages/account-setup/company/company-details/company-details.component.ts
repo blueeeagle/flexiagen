@@ -1,9 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
-import { NgbAlert } from "@ng-bootstrap/ng-bootstrap";
-import { Subject, debounceTime } from "rxjs";
-
+import { Component } from "@angular/core";
+import { FormGroup, Validators } from "@angular/forms";
+import { CommonService } from "@shared/services/common/common.service";
 @Component({
   selector: 'app-company-details',
   templateUrl: './company-details.component.html',
@@ -15,10 +12,7 @@ export class CompanyDetailsComponent {
   editData: any = {};
   formSubmitted: boolean = false;
 
-	// @ViewChild('staticAlert', { static: false }) staticAlert: NgbAlert;
-	@ViewChild('selfClosingAlert', { static: false }) selfClosingAlert!: NgbAlert;
-
-	constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef,) {}
+	constructor(private service: CommonService) {}
 
 	ngOnInit() {
 
@@ -26,9 +20,11 @@ export class CompanyDetailsComponent {
 	
 	}
 
+  // Load Form
+
   loadForm() {
 
-    this.companyDetailsFrom = this.fb.group({
+    this.companyDetailsFrom = this.service.fb.group({
 
       'companyName': [ this.editData?.companyName || '', Validators.required ],
 
@@ -43,6 +39,8 @@ export class CompanyDetailsComponent {
     });
 
   }
+
+  // convenience getter for easy access to form fields
 
   get f(): any { return this.companyDetailsFrom.controls; }
 

@@ -1,96 +1,101 @@
+<div class="location-container">
 
-<div class="auth-page">
+    <div class="d-flex justify-content-between mb-4">
 
-    <div class="location-container">
+        <div class="page-header">Location</div>
 
-        <div class="row">
+        <div class="text-end">
 
-            <div class="page-header col-sm-6">Location(20)</div>
-        
-        </div>
-
-        <div class="card border-opacity-10 border-dark">
-
-            <div class="card-body">
-
-                <div class="row">
-
-                    <div class="col-5">
-
-                        <div class="input-group">
-
-                                <span class="input-group-text ps-3 pe-3">
-
-                                    <i class="bi bi-search"></i>
-
-                                </span>
-
-                            <input type="text" class="form-control" placeholder="search for order by order id">
-
-                        </div>
-    
-                    </div>
-
-                    <div class="col-7">
-
-                        <div class="text-end">
-
-                            <button class="btn btn-outline-primary bi bi-sliders"> 
-                            
-                                <span class="ms-3">Filter</span>
-                            
-                            </button>
+            <button class="btn btn-outline-primary bi bi-sliders"> 
             
-                        </div>
+                <span class="ms-3">Filter</span>
+            
+            </button>
+
+        </div>
+    
+    </div>
+
+    <div class="card border-opacity-10 border-dark">
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-5">
+
+                    <div class="input-group">
+
+                            <span class="input-group-text ps-3 pe-3">
+
+                                <i class="bi bi-search"></i>
+
+                            </span>
+
+                        <input type="text" class="form-control" placeholder="search for order by order id">
 
                     </div>
 
                 </div>
 
-                <div class="mt-5">
+                <div class="col-7">
 
-                    <div class="row mt-3 border p-2" *ngFor="let locationDet of location">
-    
-                        <div class="col-2">
-    
-                            <p> <span class="fw-600"> {{ locationDet.areaName }} </span><br> {{ locationDet.name }}  </p>
-    
+                    <div class="text-end">
+
+                        <button class="btn btn-outline-primary bi bi-sliders"> 
+                        
+                            <span class="ms-3">Filter</span>
+                        
+                        </button>
+        
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mt-5">
+
+                <div class="row mt-3 border p-2" *ngFor="let locationDet of location">
+
+                    <div class="col-2">
+
+                        <p> <span class="fw-600"> {{ locationDet.areaName }} </span><br> {{ locationDet.name }}  </p>
+
+                    </div>
+
+                    <div class="col-2">
+
+                        <p> <span class="fw-600"> {{ locationDet.bhd }} </span><br> {{ locationDet.bhdDes }}  </p>
+
+                    </div>
+
+                    <div class="col-2">
+
+                        <p> <span class="fw-600"> {{ locationDet.free }} </span><br> {{ locationDet.freeDes }}  </p>
+
+                    </div>
+
+                    <div class="col-2 mt-3">
+
+                        <p> {{ locationDet.service }} </p>
+
+                    </div>
+
+                    <div class="col-1 mt-3">
+
+                        <div class="form-check form-switch">
+                            
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+
                         </div>
-    
-                        <div class="col-2">
-    
-                            <p> <span class="fw-600"> {{ locationDet.bhd }} </span><br> {{ locationDet.bhdDes }}  </p>
-    
-                        </div>
-    
-                        <div class="col-2">
-    
-                            <p> <span class="fw-600"> {{ locationDet.free }} </span><br> {{ locationDet.freeDes }}  </p>
-    
-                        </div>
-    
-                        <div class="col-2 mt-3">
-    
-                            <p> {{ locationDet.service }} </p>
-    
-                        </div>
-    
-                        <div class="col-1 mt-3">
-    
-                            <div class="form-check form-switch">
-                                
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-    
-                            </div>
-    
-                        </div>
-    
-                        <div class="col-3 mt-2 text-center">
-    
-                            <div class="btn btn-block btn-sm btn-outline-primary" (click)="openCanvas = true"> {{ locationDet.button }} </div>
-    
-                        </div>
-    
+
+                    </div>
+
+                    <div class="col-3 mt-2 text-center">
+
+                        <div class="btn btn-block btn-sm btn-outline-primary" (click)="openCanvas = true"> {{ locationDet.button }} </div>
+
                     </div>
 
                 </div>
@@ -103,9 +108,7 @@
 
 </div>
 
-<asidebar [openCanvas]="openCanvas" title="Filter" position="end" (onClose)="openCanvas = false">
-
-    
+<asidebar [openCanvas]="openCanvas" title="Delivery Charges" position="end" (onClose)="openCanvas = false">
 
 </asidebar>
     
