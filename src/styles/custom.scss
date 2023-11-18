@@ -14,7 +14,7 @@ section {
     padding: 0 !important;
 
     .ng-select-container {
-        height: 100% !important;
+        height: 100%;
         border: var(--bs-border-width) solid var(--bs-border-color);
     }
 }
@@ -306,3 +306,62 @@ ng-select.form-control {
 }
 
 ////////////////////////// Login & Register Page Styles Ends //////////////////////////
+
+
+///////////////////////// ng-select Styles Starts /////////////////////////
+
+.ng-select.is-invalid {
+
+    .ng-select-container {
+        border-color: var(--bs-form-invalid-border-color);
+    }
+}
+
+.ng-select.ng-select-single {
+
+    .ng-select-container {
+        height: 48px;
+
+        .ng-value-container .ng-input {
+            top: 10px;
+            padding-right: 30px;
+            padding-left: 0.75rem;
+        }                        
+    }
+
+    .ng-value-label {
+        display: flex;
+        align-items: center;
+    }
+
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
+    box-shadow: none;
+    border-color: #1e4894;   
+}
+
+.ng-select.ng-select-opened>.ng-select-container {
+    border-color: #1e4894;               
+}
+
+.ng-dropdown-panel.ng-select-bottom {
+    top: 102%;
+}
+
+.ng-select {
+
+    .ng-select-container {
+        min-width: 100px;
+        border: 2px solid #dee2e6
+    }                    
+
+    .ng-dropdown-panel {
+        border: 2px solid #dee2e6;
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }                    
+
+}
+
+///////////////////////// ng-select Styles Ends /////////////////////////
