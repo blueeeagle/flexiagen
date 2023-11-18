@@ -121,9 +121,6 @@ export class AddressDetailsComponent {
 
   loadForm() {
 
-    console.log(this.service.userDetails);
-    
-
     this.formSubmitted = false;
 
     this.addressDetailsFrom = this.service.fb.group({
@@ -265,11 +262,7 @@ export class AddressDetailsComponent {
 
         this.service.getUserDetails.subscribe((resOne: any) => {
 
-          console.log(resOne);
-          
           this.service.userDetails = resOne.status== 200 ? resOne.data : res.data;
-
-          console.log(this.service.userDetails);
 
         });
 

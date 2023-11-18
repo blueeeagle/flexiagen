@@ -37,9 +37,6 @@ export class CommonService {
     
             this.userDetails = res.data;
 
-            console.log(this.userDetails);
-            
-
             this.userDetailsObs.next(this.userDetails)
     
           }
