@@ -38,9 +38,9 @@
             
                             <div class="mt-1" >
     
-                                <button class="btn btn-outline-primary btn-md"> YES </button>
+                                <button class="btn px-4 fw-normal btn-md opt-btn" [ngClass]="{ 'active': f.haveTax.value }" (click)="f.haveTax.setValue(true)"> YES </button>
     
-                                <button class="btn btn-outline-primary btn-md mx-3"> NO </button>
+                                <button class="btn px-4 fw-normal btn-md ms-3 opt-btn" [ngClass]="{ 'active': !f.haveTax.value }" (click)="f.haveTax.setValue(false)"> NO </button>
     
                             </div>
     
@@ -48,9 +48,9 @@
     
                         <div class="form-group mb-4">
     
-                            <label for="taxationNo">Taxation Name</label>
+                            <label for="taxationNumber">Taxation Name</label>
             
-                            <input type="text" class="form-control form-control-lg" id="taxationNo" formControlName="taxationNo" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNo.errors }">
+                            <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNumber.errors }">
             
                         </div>
     
@@ -76,19 +76,29 @@
     
                 </div>
 
-                <div class="row px-4 pt-4">
+                <div class="row pt-4">
         
                     <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
 
-                        <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+                        <div class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
 
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
 
-                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+                        <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="isLoading" (click)="submit()">
 
-                    </div>
+                            <ng-container *ngIf="!isLoading">SAVE</ng-container>
+    
+                            <div class="spinner-border text-white-50 mt-2" *ngIf="isLoading" role="status">
+    
+                                <span class="visually-hidden">Loading...</span>
+    
+                            </div>
+    
+                        </button>                         
+
+                    </div>                      
 
                 </div>                
 

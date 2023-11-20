@@ -20,7 +20,7 @@
     
                             <label for="mobileNo"> Mobile No </label>
             
-                            <input type="text" class="form-control form-control-lg" id="mobileNo" formControlName="mobileNo" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.mobileNo.errors }">
+                            <input type="text" class="form-control form-control-lg" id="mobileNo" formControlName="mobileNo" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (f.mobileNo.touched || formSubmitted) && f.mobileNo.errors }">
             
                         </div>
     
@@ -28,7 +28,7 @@
     
                             <label for="emailId">Email Id</label>
             
-                            <input type="text" class="form-control form-control-lg" id="emailId" formControlName="emailId" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.emailId.errors }">
+                            <input type="text" class="form-control form-control-lg" id="emailId" formControlName="emailId" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (f.emailId.touched || formSubmitted) && f.emailId.errors }">
             
                         </div>
     
@@ -40,7 +40,7 @@
     
                                     <label for="newPassword">New Password</label>
                     
-                                    <input type="text" class="form-control form-control-lg" id="newPassword" formControlName="newPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.newPassword.errors }">
+                                    <input type="password" class="form-control form-control-lg" id="newPassword" formControlName="newPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (f.newPassword.touched || formSubmitted) && f.newPassword.errors }">
                     
                                 </div>
 
@@ -50,9 +50,9 @@
 
                                 <div class="form-group mb-4">
     
-                                    <label for="conformPassword">Conform Password</label>
+                                    <label for="confirmPassword">Confirm Password</label>
                     
-                                    <input type="text" class="form-control form-control-lg" id="conformPassword" formControlName="conformPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.conformPassword.errors }">
+                                    <input type="text" class="form-control form-control-lg" id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (f.confirmPassword.touched || formSubmitted) && f.confirmPassword.errors }">
                     
                                 </div>
                                 
@@ -68,13 +68,13 @@
         
                     <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
 
-                        <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+                        <div class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
 
                     </div>
 
                     <div class="col-sm-6">
 
-                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+                        <div class="btn btn-block btn-lg w-100 btn-primary">SAVE</div>
 
                     </div>
 

@@ -92,7 +92,7 @@ export class LoginComponent {
 
         });
 
-      }
+      } else this.isLoading = false;
 
     },(err: any)=>{
 

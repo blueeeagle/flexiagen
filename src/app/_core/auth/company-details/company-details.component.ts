@@ -261,9 +261,9 @@ export class CompanyDetailsComponent {
 
       if(res.status==200) {
 
-        this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
-
         this.isLoading = false;
+
+        this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 
         this.service.getUserDetails.subscribe((resOne: any) => {
 
@@ -277,7 +277,7 @@ export class CompanyDetailsComponent {
 
         this.service.navigate({ 'url': '/pages/dashboard' });
 
-      }
+      } else this.isLoading = false;
 
     },(err: any)=>{
 

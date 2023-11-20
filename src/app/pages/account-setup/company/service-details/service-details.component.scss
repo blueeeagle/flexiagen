@@ -83,3 +83,21 @@ input[type="checkbox"].toggle:focus:checked+label:hover:before {
     left: 115%;
     margin-left: -48px;
 }
+
+.opt-btn {
+    border: 2px solid #d1d1d1;
+    color: #87888f !important;
+    box-shadow: none;
+
+    &:hover {
+        border-color: var(--bs-primary);
+        color: #1E4894 !important;
+        background: #F3F5F9;
+    }
+}
+
+.opt-btn.active {
+    border-color: var(--bs-primary) !important;
+    color: #1E4894 !important;
+    background: #F3F5F9;
+}

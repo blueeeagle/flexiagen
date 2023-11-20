@@ -258,8 +258,6 @@ export class AddressDetailsComponent {
 
         this.service.showToastr({ "data": { "message": "Address Details Updated Successfully", "type": "success" } });        
 
-        this.isLoading = false;
-
         this.service.getUserDetails.subscribe((resOne: any) => {
 
           this.service.userDetails = resOne.status== 200 ? resOne.data : res.data;
@@ -267,6 +265,8 @@ export class AddressDetailsComponent {
         });
 
       }
+
+      this.isLoading = false;
 
     },(err: any)=>{
 

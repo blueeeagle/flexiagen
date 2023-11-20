@@ -162,15 +162,15 @@ export class RegisterComponent {
 
       if(res.status==201) {
 
+        this.isLoading = false;
+
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
 
         this.service.showToastr({ "data": { "message": "Account Created Successfully", "type": "success" } });
 
         this.service.navigate({ "url": '/auth/company-details' });
 
-        this.isLoading = false;
-
-      }
+      } else this.isLoading = false;
 
     },(err: any)=>{
 

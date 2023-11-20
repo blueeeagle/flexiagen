@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormGroup, Validators } from "@angular/forms";
 import { CommonService } from "@shared/services/common/common.service";
+import * as _ from "lodash";
 
 @Component({
   selector: 'app-service-details',
@@ -11,9 +12,17 @@ export class ServiceDetailsComponent {
 
   serviceDetailsFrom: FormGroup = new FormGroup({});
   editData: any = {};
-  formSubmitted: boolean = false;
+  isLoading: boolean = false;
 
-	constructor(private service: CommonService, private cdr: ChangeDetectorRef,) {}
+	constructor(private service: CommonService, private cdr: ChangeDetectorRef) {
+
+    this.service.userDetailsObs.subscribe((value)=>{
+
+      if(!_.isEmpty(value)) this.loadForm();
+      
+    })
+
+  }
 
 	ngOnInit() {
 
@@ -25,13 +34,11 @@ export class ServiceDetailsComponent {
 
     this.serviceDetailsFrom = this.service.fb.group({
 
-      'mobileNo': [ this.editData?.serviceName || '', Validators.required ],
+      'pos': [ this.service.userDetails?.pos || false ],
 
-      'emailId': [ this.editData?.emailId || '', Validators.required ],
+      'online': [ this.service.userDetails?.online || false ],
 
-      'newPassword': [ this.editData?.newPassword || '', Validators.required ],
-
-      'conformPassword': [ this.editData?.conformPassword || '', Validators.required ],
+      'mLogistic': [ this.service.userDetails?.mLogistic || false ],
 
     });
 
@@ -39,5 +46,16 @@ export class ServiceDetailsComponent {
 
   get f(): any { return this.serviceDetailsFrom.controls; }
 
+  submit() {
+
+    let payload = this.serviceDetailsFrom.value;
+
+    if(!payload.pos && !payload.online) return this.service.showToastr({ "data": { "message": "Please select atleast one service", "type": "error" } });    
+
+    this.isLoading = true;
+
+    console.log(this.serviceDetailsFrom.value);
+
+  }
 
 }

@@ -5,3 +5,17 @@
     pointer-events: auto;
     cursor: pointer;
 }
+
+.opt-btn {
+    border: 2px solid #d1d1d1;
+    color: #87888f !important;
+    box-shadow: none;
+
+    &:hover {
+        border-color: var(--bs-primary);
+    }
+}
+
+.opt-btn.active {
+    border-color: var(--bs-primary) !important;
+}

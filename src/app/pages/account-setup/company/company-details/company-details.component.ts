@@ -11,6 +11,7 @@ export class CompanyDetailsComponent {
   companyDetailsFrom: FormGroup = new FormGroup({});
   editData: any = {};
   formSubmitted: boolean = false;
+  isLoading: boolean = false;
 
 	constructor(private service: CommonService) {}
 
@@ -30,9 +31,9 @@ export class CompanyDetailsComponent {
 
       'ownerName': [ this.editData?.ownerName || '', Validators.required ],
 
-      'isTax': [ this.editData?.isTax || false, Validators.required ],
+      'haveTax': [ this.editData?.haveTax || false, Validators.required ],
 
-      'taxationNo': [ this.editData?.taxationNo || '', Validators.required ],
+      'taxationNumber': [ this.editData?.taxationNumber || '', Validators.required ],
 
       'companyLogo': [ this.editData?.companyLogo || '', Validators.required ],
 
@@ -44,5 +45,20 @@ export class CompanyDetailsComponent {
 
   get f(): any { return this.companyDetailsFrom.controls; }
 
+  // Submit Form
+
+  submit() {
+
+    this.formSubmitted = true;
+
+    if(this.companyDetailsFrom.invalid) return;
+
+    let payload = this.companyDetailsFrom.value;
+
+    this.isLoading = true;
+
+    console.log(payload);
+
+  }
 
 }

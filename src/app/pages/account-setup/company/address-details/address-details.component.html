@@ -178,7 +178,17 @@
 
                     <div class="col-sm-6">
 
-                        <div class=" btn btn-block btn-lg w-100 btn-primary" (click)="submit()">SAVE</div>
+                        <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="isLoading" (click)="submit()">
+
+                            <ng-container *ngIf="!isLoading">SAVE</ng-container>
+    
+                            <div class="spinner-border text-white-50 mt-2" *ngIf="isLoading" role="status">
+    
+                                <span class="visually-hidden">Loading...</span>
+    
+                            </div>
+    
+                        </button>                         
 
                     </div>
 
