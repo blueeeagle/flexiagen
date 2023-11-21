@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 
@@ -136,7 +136,7 @@ export class RegisterComponent {
 
     },{
 
-      validator: this.matchValidator('password', 'confirmPassword')
+      validator: this.service.matchValidator('password', 'confirmPassword')
 
     });
 
@@ -185,38 +185,6 @@ export class RegisterComponent {
       this.isLoading = false;
 
     });
-
-  }
-
-  // Validate Password and Confirm Password
-
-  matchValidator(controlName: string, matchingControlName: string): any {
-
-    return (formGroup: FormGroup) => {
-
-        const control = formGroup.get(controlName);
-        
-        const matchingControl = formGroup.get(matchingControlName);
-        
-        if (matchingControl!.errors && !matchingControl!.errors?.['confirmedValidator']) return null;
-
-        if (control!.value !== matchingControl!.value) {
-
-          const error = { confirmedValidator: 'Passwords do not match.' };
-
-          matchingControl!.setErrors(error);
-
-          return error;
-
-        } else {
-
-          matchingControl!.setErrors(null);
-
-          return null;
-
-        }
-
-    }
 
   }
 

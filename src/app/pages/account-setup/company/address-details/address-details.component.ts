@@ -20,7 +20,6 @@ export class AddressDetailsComponent {
     areaList: []
   };
   showPreview: boolean = false;
-  appServiceChargeDet: any = [];
   _: any = _;
 
   constructor(public service: CommonService) { 
@@ -41,20 +40,6 @@ export class AddressDetailsComponent {
     this.loadForm();
 
     this.getCountries();
-
-    this.getApplicationServiceList();
-
-  }
-
-  // Get Application Service List
-
-  getApplicationServiceList() {
-
-    this.service.getService({ "url": "/master/app-commissions" }).subscribe((res: any) => {
-
-      this.appServiceChargeDet = res.status==200 ? res.data : [];
-
-    });
 
   }
 
@@ -156,10 +141,15 @@ export class AddressDetailsComponent {
     this.addressDetailsFrom.controls['country'].valueChanges.subscribe((value: any) => {
 
       this.masterList = {
+
         ...this.masterList,
-        stateList: [],
-        cityList: [],
-        areaList: []
+
+        'stateList': [],
+
+        'cityList': [],
+
+        'areaList': []
+
       };
 
       let countryDet = _.find(this.masterList['countryList'], { 'id': value });
@@ -258,9 +248,11 @@ export class AddressDetailsComponent {
 
         this.service.showToastr({ "data": { "message": "Address Details Updated Successfully", "type": "success" } });        
 
-        this.service.getUserDetails.subscribe((resOne: any) => {
+        this.service.getUserDetails.subscribe((userRes: any) => {
 
-          this.service.userDetails = resOne.status== 200 ? resOne.data : res.data;
+          this.service.userDetails = userRes.data;
+
+          this.service.userDetailsObs.next(userRes);
 
         });
 

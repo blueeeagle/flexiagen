@@ -74,15 +74,15 @@ export class SidebarComponent implements OnInit {
               "url": "account-setup/company/service-details"
             },            
             {
-              "label": "Working Hours",
-              "allow": true,
-              "url": "account-setup/company/working-hours"
-            },
-            {
               "label": "Account Details",
               "allow": true,
               "url": "account-setup/company/account-details"
-            },            
+            },
+            {
+              "label": "Working Hours",
+              "allow": true,
+              "url": "account-setup/company/working-hours"
+            }            
           ]
         },
         {

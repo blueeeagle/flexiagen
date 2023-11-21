@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { FormGroup, Validators } from "@angular/forms";
 import { CommonService } from "@shared/services/common/common.service";
+import * as _ from "lodash";
 @Component({
   selector: 'app-company-details',
   templateUrl: './company-details.component.html',
@@ -9,11 +10,18 @@ import { CommonService } from "@shared/services/common/common.service";
 export class CompanyDetailsComponent {
 
   companyDetailsFrom: FormGroup = new FormGroup({});
-  editData: any = {};
   formSubmitted: boolean = false;
   isLoading: boolean = false;
 
-	constructor(private service: CommonService) {}
+	constructor(private service: CommonService) {
+
+    this.service.userDetailsObs.subscribe((value)=>{
+
+      if(!_.isEmpty(value)) this.loadForm();
+      
+    })
+
+  }
 
 	ngOnInit() {
 
@@ -27,15 +35,27 @@ export class CompanyDetailsComponent {
 
     this.companyDetailsFrom = this.service.fb.group({
 
-      'companyName': [ this.editData?.companyName || '', Validators.required ],
+      'companyName': [ this.service.userDetails?.companyName || '', Validators.required ],
 
-      'ownerName': [ this.editData?.ownerName || '', Validators.required ],
+      'ownerName': [ this.service.userDetails?.ownerName || '', Validators.required ],
 
-      'haveTax': [ this.editData?.haveTax || false, Validators.required ],
+      'haveTax': [ this.service.userDetails?.haveTax || false, Validators.required ],
 
-      'taxationNumber': [ this.editData?.taxationNumber || '', Validators.required ],
+      'taxationNumber': [ this.service.userDetails?.taxationNumber || '', Validators.required ],
 
-      'companyLogo': [ this.editData?.companyLogo || '', Validators.required ],
+      'companyLogo': [ this.service.userDetails?.companyLogo ],
+
+    });
+
+    this.f.haveTax?.valueChanges.subscribe((value: boolean) => {
+
+      this.f.taxationNumber.setValue(value ? this.service.userDetails?.taxationNumber : '');
+
+      if(value) this.f.taxationNumber.setValidators([Validators.required]);
+
+      else this.f.taxationNumber.clearValidators();
+
+      this.f.taxationNumber.updateValueAndValidity();
 
     });
 
@@ -53,11 +73,31 @@ export class CompanyDetailsComponent {
 
     if(this.companyDetailsFrom.invalid) return;
 
-    let payload = this.companyDetailsFrom.value;
+    let payload = _.omit(this.companyDetailsFrom.value,['companyLogo']);
 
     this.isLoading = true;
 
-    console.log(payload);
+    this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
+
+      if(res.status == 200) {
+
+        this.service.showToastr({ "data": { "message": "Company details updated successfully", "type": "success" } });
+
+        this.isLoading = false;
+
+        this.formSubmitted = false;
+
+        this.service.getUserDetails.subscribe((userRes: any) => {
+
+          this.service.userDetails = userRes.data;
+
+          this.service.userDetailsObs.next(userRes.data);
+
+        });
+
+      }
+
+    });
 
   }
 

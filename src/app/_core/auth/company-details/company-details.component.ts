@@ -149,10 +149,15 @@ export class CompanyDetailsComponent {
     this.companyForm.controls['country'].valueChanges.subscribe((value: any) => {
 
       this.masterList = {
+
         ...this.masterList,
-        stateList: [],
-        cityList: [],
-        areaList: []
+
+        'stateList': [],
+
+        'cityList': [],
+
+        'areaList': []
+        
       };
 
       let countryDet = _.find(this.masterList['countryList'], { 'id': value });

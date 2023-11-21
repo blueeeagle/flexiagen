@@ -12,14 +12,18 @@ import * as _ from "lodash";
 export class AccountDetailsComponent {
 
   accountDetailsFrom: FormGroup = new FormGroup({});
-  editData: any = {};
   formSubmitted: boolean = false;
-
-	// @ViewChild('staticAlert', { static: false }) staticAlert: NgbAlert;
-	@ViewChild('selfClosingAlert', { static: false }) selfClosingAlert!: NgbAlert;
   isLoading: boolean = false;
 
-	constructor(private service: CommonService, private cdr: ChangeDetectorRef,) {}
+	constructor(private service: CommonService) {
+
+    this.service.userDetailsObs.subscribe((value)=>{
+
+      if(!_.isEmpty(value)) this.loadForm();
+      
+    })
+
+  }
 
 	ngOnInit() {
 
@@ -31,13 +35,17 @@ export class AccountDetailsComponent {
 
     this.accountDetailsFrom = this.service.fb.group({
 
-      'mobileNo': [ this.editData?.mobileNo || '', Validators.required ],
+      'mobile': [ this.service.userDetails?.mobile || '', Validators.required ],
 
-      'emailId': [ this.editData?.emailId || '', Validators.required ],
+      'email': [ this.service.userDetails?.email || '', [Validators.required, Validators.email] ],
 
-      'newPassword': [ '', Validators.required ],
+      'password': [ '', Validators.required ],
 
       'confirmPassword': [ '', Validators.required ],
+
+    },{
+
+      validators: [ this.service.matchValidator('password', 'confirmPassword') ]
 
     });
 
@@ -45,7 +53,7 @@ export class AccountDetailsComponent {
 
   get f(): any { return this.accountDetailsFrom.controls; }
 
-  submitForm() {
+  submit() {
 
     this.formSubmitted = true;
 
@@ -53,21 +61,29 @@ export class AccountDetailsComponent {
 
     this.isLoading = true;
 
-    let payload: any = _.pick(this.accountDetailsFrom.value,['newPassword','confirmPassword']);
+    let payload: any = _.pick(this.accountDetailsFrom.value,['confirmPassword']);
 
-    payload['password'] = payload['newPassword'];
+    this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
 
-    setTimeout(()=>{
+      if(res.status == 200) {
 
-      this.isLoading = false;
+        this.service.showToastr({ "data": { "message": "Account details updated successfully", "type": "success" } });
 
-    },100)
+        this.isLoading = false;
 
-    // this.service.postService({ "url": "/users/update/"+this.service.userDetails.id, 'payload': payload }).subscribe((res: any) => {
+        this.formSubmitted = false;
 
+        this.service.getUserDetails.subscribe((userRes: any) => {
 
+          this.service.userDetails = userRes.data;
 
-    // });
+          this.service.userDetailsObs.next(userRes.data);
+
+        });
+
+      }
+
+    });
 
   }
 

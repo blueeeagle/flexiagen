@@ -20,7 +20,13 @@
     
                             <label for="companyName">Company Name</label>
             
-                            <input type="text" class="form-control form-control-lg" id="companyName" formControlName="companyName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.companyName.errors }">
+                            <input type="text" class="form-control form-control-lg" id="companyName" formControlName="companyName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.companyName.touched) && f.companyName.errors }">
+
+                            <div *ngIf="(formSubmitted || f.companyName.touched) && f.companyName.errors" class="invalid-feedback">
+    
+                                <div *ngIf="f.companyName.errors.required">Company name is required</div>
+
+                            </div>
             
                         </div>
     
@@ -28,7 +34,13 @@
     
                             <label for="ownerName">Owner Name</label>
             
-                            <input type="text" class="form-control form-control-lg" id="ownerName" formControlName="ownerName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.ownerName.errors }">
+                            <input type="text" class="form-control form-control-lg" id="ownerName" formControlName="ownerName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.ownerName.touched) && f.ownerName.errors }">
+
+                            <div *ngIf="(formSubmitted || f.ownerName.touched) && f.ownerName.errors" class="invalid-feedback">
+    
+                                <div *ngIf="f.ownerName.errors.required">Owner name is required</div>
+
+                            </div>
             
                         </div>
     
@@ -50,7 +62,13 @@
     
                             <label for="taxationNumber">Taxation Name</label>
             
-                            <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': formSubmitted && f.taxationNumber.errors }">
+                            <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.taxationNumber) && f.taxationNumber.errors }" [attr.disabled]="!f.haveTax.value || null">
+
+                            <div *ngIf="(formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors" class="invalid-feedback">
+    
+                                <div *ngIf="f.taxationNumber.errors.required">Taxation name is required</div>
+
+                            </div>
             
                         </div>
     
@@ -86,7 +104,7 @@
 
                     <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
 
-                        <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="isLoading" (click)="submit()">
+                        <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="(formSubmitted && companyDetailsFrom.invalid) || isLoading" (click)="submit()">
 
                             <ng-container *ngIf="!isLoading">SAVE</ng-container>
     

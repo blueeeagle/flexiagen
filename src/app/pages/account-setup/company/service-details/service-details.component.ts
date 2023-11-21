@@ -11,7 +11,6 @@ import * as _ from "lodash";
 export class ServiceDetailsComponent {
 
   serviceDetailsFrom: FormGroup = new FormGroup({});
-  editData: any = {};
   isLoading: boolean = false;
 
 	constructor(private service: CommonService, private cdr: ChangeDetectorRef) {
@@ -54,7 +53,25 @@ export class ServiceDetailsComponent {
 
     this.isLoading = true;
 
-    console.log(this.serviceDetailsFrom.value);
+    this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
+
+      if(res.status == 200) {
+
+        this.service.showToastr({ "data": { "message": "Service details updated successfully", "type": "success" } });
+
+        this.isLoading = false;
+
+        this.service.getUserDetails.subscribe((userRes: any) => {
+
+          this.service.userDetails = userRes.data;
+
+          this.service.userDetailsObs.next(userRes.data);
+
+        });
+
+      }
+
+    });
 
   }
 

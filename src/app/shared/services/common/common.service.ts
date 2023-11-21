@@ -8,7 +8,7 @@ import { ToastrConfigData } from '@shared/components/common-toastr/toastr-data.i
 import { CommonToastrComponent } from '@shared/components';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as _ from 'lodash';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -188,5 +188,37 @@ export class CommonService {
     this.navigate({ "url": '/auth/login' });
 
   }
+
+  // Validate Password and Confirm Password
+
+  matchValidator(controlName: string, matchingControlName: string): any {
+
+    return (formGroup: FormGroup) => {
+
+        const control = formGroup.get(controlName);
+        
+        const matchingControl = formGroup.get(matchingControlName);
+        
+        if (matchingControl!.errors && !matchingControl!.errors?.['confirmedValidator']) return null;
+
+        if (control!.value !== matchingControl!.value) {
+
+          const error = { confirmedValidator: 'Passwords do not match.' };
+
+          matchingControl!.setErrors(error);
+
+          return error;
+
+        } else {
+
+          matchingControl!.setErrors(null);
+
+          return null;
+
+        }
+
+    }
+
+  }  
   
 }

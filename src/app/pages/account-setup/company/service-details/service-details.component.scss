@@ -89,11 +89,11 @@ input[type="checkbox"].toggle:focus:checked+label:hover:before {
     color: #87888f !important;
     box-shadow: none;
 
-    &:hover {
-        border-color: var(--bs-primary);
-        color: #1E4894 !important;
-        background: #F3F5F9;
-    }
+    // &:hover {
+    //     border-color: var(--bs-primary);
+    //     color: #1E4894 !important;
+    //     background: #F3F5F9;
+    // }
 }
 
 .opt-btn.active {
