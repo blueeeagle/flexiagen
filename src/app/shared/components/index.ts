@@ -4,3 +4,4 @@ export { ModalComponent } from "./modal/modal.component";
 export { PageTitleComponent } from './page-title/page-title.component';
 export { PaginationComponent } from "./pagination/pagination.component";
 export { OffcanvasComponent } from "./offcanvas/offcanvas.component";
+export { SuccessModalComponent } from "./success-modal/success-modal.component";
