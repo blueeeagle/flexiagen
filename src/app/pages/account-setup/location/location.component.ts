@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { CommonService } from '@shared/services/common/common.service';
 
 @Component({
   selector: 'app-location',
@@ -8,17 +9,26 @@ import { FormGroup } from '@angular/forms';
 })
 export class LocationComponent {
 
+  constructor(public service: CommonService) { 
+
+    this.loadForm()
+
+  }
+
   openCanvas: boolean = false;
+  editData : any = {}
+  formSubmitted: boolean = false;
   locationFrom: FormGroup = new FormGroup({});
+  filterForm: FormGroup = new FormGroup({});
 
   location = [
 
     { 
       "areaName": "Area Name 1", 
       "name": "Hamala > Zallaq",
-      "bhd" : "3.000 BHD",
+      "minOrderAmt" : "3.000",
       "bhdDes" : "Min Order Amount",
-      "free" : "Free",
+      "deliveryCharge" : "Free",
       "freeDes" : "Delivery Charges",
       "service" : " Service Available",
       "button" : "Update Changes"
@@ -27,9 +37,9 @@ export class LocationComponent {
     { 
       "areaName": "Area Name 2", 
       "name": "Manama > Galali",
-      "bhd" : "3.000 BHD",
+      "minOrderAmt" : "3.000",
       "bhdDes" : "Min Order Amount",
-      "free" : "Free",
+      "deliveryCharge" : "Free",
       "freeDes" : "Delivery Charges",
       "service" : " Service Available",
       "button" : "Update Changes"
@@ -38,9 +48,8 @@ export class LocationComponent {
     { 
       "areaName": "Area Name 3", 
       "name": "Isa Town > Sitra",
-      "bhd" : "3.000 BHD",
-      "bhdDes" : "Min Order Amount",
-      "free" : "Free",
+      "minOrderAmt" : "3.000",
+      "deliveryCharge" : "Free",
       "freeDes" : "Delivery Charges",
       "service" : " Service Available",
       "button" : "Update Changes"
@@ -49,9 +58,8 @@ export class LocationComponent {
     { 
       "areaName": "Area Name 4", 
       "name": "Askar > Jaww",
-      "bhd" : "3.000 BHD",
-      "bhdDes" : "Min Order Amount",
-      "free" : "Free",
+      "minOrderAmt" : "3.000",
+      "deliveryCharge" : "Free",
       "freeDes" : "Delivery Charges",
       "service" : " Service Available",
       "button" : "Update Changes"
@@ -59,14 +67,44 @@ export class LocationComponent {
     { 
       "areaName": "Area Name 5", 
       "name": "Saar > Budaiya",
-      "bhd" : "3.000 BHD",
-      "bhdDes" : "Min Order Amount",
-      "free" : "Free",
+      "minOrderAmt" : "3.000",
+      "deliveryCharge" : "Free",
       "freeDes" : "Delivery Charges",
       "service" : " Service Available",
       "button" : "Update Changes"
     },
     
   ];
+
+  loadForm() {
+
+    this.formSubmitted = false;
+
+    this.filterForm = this.service.fb.group({
+
+      "minOrderAmt" : this.editData?.minOrderAmt || 0,
+
+      "deliveryCharge":  this.editData?.deliveryCharge || 'FREE',
+
+      "deliveryAmt":  this.editData?.deliveryAmt || 0,
+    
+    });
+
+  }
+
+  openAsideBar(data : any){
+
+    this.editData = data;
+
+    console.log(this.editData);
+    
+
+    this.openCanvas = true
+
+  }
+
+
+  
+  get f(): any { return this.filterForm.controls }
 
 }

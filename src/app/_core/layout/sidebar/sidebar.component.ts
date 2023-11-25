@@ -98,6 +98,12 @@ export class SidebarComponent implements OnInit {
           "icon": "bi bi-clock-history"
         },
         {
+          "label": "Items Pricing",
+          "allow": true,
+          "url": "account-setup/item-pricing",
+          "icon": "bi bi-clock-history"
+        },
+        {
           "label": "Users",
           "allow": true,
           "url": "account-setup/users",
