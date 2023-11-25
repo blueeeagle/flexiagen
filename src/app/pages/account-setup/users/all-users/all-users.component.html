@@ -1,0 +1,195 @@
+<div class="container">
+
+    <div class="d-flex justify-content-between">
+        
+        <div class="page-header">All Users</div>
+    
+    </div>
+
+    <div class="row d-flex mt-2">
+
+        <div class="col-sm-12 col-md-3 mb-2">
+
+            <div class="input-group">
+
+                <span class="input-group-text ps-3 pe-3">
+
+                    <i class="bi bi-search"></i>
+
+                </span>
+
+                <input type="text" class="form-control" placeholder="search for User by name">
+
+            </div>
+
+        </div>
+
+        <div class="col-sm-12 col-md-8 d-flex justify-content-end" style="height: fit-content;">
+
+            <button type="button" class="btn btn-primary" (click)="openCanvas = true">
+                
+                <i class="bi bi-plus-square"></i>
+                    
+                <span class="ms-1 d-none d-md-inline">Add New User</span>
+            
+            </button>
+
+            <button type="button" class="btn btn-outline-primary ms-3">
+
+                <i class="bi bi-sliders"></i>
+
+                <span class="ms-1 d-none d-md-inline">Filter</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<asidebar [openCanvas]="openCanvas" title="Add New user" position="end" (onClose)="openCanvas = false">
+
+    <div [formGroup]="addUserForm">
+
+        <div class="form-group">
+
+            <label for="name"> Name </label>
+            
+            <input type="text" class="form-control" id="name" formControlName="name" placeholder="Enter Name" [ngClass]="{ 'is-invalid': (formSubmitted || f.name.touched) && f.name.errors }">
+
+            <div *ngIf="(formSubmitted || f.name.touched) && f.name.errors" class="invalid-feedback">
+    
+                <div *ngIf="f.name.errors.required">Name is required</div>
+
+            </div>
+
+        </div>
+        
+        <div class="form-group">
+
+            <label for="email"> Email </label>
+            
+            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter Email" [ngClass]="{ 'is-invalid': (formSubmitted || f.email.touched) && f.email.errors }">
+
+            <div *ngIf="(formSubmitted || f.email.touched) && f.email.errors" class="invalid-feedback">
+    
+                <div *ngIf="f.email.errors.required">Email is required</div>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="userName"> User Name </label>
+            
+            <input type="userName" class="form-control" id="userName" formControlName="userName" placeholder="Enter User Name" [ngClass]="{ 'is-invalid': (formSubmitted || f.userName.touched) && f.userName.errors }">
+
+            <div *ngIf="(formSubmitted || f.userName.touched) && f.userName.errors" class="invalid-feedback">
+    
+                <div *ngIf="f.userName.errors.required">User Name is required</div>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="mobile">Mobile Number</label>
+
+            <div class="input-group">
+
+                <div class="input-group-prepend me-1">
+
+                    <ng-select formControlName="dialingCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialingCode.touched) && f.dialingCode.errors }">
+
+                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.id">
+                            
+                            <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['ISO3666Code'] }}.svg"/> {{ countryDet.teleCode }}
+                    
+                        </ng-option>
+
+                    </ng-select>
+
+                </div>
+
+                <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.mobile.touched) && f.mobile.errors }" numbersOnly maxlength="10">
+
+                <div *ngIf="(formSubmitted || f.mobile.touched) && f.mobile.errors" class="invalid-feedback">
+
+                    <div *ngIf="f.mobile.errors.required">Mobile number is required</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="form-group">
+
+                    <label for="role">Role</label>
+                    
+                    <ng-select formControlName="role" [clearable]="false" placeholder="Select Role" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.role.touched) && f.role?.errors }">
+                    
+                        <ng-option *ngFor="let roleDet of masterList['roleList']" [value]="roleDet.id">{{ roleDet.title | uppercase }}</ng-option>
+                    
+                    </ng-select>
+                    
+                    <div *ngIf="(formSubmitted || f.role.touched) && f.role.errors" class="invalid-feedback">
+                    
+                        <div *ngIf="f.role.errors.required">Role is required</div>
+                    
+                    </div>
+                
+                </div>
+            
+            </div>
+        
+            <div class="col-md-3">
+            
+                <div class="form-group">
+            
+                    <label for="status">Status</label>
+
+                    <div class="form-check form-switch p-0">
+
+                        <input class="form-check-input" role="switch" type="checkbox" id="isActive" formControlName="isActive">
+
+                        <label class="form-check-label" for="isActive">Active</label>
+
+                    </div>
+                    
+                </div>
+            
+            </div>
+        
+        </div>
+
+        <div class="form-group">
+
+            <label for="profile">Profile</label>
+
+            <div class="drop_box">
+
+                <input type="file" class="upload" style="display: none;" #fileInput formControlName="profile">
+
+                <button type="button" class="btn btn-outline-primary ms-3" (click)="fileInput.click()">
+                    
+                    <i class="bi bi-upload"></i>
+                    
+                    <span class="ms-1 d-none d-md-inline">Upload</span>
+                
+                </button>
+            
+            </div>
+            
+        </div>
+
+    </div>
+
+</asidebar>

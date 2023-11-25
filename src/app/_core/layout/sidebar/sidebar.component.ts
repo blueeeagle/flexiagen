@@ -107,7 +107,19 @@ export class SidebarComponent implements OnInit {
           "label": "Users",
           "allow": true,
           "url": "account-setup/users",
-          "icon": "bi bi-person-workspace"
+          "icon": "bi bi-person-workspace",
+          "subMenu" : [ 
+            {
+              "label": "All Users",
+              "allow": true,
+              "url": "account-setup/users/all-users"
+            },
+            {
+              "label": "Permission Details",
+              "allow": true,
+              "url": "account-setup/users/permission-details"
+            },         
+          ]
         }, 
         {
           "label": "My Subscription",
