@@ -66,9 +66,9 @@
     
                                     <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialCode.touched) && f.dialCode.errors }">
 
-                                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.dialCode">
+                                        <ng-option *ngFor="let dialCodeDet of dialCodeList" [value]="dialCodeDet.dialCode">
                                             
-                                            <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['iso2'] }}.svg"/> {{ countryDet.dialCode }}
+                                            <img class="country-flag" alt="{{ dialCodeDet.iso2 }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ dialCodeDet['iso2'] }}.svg"/> {{ dialCodeDet.dialCode }}
                                     
                                         </ng-option>
 

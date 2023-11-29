@@ -13,7 +13,7 @@ export class RegisterComponent {
   registerForm!: FormGroup;
   formSubmitted: boolean = false;
   isLoading: boolean = false;
-  countryList: Array<any> = [];
+  dialCodeList: Array<any> = [];
   _: any = _;
 
   constructor(private service: CommonService) { }
@@ -30,9 +30,9 @@ export class RegisterComponent {
 
   getCountries() {
 
-    this.service.getService({ "url": "/address/countries" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/address/dailCode" }).subscribe((res: any) => {
 
-      this.countryList = res.status=='ok' ? res.data : [];
+      this.dialCodeList = res.status=='ok' ? res.data : [];
 
     });
 
