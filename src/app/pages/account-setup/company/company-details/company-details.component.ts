@@ -79,7 +79,7 @@ export class CompanyDetailsComponent {
 
     this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
 
-      if(res.status == 200) {
+      if(res.status=='ok') {
 
         this.service.showToastr({ "data": { "message": "Company details updated successfully", "type": "success" } });
 

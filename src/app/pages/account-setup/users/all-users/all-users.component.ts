@@ -92,7 +92,7 @@ export class AllUsersComponent {
 
     this.service.getService({ "url": "/master/countries" }).subscribe((res: any) => {
 
-      if(res.status==200) {
+      if(res.status=='ok') {
 
         this.countryList = [];
 
@@ -124,7 +124,7 @@ export class AllUsersComponent {
 
       'userName': [ this.editData?.userName || '', Validators.required ],
 
-      'dialingCode': [this.editData?.dialingCode || null, [Validators.required]],
+      'dialCode': [this.editData?.dialCode || null, [Validators.required]],
 
       'mobile': [this.editData?.mobile || '', [Validators.required]],
       

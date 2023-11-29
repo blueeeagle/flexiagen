@@ -45,7 +45,7 @@ export class CompanyDetailsComponent {
 
     this.service.getService({ "url": "/master/app-commissions" }).subscribe((res: any) => {
 
-      this.appServiceChargeDet = res.status==200 ? res.data : [];
+      this.appServiceChargeDet = res.status=='ok' ? res.data : [];
 
     });
 
@@ -57,9 +57,9 @@ export class CompanyDetailsComponent {
 
     this.masterList['countryList'] = [];
 
-    this.service.getService({ "url": "/master/countries" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/address/countries" }).subscribe((res: any) => {
 
-      this.masterList['countryList'] = res.status==200 ? res.data : [];
+      this.masterList['countryList'] = res.status=='ok' ? res.data : [];
 
     });
 
@@ -71,9 +71,9 @@ export class CompanyDetailsComponent {
 
     this.masterList['stateList'] = [];
 
-    this.service.getService({ "url": `/master/countries/${this.f.country.value}/states` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/states/${this.f.country.value}` }).subscribe((res: any) => {
 
-      this.masterList['stateList'] = res.status == 200 ? res.data : [];
+      this.masterList['stateList'] = res.status=='ok' ? res.data : [];
 
     });
 
@@ -90,9 +90,9 @@ export class CompanyDetailsComponent {
 
     this.masterList['cityList'] = [];
 
-    this.service.getService({ "url": `/master/${fieldName == 'country' ? 'countries' : 'states' }/${this.f[fieldName].value}/cities` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/cities/${fieldName}/${this.f[fieldName].value}` }).subscribe((res: any) => {
 
-      this.masterList['cityList'] = res.status == 200 ? res.data : [];
+      this.masterList['cityList'] = res.status == 'ok' ? res.data : [];
 
     });
 
@@ -102,9 +102,9 @@ export class CompanyDetailsComponent {
 
   getAreas() {
 
-    this.service.getService({ "url": `/master/cities/${this.f.city.value}/areas` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/areas/${this.f.city.value}/areas` }).subscribe((res: any) => {
 
-      this.masterList['areaList'] = res.status == 200 ? res.data : [];
+      this.masterList['areaList'] = res.status == 'ok' ? res.data : [];
 
     });
 
@@ -264,21 +264,15 @@ export class CompanyDetailsComponent {
 
     this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-      if(res.status==200) {
+      if(res.status=='ok') {
 
         this.isLoading = false;
 
         this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 
-        this.service.getUserDetails.subscribe((resOne: any) => {
+        this.service.companyDetails = _.omit(res.data,['agentId']);
 
-          this.service.userDetails = resOne.status== 200 ? resOne.data : res.data;
-
-          this.service.session({ 'method': 'set', 'key': 'CompanyStatus', 'value': 'Created' });
-
-          this.service.navigate({ 'url': '/pages/dashboard' });
-
-        });
+        this.service.session({ 'method': 'set', 'key': 'CompanyDetails', 'value': JSON.stringify(this.service.companyDetails) });
 
         this.service.navigate({ 'url': '/pages/dashboard' });
 

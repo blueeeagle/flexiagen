@@ -49,7 +49,7 @@ export class ForgotPasswordComponent {
 
     // this.service.postService({ "url": "/users/resendOtp", 'payload': { "email": this.service.session({ "method": "get", "key": "email" }) }, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-    //   if(res.status==200) {
+    //   if(res.status=='ok') {
 
     //     this.service.showToastr({ "data": { "message": "OTP sent successfully", "type": "success" } });
 
@@ -83,7 +83,7 @@ export class ForgotPasswordComponent {
 
     // this.service.postService({ "url": "/users/verifyOtp", 'payload': _.join(this.otp), 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-    //   if(res.status==200) {
+    //   if(res.status=='ok') {
 
     //     this.service.showToastr({ "data": { "message": "OTP Verified Successfully", "type": "success" } });
 

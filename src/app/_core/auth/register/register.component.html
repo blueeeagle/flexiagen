@@ -28,6 +28,20 @@
 
                         <div class="form-group">
 
+                            <label for="name" class="fw-600">Name</label>
+
+                            <input type="text" class="form-control" id="name" formControlName="name" placeholder="Enter your name" [ngClass]="{ 'is-invalid': (formSubmitted || f.name.touched) && f.name.errors }">
+
+                            <div *ngIf="(formSubmitted || f.name.touched) && f.name.errors" class="invalid-feedback">
+
+                                <div *ngIf="f.email.errors.required">Name is required</div>
+
+                            </div>
+
+                        </div>                        
+
+                        <div class="form-group">
+
                             <label for="email" class="fw-600">Email</label>
 
                             <input type="text" class="form-control" id="email" formControlName="email" placeholder="Enter your email" [ngClass]="{ 'is-invalid': (formSubmitted || f.email.touched) && f.email.errors }">
@@ -50,11 +64,11 @@
 
                                 <div class="input-group-prepend me-1">
     
-                                    <ng-select formControlName="dialingCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialingCode.touched) && f.dialingCode.errors }">
+                                    <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialCode.touched) && f.dialCode.errors }">
 
-                                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.id">
+                                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.dialCode">
                                             
-                                            <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['ISO3666Code'] }}.svg"/> {{ countryDet.teleCode }}
+                                            <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['iso2'] }}.svg"/> {{ countryDet.dialCode }}
                                     
                                         </ng-option>
 
@@ -80,15 +94,17 @@
 
                             <div class="password-input-group">
 
-                                <input type="password" class="form-control" id="password" #password formControlName="password" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.password.touched) && f.password.errors }">
+                                <input type="password" class="form-control" id="password" #password formControlName="password" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.password.touched) && f.password.errors }" maxlength="15">
 
                                 <i class="bi" [ngClass]="password.type == 'text' ? 'bi-eye' : 'bi-eye-slash'" (click)="password.type = password.type == 'text' ? 'password' : 'text'"></i>
 
                             </div>                              
 
-                            <div *ngIf="(formSubmitted ||  f.password.touched) && f.password.errors" class="invalid-feedback">
+                            <div *ngIf="(formSubmitted ||  f.password.touched) && f.password.errors" class="invalid-feedback d-block">
 
-                                <div *ngIf="f.password.errors.required">Password is required</div>
+                                <div *ngIf="_.keys(f.password.errors).length == 1 && f.password.errors.required">Password is required</div>
+
+                                <div *ngIf="_.keys(f.password.errors).length == 1 && f.password.errors.minlength">Password must be at least 8 characters</div>
 
                             </div>
 
@@ -100,17 +116,17 @@
 
                             <div class="password-input-group">
 
-                                <input type="password" class="form-control" #confirmPassword id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" [ngClass]="{ 'is-invalid': f.confirmPassword.touched && f.confirmPassword.errors }">
+                                <input type="password" class="form-control" #confirmPassword id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.confirmPassword.touched) && f.confirmPassword.errors }"  maxlength="15">
 
                                 <i class="bi" [ngClass]="confirmPassword.type == 'text' ? 'bi-eye' : 'bi-eye-slash'" (click)="confirmPassword.type = confirmPassword.type == 'text' ? 'password' : 'text'"></i>
 
                             </div>                            
 
-                            <div *ngIf="f.confirmPassword.touched && f.confirmPassword.errors" class="invalid-feedback">
+                            <div *ngIf="(formSubmitted || f.confirmPassword.touched) && f.confirmPassword.errors" class="invalid-feedback d-block">
 
-                                <div *ngIf="f.confirmPassword.errors.required && !f.confirmPassword.errors.confirmedValidator">Confirm password is required</div>
-
-                                <div *ngIf="f.confirmPassword.errors.confirmedValidator && !f.confirmPassword.errors.required">Passwords do not match.</div>
+                                <div *ngIf="_.keys(f.confirmPassword.errors).length == 1 && f.confirmPassword.errors.required">Confirm password is required</div>
+        
+                                <div *ngIf="_.keys(f.confirmPassword.errors).length == 1 && f.confirmPassword.errors.confirmedValidator">Passwords do not match.</div>
 
                             </div>
 
@@ -134,7 +150,7 @@
                             
                             <div class="form-check ms-4">
 
-                                <input class="form-check-input" type="checkbox" id="online" formControlName="online" (change)="registerForm.patchValue({ 'mLogistic': f.online.value })">
+                                <input class="form-check-input" type="checkbox" id="online" formControlName="online" (change)="registerForm.patchValue({ 'logisticss': f.online.value })">
 
                                 <label for="online" class="form-check-label">Online</label>
 
@@ -144,13 +160,13 @@
 
                         <div class="form-check form-switch ps-0 w-fit-content">
 
-                            <label class="form-check-label text-dark" for="mLogistic">
+                            <label class="form-check-label text-dark" for="logistics">
                                 
-                                Flexi Clean Logistic
+                                Flexi Clean logistics
 
                             </label>
                             
-                            <input class="form-check-input" type="checkbox" role="switch" id="mLogistic"  formControlName="mLogistic">
+                            <input class="form-check-input" type="checkbox" role="switch" id="logistics"  formControlName="logistics">
 
                             <div class="d-flex">
 

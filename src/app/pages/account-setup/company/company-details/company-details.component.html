@@ -62,7 +62,7 @@
     
                             <label for="taxationNumber">Taxation Name</label>
             
-                            <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.taxationNumber) && f.taxationNumber.errors }" [attr.disabled]="!f.haveTax.value || null">
+                            <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors }" [attr.disabled]="!f.haveTax.value || null">
 
                             <div *ngIf="(formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors" class="invalid-feedback">
     

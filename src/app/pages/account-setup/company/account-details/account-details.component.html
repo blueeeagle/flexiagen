@@ -46,7 +46,7 @@
             
                         </div>
     
-                        <div class="row ">
+                        <div class="row">
 
                             <div class="col">
 
@@ -54,12 +54,14 @@
     
                                     <label for="password">New Password</label>
                     
-                                    <input type="password" class="form-control form-control-lg" id="password" formControlName="password" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.password.touched) && f.password.errors }">
+                                    <input type="password" class="form-control form-control-lg" id="password" formControlName="password" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.password.touched) && f.password.errors }" maxlength="15">
 
                                     <div *ngIf="(formSubmitted || f.password.touched) && f.password.errors" class="invalid-feedback">
 
-                                        <div *ngIf="f.password.errors.required">Password is required</div>
-        
+                                        <div *ngIf="_.keys(f.password.errors).length == 1 && f.password.errors.required">Password is required</div>
+
+                                        <div *ngIf="_.keys(f.password.errors).length == 1 && f.password.errors.minlength">Password must be at least 8 characters</div>
+
                                     </div>                                    
                     
                                 </div>
@@ -72,13 +74,13 @@
     
                                     <label for="confirmPassword">Confirm Password</label>
                     
-                                    <input type="text" class="form-control form-control-lg" id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.confirmPassword.touched) && f.confirmPassword.errors }">
+                                    <input type="text" class="form-control form-control-lg" id="confirmPassword" formControlName="confirmPassword" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.confirmPassword.touched) && f.confirmPassword.errors }" maxlength="15">
 
                                     <div *ngIf="(formSubmitted || f.confirmPassword.touched) && f.confirmPassword.errors" class="invalid-feedback">
 
-                                        <div *ngIf="f.confirmPassword.errors.required && !f.confirmPassword.errors.confirmedValidator">Confirm password is required</div>
+                                        <div *ngIf="_.keys(f.confirmPassword.errors).length == 1 && f.confirmPassword.errors.required">Confirm password is required</div>
         
-                                        <div *ngIf="f.confirmPassword.errors.confirmedValidator && !f.confirmPassword.errors.required">Passwords do not match.</div>
+                                        <div *ngIf="_.keys(f.confirmPassword.errors).length == 1 && f.confirmPassword.errors.confirmedValidator">Passwords do not match.</div>
         
                                     </div>                                    
                     

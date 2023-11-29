@@ -14,65 +14,7 @@ export class RegisterComponent {
   formSubmitted: boolean = false;
   isLoading: boolean = false;
   countryList: Array<any> = [];
-
-  countryDetailsList: Array<any> = [
-    {
-      "English short name": "Qatar",
-      "ISO3666Code": "QA",
-      "Alpha-3 code": "QAT",
-      "Numeric code": 634,
-      "ISO 3166-2 Code": "QA",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Saudi Arabia",
-      "ISO3666Code": "SA",
-      "Alpha-3 code": "SAU",
-      "Numeric code": 682,
-      "ISO 3166-2 Code": "SA",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "United Arab Emirates",
-      "ISO3666Code": "AE",
-      "Alpha-3 code": "ARE",
-      "Numeric code": 784,
-      "ISO 3166-2 Code": "AE",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Kuwait",
-      "ISO3666Code": "KW",
-      "Alpha-3 code": "KWT",
-      "Numeric code": 414,
-      "ISO 3166-2 Code": "KW",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Bahrain",
-      "ISO3666Code": "BH",
-      "Alpha-3 code": "BHR",
-      "Numeric code": 48,
-      "ISO 3166-2 Code": "BH",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "India",
-      "ISO3666Code": "IN",
-      "Alpha-3 code": "IND",
-      "Numeric code": 356,
-      "ISO 3166-2 Code": "IN",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Russia",
-      "ISO3666Code": "RU",
-      "Alpha-3 code": "RUS",
-      "Numeric code": 643,
-      "ISO 3166-2 Code": "RU",
-      "Independent": "Yes"
-    },                  
-  ];
+  _: any = _;
 
   constructor(private service: CommonService) { }
 
@@ -88,23 +30,9 @@ export class RegisterComponent {
 
   getCountries() {
 
-    this.service.getService({ "url": "/master/countries" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/address/countries" }).subscribe((res: any) => {
 
-      if(res.status==200) {
-
-        this.countryList = [];
-
-        _.map(res.data, (countryDet: any) => {
-
-          let countryDetails = _.find(this.countryDetailsList, { 'Alpha-3 code': countryDet.isoCode });
-
-          if(_.isEmpty(countryDetails) || _.find(this.countryList, { 'Alpha-3 code': countryDet.isoCode })) return;
-
-          this.countryList.push({ ...countryDet, "ISO3666Code": countryDetails["ISO3666Code"] });
-
-        });
-
-      }
+      this.countryList = res.status=='ok' ? res.data : [];
 
     });
 
@@ -118,9 +46,11 @@ export class RegisterComponent {
 
     this.registerForm = this.service.fb.group({
 
+      'name': ['', [Validators.required]],
+
       'email': ['', [Validators.required, Validators.email]],
 
-      'dialingCode': [null, [Validators.required]],
+      'dialCode': [null, [Validators.required]],
 
       'mobile': ['', [Validators.required]],
 
@@ -128,15 +58,27 @@ export class RegisterComponent {
 
       'online': false,
 
-      'password': ['',[Validators.required]],
+      'password': ['',[Validators.required,Validators.minLength(8)]],
 
       'confirmPassword': ['',[Validators.required]],
 
-      'mLogistic': false,
+      'logistics': { value: false, disabled: true},
 
     },{
 
       validator: this.service.matchValidator('password', 'confirmPassword')
+
+    });
+
+    this.registerForm.get('online')?.valueChanges.subscribe((value: any) => {
+
+      if(value) this.registerForm.get('logistics')?.enable();
+
+      else this.f.logistics.disable();
+
+      this.f.logistics.setValue(value);
+
+      this.f.logistics.updateValueAndValidity();
 
     });
 
@@ -152,19 +94,21 @@ export class RegisterComponent {
 
     if(this.registerForm.invalid) return this.formSubmitted = true;
 
-    let payload: any = _.omit(this.registerForm.value,['confirmPassword']);
+    let payload: any = _.omit(this.registerForm.getRawValue(),['confirmPassword']);
 
     if(!payload.pos && !payload.online) return this.service.showToastr({ "data": { "message": "Please select atleast one service", "type": "error" } });
 
     this.isLoading = true;
 
-    this.service.postService({ "url": "/users/register", 'payload': this.registerForm.value, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
+    this.service.postService({ "url": "/register", 'payload': payload }).subscribe((res: any) => {
 
-      if(res.status==201) {
+      if(res.status=='ok') {
 
         this.isLoading = false;
 
-        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
+        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
+
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(res.data.userDetails) });
 
         this.service.showToastr({ "data": { "message": "Account Created Successfully", "type": "success" } });
 

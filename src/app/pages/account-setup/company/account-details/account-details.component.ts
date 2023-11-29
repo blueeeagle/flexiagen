@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormGroup, Validators } from "@angular/forms";
-import { NgbAlert } from "@ng-bootstrap/ng-bootstrap";
 import { CommonService } from "@shared/services/common/common.service";
 import * as _ from "lodash";
 
@@ -14,16 +13,9 @@ export class AccountDetailsComponent {
   accountDetailsFrom: FormGroup = new FormGroup({});
   formSubmitted: boolean = false;
   isLoading: boolean = false;
+  _: any = _;
 
-	constructor(private service: CommonService) {
-
-    this.service.userDetailsObs.subscribe((value)=>{
-
-      if(!_.isEmpty(value)) this.loadForm();
-      
-    })
-
-  }
+	constructor(private service: CommonService) {}
 
 	ngOnInit() {
 
@@ -39,7 +31,7 @@ export class AccountDetailsComponent {
 
       'email': [ this.service.userDetails?.email || '', [Validators.required, Validators.email] ],
 
-      'password': [ '', Validators.required ],
+      'password': [ '', [Validators.required,Validators.minLength(8)] ],
 
       'confirmPassword': [ '', Validators.required ],
 
@@ -65,7 +57,7 @@ export class AccountDetailsComponent {
 
     this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
 
-      if(res.status == 200) {
+      if(res.status=='ok') {
 
         this.service.showToastr({ "data": { "message": "Account details updated successfully", "type": "success" } });
 
@@ -73,13 +65,15 @@ export class AccountDetailsComponent {
 
         this.formSubmitted = false;
 
-        this.service.getUserDetails.subscribe((userRes: any) => {
+        this.service.userDetails = _.omit(res.data,'companyId');
 
-          this.service.userDetails = userRes.data;
+        this.service.companyDetails = res.data.companyId;
 
-          this.service.userDetailsObs.next(userRes.data);
+        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(res.data.companyId) });
 
-        });
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(_.omit(res.data,['companyId'])) });
+
+
 
       }
 

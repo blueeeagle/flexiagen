@@ -37,7 +37,7 @@ export class ServiceDetailsComponent {
 
       'online': [ this.service.userDetails?.online || false ],
 
-      'mLogistic': [ this.service.userDetails?.mLogistic || false ],
+      'logistics': [ this.service.userDetails?.logistics || false ],
 
     });
 
@@ -55,7 +55,7 @@ export class ServiceDetailsComponent {
 
     this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
 
-      if(res.status == 200) {
+      if(res.status=='ok') {
 
         this.service.showToastr({ "data": { "message": "Service details updated successfully", "type": "success" } });
 

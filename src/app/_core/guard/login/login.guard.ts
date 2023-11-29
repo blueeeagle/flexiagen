@@ -14,7 +14,7 @@ export class LoginGuard implements CanActivate {
 
     if(this.service.session({ "method": "get", "key": "AuthToken"})) {
 
-      if(this.service.session({ "method": "get", "key": "CompanyStatus" }) == 'Created') this.service.navigate({ "url": "/pages/dashboard"});
+      if(this.service.session({ "method": "get", "key": "CompanyDetails" }) == 'Created') this.service.navigate({ "url": "/pages/dashboard"});
 
       else this.service.navigate({ "url": "/auth/company-details"});
     

@@ -16,38 +16,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class CommonService {
 
   pageSizeList: any = [10, 25, 50, 100];
-  userDetails: any = {};
+  userDetails: any = JSON.parse(sessionStorage.getItem('UserDetails') || '{}');
+  companyDetails: any = JSON.parse(sessionStorage.getItem('CompanyDetails') || '{}');
 
   public isLoading = new BehaviorSubject(false);
   public loaderApiUrls = new BehaviorSubject<any>([]);
   public userDetailsObs = new Subject();
   public imgBasePath = APP_CONFIG.imgBasePath;
 
-  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {
-
-    // Get User Details
-
-    setTimeout(()=>{ // To Avoid Circular Dependency Error
-
-      if(this.session({ method: "get", key: "AuthToken" })) {
-
-        this.getUserDetails.subscribe((res: any) => {
-
-          if(res.status == 200) {
-    
-            this.userDetails = res.data;
-
-            this.userDetailsObs.next(this.userDetails)
-    
-          }
-    
-        });
-
-      }
-
-    },1000)
-
-  }
+  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {}
 
   get getUserDetails(): any {
 

@@ -52,49 +52,47 @@ export class LoginComponent {
 
     this.isLoading = true;
 
-    this.service.postService({ "url": "/users/login", 'payload': this.loginForm.value, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
+    this.service.postService({ "url": "/login", 'payload': this.loginForm.value, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-      if(res.status==200) {
+      if(res.status=='ok') {
 
-        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.accessToken });
+        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
-        this.service.getUserDetails.subscribe((res: any) => {
+        this.service.userDetails = _.omit(res.data.userDetails,['companyId']);
 
-          if(res.status == 200) {
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
 
-            this.isLoading = false;
+        this.isLoading = false;
 
-            this.service.userDetails = res.data;
+        if(_.isEmpty(res.data.userDetails.companyId)) { // Check the user already created company details
 
-            if(_.isEmpty(this.service.userDetails.companyName)) { // Check the user already created company details
+          this.service.navigate({ 'url': '/auth/company-details' });
 
-              this.service.navigate({ 'url': '/auth/company-details' });
+          this.service.showToastr({ "data": { "message": "Please complete your company details", "type": "info" } });
 
-              this.service.showToastr({ "data": { "message": "Please complete your company details", "type": "info" } });
+        } else if(res.data.userDetails.pos && false)  { // Check for payment status
 
-            } else if(this.service.userDetails.pos && false)  { // Check for payment status
+          this.service.navigate({ 'url': '/auth/payment' });
 
-              this.service.navigate({ 'url': '/auth/payment' });
+          this.service.showToastr({ "data": { "message": "Please complete your payment", "type": "info" } });
 
-              this.service.showToastr({ "data": { "message": "Please complete your payment", "type": "info" } });
+        } else {
 
-            } else {
+          this.service.companyDetails = res.data.userDetails.companyId;
+ 
+          this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
 
-              this.service.session({ "method": "set", "key": "CompanyStatus", "value": "Created" });
+          this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
 
-              this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
+          this.service.navigate({ 'url': '/pages/dashboard' });
 
-              this.service.navigate({ 'url': '/pages/dashboard' });
-
-            }
-
-          }
-
-        });
+        }
 
       } else this.isLoading = false;
 
     },(err: any)=>{
+
+      this.service.showToastr({ "data": { "message": err.error.message || "Internal Server", "type": "error" } }); 
 
       this.isLoading = false;
 

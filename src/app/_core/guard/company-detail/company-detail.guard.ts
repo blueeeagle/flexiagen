@@ -14,7 +14,7 @@ export class companyDetailGuard implements CanActivate {
 
     if(this.service.session({ "method": "get", "key": "AuthToken" })) {
 
-      if(this.service.session({ "method": "get", "key": "CompanyStatus" }) == 'Created') {
+      if(this.service.session({ "method": "get", "key": "CompanyDetails" }) == 'Created') {
 
         this.service.navigate({ "url": "/pages/dashboard" });
     

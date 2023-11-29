@@ -51,7 +51,7 @@ export class AddressDetailsComponent {
 
     this.service.getService({ "url": "/master/countries" }).subscribe((res: any) => {
 
-      this.masterList['countryList'] = res.status==200 ? res.data : [];
+      this.masterList['countryList'] = res.status=='ok' ? res.data : [];
 
     });
 
@@ -65,7 +65,7 @@ export class AddressDetailsComponent {
 
     this.service.getService({ "url": `/master/countries/${this.f.country.value}/states` }).subscribe((res: any) => {
 
-      this.masterList['stateList'] = res.status == 200 ? res.data : [];
+      this.masterList['stateList'] = res.status=='ok' ? res.data : [];
 
     });
 
@@ -84,7 +84,7 @@ export class AddressDetailsComponent {
 
     this.service.getService({ "url": `/master/${fieldName == 'country' ? 'countries' : 'states' }/${this.f[fieldName].value}/cities` }).subscribe((res: any) => {
 
-      this.masterList['cityList'] = res.status == 200 ? res.data : [];
+      this.masterList['cityList'] = res.status=='ok' ? res.data : [];
 
     });
 
@@ -96,7 +96,7 @@ export class AddressDetailsComponent {
 
     this.service.getService({ "url": `/master/cities/${this.f.city.value}/areas` }).subscribe((res: any) => {
 
-      this.masterList['areaList'] = res.status == 200 ? res.data : [];
+      this.masterList['areaList'] = res.status=='ok' ? res.data : [];
 
     });
 
@@ -244,7 +244,7 @@ export class AddressDetailsComponent {
 
     this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
-      if(res.status==200) {
+      if(res.status=='ok') {
 
         this.service.showToastr({ "data": { "message": "Address Details Updated Successfully", "type": "success" } });        
 

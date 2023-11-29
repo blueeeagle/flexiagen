@@ -102,7 +102,7 @@
 
                 <div class="input-group-prepend me-1">
 
-                    <ng-select formControlName="dialingCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialingCode.touched) && f.dialingCode.errors }">
+                    <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialCode.touched) && f.dialCode.errors }">
 
                         <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.id">
                             
