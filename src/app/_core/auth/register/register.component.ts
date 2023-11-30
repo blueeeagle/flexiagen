@@ -118,7 +118,7 @@ export class RegisterComponent {
 
     },(err: any)=>{
 
-      if(err.status == 409) {
+      if(err.status == 403) {
         
         this.service.navigate({ "url": '/auth/login' });
 

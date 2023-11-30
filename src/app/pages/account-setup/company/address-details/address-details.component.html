@@ -61,11 +61,11 @@
     
                                 <div class="form-group">
 
-                                    <label for="country">Country</label>
+                                    <label for="countryId">Country</label>
 
-                                    <ng-select formControlName="country" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.country?.touched) && f.country?.errors }">
+                                    <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.countryId?.touched) && f.countryId?.errors }">
 
-                                        <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">
+                                        <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
                                             
                                             {{ countryDet.title | uppercase }}
                                     
@@ -73,9 +73,9 @@
 
                                     </ng-select>
         
-                                    <div *ngIf="(formSubmitted || f.country?.touched) && f.country?.errors" class="invalid-feedback">
+                                    <div *ngIf="(formSubmitted || f.countryId?.touched) && f.countryId?.errors" class="invalid-feedback">
         
-                                        <div *ngIf="f.country.errors.required">Country is required</div>
+                                        <div *ngIf="f.countryId.errors.required">Country is required</div>
         
                                     </div>
         
@@ -87,17 +87,17 @@
     
                                 <div class="form-group">
 
-                                    <label for="state">State</label>
+                                    <label for="stateId">State</label>
 
-                                    <ng-select formControlName="state" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.state.touched) && f.state?.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+                                    <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.stateId.touched) && f.stateId?.errors }" [readonly]="_.size(masterList['stateList']) == 0">
 
-                                        <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</ng-option>
+                                        <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.title | uppercase }}</ng-option>
 
                                     </ng-select>
         
-                                    <div *ngIf="(formSubmitted || f.state.touched) && f.state.errors" class="invalid-feedback">
+                                    <div *ngIf="(formSubmitted || f.stateId.touched) && f.stateId.errors" class="invalid-feedback">
         
-                                        <div *ngIf="f.state.errors.required">State is required</div>
+                                        <div *ngIf="f.stateId.errors.required">State is required</div>
         
                                     </div>
         
@@ -109,17 +109,17 @@
     
                                 <div class="form-group">
 
-                                    <label for="city">City</label>
+                                    <label for="cityId">City</label>
 
-                                    <ng-select formControlName="city" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.city.touched) && f.city?.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+                                    <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.cityId.touched) && f.cityId?.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
 
-                                        <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</ng-option>
+                                        <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.title | uppercase }}</ng-option>
 
                                     </ng-select>
         
-                                    <div *ngIf="(formSubmitted || f.city.touched) && f.city.errors" class="invalid-feedback">
+                                    <div *ngIf="(formSubmitted || f.cityId.touched) && f.cityId.errors" class="invalid-feedback">
         
-                                        <div *ngIf="f.city.errors.required">City is required</div>
+                                        <div *ngIf="f.cityId.errors.required">City is required</div>
         
                                     </div>
         
@@ -131,18 +131,18 @@
     
                                 <div class="form-group">
 
-                                    <label for="area">Area</label>
+                                    <label for="areaId">Area</label>
 
-                                    <ng-select formControlName="area" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.area?.touched) && f.area?.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+                                    <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.areaId?.touched) && f.areaId?.errors }" [readonly]="_.size(masterList['areaList']) == 0">
 
-                                        <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</ng-option>
+                                        <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.title | uppercase }}</ng-option>
 
                                     </ng-select>                                        
         
         
-                                    <div *ngIf="(formSubmitted || f.area?.touched) && f.area.errors" class="invalid-feedback">
+                                    <div *ngIf="(formSubmitted || f.areaId?.touched) && f.areaId.errors" class="invalid-feedback">
         
-                                        <div *ngIf="f.area.errors.required">Area is required</div>
+                                        <div *ngIf="f.areaId.errors.required">Area is required</div>
         
                                     </div>
         

@@ -104,7 +104,7 @@
 
                     <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialCode.touched) && f.dialCode.errors }">
 
-                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet.id">
+                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet._id">
                             
                             <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['ISO3666Code'] }}.svg"/> {{ countryDet.teleCode }}
                     
@@ -136,7 +136,7 @@
                     
                     <ng-select formControlName="role" [clearable]="false" placeholder="Select Role" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.role.touched) && f.role?.errors }">
                     
-                        <ng-option *ngFor="let roleDet of masterList['roleList']" [value]="roleDet.id">{{ roleDet.title | uppercase }}</ng-option>
+                        <ng-option *ngFor="let roleDet of masterList['roleList']" [value]="roleDet._id">{{ roleDet.title | uppercase }}</ng-option>
                     
                     </ng-select>
                     

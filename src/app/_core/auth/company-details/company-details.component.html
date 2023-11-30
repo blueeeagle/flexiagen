@@ -55,131 +55,136 @@
                                 </div>
     
                             </div>   
-    
-                            <div class="form-group">
-    
-                                <label for="address1" class="fw-600">Address</label>
-    
-                                <input type="text" class="form-control" id="address1" formControlName="address1" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.address1.touched) && f.address1.errors }">
-    
-                                <div *ngIf="(formSubmitted || f.address1.touched) && f.address1.errors" class="invalid-feedback">
-    
-                                    <div *ngIf="f.address1.errors.required">address1 is required</div>
-    
-                                </div>
-    
-                            </div>                                          
-                            
-                            <div class="row">                            
-    
-                                <div class="col-md-6 pe-2 pe-md-1">
-    
-                                    <div class="form-group">
-    
-                                        <label for="country" class="fw-600">Country</label>
 
-                                        <ng-select formControlName="country" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.country.touched) && f.country.errors }">
-
-                                            <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet.id">
-                                                
-                                                {{ countryDet.title | uppercase }}
-                                        
-                                            </ng-option>
-    
-                                        </ng-select>
-            
-                                        <div *ngIf="(formSubmitted || f.country.touched) && f.country.errors" class="invalid-feedback">
-            
-                                            <div *ngIf="f.country.errors.required">Country is required</div>
-            
-                                        </div>
-            
-                                    </div>
-    
-                                </div>
-
-                                <div class="col-md-6 ps-2 ps-md-1">
-    
-                                    <div class="form-group">
-    
-                                        <label for="state" class="fw-600">State</label>
-
-                                        <ng-select formControlName="state" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.state.touched) && f.state.errors }" [readonly]="_.size(masterList['stateList']) == 0">
-
-                                            <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet.id">{{ stateDet.title | uppercase }}</ng-option>
-    
-                                        </ng-select>
-            
-                                        <div *ngIf="(formSubmitted || f.state.touched) && f.state.errors" class="invalid-feedback">
-            
-                                            <div *ngIf="f.state.errors.required">State is required</div>
-            
-                                        </div>
-            
-                                    </div>
-    
-                                </div>
+                            <ng-container [formGroup]="f.addressDetails">
                                 
-                                <div class="col-md-6 pe-2 pe-md-1">
-    
-                                    <div class="form-group">
-    
-                                        <label for="city" class="fw-600">City</label>
+                                <div class="form-group">
+        
+                                    <label for="addressLine1" class="fw-600">Address</label>
+        
+                                    <input type="text" class="form-control" id="addressLine1" formControlName="addressLine1" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || af.addressLine1.touched) && af.addressLine1.errors }">
+        
+                                    <div *ngIf="(formSubmitted || af.addressLine1.touched) && af.addressLine1.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="af.addressLine1.errors.required">addressLine1 is required</div>
+        
+                                    </div>
+        
+                                </div>                                          
+                                
+                                <div class="row">                            
+        
+                                    <div class="col-md-6 pe-2 pe-md-1">
+        
+                                        <div class="form-group">
+        
+                                            <label for="countryId" class="fw-600">Country</label>
 
-                                        <ng-select formControlName="city" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.city.touched) && f.city.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+                                            <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.countryId.touched) && af.countryId.errors }">
 
-                                            <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet.id">{{ cityDet.title | uppercase }}</ng-option>
-    
-                                        </ng-select>
-            
-                                        <div *ngIf="(formSubmitted || f.city.touched) && f.city.errors" class="invalid-feedback">
-            
-                                            <div *ngIf="f.city.errors.required">City is required</div>
-            
+                                                <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
+                                                    
+                                                    {{ countryDet.name | uppercase }}
+                                            
+                                                </ng-option>
+        
+                                            </ng-select>
+                
+                                            <div *ngIf="(formSubmitted || af.countryId.touched) && af.countryId.errors" class="invalid-feedback">
+                
+                                                <div *ngIf="af.countryId.errors.required">Country is required</div>
+                
+                                            </div>
+                
                                         </div>
-            
-                                    </div>                                
-    
-                                </div>                                
-    
-                                <div class="col-md-6 ps-2 ps-md-1">
-    
-                                    <div class="form-group">
-    
-                                        <label for="area" class="fw-600">Area</label>
+        
+                                    </div>
 
-                                        <ng-select formControlName="area" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.area.touched) && f.area.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+                                    <div class="col-md-6 ps-2 ps-md-1">
+        
+                                        <div class="form-group">
+        
+                                            <label for="stateId" class="fw-600">State</label>
 
-                                            <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet.id">{{ areaDet.title | uppercase }}</ng-option>
-    
-                                        </ng-select>                                        
-            
-            
-                                        <div *ngIf="(formSubmitted || f.area.touched) && f.area.errors" class="invalid-feedback">
-            
-                                            <div *ngIf="f.area.errors.required">Area is required</div>
-            
+                                            <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.stateId.touched) && af.stateId.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+
+                                                <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.name | uppercase }}</ng-option>
+        
+                                            </ng-select>
+                
+                                            <div *ngIf="(formSubmitted || af.stateId.touched) && af.stateId.errors" class="invalid-feedback">
+                
+                                                <div *ngIf="af.stateId.errors.required">State is required</div>
+                
+                                            </div>
+                
                                         </div>
-            
+        
+                                    </div>
+                                    
+                                    <div class="col-md-6 pe-2 pe-md-1">
+        
+                                        <div class="form-group">
+        
+                                            <label for="cityId" class="fw-600">City</label>
+
+                                            <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.cityId.touched) && af.cityId.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+
+                                                <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.name | uppercase }}</ng-option>
+        
+                                            </ng-select>
+                
+                                            <div *ngIf="(formSubmitted || af.cityId.touched) && af.cityId.errors" class="invalid-feedback">
+                
+                                                <div *ngIf="af.cityId.errors.required">City is required</div>
+                
+                                            </div>
+                
+                                        </div>                                
+        
                                     </div>                                
-    
-                                </div>                                
-    
-                            </div>        
+        
+                                    <div class="col-md-6 ps-2 ps-md-1">
+        
+                                        <div class="form-group">
+        
+                                            <label for="areaId" class="fw-600">Area</label>
+
+                                            <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.areaId.touched) && af.areaId.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+
+                                                <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.name | uppercase }}</ng-option>
+        
+                                            </ng-select>                                        
+                
+                
+                                            <div *ngIf="(formSubmitted || af.areaId.touched) && af.areaId.errors" class="invalid-feedback">
+                
+                                                <div *ngIf="af.areaId.errors.required">Area is required</div>
+                
+                                            </div>
+                
+                                        </div>                                
+        
+                                    </div>                                
+        
+                                </div>        
+                                
+                                <div class="form-group">
+        
+                                    <label for="zipcode" class="fw-600">Zip Code</label>
+        
+                                    <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || af.zipcode.touched) && af.zipcode.errors }">
+        
+                                    <div *ngIf="(formSubmitted || af.zipcode.touched) && af.zipcode.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="af.zipcode.errors.required">Zipcode is required</div>
+        
+                                    </div>
+        
+                                </div>                            
+
+                            </ng-container>
                             
-                            <div class="form-group">
-    
-                                <label for="zipcode" class="fw-600">Zip Code</label>
-    
-                                <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.zipcode.touched) && f.zipcode.errors }">
-    
-                                <div *ngIf="(formSubmitted || f.zipcode.touched) && f.zipcode.errors" class="invalid-feedback">
-    
-                                    <div *ngIf="f.zipcode.errors.required">Zipcode is required</div>
-    
-                                </div>
-    
-                            </div>                            
                             
                             <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && companyForm.invalid" (click)="showCompanyDetails()" >Preview Details</button>
     
@@ -195,13 +200,13 @@
 
                                 <h5 class="fw-600 text-primary">Company Information</h5> 
 
-                                <div class="d-flex mt-2" *ngIf="companyForm.value as formValue">
+                                <div class="d-flex mt-2" *ngIf="f.addressDetails.value as formValue">
 
                                     <i class="bx bx-map fs-4 mt-1 me-2"></i>
 
                                     <p class="mb-0">
 
-                                        {{ formValue.address1 }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
+                                        {{ formValue.addressLine1 }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
                                         
                                         {{ formValue.stateName }}, {{ formValue.countryName }} - {{ formValue.zipcode }}
 
@@ -253,7 +258,7 @@
 
                                     <div class="bg-light border border-1 ms-2 p-1" *ngIf="!_.isEmpty(appServiceChargeDet)">
                                         
-                                    {{ appServiceChargeDet?.platformOnlineCharge + (appServiceChargeDet?.platformOnlineChargeType == 'percentage' ? '%' : '') || '' }} Charge
+                                    {{ appServiceChargeDet.online }} Charge
                                     
                                     </div>
 
@@ -267,7 +272,7 @@
 
                                     <div class="bg-light border border-1 ms-2 p-1"  *ngIf="!_.isEmpty(appServiceChargeDet)">
                                         
-                                        {{ appServiceChargeDet?.platformLogisticCharge + (appServiceChargeDet?.platformLogisticChargeType == 'percentage' ? '%' : '') || '' }} Charge
+                                        {{ appServiceChargeDet.logistics }} Charge
                                     
                                     </div>
 
@@ -281,7 +286,7 @@
 
                                 <div class="d-flex align-items-center flex-wrap">
 
-                                    <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet?.POSSubscriptionCharge || 0 | number: '1.3-3'}} BHD</h4>
+                                    <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet.pos }}</h4>
 
                                     <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
 

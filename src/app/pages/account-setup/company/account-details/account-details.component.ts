@@ -55,7 +55,7 @@ export class AccountDetailsComponent {
 
     let payload: any = _.pick(this.accountDetailsFrom.value,['confirmPassword']);
 
-    this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 

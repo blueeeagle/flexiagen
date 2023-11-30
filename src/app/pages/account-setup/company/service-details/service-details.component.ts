@@ -53,7 +53,7 @@ export class ServiceDetailsComponent {
 
     this.isLoading = true;
 
-    this.service.postService({ "url": `/users/update/${this.service.userDetails.id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
