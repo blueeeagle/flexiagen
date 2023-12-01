@@ -3,12 +3,12 @@
     <div class="d-flex justify-content-between mb-4">
 
         <div class="page-header">Location</div>
-
+    
         <div class="text-end">
 
-            <button class="btn btn-outline-primary bi bi-sliders"> 
+            <button class="btn btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
             
-                <span class="ms-3" >Filter</span>
+                <span class="ms-3" >Add New</span>
             
             </button>
 
@@ -20,67 +20,11 @@
 
         <div class="card-body">
 
-            <div class="row">
+            <div class="table-responsive">
 
-                <div class="col-xxl-4 col-xl-4 col-md-6">
+                <div class="table table-borderless">
 
-                    <div class="input-group">
-
-                            <span class="input-group-text ps-3 pe-3">
-
-                                <i class="bi bi-search"></i>
-
-                            </span>
-
-                        <input type="text" class="form-control" placeholder="search for location by name">
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="mt-3">
-
-                <div class="row mt-3 border pt-3 pb-1" *ngFor="let locationDet of location">
-
-                    <div class="col-xxl-2 col-xl-2 col-md-2 ">
-
-                        <p> <span class="fw-600"> {{ locationDet.areaName }} </span><br> {{ locationDet.name }}  </p>
-
-                    </div>
-
-                    <div class="col-xxl-3 col-xl-3 col-md-2">
-
-                        <p> <span class="fw-600"> {{ locationDet.minOrderAmt }} </span><br> Min Order Amount</p>
-
-                    </div>
-
-                    <div class="col-xxl-2 col-xl-2 col-md-2">
-
-                        <p> <span class="fw-600"> {{ locationDet.deliveryCharge }} </span><br> {{ locationDet.freeDes }}  </p>
-
-                    </div>
-
-                    <div class="col-xxl-3 col-xl-3 col-md-4 mt-3 d-flex">
-
-                        <p> {{ locationDet.service }} </p>
-
-                        <div class="form-check form-switch mx-xl-0 px-xl-0 mx-md-0 mx-xd-0">
-                            
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-xxl-2 col-xl-2 col-md-2 mt-2 text-end ">
-
-                        <div class="btn btn-block btn-sm btn-outline-primary" (click)="openAsideBar(locationDet)"> {{ locationDet.button }} </div>
-
-                    </div>
-
-                </div>
+                </div>      
 
             </div>
 
@@ -92,115 +36,75 @@
 
 <asidebar [openCanvas]="openCanvas" title="Delivery Charges" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false">
 
+    <div [formGroup]="locationForm">
 
-        <div [formGroup]="filterForm">
+        <div class="form-group mt-3">
 
-            <div>
-
-                <p class="text-secondary">Location Info</p>
-
-                <div class="col-md-12 py-2 px-3 fs-6" style="background-color: #EBF5F7;">
-
-                    <p class="my-0 py-0">{{ editData?.areaName }} </p>
-
-                    <small>{{ editData?.name }} </small>
-
-                </div>
-
-            </div>
-
-            <div>
-
-                <div class="form-group mt-3">
-
-                    <small class="mt-2">MIN ORDER AMOUNT</small>
-
-                    <div class="input-group mb-3 mt-2">
-
-                        <input type="text" class="form-control form-control-lg" formControlName="minOrderAmt" placeholder="ENTER AMOUNT" aria-label="Recipient's username" 
-
-                        aria-describedby="basic-addon2">
-
-                        <span class="input-group-text text-center text-primary px-lg-5  px-xxl-5" style="background-color:  #D2DAE9;;" id="basic-addon2">BHD</span>
-
-                        </div>
-
-                </div>
-
-                <div>
-
-                    <small> DELIVERY CHARGES </small>
-
-                    <div class="row justify-content-center align-items-center mt-2">
-
-                        <div class="col-sm-6">
-
-                            <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.deliveryCharge?.value == 'FREE' }" (click)="f.deliveryCharge?.setValue('FREE')"> 
-                                
-                               Free 
-                            
-                            </button>
-
-                        </div>
-
-                        <div class="col-sm-6 mt-3 mt-sm-0">
-
-                            <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.deliveryCharge?.value == 'PAID' }" (click)="f.deliveryCharge?.setValue('PAID')"> 
-                                
-                                Paid 
-                            
-                            </button>
-
-                        </div>
-
-                    </div>
-    
-                    <!-- <div class="row justify-content-center align-items-center">
-
-                        <div class="col-sm-6">
-
-                            <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.pos.value }" (click)="f.pos.setValue(!f.pos.value)"> 
-                                
-                                <span> <i class="bi bi-printer fs-4 me-2 mt-2"></i> </span>  POS 
-                            
-                            </button>
-                            
-                        </div>
-
-                        <div class="col-sm-6 mt-3 mt-sm-0">
-
-                            <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.online.value }" (click)="f.online.setValue(!f.online.value)"> 
-                                
-                                <span> <i class="bi  bi-compass fs-4 me-2 mt-2"></i> </span> online 
-                            
-                            </button>
-
-                        </div>
-
-                    </div> -->
-
-                </div>
-
-                <div class="form-group mt-3">
-
-                    <small class="mt-2">DELIVERY AMOUNT</small>
-
-                    <div class="input-group mb-3 mt-2">
-
-                        <input type="text" class="form-control form-control-lg" formControlName="deliveryAmt" placeholder="DELIVERY CHARGES" aria-label="Recipient's username" 
-
-                        aria-describedby="basic-addon2">
-
-                        <span class="input-group-text text-center text-primary px-lg-5  px-xxl-5" style="background-color:  #D2DAE9;;" id="basic-addon2">BHD</span>
-
-                        </div>
-
-                </div>
-
-            </div>
-
+            <p class="text-secondary">Location Info</p>
 
         </div>
+
+        <div class="form-group mt-3">
+
+            <small class="mt-2">MIN ORDER AMOUNT</small>
+
+            <div class="input-group mb-3 mt-2">
+
+                <input type="text" class="form-control form-control-lg text-end" formControlName="minOrderAmt" placeholder="ENTER AMOUNT" aria-label="Recipient's username" 
+
+                aria-describedby="basic-addon2">
+
+                <span class="input-group-text text-center text-primary px-lg-5  px-xxl-5" style="background-color:  #D2DAE9;;" id="basic-addon2">BHD</span>
+
+                </div>
+
+        </div>
+
+        <div class="form-group mt-3">
+
+            <small> DELIVERY CHARGES </small>
+
+            <div class="row justify-content-center align-items-center mt-2">
+
+                <div class="col-sm-6">
+
+                    <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.isFreeDelivery?.value }" (click)="f.deliveryCharge?.setValue(true)"> 
+                        
+                        Free 
+                    
+                    </button>
+
+                </div>
+
+                <div class="col-sm-6 mt-3 mt-sm-0">
+
+                    <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': !f.isFreeDelivery?.value }" (click)="f.deliveryCharge?.setValue(false)"> 
+                        
+                        Paid 
+                    
+                    </button>
+
+                </div>
+
+            </div>
+                    
+        </div>
+    
+        <div class="form-group mt-3">
+
+            <small class="mt-2">DELIVERY AMOUNT</small>
+
+            <div class="input-group mb-3 mt-2">
+
+                <input type="text" class="form-control form-control-lg text-end" formControlName="deliveryCharge" placeholder="DELIVERY CHARGES">
+
+                <span class="input-group-text text-center text-primary px-lg-5  px-xxl-5" style="background-color:  #D2DAE9;;" id="basic-addon2">BHD</span>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </asidebar>
     

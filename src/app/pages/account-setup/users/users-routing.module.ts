@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: "all-users",
-    loadChildren: () => import('./all-users/all-users.module').then(m=>m.AllUsersModule)
+    loadChildren: () => import('./users-list/users-list.module').then(m=>m.UsersListModule)
   },
   {
     path: "permission-details",

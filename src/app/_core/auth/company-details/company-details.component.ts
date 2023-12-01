@@ -275,8 +275,6 @@ export class CompanyDetailsComponent {
 
     payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
 
-    console.log(payload);
-
     this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
 
       if(res.status=='ok') {
@@ -287,7 +285,7 @@ export class CompanyDetailsComponent {
 
         this.service.companyDetails = _.omit(res.data,['agentId']);
 
-        this.service.session({ 'method': 'set', 'key': 'CompanyDetails', 'value': JSON.stringify(this.service.companyDetails) });
+        this.service.session({ "method": "set", "key": "CompanyId", "value": this.service.companyDetails._id });
 
         this.service.navigate({ 'url': '/pages/dashboard' });
 

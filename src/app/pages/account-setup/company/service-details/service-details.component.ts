@@ -12,10 +12,11 @@ export class ServiceDetailsComponent {
 
   serviceDetailsFrom: FormGroup = new FormGroup({});
   isLoading: boolean = false;
+  userSubscribe: any;
 
 	constructor(private service: CommonService, private cdr: ChangeDetectorRef) {
 
-    this.service.userDetailsObs.subscribe((value)=>{
+    this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 
       if(!_.isEmpty(value)) this.loadForm();
       
@@ -53,7 +54,7 @@ export class ServiceDetailsComponent {
 
     this.isLoading = true;
 
-    this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.patchService({ "url": `/me/serviceDetails`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -61,18 +62,22 @@ export class ServiceDetailsComponent {
 
         this.isLoading = false;
 
-        this.service.getUserDetails.subscribe((userRes: any) => {
+        this.service.userDetails = _.omit(res.data,'companyId');
 
-          this.service.userDetails = userRes.data;
+        this.service.companyDetails = _.get(res.data,'companyId');
 
-          this.service.userDetailsObs.next(userRes.data);
-
-        });
+        this.service.userDetailsObs.next(res.data);
 
       }
 
     });
 
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
   }
 
 }

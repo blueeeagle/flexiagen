@@ -12,10 +12,11 @@ export class CompanyDetailsComponent {
   companyDetailsFrom: FormGroup = new FormGroup({});
   formSubmitted: boolean = false;
   isLoading: boolean = false;
+  userSubscribe: any;
 
 	constructor(private service: CommonService) {
 
-    this.service.userDetailsObs.subscribe((value)=>{
+    this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 
       if(!_.isEmpty(value)) this.loadForm();
       
@@ -35,25 +36,39 @@ export class CompanyDetailsComponent {
 
     this.companyDetailsFrom = this.service.fb.group({
 
-      'companyName': [ this.service.userDetails?.companyName || '', Validators.required ],
+      'companyName': [ this.service.companyDetails?.companyName || '', Validators.required ],
 
-      'ownerName': [ this.service.userDetails?.ownerName || '', Validators.required ],
+      'ownerName': [ this.service.companyDetails?.ownerName || '', Validators.required ],
 
-      'haveTax': [ this.service.userDetails?.haveTax || false, Validators.required ],
+      'haveTax': [ this.service.companyDetails?.haveTax || false ],
 
-      'taxationNumber': [ this.service.userDetails?.taxationNumber || '', Validators.required ],
+      'taxationNumber': [ 
+        
+        { 'value': this.service.companyDetails?.taxationNumber || '', disabled: !this.service.companyDetails?.haveTax },
+        
+        this.service.companyDetails?.haveTax ? [Validators.required] : [] 
+      
+      ],
 
-      'companyLogo': [ this.service.userDetails?.companyLogo ],
+      'companyLogo': [ this.service.companyDetails?.companyLogo ],
 
     });
 
     this.f.haveTax?.valueChanges.subscribe((value: boolean) => {
 
+      this.f.taxationNumber.enable();
+
       this.f.taxationNumber.setValue(value ? this.service.userDetails?.taxationNumber : '');
 
       if(value) this.f.taxationNumber.setValidators([Validators.required]);
 
-      else this.f.taxationNumber.clearValidators();
+      else {
+        
+        this.f.taxationNumber.clearValidators();
+
+        this.f.taxationNumber.disable();
+
+      }
 
       this.f.taxationNumber.updateValueAndValidity();
 
@@ -77,7 +92,7 @@ export class CompanyDetailsComponent {
 
     this.isLoading = true;
 
-    this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.patchService({ "url": `/app/company/details/${this.service.companyDetails._id}`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -87,18 +102,28 @@ export class CompanyDetailsComponent {
 
         this.formSubmitted = false;
 
-        this.service.getUserDetails.subscribe((userRes: any) => {
+        this.service.companyDetails = _.omit(res.data,'agentId');
 
-          this.service.userDetails = userRes.data;
+        this.service.userDetails = _.get(res.data,'agentId');
 
-          this.service.userDetailsObs.next(userRes.data);
-
-        });
+        this.service.userDetailsObs.next(res.data);
 
       }
+
+    },(err: any) => {
+
+      this.isLoading = false;
+      
+      this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
 
     });
 
   }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
+  }  
 
 }

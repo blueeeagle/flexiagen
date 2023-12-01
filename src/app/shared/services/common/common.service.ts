@@ -24,13 +24,35 @@ export class CommonService {
   public userDetailsObs = new Subject();
   public imgBasePath = APP_CONFIG.imgBasePath;
 
-  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {}
+  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {
+
+    if(this.session({ "method": "get", "key": "AuthToken" })) { setTimeout(()=>{ this.updateUserDetails(); },100) }
+
+  }
+
+  updateUserDetails() {
+
+    this.getUserDetails.subscribe((res: any) => {
+    
+      if(res.status=='ok') {
+
+        this.userDetails = _.omit(res.data,'companyId');
+
+        this.companyDetails = res.data.companyId;
+
+        this.userDetailsObs.next(this.userDetails);
+
+      }
+
+    });
+
+  }
 
   get getUserDetails(): any {
 
     this.userDetails = {};
 
-    return this.getService({ "url": "/users/me" });
+    return this.getService({ "url": "/me" });
 
   }
 
@@ -150,11 +172,7 @@ export class CommonService {
 
   }
 
-  goBack() {
-
-    window.history.back();
-
-  }
+  goBack() { window.history.back(); }
 
   logout() {
 

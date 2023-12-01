@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { CommonService } from '@shared/services/common/common.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-location',
@@ -8,103 +9,57 @@ import { CommonService } from '@shared/services/common/common.service';
   styleUrls: ['./location.component.scss']
 })
 export class LocationComponent {
-
-  constructor(public service: CommonService) { 
-
-    this.loadForm()
-
-  }
-
+  
   openCanvas: boolean = false;
   editData : any = {}
   formSubmitted: boolean = false;
   locationFrom: FormGroup = new FormGroup({});
-  filterForm: FormGroup = new FormGroup({});
+  locationForm: FormGroup = new FormGroup({});
 
-  location = [
+  location = [];
 
-    { 
-      "areaName": "Area Name 1", 
-      "name": "Hamala > Zallaq",
-      "minOrderAmt" : "3.000",
-      "bhdDes" : "Min Order Amount",
-      "deliveryCharge" : "Free",
-      "freeDes" : "Delivery Charges",
-      "service" : " Service Available",
-      "button" : "Update Changes"
-    },
+  constructor(public service: CommonService) { 
 
-    { 
-      "areaName": "Area Name 2", 
-      "name": "Manama > Galali",
-      "minOrderAmt" : "3.000",
-      "bhdDes" : "Min Order Amount",
-      "deliveryCharge" : "Free",
-      "freeDes" : "Delivery Charges",
-      "service" : " Service Available",
-      "button" : "Update Changes"
-    },
+    this.loadForm();
 
-    { 
-      "areaName": "Area Name 3", 
-      "name": "Isa Town > Sitra",
-      "minOrderAmt" : "3.000",
-      "deliveryCharge" : "Free",
-      "freeDes" : "Delivery Charges",
-      "service" : " Service Available",
-      "button" : "Update Changes"
-    },
+    this.service.userDetailsObs.subscribe((value)=>{
 
-    { 
-      "areaName": "Area Name 4", 
-      "name": "Askar > Jaww",
-      "minOrderAmt" : "3.000",
-      "deliveryCharge" : "Free",
-      "freeDes" : "Delivery Charges",
-      "service" : " Service Available",
-      "button" : "Update Changes"
-    },
-    { 
-      "areaName": "Area Name 5", 
-      "name": "Saar > Budaiya",
-      "minOrderAmt" : "3.000",
-      "deliveryCharge" : "Free",
-      "freeDes" : "Delivery Charges",
-      "service" : " Service Available",
-      "button" : "Update Changes"
-    },
-    
-  ];
+      if(_.isEmpty(value)) this.loadForm();
+
+    })
+
+  }
 
   loadForm() {
 
     this.formSubmitted = false;
 
-    this.filterForm = this.service.fb.group({
+    this.locationForm = this.service.fb.group({
+
+      "agentId": this.editData?.agentId?._id || this.service.userDetails?._id,
+
+      "companyId": this.editData?.companyId?._id || this.service.companyDetails?._id || 0,
+
+      "areaId": this.editData?.areaId?._id || [],
 
       "minOrderAmt" : this.editData?.minOrderAmt || 0,
 
-      "deliveryCharge":  this.editData?.deliveryCharge || 'FREE',
+      "isFreeDelivery":  this.editData?.isFreeDelivery || 'FREE',
 
-      "deliveryAmt":  this.editData?.deliveryAmt || 0,
+      "deliveryCharge":  this.editData?.deliveryCharge || 0,
     
     });
 
   }
 
-  openAsideBar(data : any){
+  openAsideBar(data?: any){
 
-    this.editData = data;
-
-    console.log(this.editData);
-    
+    this.editData = data || {};
 
     this.openCanvas = true
 
   }
-
-
   
-  get f(): any { return this.filterForm.controls }
+  get f(): any { return this.locationForm.controls }
 
 }

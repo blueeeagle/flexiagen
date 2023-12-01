@@ -60,8 +60,6 @@ export class LoginComponent {
 
         this.service.userDetails = _.omit(res.data.userDetails,['companyId']);
 
-        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
-
         this.isLoading = false;
 
         if(_.isEmpty(res.data.userDetails.companyId)) { // Check the user already created company details
@@ -79,9 +77,9 @@ export class LoginComponent {
         } else {
 
           this.service.companyDetails = res.data.userDetails.companyId;
- 
-          this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
 
+          this.service.session({ "method": "set", "key": "CompanyId", "value": this.service.companyDetails._id });
+ 
           this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
 
           this.service.navigate({ 'url': '/pages/dashboard' });

@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     
       return false;
 
-    } else if(!(this.service.session({ "method": "get", "key": "CompanyDetails" }))) {
+    } else if(!(this.service.session({ "method": "get", "key": "CompanyId" }))) {
 
       this.service.navigate({ "url": "/auth/company-details" });
     

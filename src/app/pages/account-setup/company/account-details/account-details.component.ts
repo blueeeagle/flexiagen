@@ -14,8 +14,17 @@ export class AccountDetailsComponent {
   formSubmitted: boolean = false;
   isLoading: boolean = false;
   _: any = _;
+  userSubscribe: any;
 
-	constructor(private service: CommonService) {}
+	constructor(private service: CommonService) {
+
+    this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
+
+      if(!_.isEmpty(value)) this.loadForm();
+      
+    });
+
+  }
 
 	ngOnInit() {
 
@@ -53,9 +62,9 @@ export class AccountDetailsComponent {
 
     this.isLoading = true;
 
-    let payload: any = _.pick(this.accountDetailsFrom.value,['confirmPassword']);
+    let payload: any = _.omit(this.accountDetailsFrom.value,['confirmPassword']);
 
-    this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.patchService({ "url": "/me/accountDetails", 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -67,18 +76,20 @@ export class AccountDetailsComponent {
 
         this.service.userDetails = _.omit(res.data,'companyId');
 
-        this.service.companyDetails = res.data.companyId;
+        this.service.companyDetails = _.get(res.data,'companyId');
 
-        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(res.data.companyId) });
-
-        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(_.omit(res.data,['companyId'])) });
-
-
+        this.service.userDetailsObs.next(this.service.userDetails);
 
       }
 
     });
 
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
   }
 
 }

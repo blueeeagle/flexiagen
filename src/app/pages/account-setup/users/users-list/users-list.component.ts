@@ -5,11 +5,12 @@ import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-all-users',
-  templateUrl: './all-users.component.html',
-  styleUrls: ['./all-users.component.scss']
+  selector: 'app-users-list',
+  templateUrl: './users-list.component.html',
+  styleUrls: ['./users-list.component.scss']
 })
-export class AllUsersComponent {
+export class UsersListComponent {
+
 
   openCanvas: boolean = false;
   formSubmitted: boolean = false;

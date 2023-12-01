@@ -21,10 +21,11 @@ export class AddressDetailsComponent {
   };
   showPreview: boolean = false;
   _: any = _;
+  userSubscribe: any;
 
   constructor(public service: CommonService) { 
 
-    this.service.userDetailsObs.subscribe((value)=>{
+    this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 
       if(!_.isEmpty(value)) this.loadForm();
       
@@ -49,7 +50,7 @@ export class AddressDetailsComponent {
 
     this.masterList['countryList'] = [];
 
-    this.service.getService({ "url": "/master/countries" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/address/countries" }).subscribe((res: any) => {
 
       this.masterList['countryList'] = res.status=='ok' ? res.data : [];
 
@@ -63,7 +64,7 @@ export class AddressDetailsComponent {
 
     this.masterList['stateList'] = [];
 
-    this.service.getService({ "url": `/master/countries/${this.f.countryId.value}/states` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/states/${this.f.countryId.value}` }).subscribe((res: any) => {
 
       this.masterList['stateList'] = res.status=='ok' ? res.data : [];
 
@@ -82,7 +83,7 @@ export class AddressDetailsComponent {
 
     this.masterList['cityList'] = [];
 
-    this.service.getService({ "url": `/master/${fieldName == 'countryId' ? 'countries' : 'states' }/${this.f[fieldName].value}/cities` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/cities/${fieldName == 'countryId' ? 'country' : 'state' }/${this.f[fieldName].value}` }).subscribe((res: any) => {
 
       this.masterList['cityList'] = res.status=='ok' ? res.data : [];
 
@@ -94,7 +95,7 @@ export class AddressDetailsComponent {
 
   getAreas() {
 
-    this.service.getService({ "url": `/master/cities/${this.f.cityId.value}/areas` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/areas/${this.f.cityId.value}` }).subscribe((res: any) => {
 
       this.masterList['areaList'] = res.status=='ok' ? res.data : [];
 
@@ -110,27 +111,27 @@ export class AddressDetailsComponent {
 
     this.addressDetailsFrom = this.service.fb.group({
 
-      'address1': [this.service.userDetails.address1 || '', [Validators.required]],
+      'addressLine1': [this.service.companyDetails?.addressDetails?.addressLine1 || '', [Validators.required]],
 
-      'address2': [this.service.userDetails.address2 || '', [Validators.required]],
+      'addressLine2': [this.service.companyDetails?.addressDetails?.addressLine2 || ''],
 
-      'areaId': [this.service.userDetails.areaId?._id || null, [Validators.required]],  
+      'areaId': [this.service.companyDetails?.addressDetails?.areaId?._id || null, [Validators.required]],  
       
-      'cityId': [this.service.userDetails.cityId?._id || null, [Validators.required]],
+      'cityId': [this.service.companyDetails?.addressDetails?.cityId?._id || null, [Validators.required]],
 
-      'stateId': [this.service.userDetails.stateId?._id || null],
+      'stateId': [this.service.companyDetails?.addressDetails?.stateId?._id || null],
 
-      'countryId': [this.service.userDetails.countryId?._id || null, [Validators.required]],
+      'countryId': [this.service.companyDetails?.addressDetails?.countryId?._id || null, [Validators.required]],
 
-      'zipcode': [this.service.userDetails.zipcode || null, [Validators.required]],
+      'zipcode': [this.service.companyDetails?.addressDetails?.zipcode || null, [Validators.required]],
 
     });
 
-    if(!_.isEmpty(this.service.userDetails)) {
+    if(!_.isEmpty(this.service.companyDetails?.addressDetails)) {
 
       this.getStates(); // Get States based on Country
   
-      this.getCities({ 'fieldName': 'stateId' }); // Get Cities based on State
+      this.getCities({ 'fieldName': this.f.stateId.value ? 'stateId' : 'countryId' }); // Get Cities based on State
 
       this.getAreas(); // Get Areas based on City
 
@@ -140,35 +141,13 @@ export class AddressDetailsComponent {
 
     this.addressDetailsFrom.controls['countryId'].valueChanges.subscribe((value: any) => {
 
-      this.masterList = {
-
-        ...this.masterList,
-
-        'stateList': [],
-
-        'cityList': [],
-
-        'areaList': []
-
-      };
+      this.masterList = { ...this.masterList, 'stateList': [], 'cityList': [], 'areaList': [] };
 
       let countryDet = _.find(this.masterList['countryList'], { '_id': value });
 
-      console.log(countryDet);
-      
-      this.addressDetailsFrom.patchValue({ 
-        
-        'cityId': null,
-        
-        'stateId': null,
-        
-        'areaId': null,
-        
-        'zipcode': null
-      
-      }, { emitEvent: false });
+      this.addressDetailsFrom.patchValue({ 'cityId': null, 'stateId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
 
-      if(countryDet.hasState == 1) {
+      if(countryDet.hasState) {
 
         this.addressDetailsFrom.controls['stateId'].setValidators([Validators.required]);
 
@@ -190,15 +169,7 @@ export class AddressDetailsComponent {
 
       this.masterList['areaList'] = []; // Reset Area List
 
-      this.addressDetailsFrom.patchValue({ 
-        
-        'cityId': null,
-        
-        'areaId': null,
-        
-        'zipcode': null 
-      
-      }, { emitEvent: false });
+      this.addressDetailsFrom.patchValue({ 'cityId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
 
     });
 
@@ -208,13 +179,7 @@ export class AddressDetailsComponent {
 
       this.getAreas(); // Get Areas based on City
 
-      this.addressDetailsFrom.patchValue({
-        
-        'areaId': null, 'areaName': '',
-        
-        'zipcode': null 
-      
-      });
+      this.addressDetailsFrom.patchValue({ 'areaId': null, 'zipcode': null });
 
     });
 
@@ -224,7 +189,7 @@ export class AddressDetailsComponent {
 
       this.addressDetailsFrom.patchValue({ 
         
-        'zipcode': null 
+        'zipcode': _.get(_.find(this.masterList['areaList'], { '_id': value }), 'zipCode', null) 
       
       });
 
@@ -244,19 +209,17 @@ export class AddressDetailsComponent {
 
     let payload: any = this.addressDetailsFrom.value;
 
-    this.service.postService({ "url": `/users/update/${this.service.userDetails._id}`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
+    this.service.patchService({ "url": `/app/company/addressDetails/${this.service.companyDetails._id}`, 'payload': payload}).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
         this.service.showToastr({ "data": { "message": "Address Details Updated Successfully", "type": "success" } });        
 
-        this.service.getUserDetails.subscribe((userRes: any) => {
+        this.service.companyDetails = _.omit(res.data,'agentId');
 
-          this.service.userDetails = userRes.data;
+        this.service.userDetails = _.get(res.data,'agentId');
 
-          this.service.userDetailsObs.next(userRes);
-
-        });
+        this.service.userDetailsObs.next(this.service.userDetails);
 
       }
 
@@ -272,6 +235,11 @@ export class AddressDetailsComponent {
 
   }
 
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
+  }
 
 }
 
