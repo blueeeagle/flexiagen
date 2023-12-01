@@ -26,7 +26,8 @@ import {
   PageTitleComponent,
   PaginationComponent,
   OffcanvasComponent,
-  SuccessModalComponent
+  SuccessModalComponent,
+  NgSelectComponent
 } from './components';
 
 import { ConfirmationDialogService } from './components/confirmation-dialog/confirmation.service';
@@ -66,7 +67,8 @@ export const MY_FORMATS = {
     PageTitleComponent,
     PaginationComponent,
     OffcanvasComponent,
-    SuccessModalComponent
+    SuccessModalComponent,
+    NgSelectComponent
   ],
   imports: [
     CommonModule,
@@ -99,7 +101,8 @@ export const MY_FORMATS = {
     PageTitleComponent,
     PaginationComponent,
     OffcanvasComponent,
-    SuccessModalComponent
+    SuccessModalComponent,
+    NgSelectComponent
   ],
   providers: [
     ConfirmationDialogService,

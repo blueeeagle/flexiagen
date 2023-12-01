@@ -307,6 +307,17 @@ ng-select.form-control {
 
 ////////////////////////// Login & Register Page Styles Ends //////////////////////////
 
+.opt-btn {
+    border: 2px solid #d1d1d1 !important;
+    color: #87888f !important;
+    box-shadow: none;
+}
+
+.opt-btn.active {
+    border-color: var(--bs-primary) !important;
+    color: #1E4894 !important;
+    background: #F3F5F9;
+}
 
 ///////////////////////// ng-select Styles Starts /////////////////////////
 
@@ -353,7 +364,8 @@ ng-select.form-control {
 
     .ng-select-container {
         min-width: 100px;
-        border: 2px solid #dee2e6
+        border: 2px solid #dee2e6;
+        min-height: 52px;
     }                    
 
     .ng-dropdown-panel {

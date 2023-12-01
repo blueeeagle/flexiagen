@@ -34,13 +34,32 @@
 
 </div>
 
-<asidebar [openCanvas]="openCanvas" title="Delivery Charges" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false">
+<asidebar [openCanvas]="openCanvas" title="{{mode}} Location" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false" (onSubmit)="submit()">
 
     <div [formGroup]="locationForm">
 
         <div class="form-group mt-3">
 
-            <p class="text-secondary">Location Info</p>
+            <small class="mt-2">LOCATION</small>
+
+            <custom-ng-select 
+                [multiple]="true"
+                [items]="masterList['areaList']"
+                bindLabel="item['name']"
+                bindValue="_id"
+                placeholder="SELECT LOCATIONS"
+                [searchable]="true"
+                [clearable]="false"
+                formControlField="areaId"
+                [from]="locationForm"                
+                [showError]="(formSubmitted || f.areaId.touched) && f.areaId?.errors"
+            ></custom-ng-select>
+
+            <div *ngIf="(formSubmitted || f.areaId.touched) && f.areaId?.errors" class="d-block invalid-feedback">
+
+                <div *ngIf="f.areaId?.errors?.required"> Location is required </div>
+
+            </div>
 
         </div>
 
@@ -50,13 +69,17 @@
 
             <div class="input-group mb-3 mt-2">
 
-                <input type="text" class="form-control form-control-lg text-end" formControlName="minOrderAmt" placeholder="ENTER AMOUNT" aria-label="Recipient's username" 
-
-                aria-describedby="basic-addon2">
+                <input type="text" class="form-control form-control-lg text-end" formControlName="minOrderAmt" placeholder="ENTER AMOUNT" [ngClass]="{ 'is-invalid': (formSubmitted || f.minOrderAmt.touched) && f.minOrderAmt?.errors }">
 
                 <span class="input-group-text text-center text-primary px-lg-5  px-xxl-5" style="background-color:  #D2DAE9;;" id="basic-addon2">BHD</span>
 
-                </div>
+            </div>
+
+            <div *ngIf="(formSubmitted || f.minOrderAmt.touched) && f.minOrderAmt?.errors" class="d-block invalid-feedback">
+
+                <div *ngIf="f.minOrderAmt?.errors?.required"> Min Order Amount is required </div>
+
+            </div>
 
         </div>
 
@@ -64,21 +87,21 @@
 
             <small> DELIVERY CHARGES </small>
 
-            <div class="row justify-content-center align-items-center mt-2">
+            <div class="row align-items-center mt-2">
 
-                <div class="col-sm-6">
+                <div class="col-md-4 col-sm-6">
 
-                    <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.isFreeDelivery?.value }" (click)="f.deliveryCharge?.setValue(true)"> 
+                    <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.isFreeDelivery?.value }" (click)="f.isFreeDelivery?.setValue(true)"> 
                         
                         Free 
                     
                     </button>
-
+                    
                 </div>
 
-                <div class="col-sm-6 mt-3 mt-sm-0">
+                <div class="col-md-4 col-sm-6 mt-3 mt-sm-0">
 
-                    <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': !f.isFreeDelivery?.value }" (click)="f.deliveryCharge?.setValue(false)"> 
+                    <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': !f.isFreeDelivery?.value }" (click)="f.isFreeDelivery?.setValue(false)"> 
                         
                         Paid 
                     
@@ -96,9 +119,15 @@
 
             <div class="input-group mb-3 mt-2">
 
-                <input type="text" class="form-control form-control-lg text-end" formControlName="deliveryCharge" placeholder="DELIVERY CHARGES">
+                <input type="text" class="form-control form-control-lg text-end" formControlName="deliveryCharge" placeholder="DELIVERY CHARGES" [ngClass]="{ 'is-invalid': (formSubmitted || f.deliveryCharge.touched) && f.deliveryCharge?.errors }">
 
                 <span class="input-group-text text-center text-primary px-lg-5  px-xxl-5" style="background-color:  #D2DAE9;;" id="basic-addon2">BHD</span>
+
+            </div>
+
+            <div *ngIf="(formSubmitted || f.deliveryCharge.touched) && f.deliveryCharge?.errors" class="d-block invalid-feedback">
+
+                <div *ngIf="f.deliveryCharge?.errors?.required"> Delivery Charge is required </div>
 
             </div>
 

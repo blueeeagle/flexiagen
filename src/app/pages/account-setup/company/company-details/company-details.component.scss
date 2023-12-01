@@ -1,4 +1,4 @@
-.upload-img{
+.upload-img {
     min-width: 210px;
     max-width: 250px;
     border-style: dotted !important;
@@ -7,15 +7,7 @@
 }
 
 .opt-btn {
-    border: 2px solid #d1d1d1;
-    color: #87888f !important;
-    box-shadow: none;
-
     &:hover {
         border-color: var(--bs-primary);
     }
-}
-
-.opt-btn.active {
-    border-color: var(--bs-primary) !important;
 }
