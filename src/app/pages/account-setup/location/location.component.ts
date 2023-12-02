@@ -93,9 +93,6 @@ export class LocationComponent {
     
     });
 
-    console.log(this.locationForm,this.editData?.areaId);
-    
-
   }
 
   openAsideBar(data?: any){
