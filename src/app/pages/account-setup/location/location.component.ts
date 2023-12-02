@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-locationForm',
@@ -9,6 +11,8 @@ import * as _ from 'lodash';
   styleUrls: ['./location.component.scss']
 })
 export class LocationComponent {
+
+  @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
   
   openCanvas: boolean = false;
   editData : any = {};
@@ -81,7 +85,7 @@ export class LocationComponent {
 
       "companyId": this.editData?.companyId || this.service.userDetails?.companyId || 0,
 
-      "areaId": [this.mode == 'Update' ? this.editData?.areaId?._id : null, [Validators.required]],
+      "areaId": [ this.mode == 'Update' ? this.editData?.areaId?._id : null, [Validators.required]],
 
       "minOrderAmt" : [this.editData?.minOrderAmt || null, [Validators.required]],
 
@@ -108,6 +112,22 @@ export class LocationComponent {
   
   get f(): any { return this.locationForm.controls }
 
+  updateLocation(data: any) {
+
+    this.service.patchService({ "url": `/setup/agentLocation/${data._id}`, "payload": { "is_active": data.is_active } }).subscribe((res: any) => {
+  
+      if(res.status=='ok') {
+
+        this.service.showToastr({ "data": { "message": `Location ${ data.is_active ? 'activated' : 'inactivated' } successfully!`, "type": "success" } });
+
+        this.locationList.splice(_.findIndex(this.locationList,{ "_id": res.data._id }), 1, res.data);
+
+      }
+
+    });
+
+  }
+
   submit() {
 
     this.formSubmitted = true;
@@ -118,21 +138,29 @@ export class LocationComponent {
     
     if(this.mode=='Create') payload = _.map(this.f.areaId.value,(value)=>{ return { ..._.omit(payload,'areaId'), "areaId": value }; });
 
-    const method = this.mode == 'Create' ? 
-    
-      this.service.postService({ "url": '/setup/agentLocations', "payload": payload }) : 
+    forkJoin({
+
+      "result": this.mode == 'Create' ? 
+
+          this.service.postService({ "url": '/setup/agentLocations', "payload": payload }) : 
       
-        this.service.patchService({ "url": '/setup/agentLocation' , "payload": payload });
+            this.service.patchService({ "url": `/setup/agentLocation/${this.editData._id}` , "payload": payload })
 
-    method.subscribe((res: any) => {
+    }).subscribe({
 
-      if(res.status=='ok') {
+      next: (res: any) => {
 
-        this.openCanvas = false;
+        if(res.result.status=='ok') {
 
-        this.loadForm();
+          this.canvas?.close();
 
-        this.getAgentLocations();
+          this.service.showToastr({ "data": { "message": `Location ${ this.mode == 'Create' ? 'created' : 'updated' } successfully!`, "type": "success" } });
+
+          this.getAgentLocations();
+
+          this.loadForm();
+
+        }
 
       }
 

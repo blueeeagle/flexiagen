@@ -70,7 +70,7 @@
     
                                 </label>
 
-                                <input class="form-check-input" type="checkbox" role="switch" id="logistics"  [(ngModel)]="location['is_active']">
+                                <input class="form-check-input" type="checkbox" role="switch" id="logistics"  [(ngModel)]="location['is_active']" (change)="updateLocation(location)" [ngModelOptions]="{standalone: true}">
 
                             </div>
 
@@ -96,32 +96,55 @@
 
 </div>
 
-<asidebar [openCanvas]="openCanvas" title="{{mode}} Location" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" title="{{mode}} Location" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false" (onSubmit)="submit()">
 
     <div [formGroup]="locationForm">
 
         <div class="form-group mt-3">
 
-            <small class="mt-2">LOCATION</small>
+            <ng-container *ngIf="mode == 'Create'"> 
 
-            <custom-ng-select 
-                [multiple]="mode == 'Create'"
-                [items]="masterList['areaList']"
-                bindLabel="item['name']"
-                bindValue="_id"
-                placeholder="SELECT LOCATIONS"
-                [searchable]="true"
-                [clearable]="false"
-                formControlField="areaId"
-                [from]="locationForm"                
-                [showError]="(formSubmitted || f.areaId.touched) && f.areaId?.errors"
-            ></custom-ng-select>
+                <small class="mt-2">LOCATION</small>                
 
-            <div *ngIf="(formSubmitted || f.areaId.touched) && f.areaId?.errors" class="d-block invalid-feedback">
+                <custom-ng-select 
+                    [value]="f.areaId?.value"
+                    [from]="locationForm"     
+                    formControlField="areaId"
+                    [multiple]="true"
+                    [items]="masterList['areaList']"
+                    bindLabel="item?.name"
+                    bindValue="_id"
+                    placeholder="SELECT LOCATIONS"
+                    [showError]="(formSubmitted || f.areaId.touched) && f.areaId?.errors"
+                ></custom-ng-select>                
 
-                <div *ngIf="f.areaId?.errors?.required"> Location is required </div>
+                <div *ngIf="(formSubmitted || f.areaId.touched) && f.areaId?.errors" class="d-block invalid-feedback">
 
-            </div>
+                    <div *ngIf="f.areaId?.errors?.required"> Location is required </div>
+    
+                </div>                
+
+            </ng-container>
+
+            <ng-container *ngIf="mode == 'Update'"> 
+
+                <small class="mb-1">LOCATION</small>
+
+                <div class="h5 fw-600">
+                    
+                    {{ editData.areaId.name }} 
+                    
+                    <span class="small mb-0 text-light fw-normal"> 
+
+                        <i class="bi bi-chevron-right small"></i>
+                        
+                        {{ editData?.areaId?.cityId?.name || '' }} 
+                    
+                    </span>
+                
+                </div>
+
+            </ng-container>
 
         </div>
 

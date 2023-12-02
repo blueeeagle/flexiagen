@@ -42,7 +42,7 @@ export class WorkingHoursComponent {
 
         this.wdf.push(this.getFormArray({ 'value': { day } }));
 
-        this.wdf.at(index).push(this.getFormArray({ 'type': 'workingHours' }));
+        this.whf(index).push(this.getFormArray({ 'type': 'workingHours' }));
         
       });
 

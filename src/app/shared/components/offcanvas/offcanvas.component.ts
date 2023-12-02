@@ -45,6 +45,8 @@ export class OffcanvasComponent implements OnInit {
 
     if(this.isCanvasOpen) this.offcanvas.show();
 
+    else this.offcanvas.hide();
+
   }
 
   get openCanvas(): boolean { return this.isCanvasOpen; }
@@ -65,7 +67,6 @@ export class OffcanvasComponent implements OnInit {
     });
 
   }
-
 
   close() {
     
