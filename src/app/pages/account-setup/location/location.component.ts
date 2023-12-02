@@ -79,8 +79,6 @@ export class LocationComponent {
 
     this.locationForm = this.service.fb.group({
 
-      "agentId": this.editData?.agentId?._id || this.service.userDetails?._id,
-
       "companyId": this.editData?.companyId || this.service.userDetails?.companyId || 0,
 
       "areaId": [this.mode == 'Update' ? this.editData?.areaId?._id : null, [Validators.required]],
