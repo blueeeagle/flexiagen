@@ -25,6 +25,8 @@ export class LocationComponent {
 
     this.loadForm();
 
+    this.getAgentLocations();
+
     if(!_.isEmpty(this.service.companyDetails)) this.getAreaList();
 
     this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
@@ -37,7 +39,23 @@ export class LocationComponent {
 
       }
 
-    })
+    });
+
+  }
+
+  getAgentLocations() {
+
+    this.locationList = [];
+
+    this.service.getService({ "url": `/setup/agentLocations` }).subscribe((res: any) => {
+
+      if(res.status=='ok') {
+
+        this.locationList = res.data || [];
+
+      }
+
+    });
 
   }
 
@@ -63,17 +81,20 @@ export class LocationComponent {
 
       "agentId": this.editData?.agentId?._id || this.service.userDetails?._id,
 
-      "companyId": this.editData?.companyId?._id || this.service.companyDetails?._id || 0,
+      "companyId": this.editData?.companyId || this.service.userDetails?.companyId || 0,
 
       "areaId": [this.mode == 'Update' ? this.editData?.areaId?._id : null, [Validators.required]],
 
       "minOrderAmt" : [this.editData?.minOrderAmt || null, [Validators.required]],
 
-      "isFreeDelivery":  this.editData?.isFreeDelivery || 'FREE',
+      "isFreeDelivery":  this.editData?.isFreeDelivery || false,
 
       "deliveryCharge":  [this.editData?.deliveryCharge || null, [Validators.required]],
     
     });
+
+    console.log(this.locationForm,this.editData?.areaId);
+    
 
   }
 
@@ -83,7 +104,10 @@ export class LocationComponent {
 
     this.mode = data ? 'Update' : 'Create';
 
-    this.openCanvas = true
+    this.loadForm();
+    
+    this.openCanvas = true;
+
 
   }
   
@@ -95,11 +119,29 @@ export class LocationComponent {
 
     if(this.locationForm.invalid) return;
 
-    let payload = this.locationForm.value;
+    let payload = _.cloneDeep(this.locationForm.value);
+    
+    if(this.mode=='Create') payload = _.map(this.f.areaId.value,(value)=>{ return { ..._.omit(payload,'areaId'), "areaId": value }; });
 
-    if(this.mode=='Create') payload = _.map(payload.areaId,(value)=>{ return _.extend(payload, { "areaId": value }) });
+    const method = this.mode == 'Create' ? 
+    
+      this.service.postService({ "url": '/setup/agentLocations', "payload": payload }) : 
+      
+        this.service.patchService({ "url": '/setup/agentLocation' , "payload": payload });
 
-    // console.log(payload);
+    method.subscribe((res: any) => {
+
+      if(res.status=='ok') {
+
+        this.openCanvas = false;
+
+        this.loadForm();
+
+        this.getAgentLocations();
+
+      }
+
+    });
 
   }
 

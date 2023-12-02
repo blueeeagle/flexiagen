@@ -62,7 +62,7 @@ export class ServiceDetailsComponent {
 
         this.isLoading = false;
 
-        this.service.userDetails = _.omit(res.data,'companyId');
+        this.service.userDetails = { ..._.omit(res.data,'companyId'), "companyId": res.data.companyId._id };
 
         this.service.companyDetails = _.get(res.data,'companyId');
 

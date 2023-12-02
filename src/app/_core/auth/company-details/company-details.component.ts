@@ -283,7 +283,11 @@ export class CompanyDetailsComponent {
 
         this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 
-        this.service.companyDetails = _.omit(res.data,['agentId']);
+        this.service.companyDetails = res.data.companyDetails;
+
+        this.service.userDetails = res.data.userDetails;
+
+        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
         this.service.session({ "method": "set", "key": "CompanyId", "value": this.service.companyDetails._id });
 

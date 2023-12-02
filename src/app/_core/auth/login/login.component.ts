@@ -58,11 +58,11 @@ export class LoginComponent {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
-        this.service.userDetails = _.omit(res.data.userDetails,['companyId']);
+        this.service.userDetails = res.data.userDetails;
 
         this.isLoading = false;
 
-        if(_.isEmpty(res.data.userDetails.companyId)) { // Check the user already created company details
+        if(_.isEmpty(res.data.companyDetails)) { // Check the user already created company details
 
           this.service.navigate({ 'url': '/auth/company-details' });
 
@@ -76,7 +76,7 @@ export class LoginComponent {
 
         } else {
 
-          this.service.companyDetails = res.data.userDetails.companyId;
+          this.service.companyDetails = res.data.companyDetails;
 
           this.service.session({ "method": "set", "key": "CompanyId", "value": this.service.companyDetails._id });
  

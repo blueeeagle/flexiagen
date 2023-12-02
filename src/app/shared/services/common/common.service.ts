@@ -16,8 +16,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class CommonService {
 
   pageSizeList: any = [10, 25, 50, 100];
-  userDetails: any = JSON.parse(sessionStorage.getItem('UserDetails') || '{}');
-  companyDetails: any = JSON.parse(sessionStorage.getItem('CompanyDetails') || '{}');
+  userDetails: any = {};
+  companyDetails: any = {};
 
   public isLoading = new BehaviorSubject(false);
   public loaderApiUrls = new BehaviorSubject<any>([]);
@@ -36,7 +36,7 @@ export class CommonService {
     
       if(res.status=='ok') {
 
-        this.userDetails = _.omit(res.data,'companyId');
+        this.userDetails = { ..._.omit(res.data,'companyId'), "companyId": res.data.companyId._id };
 
         this.companyDetails = res.data.companyId;
 

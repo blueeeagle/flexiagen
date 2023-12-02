@@ -108,8 +108,6 @@ export class RegisterComponent {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
-        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(res.data.userDetails) });
-
         this.service.showToastr({ "data": { "message": "Account Created Successfully", "type": "success" } });
 
         this.service.navigate({ "url": '/auth/company-details' });

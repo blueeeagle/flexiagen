@@ -267,3 +267,28 @@ a {
     font-weight: 600;
     color: var(--bs-primary);
 }
+
+.table {    
+    
+    thead th {
+        background: #EBEEF6;
+        color: #979AA5;
+        font-weight: 600;
+    }
+
+    tbody td {
+        color: #4C4D52;
+        font-weight: 500;
+    }
+}
+
+.table.table-borderless {
+    
+    thead th {
+        border-bottom: 1px solid #D7DFEC;
+    }
+
+    tbody tr:not(:last-child)  td {
+        border-bottom: 1px solid #D7DFEC;
+    }
+}
