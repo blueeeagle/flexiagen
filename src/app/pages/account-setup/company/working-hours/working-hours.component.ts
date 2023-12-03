@@ -3,6 +3,7 @@ import { FormArray, FormGroup, Validators } from "@angular/forms";
 import { CommonService } from "@shared/services/common/common.service";
 import * as _ from "lodash";
 import * as moment from "moment";
+import { forkJoin } from "rxjs";
 
 @Component({
   selector: 'app-working-hours',
@@ -31,22 +32,61 @@ export class WorkingHoursComponent {
     { "value": "22:00", "label": "10:00 PM" }, { "value": "23:00", "label": "11:00 PM" },
     { "value": "00:00", "label": "12:00 AM" }
   ];
+  userSubscribe: any;
 
-	constructor(private service: CommonService, private cdr: ChangeDetectorRef,) {}
+	constructor(private service: CommonService) {
 
-	ngOnInit() {
+    if(!_.isEmpty(this.service.companyDetails)) this.getWorkingHours();
+
+    this.userSubscribe = this.service.userDetailsObs.subscribe((data: any) => {
+
+      if(!_.isEmpty(data)) {
+        
+        this.getWorkingHours();
+
+      }
+
+    });
 
     this.loadForm();
-	
-	}
+
+  }
+
+	ngOnInit() {}
+
+  getWorkingHours() {
+
+    this.service.postService({ 'url': '/app/workingHrs/list', 'payload': { 'companyId': this.service.companyDetails._id, 'isDefault': true } }).subscribe((res: any) => {
+
+      if(res.status == 'ok') {
+
+        this.editData = _.size(res.data) > 0 ? {
+
+          'companyId': res.data[0]?.companyId,
+
+          'workingDays': _.map(res.data, (value: any) => {
+
+            return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
+
+          })
+
+        } : {};
+
+        this.mode = _.size(res.data) > 0 ? 'Update' : 'Create';
+
+        this.loadForm();
+
+      }
+
+    });
+
+  }
 
   loadForm() {
 
     this.workingHoursFrom = this.service.fb.group({
 
       'companyId': [ this.editData?.companyId?._id || this.service.companyDetails._id, Validators.required ],
-
-      'isDefault': true,
 
       'workingDays': this.service.fb.array([]),
 
@@ -94,6 +134,8 @@ export class WorkingHoursComponent {
     
       return this.service.fb.group({
 
+        '_id': value?._id || null,
+
         'day': value?.day || '',
 
         'is_active': value?.is_active || true,
@@ -106,7 +148,7 @@ export class WorkingHoursComponent {
 
       return this.service.fb.group({
 
-        'startTime': [value?.startT || null, Validators.required],
+        'startTime': [value?.startTime || null, Validators.required],
 
         'endTime': [value?.endTime || null, Validators.required]
 
@@ -132,7 +174,7 @@ export class WorkingHoursComponent {
 
     // allow time before next slot end time
 
-    if(fieldName == 'endTime' && moment(option, 'HH:mm').isBefore(moment(nextTimeDet?.value || '23:00', 'HH:mm'))) isAvailable = false;
+    if(fieldName == 'endTime' && moment(option, 'HH:mm').isBefore(moment(nextTimeDet?.value, 'HH:mm'))) isAvailable = false;
 
     return !isAvailable;
 
@@ -222,7 +264,51 @@ export class WorkingHoursComponent {
 
     });
 
-    console.log(payload);
+    if(this.mode == 'Create') payload = _.map(payload, (e)=> _.omit(e, '_id'));
+
+    forkJoin({
+
+      result: this.mode == 'Create' ? 
+
+        this.service.postService({ 'url': '/app/workingHrs', 'payload': payload }) :
+
+          this.service.patchService({ 'url': '/app/workingHrs', 'payload': payload })
+
+    }).subscribe({
+
+      next: (res: any) => {
+
+        if(res.result.status == 'ok') {
+
+          this.editData = _.size(res.result.data) > 0 ? {
+
+            'companyId': res.result.data[0]?.companyId,
+  
+            'workingDays': _.map(res.result.data, (value: any) => {
+  
+              return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
+  
+            })
+  
+          } : {};
+  
+          this.mode = 'Update';
+
+          this.loadForm();
+
+          this.service.showToastr({ 'data': { 'message': res.result.message, 'type': 'success' } });
+
+        }
+
+      }
+
+    });
+
+  }
+
+  ngOnDestroy() {
+
+    this.userSubscribe.unsubscribe();
 
   }
 

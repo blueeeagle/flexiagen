@@ -86,24 +86,6 @@ export class SidebarComponent implements OnInit {
           ]
         },
         {
-          "label": "Location",
-          "allow": true,
-          "url": "account-setup/location",
-          "icon": "bi bi-geo-alt"
-        },
-        {
-          "label": "Timeslot",
-          "allow": true,
-          "url": "account-setup/timeslot",
-          "icon": "bi bi-clock-history"
-        },
-        {
-          "label": "Items Pricing",
-          "allow": true,
-          "url": "account-setup/item-pricing",
-          "icon": "bi bi-clock-history"
-        },
-        {
           "label": "Users",
           "allow": true,
           "url": "account-setup/users",
@@ -120,6 +102,24 @@ export class SidebarComponent implements OnInit {
               "url": "account-setup/users/permission-details"
             },         
           ]
+        },        
+        {
+          "label": "Location",
+          "allow": true,
+          "url": "account-setup/location",
+          "icon": "bi bi-geo-alt"
+        },
+        {
+          "label": "Timeslot",
+          "allow": true,
+          "url": "account-setup/timeslot",
+          "icon": "bi bi-clock-history"
+        },
+        {
+          "label": "Items Pricing",
+          "allow": true,
+          "url": "account-setup/item-pricing",
+          "icon": "bi-coin"
         }, 
         {
           "label": "My Subscription",
