@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
+import { CommonService } from '@shared/services/common/common.service';
 
 @Component({
   selector: 'top-navbar',
@@ -16,6 +18,28 @@ export class TopNavbarComponent {
 
   @Output() menuEvent: EventEmitter<Boolean> = new EventEmitter();
 
-  logImgErrorHandling(){ this.logoUrl = './assets/images/logo.png'; }
+  constructor(private service: CommonService,private confirmationDialog: ConfirmationDialogService) { }
+
+  logImgErrorHandling() { this.logoUrl = './assets/images/logo.png'; }
+
+  logout() {
+
+    this.confirmationDialog.confirm({ 
+      
+      type: "warn", message: 'Are you sure you want to log out?', title: 'Logout' 
+    
+    }).then((confirmed) => {
+
+      if (confirmed) {
+
+        this.service.logout();
+
+        this.service.showToastr({ "data": { "message": "Logged out successfully.", "type": "success" } });
+
+      }
+
+    });
+
+  }
 
 }

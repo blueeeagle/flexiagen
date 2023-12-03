@@ -1,12 +1,36 @@
 // ** Alter Image Icon Color schemes
 
-.close:hover{
-    background : #eaedf1 !important;
+.confirmationModal {
+    --error-foreground: #fff;
+    --error-background: #ec4337;
+    --basic-foreground: #fff;
+    --basic-background: #9e9e9e;
+    --info-foreground: #fff;
+    --info-background: #2196f3;
+    --success-foreground: #fff;
+    --success-background: #4dce59;
+    --warn-foreground: #fff;
+    --warn-background: #ff9800;
+
+    border-top: 4px solid;
+    border-radius: 0.25rem;
 }
 
-.btn{
-    padding: 4px 16px !important;
-    font-size: 0.85rem;
+.confirmationModal.error {
+    border-color: var(--error-background);
+}
+.confirmationModal.warn {
+    border-color: var(--warn-background);
+}
+.confirmationModal.info {
+    border-color: var(--info-background);
+}
+.confirmationModal.success {
+    border-color: var(--success-background);
+}
+
+.close:hover{
+    background : #eaedf1 !important;
 }
 
 .btn-close{
@@ -56,9 +80,10 @@
 }
 
 .modal-footer{
-    border-bottom-right-radius: 15px !important;
-    border-bottom-left-radius: 15px !important;
+    border-bottom-right-radius: 1rem !important;
+    border-bottom-left-radius: 1rem !important;
     background : #fff !important;
+    padding: 0.65rem 0.75rem;
 }
 
 .confirmationModal .modal-content{

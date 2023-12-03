@@ -20,7 +20,15 @@
 
         <i class="bi bi-bell bi bi-bell fs-5 me-3 cursor-pointer" routerLink="/pages/notification"></i>
 
-        <img src="assets/images/user-profile.png">
+        <a [matMenuTriggerFor]="menu"><img src="assets/images/user-profile.png"></a>
+
+        <mat-menu #menu="matMenu" class="menu-dropdown mt-1">
+
+            <a mat-menu-item class="pe-5 small" routerLink="/pages/account-setup/company/account-details"> <i class="bi bi-person me-2"></i> Profile </a>
+
+            <a mat-menu-item class="pe-5 small" (click)="logout()"> <i class="bi bi-gear me-2"></i> Logout </a>
+
+        </mat-menu>
 
     </div>
 

@@ -12,7 +12,23 @@ export class ConfirmationDialogService {
     
     const modalRef = this.modalService.open(ConfirmationDialogComponent, { windowClass :"d-flex modal-dialog-centered confirmationModal justify-content-around flex-column" , backdrop: "static", keyboard : false, });
 
-    modalRef.componentInstance.iconClass = data.type == 'success' ? 'bx bx-check-circle fs-3' : data.type == 'error' ? 'bx bx-error-circle fs-3' : data.type == 'info' ? 'bx bx-info-circle fs-3' : data.type == 'warn' ? 'bx bx-error fs-3' : data.icon?.class;
+    modalRef.componentInstance.iconClass = 
+    
+      data.type == 'success' ? 
+
+        'bx bx-check-circle fs-3' : 
+        
+          data.type == 'error' ? 
+          
+            'bx bx-error-alt fs-3' : 
+            
+              data.type == 'info' ? 
+              
+                'bx bx-info-circle fs-3' : 
+                
+                  data.type == 'warn' ? 
+                  
+                    'bx bx-error fs-3' :  data.icon?.class;
 
     modalRef.componentInstance.iconColor = data.type || data.icon?.color;
 

@@ -58,7 +58,11 @@
 
                         <td class="text-end">{{ location['minOrderAmt']  | number: '1.2-2' | currency: 'INR' }}</td>
 
-                        <td class="text-end">{{ location['deliveryCharge'] | number: '1.2-2' | currency: 'INR' }}</td>   
+                        <td class="text-end">
+
+                            {{ !location['isFreeDelivery'] ? (location['deliveryCharge'] | number: '1.2-2' | currency: 'INR') : 'Free' }}
+                        
+                        </td>   
 
                         <td>
 
@@ -78,9 +82,9 @@
 
                         <td class="text-center">
 
-                            <a class="text-primary" (click)="openAsideBar(location)"> 
+                            <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(location)"> 
 
-                                <i class="bi bi-pencil-square"></i> Update
+                                <i class="bi bi-pencil-square me-2"></i> Update
 
                             </a>
 

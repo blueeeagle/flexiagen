@@ -20,7 +20,7 @@ export class LocationComponent {
   formSubmitted: boolean = false;
   locationForm: FormGroup = new FormGroup({});
   masterList: any = {
-    "areaList": []
+    "areaList": null
   };
   locationList: Array<any> = [];
   userSubscribe: any;
@@ -65,7 +65,7 @@ export class LocationComponent {
 
   getAreaList() {
 
-    this.service.getService({ "url": `/address/areas/${this.service.companyDetails?.addressDetails?.cityId?._id}` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/master/otherNewLocations/${this.service.companyDetails?.addressDetails?.cityId?._id}` }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -95,9 +95,41 @@ export class LocationComponent {
     
     });
 
+    this.f.isFreeDelivery.valueChanges.subscribe((value: any) => {
+
+      if(value) {
+
+        this.f.deliveryCharge.clearValidators();
+
+        this.f.deliveryCharge.setValue(null);
+
+        this.f.deliveryCharge.disable();
+
+      } else {
+        
+        this.f.deliveryCharge.setValidators([Validators.required]);
+
+        this.f.deliveryCharge.setValue(this.editData?.deliveryCharge || null);
+
+        this.f.deliveryCharge.enable();
+
+      }
+
+      this.f.deliveryCharge.updateValueAndValidity();
+
+    });
+
   }
 
   openAsideBar(data?: any){
+
+    if(_.isNull(this.masterList['areaList'])) 
+    
+      return this.service.showToastr({ "data": { "message": "Please wait while we are fetching areas!", "type": "info" } });
+ 
+    if(_.isUndefined(data) &&_.size(this.masterList['areaList']) == 0) 
+    
+      return this.service.showToastr({ "data": { "message": "All areas are already added!", "type": "info" } });
 
     this.editData = data || {};
 

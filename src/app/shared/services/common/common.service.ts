@@ -176,9 +176,7 @@ export class CommonService {
 
   logout() {
 
-    sessionStorage.clear();
-
-    sessionStorage.clear();
+    this.session({ "method": "clear" });
 
     this.navigate({ "url": '/auth/login' });
 

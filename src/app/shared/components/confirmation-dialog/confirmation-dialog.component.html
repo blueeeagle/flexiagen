@@ -1,4 +1,4 @@
-<div class="confirmationModal">
+<div class="confirmationModal" [ngClass]="iconColor">
 
   <div class="modal-body d-flex justify-content-between">
 
@@ -30,9 +30,9 @@
 
   <div class="modal-footer" *ngIf="btnCancelShow || btnOkShow">
 
-    <button matRipple class="btn btn-sm btn-secondary" (click)="decline()" *ngIf="btnCancelShow"> {{ btnCancelText | titlecase }} </button>
+    <button matRipple class="btn btn-lg py-2 btn-outline-primary border-1 fw-normal fs-6" (click)="decline()" *ngIf="btnCancelShow"> {{ btnCancelText | titlecase }} </button>
 
-    <button matRipple class="btn btn-sm btn-primary" (click)="accept()" *ngIf="btnOkShow"> {{ btnOkText | titlecase }} </button>
+    <button matRipple class="btn btn-lg py-2 btn-primary border-1 fw-normal fs-6" (click)="accept()" *ngIf="btnOkShow"> {{ btnOkText | titlecase }} </button>
 
   </div>
 

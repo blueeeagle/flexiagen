@@ -61,3 +61,12 @@
     
     }    
 }
+
+::ng-deep .menu-dropdown {
+    .mat-mdc-menu-content {
+        padding: 0;
+    }
+    .mat-mdc-menu-item-text {
+        font-size: 14px !important;
+    }
+}
