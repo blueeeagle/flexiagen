@@ -1,3 +1,4 @@
+
 import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormArray, FormGroup, Validators } from "@angular/forms";
 import { CommonService } from "@shared/services/common/common.service";
@@ -33,6 +34,7 @@ export class WorkingHoursComponent {
     { "value": "00:00", "label": "12:00 AM" }
   ];
   userSubscribe: any;
+  isLoading: boolean = false;
 
 	constructor(private service: CommonService) {
 
@@ -138,7 +140,7 @@ export class WorkingHoursComponent {
 
         'day': value?.day || '',
 
-        'is_active': value?.is_active || true,
+        'is_active': value ? value.is_active : true,
 
         'availableTimes': this.service.fb.array([]),
 
@@ -254,7 +256,7 @@ export class WorkingHoursComponent {
 
     this.formSubmitted = true;
 
-    if(this.workingHoursFrom.invalid) return;
+    if(this.workingHoursFrom.invalid) return this.service.showToastr({ 'data': { 'message': 'Please fill all the required fields', 'type': 'error' } });
 
     let payload = _.cloneDeep(this.workingHoursFrom.value);
 
@@ -263,6 +265,8 @@ export class WorkingHoursComponent {
       return { ..._.omit(payload,'workingDays'), ...value };
 
     });
+
+    this.isLoading = true;
 
     if(this.mode == 'Create') payload = _.map(payload, (e)=> _.omit(e, '_id'));
 
@@ -277,6 +281,8 @@ export class WorkingHoursComponent {
     }).subscribe({
 
       next: (res: any) => {
+
+        this.isLoading = false;
 
         if(res.result.status == 'ok') {
 
@@ -299,6 +305,12 @@ export class WorkingHoursComponent {
           this.service.showToastr({ 'data': { 'message': res.result.message, 'type': 'success' } });
 
         }
+
+      },
+
+      error: (err: any) => {
+
+        this.isLoading = false;
 
       }
 

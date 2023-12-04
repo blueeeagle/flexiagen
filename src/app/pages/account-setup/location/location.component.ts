@@ -24,6 +24,7 @@ export class LocationComponent {
   };
   locationList: Array<any> = [];
   userSubscribe: any;
+  isLoading: boolean = false;
 
   constructor(public service: CommonService) { 
 
@@ -167,6 +168,8 @@ export class LocationComponent {
     if(this.locationForm.invalid) return;
 
     let payload = _.cloneDeep(this.locationForm.value);
+
+    this.isLoading = true;
     
     if(this.mode=='Create') payload = _.map(this.f.areaId.value,(value)=>{ return { ..._.omit(payload,'areaId'), "areaId": value }; });
 
@@ -182,6 +185,8 @@ export class LocationComponent {
 
       next: (res: any) => {
 
+        this.isLoading = false;
+
         if(res.result.status=='ok') {
 
           this.canvas?.close();
@@ -193,6 +198,12 @@ export class LocationComponent {
           this.loadForm();
 
         }
+
+      }, 
+
+      error: (err: any) => {
+
+        this.isLoading = false;
 
       }
 

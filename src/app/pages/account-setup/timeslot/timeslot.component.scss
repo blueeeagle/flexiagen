@@ -1,0 +1,8 @@
+.day-badge {
+    &:focus {
+        border: none !important;
+    }
+}
+.timeslot-badge {
+    min-width: 175px
+}
