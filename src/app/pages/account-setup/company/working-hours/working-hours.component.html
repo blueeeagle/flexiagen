@@ -65,6 +65,12 @@
                                     </div>
     
                                     <div class="col-sm-2 mb-2 align-self-center">
+
+                                        <a class="btn btn-sm btn-outline-danger me-2" (click)="whf(wdIndx).removeAt(timeIndx)" *ngIf="!first">
+    
+                                            <i class="fas fa-trash-alt"></i>
+    
+                                        </a>
     
                                         <a class="btn btn-sm btn-outline-primary" (click)="addWorkingHours(wdIndx)" *ngIf="last">
     
@@ -72,12 +78,6 @@
     
                                         </a>
     
-                                        <a class="btn btn-sm btn-outline-danger ms-2" (click)="whf(wdIndx).removeAt(timeIndx)" *ngIf="!first">
-    
-                                            <i class="fas fa-trash-alt"></i>
-    
-                                        </a>
-                                        
                                     </div>
     
                                 </ng-container>
@@ -100,7 +100,7 @@
     
                     <div class="col-sm-6 pt-4">
     
-                        <div class=" btn btn-block btn-lg w-100 btn-primary">SAVE</div>
+                        <div class=" btn btn-block btn-lg w-100 btn-primary" (click)="submit()">SAVE</div>
     
                     </div>
 
