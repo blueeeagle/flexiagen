@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
 
     <div class="d-flex justify-content-between">
         
@@ -6,7 +6,7 @@
     
     </div>
 
-    <div class="row d-flex mt-2">
+    <div class="row d-flex justify-content-between mt-2">
 
         <div class="col-sm-12 col-md-3 mb-2">
 
@@ -24,7 +24,20 @@
 
         </div>
 
-        <div class="col-sm-12 col-md-8 d-flex justify-content-end" style="height: fit-content;">
+        <div class="col-sm-12 col-md-8 text-end">
+
+            <button type="button" class="btn btn-primary" (click)="openCanvas = true">
+            
+                <i class="bi bi-plus-square"></i>
+            
+                <span class="ms-1 d-none d-md-inline">Add New User</span>
+            
+            </button>
+
+
+        </div>
+
+        <!-- <div class="col-sm-12 col-md-8 d-flex justify-content-end" style="height: fit-content;">
 
             <button type="button" class="btn btn-primary" (click)="openCanvas = true">
                 
@@ -42,13 +55,94 @@
 
             </button>
 
-        </div>
+        </div> -->
 
     </div>
 
 </div>
 
-<asidebar [openCanvas]="openCanvas" title="Add New user" position="end" (onClose)="openCanvas = false">
+<div class="card border-opacity-10 border-dark">
+
+    <div class="table-responsive">
+
+        <table class="table table-borderless mb-0 align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th style="width:5%">SL#</th>
+
+                    <th style="width:15%">NAME</th>
+
+                    <th style="width:15%">EMAIL ID</th>
+
+                    <th style="width:15%">USERNAME</th>
+
+                    <th style="width:15%">ROLE</th>
+
+                    <th style="width:15%">MOBILE</th>
+
+                    <th style="width:15%" class="text-center">STATUS</th>
+
+                    <th style="width:5%">Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr *ngFor="let user of usersList; let i = index">
+
+                    <td>{{i+1}}</td>
+
+                    <td> {{ user?.name | uppercase }} </td>
+
+                    <td> {{ user?.email || '--Nil--'  }} </td>
+
+                    <td> {{ user?.userName || 'N/A'}} </td>
+
+                    <td> {{ user?.role?.roleName | uppercase }} </td>
+
+                    <td>  {{ user.dialCode }} {{ user?.mobile }}  </td>
+
+                    <td> 
+
+                        <div class="form-check form-switch ps-0 w-100 justify-content-center d-flex">
+                        
+                            <label class="form-check-label text-dark" for="logistics">
+                        
+                                {{ user.is_active ? 'Available' : 'Unavailable' }}
+                        
+                            </label>
+                        
+                            <input class="form-check-input" type="checkbox" role="switch" id="logistics" [(ngModel)]="user['is_active']" [ngModelOptions]="{standalone: true}">
+                        
+                        </div>
+                        
+                    </td>
+
+                    <td> 
+
+                        <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(user)">
+                        
+                            <i class="bi bi-pencil-square me-2"></i> Update
+                        
+                        </a>
+                        
+                    </td>
+
+                   
+                </tr>
+
+        </table>
+
+    </div>
+
+</div>
+
+<asidebar #canvas [openCanvas]="openCanvas" title="Add New user" position="end" (onClose)="openCanvas = false" (onSubmit)="createUser()">
 
     <div [formGroup]="addUserForm">
 
@@ -99,29 +193,33 @@
             <label for="mobile">Mobile Number</label>
 
             <div class="input-group">
-
+            
                 <div class="input-group-prepend me-1">
-
-                    <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.dialCode.touched) && f.dialCode.errors }">
-
-                        <ng-option *ngFor="let countryDet of countryList" [value]="countryDet._id">
-                            
-                            <img class="country-flag" alt="{{ countryDet.isoCode }}" src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ countryDet['ISO3666Code'] }}.svg"/> {{ countryDet.teleCode }}
-                    
+            
+                    <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control"
+                        [ngClass]="{ 'is-invalid': (formSubmitted || f.dialCode.touched) && f.dialCode.errors }">
+            
+                        <ng-option *ngFor="let dialCodeDet of dialCodeList" [value]="dialCodeDet.dialCode">
+            
+                            <img class="country-flag" alt="{{ dialCodeDet.iso2 }}"
+                                src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ dialCodeDet['iso2'] }}.svg" /> {{
+                            dialCodeDet.dialCode }}
+            
                         </ng-option>
-
+            
                     </ng-select>
-
+            
                 </div>
-
-                <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.mobile.touched) && f.mobile.errors }" numbersOnly maxlength="10">
-
+            
+                <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter"
+                    [ngClass]="{ 'is-invalid': (formSubmitted || f.mobile.touched) && f.mobile.errors }" numbersOnly maxlength="10">
+            
                 <div *ngIf="(formSubmitted || f.mobile.touched) && f.mobile.errors" class="invalid-feedback">
-
+            
                     <div *ngIf="f.mobile.errors.required">Mobile number is required</div>
-
+            
                 </div>
-
+            
             </div>
 
         </div>
@@ -136,7 +234,7 @@
                     
                     <ng-select formControlName="role" [clearable]="false" placeholder="Select Role" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || f.role.touched) && f.role?.errors }">
                     
-                        <ng-option *ngFor="let roleDet of masterList['roleList']" [value]="roleDet._id">{{ roleDet.title | uppercase }}</ng-option>
+                        <ng-option *ngFor="let roleDet of masterList['roleList']" [value]="roleDet._id">{{ roleDet?.roleName | uppercase }}</ng-option>
                     
                     </ng-select>
                     
