@@ -195,6 +195,12 @@ export class LocationComponent {
 
           this.getAgentLocations();
 
+          if(this.mode == 'Create') {
+
+            this.masterList['areaList'] = _.filter(this.masterList['areaList'],(e: any)=>!_.includes(e._id,_.map(payload,'areaId')));
+
+          }
+
           this.loadForm();
 
         }

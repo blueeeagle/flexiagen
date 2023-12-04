@@ -50,27 +50,27 @@
     box-shadow: none !important;
 }
 
-.confirm-img.error{
+.error.confirm-img {
     color       :  var(--error-foreground) !important;
     background  :  var(--error-background) !important;
 }
 
-.confirm-img.basic{
+.basic.confirm-img {
     color       :  var(--basic-foreground) !important;
     background  :  var(--basic-background) !important;
 }
 
-.confirm-img.info{
+.info.confirm-img {
     color       :  var(--info-foreground) !important;
     background  :  var(--info-background) !important;
 }
 
-.confirm-img.success{
+.success.confirm-img {
     color       :  var(--success-foreground) !important;
     background  :  var(--success-background) !important;
 }
 
-.confirm-img.warn{
+.warn.confirm-img {
     color       :  var(--warn-foreground) !important;
     background  :  var(--warn-background) !important;
 }
