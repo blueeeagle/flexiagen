@@ -78,7 +78,7 @@ export class UsersListComponent {
       
       'role': [this.editData?.role?._id || null, [Validators.required]],
 
-      'isActive': [ _.isEmpty(this.editData) ? true : (this.editData?.isActive || null), [Validators.required]],
+      'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
 
       'profile': [this.editData?.profile || null ],
 
@@ -131,8 +131,6 @@ export class UsersListComponent {
 
     payload["companyId"] = this.service.companyDetails._id;
 
-    console.log({ payload })
-
     const formData = new FormData();
 
     formData.append("data", JSON.stringify(payload));
@@ -171,5 +169,26 @@ export class UsersListComponent {
 
   }
 
+  updateUserAction(data: any) {
+
+    const formData = new FormData();
+
+    const payload = { "is_active": data.is_active };
+    
+    formData.append("data", JSON.stringify(payload));
+
+    this.service.patchService({ "url": `/agent/user/${data?._id}`, "payload": formData }).subscribe((res: any) => {
+  
+      if(res.status=='ok') {
+
+        this.service.showToastr({ "data": { "message": `User ${ data.is_active ? 'activated' : 'inactivated' } successfully!`, "type": "success" } });
+
+        // this.usersList.splice(_.findIndex(this.usersList,{ "_id": res.data._id }), 1, res.data);
+
+      }
+
+    });
+
+  }
 
 }
