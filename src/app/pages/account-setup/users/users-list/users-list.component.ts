@@ -1,8 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { OffcanvasComponent } from '@shared/components';
 import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-users-list',
@@ -11,107 +13,52 @@ import * as _ from 'lodash';
 })
 export class UsersListComponent {
 
+  @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
   openCanvas: boolean = false;
   formSubmitted: boolean = false;
-  countryList: Array<any> = [];
+  dialCodeList: Array<any> = [];
   masterList : any = {};
   addUserForm: FormGroup = new FormGroup({});
+  usersList: Array<any> = [];
+  roles: Array<any> = [];
+  mode: 'Create' | 'Update' = 'Create';
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService){}
   
   @Input() editData: any = {};
 
-  countryDetailsList: Array<any> = [
-    {
-      "English short name": "Qatar",
-      "ISO3666Code": "QA",
-      "Alpha-3 code": "QAT",
-      "Numeric code": 634,
-      "ISO 3166-2 Code": "QA",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Saudi Arabia",
-      "ISO3666Code": "SA",
-      "Alpha-3 code": "SAU",
-      "Numeric code": 682,
-      "ISO 3166-2 Code": "SA",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "United Arab Emirates",
-      "ISO3666Code": "AE",
-      "Alpha-3 code": "ARE",
-      "Numeric code": 784,
-      "ISO 3166-2 Code": "AE",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Kuwait",
-      "ISO3666Code": "KW",
-      "Alpha-3 code": "KWT",
-      "Numeric code": 414,
-      "ISO 3166-2 Code": "KW",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Bahrain",
-      "ISO3666Code": "BH",
-      "Alpha-3 code": "BHR",
-      "Numeric code": 48,
-      "ISO 3166-2 Code": "BH",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "India",
-      "ISO3666Code": "IN",
-      "Alpha-3 code": "IND",
-      "Numeric code": 356,
-      "ISO 3166-2 Code": "IN",
-      "Independent": "Yes"
-    },
-    {
-      "English short name": "Russia",
-      "ISO3666Code": "RU",
-      "Alpha-3 code": "RUS",
-      "Numeric code": 643,
-      "ISO 3166-2 Code": "RU",
-      "Independent": "Yes"
-    },                  
-  ];
 
   ngOnInit() {
 
     this.loadForm();
 
-    this.getCountries()
+    this.getBaseDetails();
+
+    this.getUsersList();
 	
-	}
-
-  getCountries() {
-
-    this.service.getService({ "url": "/master/countries" }).subscribe((res: any) => {
-
-      if(res.status=='ok') {
-
-        this.countryList = [];
-
-        _.map(res.data, (countryDet: any) => {
-
-          let countryDetails = _.find(this.countryDetailsList, { 'Alpha-3 code': countryDet.isoCode });
-
-          if(_.isEmpty(countryDetails) || _.find(this.countryList, { 'Alpha-3 code': countryDet.isoCode })) return;
-
-          this.countryList.push({ ...countryDet, "ISO3666Code": countryDetails["ISO3666Code"] });
-
-        });
-
-      }
-
-    });
-
   }
+  
+  getBaseDetails() {
+    
+    forkJoin({
+
+      "roles": this.service.getService({ url: "/setup/roles" }),
+      
+      "dialCodes": this.service.getService({ "url": "/address/dailCode" }) 
+      
+    }).subscribe((res: any) => {
+
+      console.log(res);
+      
+      if (res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
+
+      if (res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
+      
+    });
+    
+  }
+
 
   // Load Form
 
@@ -129,11 +76,11 @@ export class UsersListComponent {
 
       'mobile': [this.editData?.mobile || '', [Validators.required]],
       
-      'role': [this.editData?.role || null, [Validators.required]],
+      'role': [this.editData?.role?._id || null, [Validators.required]],
 
-      'isActive': [this.editData?.isActive || null, [Validators.required]],
+      'isActive': [ _.isEmpty(this.editData) ? true : (this.editData?.isActive || null), [Validators.required]],
 
-      'profile': [this.editData?.profile || null, [Validators.required]],
+      'profile': [this.editData?.profile || null ],
 
     });
 
@@ -142,5 +89,87 @@ export class UsersListComponent {
   // convenience getter for easy access to form fields
 
   get f(): any { return this.addUserForm.controls; }
+
+  openAsideBar(data?: any) {
+    
+    this.editData = data || {};
+
+    this.mode = data ? 'Update' : 'Create';
+
+    this.loadForm();
+    
+    this.openCanvas = true;
+
+  }
+
+  getUsersList() {
+    
+    this.service.postService({ url: "/agent/users" }).subscribe((res: any) => {
+      
+      if (res.status == "ok") {
+          
+        this.usersList = res.data;
+
+      }
+      
+    },
+      (error: any) => {
+      
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+    })
+  }
+
+  createUser() {
+        
+    this.formSubmitted = true;
+
+    console.log(this.addUserForm.controls);
+    
+    if (this.addUserForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
+
+    const payload = this.addUserForm.getRawValue();
+
+    payload["companyId"] = this.service.companyDetails._id;
+
+    console.log({ payload })
+
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify(payload));
+
+    _.forEach(formData, (item: any) => console.log(item));
+
+    forkJoin({
+
+      "result": this.mode == 'Create' ? this.service.postService({ url: "/agent/user", payload : formData })
+        
+        : this.service.patchService({ url: `/agent/user/${this.editData?._id}`, payload : formData })
+      
+    }).subscribe((res: any) => {
+
+      console.log(res);
+      
+      if (res.result.status == "ok") {
+
+        this.canvas?.close();
+
+        this.service.showToastr({ data: { type: "success", message:  `User ${this.mode == 'Create' ? 'Created' : 'Updated'} Success` } });
+
+        this.getUsersList();
+
+        this.loadForm();
+
+      }
+
+    },
+    
+      (error: any) => {
+      
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
+        
+    })
+
+  }
+
 
 }
