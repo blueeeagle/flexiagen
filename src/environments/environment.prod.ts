@@ -7,7 +7,7 @@ export const APP_CONFIG = {
     encryptedReq: false,
     secretKey: "",
 
-	domain: 'https://elated-shrug-moth.cyclic.app/api',
+	domain: 'http://agentapi.flexiclean.me/api/v1',
 
     imgBasePath: ''
 
