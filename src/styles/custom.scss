@@ -223,12 +223,6 @@ ng-select.form-control {
                     }
 
                 }
-
-                .country-flag {
-                    height: 16px !important;
-                    margin-right: 2px;
-                }
-
                 .ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
                     box-shadow: none;
                     border-color: #1e4894;   
@@ -374,6 +368,12 @@ ng-select.form-control {
         border-bottom-right-radius: 0.25rem;
     }                    
 
+}
+
+
+.country-flag {
+    height: 16px !important;
+    margin-right: 2px;
 }
 
 ///////////////////////// ng-select Styles Ends /////////////////////////
