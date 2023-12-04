@@ -69,6 +69,8 @@ export class TimeslotComponent {
 
         this.editData = res.timeslotRes.status == 'ok' ? _.first(res.timeslotRes.data) : {};
 
+        this.mode = this.editData?._id ? 'Update' : 'Create';
+
         if(res.workingDayRes.status == 'ok') {
 
           this.workingDayDetails = _.first(res.workingDayRes.data) || {};
@@ -118,8 +120,6 @@ export class TimeslotComponent {
 
     });
 
-    console.log(this.availTimeSlots);
-
     this.availTimeSlots.forEach((slotDet: any) => {
 
       slotDet = _.find(this.editData?.timeSlots, { 'startTime': slotDet.startTime, 'endTime': slotDet.endTime }) || slotDet;
@@ -139,8 +139,6 @@ export class TimeslotComponent {
   get ts(): any { return this.f.timeSlots as FormArray; }
 
   getTimeSlotForm({ slotDet = {} }: { slotDet?: any }) {
-
-    console.log(!_.isEmpty(slotDet) ? slotDet.is_active : true);
 
     return this.service.fb.group({
 
