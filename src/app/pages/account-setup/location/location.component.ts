@@ -14,6 +14,7 @@ export class LocationComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
   
+  tableColumns = ['SL#', 'LOCATION', 'MIN ORDER AMOUNT', 'DELIVERY CHARGES', 'SERVICE', 'ACTION'];
   openCanvas: boolean = false;
   editData : any = {};
   mode: 'Create' | 'Update' = 'Create';
