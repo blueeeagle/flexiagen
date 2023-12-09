@@ -19,6 +19,7 @@ export class UsersListComponent {
   openCanvas: boolean = false;
   formSubmitted: boolean = false;
   userButton:boolean=true
+  modalstatus: boolean = false ;
   dialCodeList: Array<any> = [];
   masterList : any = {};
   addUserForm: FormGroup = new FormGroup({});
@@ -101,6 +102,20 @@ export class UsersListComponent {
     this.loadForm();
     
     this.openCanvas = true;
+
+  }
+
+  open(){
+
+    this.editData = {
+
+      imgSrc : '/assets/images/card.png',
+
+      'content' : 'Card Details added  Successfully'
+
+    }
+
+    this.modalstatus = true
 
   }
 
