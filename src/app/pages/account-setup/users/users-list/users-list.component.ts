@@ -51,8 +51,6 @@ export class UsersListComponent {
       
     }).subscribe((res: any) => {
 
-      console.log(res);
-      
       if (res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
 
       if (res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
@@ -139,8 +137,6 @@ export class UsersListComponent {
         
     this.formSubmitted = true;
 
-    console.log(this.addUserForm.controls);
-    
     if (this.addUserForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
 
     const payload = this.addUserForm.getRawValue();
@@ -151,37 +147,39 @@ export class UsersListComponent {
 
     formData.append("data", JSON.stringify(payload));
 
-    _.forEach(formData, (item: any) => console.log(item));
-
     forkJoin({
 
-      "result": this.mode == 'Create' ? this.service.postService({ url: "/agent/user", payload : formData })
+      "result": this.mode == 'Create' ? 
+      
+          this.service.postService({ url: "/agent/user", payload : formData })
         
-        : this.service.patchService({ url: `/agent/user/${this.editData?._id}`, payload : formData })
+            : this.service.patchService({ url: `/agent/user/${this.editData?._id}`, payload : formData })
       
-    }).subscribe((res: any) => {
-
-      console.log(res);
+    }).subscribe({
       
-      if (res.result.status == "ok") {
+      next: (res: any) => {
 
-        this.canvas?.close();
+        if (res.result.status == "ok") {
 
-        this.service.showToastr({ data: { type: "success", message:  `User ${this.mode == 'Create' ? 'Created' : 'Updated'} Success` } });
+          this.canvas?.close();
+  
+          this.service.showToastr({ data: { type: "success", message:  `User ${this.mode == 'Create' ? 'Created' : 'Updated'} Success` } });
+  
+          this.getUsersList();
+  
+          this.loadForm();
+  
+        }
 
-        this.getUsersList();
+      },
 
-        this.loadForm();
+      error: (error: any) => {
+
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
 
       }
 
-    },
-    
-      (error: any) => {
-      
-        this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
-        
-    })
+    });
 
   }
 
