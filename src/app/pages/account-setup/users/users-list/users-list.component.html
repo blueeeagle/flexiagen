@@ -191,7 +191,7 @@
 
             <label for="name"> Name </label>
             
-            <input type="text" class="form-control" id="name" formControlName="name" placeholder="Enter Name" [ngClass]="{ 'is-invalid': (formSubmitted || f.name.touched) && f.name.errors }">
+            <input type="text" class="form-control form-control-lg" id="name" formControlName="name" placeholder="Enter Name" [ngClass]="{ 'is-invalid': (formSubmitted || f.name.touched) && f.name.errors }">
 
             <div *ngIf="(formSubmitted || f.name.touched) && f.name.errors" class="invalid-feedback">
     
@@ -205,7 +205,7 @@
 
             <label for="email"> Email </label>
             
-            <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter Email" [ngClass]="{ 'is-invalid': (formSubmitted || f.email.touched) && f.email.errors }">
+            <input type="email" class="form-control form-control-lg" id="email" formControlName="email" placeholder="Enter Email" [ngClass]="{ 'is-invalid': (formSubmitted || f.email.touched) && f.email.errors }">
 
             <div *ngIf="(formSubmitted || f.email.touched) && f.email.errors" class="invalid-feedback">
     
@@ -219,7 +219,7 @@
 
             <label for="userName"> User Name </label>
             
-            <input type="userName" class="form-control" id="userName" formControlName="userName" placeholder="Enter User Name" [ngClass]="{ 'is-invalid': (formSubmitted || f.userName.touched) && f.userName.errors }">
+            <input type="userName" class="form-control form-control-lg" id="userName" formControlName="userName" placeholder="Enter User Name" [ngClass]="{ 'is-invalid': (formSubmitted || f.userName.touched) && f.userName.errors }">
 
             <div *ngIf="(formSubmitted || f.userName.touched) && f.userName.errors" class="invalid-feedback">
     
@@ -332,3 +332,11 @@
     </div>
 
 </asidebar>
+
+
+<success-modal 
+[modalStatus]="this.modalstatus"
+[modalDet]="editData"
+(onClose)="this.modalstatus = false"
+size="lg">
+</success-modal>    
