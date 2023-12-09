@@ -18,3 +18,47 @@
   border: 3px dotted #a3a3a3;
   border-radius: 5px;
 }
+
+table.mat-table {
+  border-collapse: separate; /* Don't collapse */
+}
+
+table.mat-table th {
+  /* Apply both top and bottom borders to the <th> */
+  border-top: 1px solid #DCDFE8 !important;
+  border-right: 1px solid #DCDFE8;
+}
+
+table.mat-table td {
+  /* For cells, apply the border to one of each side only (right but not left, bottom but not top) */
+  border-right: 1px solid #DCDFE8;
+}
+
+table.mat-table th:first-child,
+table.mat-table td:first-child {
+  /* Apply a left border on the first <td> or <th> in a row */
+  border-left: 1px solid #DCDFE8;
+}
+
+tr.mat-header-row {
+  height: auto !important;
+}
+tr.mat-row, tr.mat-footer-row {
+  height: auto !important;
+}
+
+.mat-menu-panel {
+  min-height: auto !important;
+}
+
+.mat-menu-content {
+  padding: 0px !important;
+}
+
+button.mat-menu-item {
+  padding: 0 12px;
+  line-height: 30px;
+  height: 40px;
+  border-bottom: 1px solid #b8becf !important;
+  border-radius: 0px;
+}
