@@ -10,44 +10,10 @@
     --info-background: #eff9fc
 }
 
-::ng-deep{
+// *** Message Type Styles ***
 
-    .cdk-overlay-container {
-        z-index: 1050 !important;
-    }
-    
-    // Snackbar background color
-    .mat-mdc-snack-bar-container {
-        min-width: 380px;
-        max-width: 40vw;
+.snack-container {
 
-        .mdc-snackbar__surface  {
-            background : #fff !important;
-            width: 100%;
-            padding-right: 0px;
-        }
-        .text-secondary {
-            font-size: 1rem;
-            font-family: 'Poppins';
-        }
-        
-    }
-
-    // Image position
-    .iconImage{
-        font-size: 1.5rem !important;
-    }
-
-    .imgContainer{
-        width: 38px !important;
-        height: 38px !important;
-        vertical-align: middle !important;
-        border-radius: 50% !important;
-        position: relative;
-    }
-
-    // *** Message Type Styles ***
-    
     .success{
         background-color  : var(--success-background);
         color             : var(--success-foreground);
@@ -63,6 +29,40 @@
     .info{
         background-color  : var(--info-background);
         color             : var(--info-foreground);
+    }
+
+    // Image position
+    .iconImage{
+        font-size: 1.5rem !important;
+    }
+
+    .imgContainer{
+        width: 38px !important;
+        height: 38px !important;
+        vertical-align: middle !important;
+        border-radius: 50% !important;
+        position: relative;
+    }
+
+}
+
+::ng-deep{
+    .cdk-overlay-container {
+        z-index: 1050 !important;
+    }
+    // Snackbar background color
+    .mat-mdc-snack-bar-container {
+        min-width: 380px;
+        max-width: 40vw;
+        .mdc-snackbar__surface  {
+            background : #fff !important;
+            width: 100%;
+            padding-right: 0px;
+        }
+        .text-secondary {
+            font-size: 1rem;
+            font-family: 'Poppins';
+        }
     }
 }
 
