@@ -13,6 +13,7 @@ import { forkJoin } from 'rxjs';
 export class TimeslotComponent {
 
   timeslotForm: any;
+  _: any = _;
   days: any = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ];
   selectedDay: string = 'Sunday';
   totalTimeSlots: any = [
@@ -62,6 +63,8 @@ export class TimeslotComponent {
         if(res.status=='ok') {
 
           this.workingDayDetails = _.first(res.data) || {};
+
+          // this.workingDayDetails = {}
 
           if(!_.isEmpty(this.workingDayDetails)) this.getTimeSlots();
           
