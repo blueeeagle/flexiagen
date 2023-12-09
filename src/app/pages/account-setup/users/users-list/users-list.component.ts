@@ -18,6 +18,7 @@ export class UsersListComponent {
   tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'USERNAME', 'MOBILE', 'ROLE', 'STATUS', 'ACTION'];
   openCanvas: boolean = false;
   formSubmitted: boolean = false;
+  userButton:boolean=true
   modalstatus: boolean = false ;
   dialCodeList: Array<any> = [];
   masterList : any = {};
