@@ -1,0 +1,21 @@
+<ng-template #modal>
+
+    <div class="modal-body">
+
+        <div class="mt-5" style="display: flex; justify-content: center; align-items: center;" >
+
+            <div class="product-image  rounded" style="background: url('/assets/images/card.png');" ></div> 
+
+        </div>
+                
+        <p class="fs-6 text-center mt-3">{{ editData?.content }}</p>
+
+        <div class="text-center mt-1 mb-5">
+
+            <button class="btn btn-primary btn-lg  py-2 px-5" style="font-size: 10px;" (click)="close()" >OK</button>
+
+        </div>
+     
+    </div>
+    
+</ng-template>
