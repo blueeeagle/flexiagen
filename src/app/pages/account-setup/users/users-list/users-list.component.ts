@@ -17,6 +17,7 @@ export class UsersListComponent {
 
   openCanvas: boolean = false;
   formSubmitted: boolean = false;
+  userButton:boolean=true
   dialCodeList: Array<any> = [];
   masterList : any = {};
   addUserForm: FormGroup = new FormGroup({});

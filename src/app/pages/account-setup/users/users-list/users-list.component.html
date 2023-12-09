@@ -1,145 +1,176 @@
-<div class="container-fluid">
+<div class="user-list">
 
-    <div class="d-flex justify-content-between">
-        
-        <div class="page-header">All Users</div>
+    <ng-container *ngIf="usersList.length == 0;else userslist">
     
-    </div>
+        <div class="empty-wishlist">
 
-    <div class="row d-flex justify-content-between mt-2">
-
-        <div class="col-sm-12 col-md-3 mb-2">
-
-            <div class="input-group">
-
-                <span class="input-group-text ps-3 pe-3">
-
-                    <i class="bi bi-search"></i>
-
-                </span>
-
-                <input type="text" class="form-control" placeholder="search for User by name">
-
+            <div class="empty-content">
+    
+                <h4 class="fw-600">LIST IS EMPTY</h4>
+            
+                <div class="emptyIcon"></div>
+                
+                <button type="button" class="btn btn-primary" (click)="openCanvas = true">
+                
+                    <i class="bi bi-plus-square"></i>
+                
+                    <span class="ms-1 d-none d-md-inline">Add New User</span>
+                
+                </button>
+                
             </div>
 
         </div>
 
-        <div class="col-sm-12 col-md-8 text-end">
+    </ng-container>
 
-            <button type="button" class="btn btn-primary" (click)="openCanvas = true">
-            
-                <i class="bi bi-plus-square"></i>
-            
-                <span class="ms-1 d-none d-md-inline">Add New User</span>
-            
-            </button>
+    <ng-template #userslist>
 
+        <div class="container-fluid">
+    
+            <div class="d-flex justify-content-between">
+                
+                <div class="page-header">All Users</div>
+            
+            </div>
+        
+            <div class="row d-flex justify-content-between mt-2">
+        
+                <div class="col-sm-12 col-md-3 mb-2">
+        
+                    <div class="input-group">
+        
+                        <span class="input-group-text ps-3 pe-3">
+        
+                            <i class="bi bi-search"></i>
+        
+                        </span>
+        
+                        <input type="text" class="form-control" placeholder="search for User by name">
+        
+                    </div>
+        
+                </div>
+        
+                <div class="col-sm-12 col-md-8 text-end">
+        
+                    <button type="button" class="btn btn-primary" (click)="openCanvas = true">
+                    
+                        <i class="bi bi-plus-square"></i>
+                    
+                        <span class="ms-1 d-none d-md-inline">Add New User</span>
+                    
+                    </button>
 
+                </div>
+        
+                <!-- <div class="col-sm-12 col-md-8 d-flex justify-content-end" style="height: fit-content;">
+        
+                    <button type="button" class="btn btn-primary" (click)="openCanvas = true">
+                        
+                        <i class="bi bi-plus-square"></i>
+                            
+                        <span class="ms-1 d-none d-md-inline">Add New User</span>
+                    
+                    </button>
+        
+                    <button type="button" class="btn btn-outline-primary ms-3">
+        
+                        <i class="bi bi-sliders"></i>
+        
+                        <span class="ms-1 d-none d-md-inline">Filter</span>
+        
+                    </button>
+        
+                </div> -->
+        
+            </div>
+        
+        </div>
+        
+        <div class="card border-opacity-10 border-dark">
+        
+            <div class="table-responsive">
+        
+                <table class="table table-borderless mb-0 align-middle">
+        
+                    <thead>
+        
+                        <tr>
+        
+                            <th style="width:5%">SL#</th>
+        
+                            <th style="width:15%">NAME</th>
+        
+                            <th style="width:15%">EMAIL ID</th>
+        
+                            <th style="width:15%">USERNAME</th>
+        
+                            <th style="width:15%">ROLE</th>
+        
+                            <th style="width:15%">MOBILE</th>
+        
+                            <th style="width:15%" class="text-center">STATUS</th>
+        
+                            <th style="width:5%">Action</th>
+        
+                        </tr>
+        
+                    </thead>
+        
+                    <tbody>
+        
+                        <tr *ngFor="let user of usersList; let i = index">
+        
+                            <td>{{i+1}}</td>
+        
+                            <td> {{ user?.name | uppercase }} </td>
+        
+                            <td> {{ user?.email || '--Nil--'  }} </td>
+        
+                            <td> {{ user?.userName || 'N/A'}} </td>
+        
+                            <td> {{ user?.role?.roleName | uppercase }} </td>
+        
+                            <td>  {{ user.dialCode }} {{ user?.mobile }}  </td>
+        
+                            <td> 
+        
+                                <div class="form-check form-switch ps-0 w-100 justify-content-center d-flex">
+                                
+                                    <label class="form-check-label text-dark" for="active">
+                                
+                                    {{ (user.is_active) ? 'Active' : 'In-Active' }}
+                                
+                                    </label>
+                                
+                                    <input class="form-check-input" type="checkbox" role="switch" id="active" [(ngModel)]="user['is_active']" [ngModelOptions]="{standalone: true}" (change)="updateUserAction(user)">
+                                
+                                </div>
+                                
+                            </td>
+        
+                            <td> 
+        
+                                <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(user)">
+                                
+                                    <i class="bi bi-pencil-square me-2"></i> Update
+                                
+                                </a>
+                                
+                            </td>
+        
+                        
+                        </tr>
+        
+                </table>
+        
+            </div>
+        
         </div>
 
-        <!-- <div class="col-sm-12 col-md-8 d-flex justify-content-end" style="height: fit-content;">
-
-            <button type="button" class="btn btn-primary" (click)="openCanvas = true">
-                
-                <i class="bi bi-plus-square"></i>
-                    
-                <span class="ms-1 d-none d-md-inline">Add New User</span>
-            
-            </button>
-
-            <button type="button" class="btn btn-outline-primary ms-3">
-
-                <i class="bi bi-sliders"></i>
-
-                <span class="ms-1 d-none d-md-inline">Filter</span>
-
-            </button>
-
-        </div> -->
-
-    </div>
-
-</div>
-
-<div class="card border-opacity-10 border-dark">
-
-    <div class="table-responsive">
-
-        <table class="table table-borderless mb-0 align-middle">
-
-            <thead>
-
-                <tr>
-
-                    <th style="width:5%">SL#</th>
-
-                    <th style="width:15%">NAME</th>
-
-                    <th style="width:15%">EMAIL ID</th>
-
-                    <th style="width:15%">USERNAME</th>
-
-                    <th style="width:15%">ROLE</th>
-
-                    <th style="width:15%">MOBILE</th>
-
-                    <th style="width:15%" class="text-center">STATUS</th>
-
-                    <th style="width:5%">Action</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr *ngFor="let user of usersList; let i = index">
-
-                    <td>{{i+1}}</td>
-
-                    <td> {{ user?.name | uppercase }} </td>
-
-                    <td> {{ user?.email || '--Nil--'  }} </td>
-
-                    <td> {{ user?.userName || 'N/A'}} </td>
-
-                    <td> {{ user?.role?.roleName | uppercase }} </td>
-
-                    <td>  {{ user.dialCode }} {{ user?.mobile }}  </td>
-
-                    <td> 
-
-                        <div class="form-check form-switch ps-0 w-100 justify-content-center d-flex">
-                        
-                            <label class="form-check-label text-dark" for="active">
-                        
-                            {{ (user.is_active) ? 'Active' : 'In-Active' }}
-                        
-                            </label>
-                        
-                            <input class="form-check-input" type="checkbox" role="switch" id="active" [(ngModel)]="user['is_active']" [ngModelOptions]="{standalone: true}" (change)="updateUserAction(user)">
-                        
-                        </div>
-                        
-                    </td>
-
-                    <td> 
-
-                        <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(user)">
-                        
-                            <i class="bi bi-pencil-square me-2"></i> Update
-                        
-                        </a>
-                        
-                    </td>
-
-                   
-                </tr>
-
-        </table>
-
-    </div>
-
+    </ng-template>
+  
 </div>
 
 <asidebar #canvas [openCanvas]="openCanvas" title="Add New user" position="end" (onClose)="openCanvas = false" (onSubmit)="createUser()">
@@ -291,3 +322,4 @@
     </div>
 
 </asidebar>
+
