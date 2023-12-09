@@ -18,6 +18,7 @@ export class UsersListComponent {
   tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'USERNAME', 'MOBILE', 'ROLE', 'STATUS', 'ACTION'];
   openCanvas: boolean = false;
   formSubmitted: boolean = false;
+  modalstatus: boolean = false ;
   dialCodeList: Array<any> = [];
   masterList : any = {};
   addUserForm: FormGroup = new FormGroup({});
@@ -100,6 +101,20 @@ export class UsersListComponent {
     this.loadForm();
     
     this.openCanvas = true;
+
+  }
+
+  open(){
+
+    this.editData = {
+
+      imgSrc : '/assets/images/card.png',
+
+      'content' : 'Card Details added  Successfully'
+
+    }
+
+    this.modalstatus = true
 
   }
 

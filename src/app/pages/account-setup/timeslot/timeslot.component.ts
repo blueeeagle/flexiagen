@@ -55,58 +55,59 @@ export class TimeslotComponent {
 
   }
 
-  getWorkingHours() {
+  getWorkingHours(){
+    
+    this.service.postService({ 'url': '/app/workingHrs/list', 'payload': { 'companyId': this.service.companyDetails._id, 'day': this.selectedDay, 'isDefault': true } }).subscribe((res: any) => {
 
-    forkJoin({
+        if(res.status=='ok') {
 
-      'timeslotRes':  this.service.postService({ 'url': '/app/timeslot/list', 'payload': { 'companyId': this.service.companyDetails._id, 'day': this.selectedDay, 'isDefault': true } }),
+          this.workingDayDetails = _.first(res.data) || {};
 
-      'workingDayRes': this.service.postService({ 'url': '/app/workingHrs/list', 'payload': { 'companyId': this.service.companyDetails._id, 'day': this.selectedDay, 'isDefault': true } })
-      
-    }).subscribe({
-
-      next: (res: any) => {
-
-        this.editData = res.timeslotRes.status == 'ok' ? _.first(res.timeslotRes.data) : {};
-
-        this.mode = this.editData?._id ? 'Update' : 'Create';
-
-        if(res.workingDayRes.status == 'ok') {
-
-          this.workingDayDetails = _.first(res.workingDayRes.data) || {};
-
-          this.availTimeSlots = [];
-  
-          if(!_.isEmpty(this.workingDayDetails)) {
-  
-            // Iterate through each total slot
-            for (const slotDet of this.totalTimeSlots) {
-              // check if the slot is inbetween any of the shop available times
-              const isAvail = _.some(this.workingDayDetails.availableTimes, timeDet =>
-                moment(slotDet.startTime,"HH:mm").isBetween(moment(timeDet.startTime,"HH:mm"), moment(timeDet.endTime,"HH:mm"), undefined, '[)') &&
-                moment(slotDet.endTime,"HH:mm").isBetween(moment(timeDet.startTime,"HH:mm"), moment(timeDet.endTime,"HH:mm"), undefined, '(]')
-              );
-              // if the slot is available, push it to the available slots array
-              if (isAvail) {
-                this.availTimeSlots.push({
-                  startTime: moment(slotDet.startTime,"HH:mm").format('HH:mm'),
-                  endTime: moment(slotDet.endTime,"HH:mm").format('HH:mm'),
-                  session: slotDet.session
-                });
-              }
-            }
-  
-          } else this.availTimeSlots = this.totalTimeSlots;
-  
-          this.loadForm();
-
-        }        
-
-      }
+          if(!_.isEmpty(this.workingDayDetails)) this.getTimeSlots();
+          
+        }
 
     });
 
-  }  
+  }
+
+  getTimeSlots() {
+
+    this.service.postService({ 'url': '/app/timeslot/list', 'payload': { 'companyId': this.service.companyDetails._id, 'day': this.selectedDay, 'isDefault': true } }).subscribe((res:any)=>{
+
+      this.editData = res?.status == 'ok' ? _.first(res.data) : {};
+
+      this.mode = this.editData?._id ? 'Update' : 'Create';
+
+      this.availTimeSlots = [];
+
+      // Iterate through each total slot
+      for (const slotDet of this.totalTimeSlots) {
+
+        // check if the slot is inbetween any of the shop available times
+        const isAvail = _.some(this.workingDayDetails.availableTimes, timeDet =>
+          moment(slotDet.startTime,"HH:mm").isBetween(moment(timeDet.startTime,"HH:mm"), moment(timeDet.endTime,"HH:mm"), undefined, '[)') &&
+          moment(slotDet.endTime,"HH:mm").isBetween(moment(timeDet.startTime,"HH:mm"), moment(timeDet.endTime,"HH:mm"), undefined, '(]')
+        );
+
+        // if the slot is available, push it to the available slots array
+        if (isAvail) {
+
+          this.availTimeSlots.push({
+            'startTime': moment(slotDet.startTime,"HH:mm").format('HH:mm'),
+            'endTime': moment(slotDet.endTime,"HH:mm").format('HH:mm'),
+            'session': slotDet.session
+          });
+
+        }
+
+      }
+
+      this.loadForm();
+      
+    })
+
+  }
 
   loadForm() {
 
