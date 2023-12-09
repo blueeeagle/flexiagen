@@ -75,7 +75,7 @@ export class TimeslotComponent {
 
     this.service.postService({ 'url': '/app/timeslot/list', 'payload': { 'companyId': this.service.companyDetails._id, 'day': this.selectedDay, 'isDefault': true } }).subscribe((res:any)=>{
 
-      this.editData = res.timeslotRes.status == 'ok' ? _.first(res.timeslotRes.data) : {};
+      this.editData = res?.status == 'ok' ? _.first(res.data) : {};
 
       this.mode = this.editData?._id ? 'Update' : 'Create';
 
