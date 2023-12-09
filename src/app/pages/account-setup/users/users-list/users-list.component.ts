@@ -15,6 +15,7 @@ export class UsersListComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
+  tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'USERNAME', 'MOBILE', 'ROLE', 'STATUS', 'ACTION'];
   openCanvas: boolean = false;
   formSubmitted: boolean = false;
   dialCodeList: Array<any> = [];

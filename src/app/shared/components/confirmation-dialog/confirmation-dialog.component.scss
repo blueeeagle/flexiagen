@@ -50,29 +50,41 @@
     box-shadow: none !important;
 }
 
-.error.confirm-img {
-    color       :  var(--error-foreground) !important;
-    background  :  var(--error-background) !important;
+.error {
+ 
+    .confirm-img {
+        color       :  var(--error-foreground) !important;
+        background  :  var(--error-background) !important;
+    }
+    
 }
 
-.basic.confirm-img {
-    color       :  var(--basic-foreground) !important;
-    background  :  var(--basic-background) !important;
+.basic {
+    .confirm-img {
+        color       :  var(--basic-foreground) !important;
+        background  :  var(--basic-background) !important;
+    }
 }
 
-.info.confirm-img {
-    color       :  var(--info-foreground) !important;
-    background  :  var(--info-background) !important;
+.info {
+    .confirm-img {
+        color       :  var(--info-foreground) !important;
+        background  :  var(--info-background) !important;
+    }
 }
 
-.success.confirm-img {
-    color       :  var(--success-foreground) !important;
-    background  :  var(--success-background) !important;
+.success {
+    .confirm-img {
+        color       :  var(--success-foreground) !important;
+        background  :  var(--success-background) !important;
+    }
 }
 
-.warn.confirm-img {
-    color       :  var(--warn-foreground) !important;
-    background  :  var(--warn-background) !important;
+.warn {
+    .confirm-img {
+        color       :  var(--warn-foreground) !important;
+        background  :  var(--warn-background) !important;
+    }
 }
 
 .modal-body {
