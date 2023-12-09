@@ -6,7 +6,7 @@
     
     </div>
 
-    <div class="row mt-2" >
+    <div class="row mt-2" *ngIf="!_.isEmpty(workingDayDetails)">
         
         <div class="col-xxl-9 col-xl-10">
 
@@ -137,5 +137,29 @@
         </div>
 
     </div>
-    
+
+    <div class="mt-5" *ngIf="_.isEmpty(workingDayDetails)" >
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <p class="text-center">Please Create Working Hours</p>
+
+                <div class="text-center">
+
+                    <button class="btn btn-outline-primary btn-lg mt-4"  routerLink="/pages/account-setup/company/working-hours"> Create </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div>
+
+        </div>
+
+    </div>
+
 </div>
