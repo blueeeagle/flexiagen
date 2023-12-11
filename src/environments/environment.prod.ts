@@ -9,6 +9,6 @@ export const APP_CONFIG = {
 
 	domain: 'http://agentapi.flexiclean.me/api/v1',
 
-    imgBasePath: ''
+    imgBasePath: 'http://agentapi.flexiclean.me/'
 
 };

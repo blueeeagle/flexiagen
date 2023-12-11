@@ -421,3 +421,9 @@ ng-select.form-control {
         border-color: var(--bs-primary);
     }
 }
+
+.product-image {
+    background-size: contain !important;   
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
