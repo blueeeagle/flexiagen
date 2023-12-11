@@ -23,9 +23,10 @@ export class UsersListComponent {
   dialCodeList: Array<any> = [];
   masterList : any = {};
   addUserForm: FormGroup = new FormGroup({});
-  usersList: Array<any> = [];
+  usersList!: Array<any>;
   roles: Array<any> = [];
   mode: 'Create' | 'Update' = 'Create';
+  _: any = _;
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService){}
   

@@ -26,6 +26,7 @@ export class LocationComponent {
   locationList: Array<any> = [];
   userSubscribe: any;
   isLoading: boolean = false;
+  _: any = _;
 
   constructor(public service: CommonService) { 
 

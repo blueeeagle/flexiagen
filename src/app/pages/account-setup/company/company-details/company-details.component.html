@@ -77,8 +77,10 @@
                             <label for="email">Company Logo </label>
             
                             <div class="mt-1">
+
+                                <input type="file" class="upload" style="display: none;" #fileInput>
     
-                               <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img">
+                               <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img" (click)="fileInput.click()">
                                 
                                     <i class="bi bi-file-earmark-plus fs-4"></i> 
                                     

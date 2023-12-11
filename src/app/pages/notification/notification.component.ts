@@ -10,7 +10,7 @@ export class NotificationComponent {
 
   _: any = _;
 
-  orderList: Array<any> = [
+  notifications: Array<any> = [
     {
       "orderId": "54215",
       "description": "Allows users to view list of customers associated with the laundry",
@@ -32,9 +32,9 @@ export class NotificationComponent {
 
   removeCard(index: number): void {
 
-    if (index >= 0 && index < this.orderList.length) {
+    if (index >= 0 && index < this.notifications.length) {
 
-      this.orderList.splice(index, 1);
+      this.notifications.splice(index, 1);
 
     }
   

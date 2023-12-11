@@ -1,10 +1,10 @@
-<nav class="custom-tabs mt-3 mb-1">
+<nav class="mt-3 mb-1">
 
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
 
-        <button class="nav-link active border-bottom" id="nav-roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab" aria-controls="item-roles" aria-selected="true">Roles</button>
+        <button class="nav-link active border-bottom border-0" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab" aria-controls="item-roles" aria-selected="true">Roles</button>
 
-        <button class="nav-link border-bottom" id="nav-permission-tab" data-bs-toggle="tab" data-bs-target="#permission" type="button" role="tab" aria-controls="permission" aria-selected="false">Permissions</button>
+        <button class="nav-link border-bottom border-0" id="permission-tab" data-bs-toggle="tab" data-bs-target="#permission" type="button" role="tab" aria-controls="permission" aria-selected="false">Permissions</button>
 
     </div>
 
@@ -14,7 +14,7 @@
 
             <div class="tab-content" id="nav-tabContent">
 
-                <div class="tab-pane fade show active" id="roles" role="tabpanel" aria-labelledby="nav-roles-tab">
+                <div class="tab-pane fade show active" id="roles" role="tabpanel" aria-labelledby="roles-tab">
 
                     <div class="col-xl-6 col-lg-7">
 
@@ -88,104 +88,98 @@
 
                 </div>
 
-                <div class="tab-pane fade show" id="permission" role="tabpanel" aria-labelledby="nav-permission-tab">
+                <div class="tab-pane fade show" id="permission" role="tabpanel" aria-labelledby="permission-tab">
 
-                    <div class="row">
+                    <div class="col-xl-6 col-lg-7">
 
-                        <div class="col-md-7 px-0">
+                        <div class="row mx-0">
 
-                            <div class="row mx-0">
+                            <ng-container formArrayName="permissionList">
 
-                                <ng-container formArrayName="permissionList">
+                                <div class="table-responsive w-fit-content">
 
-                                    <div class="table-responsive w-fit-content">
-    
-                                        <table class="table table-bordered form-table">
+                                    <table class="table table-bordered form-table">
 
-                                            <thead>
+                                        <thead>
 
-                                                <tr>
-                                
-                                                    <th scope="col" style="width: 780px;">Laundry Customers</th>
-
-                                                </tr>
-
-                                            </thead>
-
-                                            <tbody>
-                                            
-                                                <ng-container *ngFor="let permissionForm of f.permissionList.controls; let i = index; let last = last; let first = first">
-            
-                                                    <ng-container [formGroup]="permissionForm" *ngIf="permissionForm.controls as pf">
-                                    
-                                                        <tr *ngFor="let role of roleList;let i=index">
-                                                            
-                                                            <td class="d-flex justify-content-between">
-                                                                
-                                                                <label class="text-decoration-none cursor-pointer" [for]="'isChecked' + i">
-
-                                                                    <p>
-
-                                                                        <span class="fw-bold text-dark">{{role.roleName}}</span><br>
-                                                                        <span class="text-light">{{role.description}}</span>
-
-                                                                    </p>
-
-                                                                </label>
-
-                                                                <div class="form-check form-group">
-    
-                                                                    <input class="form-check-input" type="checkbox" [id]="'isChecked' + i" formControlName="isChecked">
-                                    
-                                                                </div>
-
-                                                            </td>
+                                            <tr>
                             
-                                                        </tr>
+                                                <th scope="col" style="width: 780px;">Laundry Customers</th>
 
-                                                    </ng-container>
+                                            </tr>
+
+                                        </thead>
+
+                                        <tbody>
+                                        
+                                            <ng-container *ngFor="let permissionForm of f.permissionList.controls; let i = index; let last = last; let first = first">
+        
+                                                <ng-container [formGroup]="permissionForm" *ngIf="permissionForm.controls as pf">
+                                
+                                                    <tr *ngFor="let role of roleList;let i=index">
+                                                        
+                                                        <td class="d-flex justify-content-between">
+                                                            
+                                                            <label class="text-decoration-none cursor-pointer" [for]="'isChecked' + i">
+
+                                                                <p>
+
+                                                                    <span class="fw-bold text-dark">{{role.roleName}}</span><br>
+                                                                    <span class="text-light">{{role.description}}</span>
+
+                                                                </p>
+
+                                                            </label>
+
+                                                            <div class="form-check form-group">
+
+                                                                <input class="form-check-input" type="checkbox" [id]="'isChecked' + i" formControlName="isChecked">
+                                
+                                                            </div>
+
+                                                        </td>
+                        
+                                                    </tr>
 
                                                 </ng-container>
 
-                                        </table>
+                                            </ng-container>
 
-                                    </div>
+                                    </table>
 
-                                </ng-container>
-
-                            </div>
-                            
-                            <div class="row px-4 pt-4">
-    
-                                <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
-    
-                                    <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="loadForm()">CLEAR</div>
-    
                                 </div>
-    
-                                <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
 
-                                    <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="(formSubmitted && permissionForm.invalid) || isLoading" (click)="submit()">
-            
-                                        <ng-container *ngIf="!isLoading">SAVE</ng-container>
-                
-                                        <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
-                
-                                            <span class="visually-hidden">Loading...</span>
-                
-                                        </div>
-                
-                                    </button>                         
-            
-                                </div> 
-    
+                            </ng-container>
+
+                        </div>
+                        
+                        <div class="row px-4 pt-4">
+
+                            <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                                <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="loadForm()">CLEAR</div>
+
                             </div>
+
+                            <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                                <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="(formSubmitted && permissionForm.invalid) || isLoading" (click)="submit()">
+        
+                                    <ng-container *ngIf="!isLoading">SAVE</ng-container>
+            
+                                    <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+            
+                                        <span class="visually-hidden">Loading...</span>
+            
+                                    </div>
+            
+                                </button>                         
+        
+                            </div> 
 
                         </div>
 
-
                     </div>
-
 
                 </div>
 

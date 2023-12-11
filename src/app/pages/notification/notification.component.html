@@ -8,9 +8,9 @@
 
     <div class="row">
 
-        <ng-container *ngIf="_.size(orderList) > 0;else emptyNotificaion">
+        <ng-container *ngIf="_.size(notifications) > 0;else emptyNotificaion">
         
-            <ng-container *ngFor="let orderDet of orderList;let i =index">
+            <ng-container *ngFor="let notificationDet of notifications;let i =index">
     
                 <div class="card rounded shadow mt-2 custom-card">
     
@@ -26,7 +26,7 @@
     
                             <a class="me-2">
     
-                                <p class="px-1 text-secondary">Order ID : {{ orderDet.orderId }} was pending</p>
+                                <p class="px-1 text-secondary">Order ID : {{ notificationDet.orderId }} was pending</p>
     
                             </a>
     
@@ -57,11 +57,11 @@
 
         <ng-template #emptyNotificaion>
 
-            <div class="empty-notificaion">
+            <div class="empty-page">
                 
                 <div class="empty-content">
       
-                  <div class="emptyIcon"></div>
+                  <div class="emptyIcon" style="background: url(./assets/images/empty-notification.png);"></div>
 
                   <h4 class="fw-bold">No Notifications Yet</h4>
 
