@@ -135,7 +135,7 @@ export class UsersListComponent {
     })
   }
 
-  createUser() {
+  submit() {
         
     this.formSubmitted = true;
 
