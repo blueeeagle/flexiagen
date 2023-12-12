@@ -1,148 +1,152 @@
 <div class="location-container">
 
-    <ng-container *ngIf="_.size(locationList) == 0;else locationlist">
-    
-        <div class="empty-page">
+    <div class="container-fluid">
 
-            <div class="empty-content">
-    
-                <h4 class="fw-600">LIST IS EMPTY</h4>
-            
-                <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                
-                <button type="button" class="btn btn-primary" (click)="openCanvas = true">
-                
-                    <i class="bi bi-plus-square"></i>
-                
-                    <span class="ms-1 d-none d-md-inline">Add New </span>
-                
-                </button>
-                
-            </div>
-
-        </div>
-
-    </ng-container>
-
-    <ng-template #locationlist>
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-    
-            <div class="page-header">LOCATION</div>
+        <ng-container *ngIf="_.size(locationList) == 0;else locationlist">
         
-            <div class="text-end">
+            <div class="empty-page">
     
-                <button class="btn btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
+                <div class="empty-content">
+        
+                    <h4 class="fw-600">LIST IS EMPTY</h4>
                 
-                    <span class="ms-3" >Add New</span>
-                
-                </button>
+                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                    
+                    <button type="button" class="btn btn-primary" (click)="openCanvas = true">
+                    
+                        <i class="bi bi-plus-square"></i>
+                    
+                        <span class="ms-1 d-none d-md-inline">Add New </span>
+                    
+                    </button>
+                    
+                </div>
     
             </div>
+    
+        </ng-container>
+    
+        <ng-template #locationlist>
+    
+            <div class="d-flex justify-content-between align-items-center mb-4">
         
-        </div>
-    
-        <div class="card border-0">
-    
-            <div class="table-responsive">
-    
-                <table class="table table-bordered bg-white" mat-table [dataSource]="locationList">
-    
-                    <ng-container matColumnDef="SL#" sticky>
+                <div class="page-header">LOCATION</div>
             
-                        <th mat-header-cell *matHeaderCellDef> SL# </th>
-          
-                        <td mat-cell *matCellDef="let locationDet; let index = index">
+                <div class="text-end">
         
-                            {{ index + 1 }}   
-                          
-                        </td>
-          
-                      </ng-container>  
-    
-                      <ng-container matColumnDef="LOCATION" sticky>
-                
-                        <th mat-header-cell *matHeaderCellDef> Location </th>
+                    <button class="btn btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
+                    
+                        <span class="ms-3" >Add New</span>
+                    
+                    </button>
         
-                        <td mat-cell *matCellDef="let locationDet">
-        
-                            {{ locationDet['areaId']['name'] }}
-    
-                            <p class="small mb-0 text-light"> {{ locationDet['areaId']['cityId']['name'] }} </p>
-        
-                        </td>
-    
-                    </ng-container>
-    
-                    <ng-container matColumnDef="MIN ORDER AMOUNT" sticky>
-                
-                        <th mat-header-cell *matHeaderCellDef class="text-end"> Min Order Amount </th>
-        
-                        <td mat-cell *matCellDef="let locationDet" class="text-end">
-        
-                            {{ locationDet['minOrderAmt']  | number: '1.2-2' | currency: 'INR' }}
-        
-                        </td>
-    
-                    </ng-container>
-    
-                    <ng-container matColumnDef="DELIVERY CHARGES" sticky>
-                
-                        <th mat-header-cell *matHeaderCellDef class="text-end"> Delivery Charges </th>
-        
-                        <td mat-cell *matCellDef="let locationDet" class="text-end">
-        
-                            {{ !locationDet['isFreeDelivery'] ? (locationDet['deliveryCharge'] | number: '1.2-2' | currency: 'INR') : 'Free' }}
-        
-                        </td>
-    
-                    </ng-container>
-    
-                    <ng-container matColumnDef="SERVICE" stickyEnd>
-                
-                        <th mat-header-cell *matHeaderCellDef> Service </th>
-        
-                        <td mat-cell *matCellDef="let locationDet">
-        
-                            <div class="form-check form-switch justify-content-end flex-row-reverse d-flex ps-0">
-    
-                                <label class="form-check-label text-dark ms-2" for="logistics"> {{ locationDet.is_active ? 'Available' : 'Unavailable' }} </label>
-    
-                                <input class="form-check-input ms-0" type="checkbox" role="switch" id="logistics"  [(ngModel)]="locationDet['is_active']" (change)="updateLocation(locationDet)" [ngModelOptions]="{standalone: true}">
-    
-                            </div>
-        
-                        </td>
-    
-                    </ng-container>
-    
-                    <ng-container matColumnDef="ACTION" stickyEnd>
-                
-                        <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> Action </th>
-        
-                        <td mat-cell *matCellDef="let locationDet">
-        
-                            <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(locationDet)"> 
-    
-                                <i class="bi bi-pencil-square me-2"></i> Update
-    
-                            </a>
-        
-                        </td>
-    
-                    </ng-container>
-    
-                    <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
+                </div>
             
-                    <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>  
-    
-                </table>
-    
+            </div>
+        
+            <div class="card border-0">
+        
+                <div class="table-responsive">
+        
+                    <table class="table table-bordered bg-white" mat-table [dataSource]="locationList">
+        
+                        <ng-container matColumnDef="SL#" sticky>
+                
+                            <th mat-header-cell *matHeaderCellDef> SL# </th>
+              
+                            <td mat-cell *matCellDef="let locationDet; let index = index">
+            
+                                {{ index + 1 }}   
+                              
+                            </td>
+              
+                          </ng-container>  
+        
+                          <ng-container matColumnDef="LOCATION" sticky>
+                    
+                            <th mat-header-cell *matHeaderCellDef> Location </th>
+            
+                            <td mat-cell *matCellDef="let locationDet">
+            
+                                {{ locationDet['areaId']['name'] }}
+        
+                                <p class="small mb-0 text-light"> {{ locationDet['areaId']['cityId']['name'] }} </p>
+            
+                            </td>
+        
+                        </ng-container>
+        
+                        <ng-container matColumnDef="MIN ORDER AMOUNT" sticky>
+                    
+                            <th mat-header-cell *matHeaderCellDef class="text-end"> Min Order Amount </th>
+            
+                            <td mat-cell *matCellDef="let locationDet" class="text-end">
+            
+                                {{ locationDet['minOrderAmt']  | number: '1.2-2' | currency: 'INR' }}
+            
+                            </td>
+        
+                        </ng-container>
+        
+                        <ng-container matColumnDef="DELIVERY CHARGES" sticky>
+                    
+                            <th mat-header-cell *matHeaderCellDef class="text-end"> Delivery Charges </th>
+            
+                            <td mat-cell *matCellDef="let locationDet" class="text-end">
+            
+                                {{ !locationDet['isFreeDelivery'] ? (locationDet['deliveryCharge'] | number: '1.2-2' | currency: 'INR') : 'Free' }}
+            
+                            </td>
+        
+                        </ng-container>
+        
+                        <ng-container matColumnDef="SERVICE" stickyEnd>
+                    
+                            <th mat-header-cell *matHeaderCellDef> Service </th>
+            
+                            <td mat-cell *matCellDef="let locationDet">
+            
+                                <div class="form-check form-switch justify-content-end flex-row-reverse d-flex ps-0">
+        
+                                    <label class="form-check-label text-dark ms-2" for="logistics"> {{ locationDet.is_active ? 'Available' : 'Unavailable' }} </label>
+        
+                                    <input class="form-check-input ms-0" type="checkbox" role="switch" id="logistics"  [(ngModel)]="locationDet['is_active']" (change)="updateLocation(locationDet)" [ngModelOptions]="{standalone: true}">
+        
+                                </div>
+            
+                            </td>
+        
+                        </ng-container>
+        
+                        <ng-container matColumnDef="ACTION" stickyEnd>
+                    
+                            <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> Action </th>
+            
+                            <td mat-cell *matCellDef="let locationDet">
+            
+                                <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(locationDet)"> 
+        
+                                    <i class="bi bi-pencil-square me-2"></i> Update
+        
+                                </a>
+            
+                            </td>
+        
+                        </ng-container>
+        
+                        <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
+                
+                        <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>  
+        
+                    </table>
+        
+                </div>        
+        
             </div>        
-    
-        </div>        
-        
-    </ng-template>
+            
+        </ng-template>
+
+    </div>
 
 </div>
 
