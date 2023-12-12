@@ -1,122 +1,126 @@
-<div class="dashboard-container">
+<div class="workingHours-container">
 
-    <div class="row">
+    <div class="container-fluid"> 
 
-        <div class="page-header col-sm-6">WORKING HOURS</div>
-    
-    </div>
+        <div class="row">
 
-    <div class="row mt-2">
+            <div class="page-header col-sm-6">WORKING HOURS</div>
         
-        <div class="col-xxl-7 col-xl-9">
+        </div>
 
-            <form [formGroup]="workingHoursFrom">
-    
-                <ng-container  formArrayName="workingDays">
-    
-                    <ng-container *ngFor="let dayForm of wdf.controls; let wdIndx = index" [formGroup]="dayForm">
-    
-                        <div class="row border p-2 mb-3 rounded" *ngIf="dayForm.controls as df">
-    
-                            <div class="col-md-4 mb-2 pe-0 align-self-center">
-    
-                                <div class="form-check form-switch ps-0 w-fit-content">
-                                    
-                                    <input class="form-check-input float-start ms-0 mt-1" type="checkbox" role="switch" id="is_active"  formControlName="is_active">
-    
-                                    <label class="form-check-label fw-medium fs-5 ms-2 mt-0" for="is_active">
-    
-                                        {{ df.day.value }}
+        <div class="row mt-2">
+            
+            <div class="col-xxl-7 col-xl-9">
+
+                <form [formGroup]="workingHoursFrom">
+        
+                    <ng-container  formArrayName="workingDays">
+        
+                        <ng-container *ngFor="let dayForm of wdf.controls; let wdIndx = index" [formGroup]="dayForm">
+        
+                            <div class="row border p-2 mb-3 rounded" *ngIf="dayForm.controls as df">
+        
+                                <div class="col-md-4 mb-2 pe-0 align-self-center">
+        
+                                    <div class="form-check form-switch ps-0 w-fit-content">
                                         
-                                    </label>                                    
-    
+                                        <input class="form-check-input float-start ms-0 mt-1" type="checkbox" role="switch" id="is_active"  formControlName="is_active">
+        
+                                        <label class="form-check-label fw-medium fs-5 ms-2 mt-0" for="is_active">
+        
+                                            {{ df.day.value }}
+                                            
+                                        </label>                                    
+        
+                                    </div>
+        
                                 </div>
-    
-                            </div>
-    
-                            <ng-container formArrayName="availableTimes">
-    
-                                <ng-container *ngFor="let timeForm of df.availableTimes.controls; let timeIndx = index; let first = first; let last = last" [formGroup]="timeForm">
-    
-                                    <div class="col-md-4 mb-2" *ngIf="!first"></div>
-    
-                                    <div class="col-md-3 col-sm-4 col-6 mb-2">
-    
-                                        <ng-select class="w-100" placeholder="Start Time" formControlName="startTime" [clearable]="false" [searchable]="false" [readonly]="!df.is_active.value" (change)="changeValue({ fieldName: 'startTime', 'index': wdIndx, 'indexTwo': timeIndx })">
-    
-                                            <ng-option *ngFor="let time of timeOptions; let isLastTime = last" [value]="time.value" [disabled]="isLastTime || isTimeAvailable({ 'fieldName': 'startTime', 'option': time.value, wdIndx, timeIndx })">
-                                                {{ time.label }}
-                                            </ng-option>
-    
-                                        </ng-select>
-                                        
-                                    </div>
-    
-                                    <div class="col-md-3 col-sm-4 col-6 mb-2">
-    
-                                        <ng-select class="w-100" placeholder="Start Time" formControlName="endTime" [clearable]="false" [searchable]="false" [readonly]="!df.is_active.value" (change)="changeValue({ fieldName: 'endTime', 'index': wdIndx, 'indexTwo': timeIndx })">
-    
-                                            <ng-option *ngFor="let time of timeOptions; let indx = index" [value]="time.value" [disabled]="indx == 0 || isTimeAvailable({ 'fieldName': 'endTime', 'option': time.value, wdIndx, timeIndx })">
-                                                {{ time.label }}
-                                            </ng-option>
-    
-                                        </ng-select>
-                                        
-                                    </div>
-    
-                                    <div class="col-md-2 col-sm-4 mb-2 align-self-center">
+        
+                                <ng-container formArrayName="availableTimes">
+        
+                                    <ng-container *ngFor="let timeForm of df.availableTimes.controls; let timeIndx = index; let first = first; let last = last" [formGroup]="timeForm">
+        
+                                        <div class="col-md-4 mb-2" *ngIf="!first"></div>
+        
+                                        <div class="col-md-3 col-sm-4 col-6 mb-2">
+        
+                                            <ng-select class="w-100" placeholder="Start Time" formControlName="startTime" [clearable]="false" [searchable]="false" [readonly]="!df.is_active.value" (change)="changeValue({ fieldName: 'startTime', 'index': wdIndx, 'indexTwo': timeIndx })">
+        
+                                                <ng-option *ngFor="let time of timeOptions; let isLastTime = last" [value]="time.value" [disabled]="isLastTime || isTimeAvailable({ 'fieldName': 'startTime', 'option': time.value, wdIndx, timeIndx })">
+                                                    {{ time.label }}
+                                                </ng-option>
+        
+                                            </ng-select>
+                                            
+                                        </div>
+        
+                                        <div class="col-md-3 col-sm-4 col-6 mb-2">
+        
+                                            <ng-select class="w-100" placeholder="Start Time" formControlName="endTime" [clearable]="false" [searchable]="false" [readonly]="!df.is_active.value" (change)="changeValue({ fieldName: 'endTime', 'index': wdIndx, 'indexTwo': timeIndx })">
+        
+                                                <ng-option *ngFor="let time of timeOptions; let indx = index" [value]="time.value" [disabled]="indx == 0 || isTimeAvailable({ 'fieldName': 'endTime', 'option': time.value, wdIndx, timeIndx })">
+                                                    {{ time.label }}
+                                                </ng-option>
+        
+                                            </ng-select>
+                                            
+                                        </div>
+        
+                                        <div class="col-md-2 col-sm-4 mb-2 align-self-center">
 
-                                        <a class="btn btn-sm btn-outline-danger p-2 py-1 me-2" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ? whf(wdIndx).removeAt(timeIndx) : null" *ngIf="!first">
-    
-                                            <i class="fas fa-trash-alt"></i>
-    
-                                        </a>
-    
-                                        <a class="btn btn-sm btn-outline-primary p-2 py-1" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ?addWorkingHours(wdIndx) : null" *ngIf="last">
-    
-                                            <i class="fas fa-plus"></i>
-    
-                                        </a>
-    
-                                    </div>
-    
+                                            <a class="btn btn-sm btn-outline-danger p-2 py-1 me-2" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ? whf(wdIndx).removeAt(timeIndx) : null" *ngIf="!first">
+        
+                                                <i class="fas fa-trash-alt"></i>
+        
+                                            </a>
+        
+                                            <a class="btn btn-sm btn-outline-primary p-2 py-1" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ?addWorkingHours(wdIndx) : null" *ngIf="last">
+        
+                                                <i class="fas fa-plus"></i>
+        
+                                            </a>
+        
+                                        </div>
+        
+                                    </ng-container>
+        
                                 </ng-container>
-    
-                            </ng-container>
-                            
-                        </div>                        
-    
+                                
+                            </div>                        
+        
+                        </ng-container>
+        
                     </ng-container>
-    
-                </ng-container>
 
-                <div class="row">
+                    <div class="row">
 
-                    <div class="col-sm-6 pt-4 order-sm-first order-last mt-3 mt-sm-0">
-    
-                        <button class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</button>
-    
+                        <div class="col-sm-6 pt-4 order-sm-first order-last mt-3 mt-sm-0">
+        
+                            <button class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</button>
+        
+                        </div>
+        
+                        <div class="col-sm-6 pt-4">
+        
+                            <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="isLoading" (click)="submit()">
+
+                                <ng-container *ngIf="!isLoading">SAVE</ng-container>
+
+                                <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+
+                                    <span class="visually-hidden">Loading...</span>
+
+                                </div>
+
+                            </button>
+        
+                        </div>
+
                     </div>
-    
-                    <div class="col-sm-6 pt-4">
-    
-                        <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="isLoading" (click)="submit()">
+        
+                </form>
 
-                            <ng-container *ngIf="!isLoading">SAVE</ng-container>
-
-                            <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
-
-                                <span class="visually-hidden">Loading...</span>
-
-                            </div>
-
-                        </button>
-    
-                    </div>
-
-                </div>
-    
-            </form>
+            </div>
 
         </div>
 

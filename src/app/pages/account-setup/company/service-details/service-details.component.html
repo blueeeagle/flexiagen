@@ -1,100 +1,104 @@
 <div class="serviceDetails-container">
 
-    <div class="row">
+    <div class="container-fluid">    
 
-        <div class="page-header col-sm-6">SERVICE DETAILS</div>
-    
-    </div>
+        <div class="row">
 
-    <div class="row mt-2">
-
-        <form [formGroup]="serviceDetailsFrom">
-
-            <div class="col-xl-6 col-lg-7">
-
-                <div class="card border-opacity-10 border-dark">
-
-                    <div class="card-body">
-
-                        <p> SERVICE SUPPORTED </p>
-    
-                        <div class="row justify-content-center align-items-center">
-
-                            <div class="col-sm-6">
-
-                                <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.pos.value }" (click)="f.pos.setValue(!f.pos.value)"> 
-                                    
-                                    <span> <i class="bi bi-printer fs-4 me-2 mt-2"></i> </span>  POS 
-                                
-                                </button>
-                                
-                            </div>
-
-                            <div class="col-sm-6 mt-3 mt-sm-0">
-
-                                <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.online.value }" (click)="f.online.setValue(!f.online.value)"> 
-                                    
-                                    <span> <i class="bi  bi-compass fs-4 me-2 mt-2"></i> </span> online 
-                                
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-sm-8 text-start mt-4">
-                                
-                                <p class="fw-400"> FLEXICLEAN XNMAN SUPPORT </p>
-
-                                <p class="text-light"> Fees 20% </p>
-
-                            </div>
-
-                            <div class="col-sm-4 align-self-center  mt-3 mt-sm-0">
-                                
-                                <input type="checkbox" id="logistics" class="toggle" formControlName="logistics" [checked]="f.logistics.value">
-
-                                <label for="logistics"><span class="on">YES</span><span class="off">NO</span></label>
-
-                            </div>
-                           
-                        </div>
-    
-                    </div>
-    
-                </div>
-
-                <div class="row px-4 pt-4">
+            <div class="page-header col-sm-6">SERVICE DETAILS</div>
         
-                    <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+        </div>
 
-                        <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+        <div class="row mt-2">
 
-                    </div>
+            <form [formGroup]="serviceDetailsFrom">
 
-                    <div class="col-sm-6">
+                <div class="col-xl-6 col-lg-7">
 
-                        <button class="btn btn-block btn-lg w-100 btn-primary"  [disabled]="isLoading" (click)="submit()">
+                    <div class="card border-opacity-10 border-dark">
 
-                            <ng-container *ngIf="!isLoading">SAVE</ng-container>
-    
-                            <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
-    
-                                <span class="visually-hidden">Loading...</span>
-    
+                        <div class="card-body">
+
+                            <p> SERVICE SUPPORTED </p>
+        
+                            <div class="row justify-content-center align-items-center">
+
+                                <div class="col-sm-6">
+
+                                    <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.pos.value }" (click)="f.pos.setValue(!f.pos.value)"> 
+                                        
+                                        <span> <i class="bi bi-printer fs-4 me-2 mt-2"></i> </span>  POS 
+                                    
+                                    </button>
+                                    
+                                </div>
+
+                                <div class="col-sm-6 mt-3 mt-sm-0">
+
+                                    <button class="btn w-75 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': f.online.value }" (click)="f.online.setValue(!f.online.value)"> 
+                                        
+                                        <span> <i class="bi  bi-compass fs-4 me-2 mt-2"></i> </span> online 
+                                    
+                                    </button>
+
+                                </div>
+
                             </div>
-    
-                        </button>                         
 
+                            <div class="row">
+
+                                <div class="col-sm-8 text-start mt-4">
+                                    
+                                    <p class="fw-400"> FLEXICLEAN XNMAN SUPPORT </p>
+
+                                    <p class="text-light"> Fees 20% </p>
+
+                                </div>
+
+                                <div class="col-sm-4 align-self-center  mt-3 mt-sm-0">
+                                    
+                                    <input type="checkbox" id="logistics" class="toggle" formControlName="logistics" [checked]="f.logistics.value">
+
+                                    <label for="logistics"><span class="on">YES</span><span class="off">NO</span></label>
+
+                                </div>
+                            
+                            </div>
+        
+                        </div>
+        
                     </div>
 
-                </div>                
-
-            </div>
+                    <div class="row px-4 pt-4">
             
-        </form>
+                        <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                            <div class=" btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <button class="btn btn-block btn-lg w-100 btn-primary"  [disabled]="isLoading" (click)="submit()">
+
+                                <ng-container *ngIf="!isLoading">SAVE</ng-container>
+        
+                                <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+        
+                                    <span class="visually-hidden">Loading...</span>
+        
+                                </div>
+        
+                            </button>                         
+
+                        </div>
+
+                    </div>                
+
+                </div>
+                
+            </form>
+
+        </div>
 
     </div>
     

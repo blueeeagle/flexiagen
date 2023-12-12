@@ -1,130 +1,134 @@
 <div class="companyDetails-container">
 
-    <div class="row">
+    <div class="container-fluid">
 
-        <div class="page-header col-sm-6">COMPANY DETAILS</div>
-    
-    </div>
+        <div class="row">
 
-    <div class="row mt-2">
-
-        <form [formGroup]="companyDetailsFrom">
-
-            <div class="col-xl-6 col-lg-7">
-
-                <div class="card border-opacity-10 border-dark">
-
-                    <div class="card-body">
-    
-                        <div class="form-group mb-4">
-    
-                            <label for="companyName">Company Name</label>
-            
-                            <input type="text" class="form-control form-control-lg" id="companyName" formControlName="companyName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.companyName.touched) && f.companyName.errors }">
-
-                            <div *ngIf="(formSubmitted || f.companyName.touched) && f.companyName.errors" class="invalid-feedback">
-    
-                                <div *ngIf="f.companyName.errors.required">Company name is required</div>
-
-                            </div>
-            
-                        </div>
-    
-                        <div class="form-group mb-4">
-    
-                            <label for="ownerName">Owner Name</label>
-            
-                            <input type="text" class="form-control form-control-lg" id="ownerName" formControlName="ownerName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.ownerName.touched) && f.ownerName.errors }">
-
-                            <div *ngIf="(formSubmitted || f.ownerName.touched) && f.ownerName.errors" class="invalid-feedback">
-    
-                                <div *ngIf="f.ownerName.errors.required">Owner name is required</div>
-
-                            </div>
-            
-                        </div>
-    
-                        <div class="form-group mb-4">
-    
-                            <label for="email">DO YOU HAVE TAX ? </label>
-            
-                            <div class="mt-1" >
-    
-                                <button class="btn px-4 fw-normal btn-md opt-btn" [ngClass]="{ 'active': f.haveTax.value }" (click)="f.haveTax.setValue(true)"> YES </button>
-    
-                                <button class="btn px-4 fw-normal btn-md ms-3 opt-btn" [ngClass]="{ 'active': !f.haveTax.value }" (click)="f.haveTax.setValue(false)"> NO </button>
-    
-                            </div>
-    
-                        </div>
-    
-                        <div class="form-group mb-4">
-    
-                            <label for="taxationNumber">Taxation Name</label>
-            
-                            <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors }">
-
-                            <div *ngIf="(formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors" class="invalid-feedback">
-    
-                                <div *ngIf="f.taxationNumber.errors.required">Taxation name is required</div>
-
-                            </div>
-            
-                        </div>
-    
-                        <div class="form-group mb-4">
-    
-                            <label for="email">Company Logo </label>
-            
-                            <div class="mt-1">
-
-                                <input type="file" class="upload" style="display: none;" #fileInput>
-    
-                               <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img" (click)="fileInput.click()">
-                                
-                                    <i class="bi bi-file-earmark-plus fs-4"></i> 
-                                    
-                                    <span class="mx-1">Upload</span>  
-                                
-                               </a>
-    
-                            </div>
-    
-                        </div>
-    
-                    </div>
-    
-                </div>
-
-                <div class="row pt-4">
+            <div class="page-header col-sm-6">COMPANY DETAILS</div>
         
-                    <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+        </div>
 
-                        <div class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+        <div class="row mt-2">
 
+            <form [formGroup]="companyDetailsFrom">
+
+                <div class="col-xl-6 col-lg-7">
+
+                    <div class="card border-opacity-10 border-dark">
+
+                        <div class="card-body">
+        
+                            <div class="form-group mb-4">
+        
+                                <label for="companyName">Company Name</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="companyName" formControlName="companyName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.companyName.touched) && f.companyName.errors }">
+
+                                <div *ngIf="(formSubmitted || f.companyName.touched) && f.companyName.errors" class="invalid-feedback">
+        
+                                    <div *ngIf="f.companyName.errors.required">Company name is required</div>
+
+                                </div>
+                
+                            </div>
+        
+                            <div class="form-group mb-4">
+        
+                                <label for="ownerName">Owner Name</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="ownerName" formControlName="ownerName" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.ownerName.touched) && f.ownerName.errors }">
+
+                                <div *ngIf="(formSubmitted || f.ownerName.touched) && f.ownerName.errors" class="invalid-feedback">
+        
+                                    <div *ngIf="f.ownerName.errors.required">Owner name is required</div>
+
+                                </div>
+                
+                            </div>
+        
+                            <div class="form-group mb-4">
+        
+                                <label for="email">DO YOU HAVE TAX ? </label>
+                
+                                <div class="mt-1" >
+        
+                                    <button class="btn px-4 fw-normal btn-md opt-btn" [ngClass]="{ 'active': f.haveTax.value }" (click)="f.haveTax.setValue(true)"> YES </button>
+        
+                                    <button class="btn px-4 fw-normal btn-md ms-3 opt-btn" [ngClass]="{ 'active': !f.haveTax.value }" (click)="f.haveTax.setValue(false)"> NO </button>
+        
+                                </div>
+        
+                            </div>
+        
+                            <div class="form-group mb-4">
+        
+                                <label for="taxationNumber">Taxation Name</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="taxationNumber" formControlName="taxationNumber" placeholder="Enter" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors }">
+
+                                <div *ngIf="(formSubmitted || f.taxationNumber.touched) && f.taxationNumber.errors" class="invalid-feedback">
+        
+                                    <div *ngIf="f.taxationNumber.errors.required">Taxation name is required</div>
+
+                                </div>
+                
+                            </div>
+        
+                            <div class="form-group mb-4">
+        
+                                <label for="email">Company Logo </label>
+                
+                                <div class="mt-1">
+
+                                    <input type="file" class="upload" style="display: none;" #fileInput>
+        
+                                <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img" (click)="fileInput.click()">
+                                    
+                                        <i class="bi bi-file-earmark-plus fs-4"></i> 
+                                        
+                                        <span class="mx-1">Upload</span>  
+                                    
+                                </a>
+        
+                                </div>
+        
+                            </div>
+        
+                        </div>
+        
                     </div>
 
-                    <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
-
-                        <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="(formSubmitted && companyDetailsFrom.invalid) || isLoading" (click)="submit()">
-
-                            <ng-container *ngIf="!isLoading">SAVE</ng-container>
-    
-                            <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
-    
-                                <span class="visually-hidden">Loading...</span>
-    
-                            </div>
-    
-                        </button>                         
-
-                    </div>                      
-
-                </div>                
-
-            </div>
+                    <div class="row pt-4">
             
-        </form>
+                        <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                            <div class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</div>
+
+                        </div>
+
+                        <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+
+                            <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="(formSubmitted && companyDetailsFrom.invalid) || isLoading" (click)="submit()">
+
+                                <ng-container *ngIf="!isLoading">SAVE</ng-container>
+        
+                                <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+        
+                                    <span class="visually-hidden">Loading...</span>
+        
+                                </div>
+        
+                            </button>                         
+
+                        </div>                      
+
+                    </div>                
+
+                </div>
+                
+            </form>
+
+        </div>
 
     </div>
     
