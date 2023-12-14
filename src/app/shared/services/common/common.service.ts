@@ -36,9 +36,9 @@ export class CommonService {
     
       if(res.status=='ok') {
 
-        this.userDetails = { ..._.omit(res.data,'companyId'), "companyId": res.data.companyId._id };
+        this.userDetails = { ..._.omit(res.data,'companyId'), "companyId": res.data.companyId?._id };
 
-        this.companyDetails = res.data.companyId;
+        this.companyDetails = res.data.companyId || {};
 
         this.userDetailsObs.next(this.userDetails);
 

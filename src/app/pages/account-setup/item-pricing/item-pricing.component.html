@@ -12,19 +12,63 @@
     
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
     
-                <button class="nav-link active border-bottom border-0" data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
+                <button class="nav-link active border-bottom border-0" #myProductsBtn data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
                     
                     My Products
                 
                 </button>
         
-                <button class="nav-link border-bottom border-0" data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
+                <button class="nav-link border-bottom border-0" #otherProductsBtn data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
                     
                     Other Products
                 
                 </button>
         
             </div>
+
+            <ng-template #emptyAgentProducts>
+        
+                <div class="empty-page">
+        
+                    <div class="empty-content">
+            
+                        <h4 class="fw-600">You have not added any products</h4>
+                    
+                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                        
+                        <a class="btn btn-md btn-primary bi bi-plus-lg" (click)="otherProductsBtn.click()">
+                        
+                            <span class="ms-3">Add New</span>
+                        
+                        </a>
+
+                    </div>
+        
+                </div>
+        
+            </ng-template>
+    
+            <ng-template #emptyProducts>
+        
+                <div class="empty-page">
+        
+                    <div class="empty-content">
+            
+                        <h4 class="fw-600">Already you have added all products</h4>
+                    
+                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                        
+                        <a class="btn btn-md btn-primary" (click)="myProductsBtn.click()">
+                        
+                            <span class="ms-1">My Products</span>
+                        
+                        </a>
+                        
+                    </div>
+        
+                </div>
+        
+            </ng-template>            
     
             <div class="tab-content mt-3" id="nav-tabContent">
     
@@ -34,7 +78,7 @@
     
                         <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let productDet of agentProdcuts">
                         
-                            <div class="card">
+                            <div class="card my-2">
     
                                 <div class="card-body">
     
@@ -68,7 +112,7 @@
     
                         <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let productDet of otherProducts">
                         
-                            <div class="card">
+                            <div class="card my-2">
     
                                 <div class="card-body">
     
@@ -97,52 +141,6 @@
                 </div>            
     
             </div>
-    
-            <ng-template #emptyAgentProducts>
-        
-                <div class="empty-page">
-        
-                    <div class="empty-content">
-            
-                        <h4 class="fw-600">You have not added any products</h4>
-                    
-                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                        
-                        <button type="button" class="btn btn-primary" data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
-                        
-                            <i class="bi bi-plus-square"></i>
-                        
-                            <span class="ms-1 d-none d-md-inline">Add Products</span>
-                        
-                        </button>
-                        
-                    </div>
-        
-                </div>
-        
-            </ng-template>
-    
-            <ng-template #emptyProducts>
-        
-                <div class="empty-page">
-        
-                    <div class="empty-content">
-            
-                        <h4 class="fw-600">Already you have added all products</h4>
-                    
-                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                        
-                        <button type="button" class="btn btn-primary" data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
-                        
-                            <span class="ms-1 d-none d-md-inline">My Products</span>
-                        
-                        </button>
-                        
-                    </div>
-        
-                </div>
-        
-            </ng-template>
     
         </div>        
 

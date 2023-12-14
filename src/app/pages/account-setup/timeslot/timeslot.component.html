@@ -140,29 +140,23 @@
     
         </div>
     
-        <div class="mt-5" *ngIf="_.isEmpty(workingDayDetails)" >
-    
-            <div class="card">
-    
-                <div class="card-body">
-    
-                    <p class="text-center">Please Create Working Hours</p>
-    
-                    <div class="text-center">
-    
-                        <button class="btn btn-outline-primary btn-lg mt-4"  routerLink="/pages/account-setup/company/working-hours"> Create </button>
-    
-                    </div>
-    
+        <ng-container *ngIf="_.isEmpty(workingDayDetails)" >
+
+            <div class="empty-page">
+
+                <div class="empty-content">
+        
+                    <h4 class="fw-600">Please set the working hours first</h4>
+                
+                    <div class="emptyIcon" style="background: url(./assets/images/working-hours.png);"></div>
+                    
+                    <a class="btn btn-md btn-primary" routerLink="/pages/account-setup/company/working-hours"> Working Hours</a>
+                    
                 </div>
     
-            </div>
+            </div>                
     
-            <div>
-    
-            </div>
-    
-        </div>        
+        </ng-container>        
 
     </div>
 

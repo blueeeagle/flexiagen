@@ -48,15 +48,13 @@ export class CompanyDetailsComponent {
 
       if(res.status=='ok') {
 
-        this.masterList['countryDet'] = _.pick(res.data,['decimalPoints','currencyCode']);
-
         _.reduce({ 'pos': '0', 'online': '0', 'logistics': '0' }, (result: any, v: any, key: any) => {
 
           let chargesDet = _.find(res.data.charges, { 'name': key });
 
           const { value, type } = chargesDet;
 
-          result[key] = type == 'percentage' ? `${value}%` : `${value.toFixed(this.masterList['countryDet'].decimalPoints)} ${this.masterList['countryDet'].currencyCode}`;
+          result[key] = type == 'percentage' ? `${value}%` : `${value.toFixed(this.masterList['currencyDet']?.decimalPoints || 3)} ${this.masterList['currencyDet']?.currencyCode}`;
 
           return result;
 
@@ -74,7 +72,7 @@ export class CompanyDetailsComponent {
 
     this.masterList['countryList'] = [];
 
-    this.service.getService({ "url": "/address/countries" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/address/countries", 'params': { 'incl': 'currencyDetails' } }).subscribe((res: any) => {
 
       this.masterList['countryList'] = res.status=='ok' ? res.data : [];
 
@@ -139,6 +137,8 @@ export class CompanyDetailsComponent {
 
       'ownerName': ['', [Validators.required]],
 
+      "currencyId": [null, [Validators.required]],
+
       "addressDetails": this.service.fb.group({
 
         'addressLine1': ['', [Validators.required]],
@@ -175,7 +175,9 @@ export class CompanyDetailsComponent {
 
       this.masterList['countryDet'] = _.find(this.masterList['countryList'], { '_id': value });
 
-      this.getAppServiceCharges();
+      this.masterList['currencyDet'] = this.masterList['countryDet']?.currencyId || {};
+
+      this.companyForm.patchValue({ 'currencyId': this.masterList['currencyDet']?._id || null }, { emitEvent: false });
 
       this.f.addressDetails.patchValue({ 
         
@@ -184,6 +186,8 @@ export class CompanyDetailsComponent {
         'countryName': this.masterList['countryDet']?.name || '', 'stateName': '', 'cityName': '', 'areaName': ''
       
       }, { emitEvent: false });
+
+      this.getAppServiceCharges();
 
       if(this.masterList['countryDet'].hasState) {
 
@@ -264,7 +268,7 @@ export class CompanyDetailsComponent {
   // Register Company Details
 
   submit(): any {
-    
+
     if(this.companyForm.invalid) return this.formSubmitted = true;
 
     this.isLoading = true
@@ -305,7 +309,9 @@ export class CompanyDetailsComponent {
 
   }
 
-  showCompanyDetails(): any {
+  showCompanyDetails(event: any): any {
+
+    event.preventDefault();
 
     if(this.companyForm.invalid) return this.formSubmitted = true;
 

@@ -64,6 +64,8 @@ export class RegisterComponent {
 
       'logistics': { value: false, disabled: true},
 
+      'userType': 'agent'
+
     },{
 
       validator: this.service.matchValidator('password', 'confirmPassword')
