@@ -10,6 +10,8 @@ import { MainInterceptor } from '@core/interceptor/main.interceptor';
 import { SharedModule } from '@shared/shared.module';
 import { CommonService } from '@shared/services/common/common.service';
 
+import "@shared/utils/prototypes";
+
 @NgModule({
   declarations: [
     AppComponent

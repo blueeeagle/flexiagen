@@ -80,7 +80,7 @@
             
                             <td mat-cell *matCellDef="let locationDet" class="text-end">
             
-                                {{ locationDet['minOrderAmt']  | number: '1.2-2' | currency: 'INR' }}
+                                {{ locationDet['minOrderAmt']  | currency: service.currencyDetails.currencyCode }}
             
                             </td>
         

@@ -16,9 +16,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class CommonService {
 
   pageSizeList: any = [10, 25, 50, 100];
-  public userDetails: any = {};
-  public companyDetails: any = {};
-  public currencyDetails: any = {};
+
+  public userDetails: any = JSON.parse(this.session({ "method": "get", "key": "UserDetails" })) || {};
+  public companyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CompanyDetails" })) || {};
+  public currencyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" })) || {};
 
   public isLoading = new BehaviorSubject(false);
   public loaderApiUrls = new BehaviorSubject<any>([]);

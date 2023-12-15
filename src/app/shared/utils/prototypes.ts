@@ -3,50 +3,13 @@ export { } // this will make it module
 declare global{ // this is important to access it as global type String
 
     interface String {
-        stringToFloat(): Number;
         toTitleCase(): string;
-        toHours(): any;
+        toCustomFixed(digits?: number): string;
     }
 
     interface Number {
-        stringToFloat(): Number;
-        toINR(): string;
-        toHours(): any;
+        toCustomFixed(digits?: number): string;
     } 
-
-}
-
-Number.prototype.toINR = function () {
-    const d = (this || 0).toString().replace(/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g, "$1,");
-    const b = '\u20B9';
-    return b.concat(d);
-};
-
-Number.prototype.toHours = function () {
-
-    const num: any = this || 0;
-
-    return (num % 1 == 0) ? this : Math.floor(num) +':'+ Math.round((num % 1) * 60).toString().padStart(2,'0')
-
-}
-
-String.prototype.toHours = function () {
-
-    const num: any = parseFloat(this.toString()) || 0;
-
-    return (num % 1 == 0) ? this : Math.floor(num) +':'+ Math.round((num % 1) * 60).toString().padStart(2,'0')
-
-}
-
-String.prototype.stringToFloat = function (): Number {
-
-    return parseFloat((this.toString()).replace(/,/g, '') || '0');
-
-}
-
-Number.prototype.stringToFloat = function (): Number {
-
-    return parseFloat(this.toString() || '0');
 
 }
 
@@ -65,5 +28,23 @@ String.prototype.toTitleCase = function () {
     }
 
     return array.join(' ');
+
+}
+
+String.prototype.toCustomFixed = function (digits?: number) {
+
+    let currencyDetails = JSON.parse(sessionStorage.getItem('CurrencyDetails') || '{}');
+
+    let value = this.replace(/[^0-9.]*/g,''); // remove all non numeric characters except dot
+
+    return parseFloat(value).toFixed(digits || currencyDetails['decimalPoints'] || 3);
+
+}
+
+Number.prototype.toCustomFixed = function (digits?: number) {
+
+    let currencyDetails = JSON.parse(sessionStorage.getItem('CurrencyDetails') || '{}');
+
+    return parseFloat(this.toString()).toFixed(digits || currencyDetails['decimalPoints'] || 3);
 
 }

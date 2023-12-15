@@ -184,7 +184,7 @@
 
                     <div>
 
-                        <input type="text" class="form-control form-control-lg" style="width: 140px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }">
+                        <input type="text" class="form-control form-control-lg" style="width: 140px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
     
                         <div class="invalid-feedback" *ngIf="cf.amount.invalid && cf.amount.touched">
                             

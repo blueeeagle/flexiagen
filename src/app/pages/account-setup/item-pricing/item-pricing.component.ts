@@ -135,7 +135,7 @@ export class ItemPricingComponent {
 
       'imgURL': [this.getFullImagePath(chargeDet.chargeId?.imgURL || chargeDet.imgURL), Validators.required],
 
-      'amount': [chargeDet.amount || 0, Validators.required],
+      'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
 
       'is_active': [this.mode == 'Create' ? true : chargeDet.is_active],
 
@@ -178,6 +178,10 @@ export class ItemPricingComponent {
       }
 
       this.cf.at(index).get('amount').updateValueAndValidity();
+
+    } else if(fieldName == 'amount') {
+
+      console.log(this.cf.at(index).value);
 
     }
 
