@@ -289,11 +289,17 @@ export class CompanyDetailsComponent {
 
         this.service.companyDetails = res.data.companyDetails;
 
+        this.service.currencyDetails = this.service.companyDetails.currencyId;
+
         this.service.userDetails = res.data.userDetails;
 
-        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
 
-        this.service.session({ "method": "set", "key": "CompanyId", "value": this.service.companyDetails._id });
+        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(_.omit(this.service.companyDetails,'currencyId')) });
+
+        this.service.session({ "method": "set", "key": "CurrencyDetails", "value": JSON.stringify(this.service.currencyDetails) });
+
+        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
         this.service.navigate({ 'url': '/pages/dashboard' });
 

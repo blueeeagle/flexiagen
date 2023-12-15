@@ -57,8 +57,10 @@ export class LoginComponent {
       if(res.status=='ok') {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
-
+        
         this.service.userDetails = res.data.userDetails;
+        
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
 
         this.isLoading = false;
 
@@ -78,8 +80,12 @@ export class LoginComponent {
 
           this.service.companyDetails = res.data.companyDetails;
 
-          this.service.session({ "method": "set", "key": "CompanyId", "value": this.service.companyDetails._id });
- 
+          this.service.currencyDetails = this.service.companyDetails.currencyId;
+
+          this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(_.omit(this.service.companyDetails,'currencyId')) });
+
+          this.service.session({ "method": "set", "key": "CurrencyDetails", "value": JSON.stringify(this.service.currencyDetails) });
+
           this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
 
           this.service.navigate({ 'url': '/pages/dashboard' });

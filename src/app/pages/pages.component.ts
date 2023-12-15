@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonService } from '@shared/services/common/common.service';
 
 @Component({
   selector: 'app-pages',

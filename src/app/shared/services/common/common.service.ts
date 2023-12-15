@@ -16,8 +16,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class CommonService {
 
   pageSizeList: any = [10, 25, 50, 100];
-  userDetails: any = {};
-  companyDetails: any = {};
+  public userDetails: any = {};
+  public companyDetails: any = {};
+  public currencyDetails: any = {};
 
   public isLoading = new BehaviorSubject(false);
   public loaderApiUrls = new BehaviorSubject<any>([]);
@@ -40,17 +41,33 @@ export class CommonService {
 
         this.companyDetails = res.data.companyId || {};
 
+        this.currencyDetails = this.companyDetails?.currencyId || {};
+
+        this.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.userDetails) });
+
+        this.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(_.omit(this.companyDetails,'currencyId')) });
+
+        this.session({ "method": "set", "key": "CurrencyDetails", "value": JSON.stringify(this.currencyDetails) });
+
         this.userDetailsObs.next(this.userDetails);
 
       }
 
-    });
+    },(err: any) => { 
+
+      this.userDetails = JSON.parse(this.session({ "method": "get", "key": "UserDetails" }));
+
+      this.companyDetails = JSON.parse(this.session({ "method": "get", "key": "CompanyDetails" }));
+  
+      this.currencyDetails = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" }));      
+
+      this.userDetailsObs.next(this.userDetails);
+
+     });
 
   }
 
   get getUserDetails(): any {
-
-    this.userDetails = {};
 
     return this.getService({ "url": "/me" });
 
