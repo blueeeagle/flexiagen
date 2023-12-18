@@ -4,6 +4,12 @@
 
 <div class="main-content" [ngClass]="{ 'menu-closed': !isMenuOpen }">
 
+    <ngx-spinner bdColor="rgb(255 255 255)" size="medium" color="rgb(30 72 148)" type="square-jelly-box" [fullScreen]="false">
+        
+        <p class="fw-500 h5 mt-5" style="color: rgb(52 91 159)" > Please Wait... </p>
+    
+    </ngx-spinner>
+
     <router-outlet></router-outlet>
 
 </div>

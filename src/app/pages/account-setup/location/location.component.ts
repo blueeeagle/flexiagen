@@ -23,12 +23,16 @@ export class LocationComponent {
   masterList: any = {
     "areaList": null
   };
-  locationList: Array<any> = [];
+  locationList!: Array<any>;
   userSubscribe: any;
   isLoading: boolean = false;
   _: any = _;
 
+  loaderUrlList: any = ['/setup/agentLocations','/master/otherNewLocations/'+JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }))?.addressDetails?.cityId?._id];
+
   constructor(public service: CommonService) { 
+
+    this.service.setApiLoaders({ 'isLoading': true, 'url': this.loaderUrlList });
 
     this.loadForm();
 
@@ -52,15 +56,13 @@ export class LocationComponent {
 
   getAgentLocations() {
 
-    this.locationList = [];
-
     this.service.getService({ "url": `/setup/agentLocations` }).subscribe((res: any) => {
 
-      if(res.status=='ok') {
+      this.locationList = res.status=='ok' ? res.data : [];
 
-        this.locationList = res.data || [];
+    },(error: any)=>{
 
-      }
+      this.service.showToastr({ "data": { "message": error?.message || "Something went wrong!", "type": "error" } });
 
     });
 
@@ -68,13 +70,15 @@ export class LocationComponent {
 
   getAreaList() {
 
-    this.service.getService({ "url": `/master/otherNewLocations/${this.service.companyDetails?.addressDetails?.cityId?._id}` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/master/otherNewLocations/${this.service.companyDetails?.addressDetails?.cityId?._id}`, "options": { "loaderState": true } }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
         this.masterList['areaList'] = res.data || [];
 
       }
+
+      this.service.setApiLoaders({ 'isLoading': false, 'url': this.loaderUrlList });
 
     });
 

@@ -1,8 +1,8 @@
-<div class="location-container">
+<div class="location-container" *ngIf="_.size(service._loading.loadingMap) == 0">
 
-    <div class="container-fluid">
-
-        <ng-container *ngIf="_.size(locationList) == 0;else locationlist">
+    <ng-container *ngIf="!_.isUndefined(locationList)">
+    
+        <ng-container *ngIf="_.size(locationList) == 0;else locationPage">
         
             <div class="empty-page">
     
@@ -23,9 +23,13 @@
             </div>
     
         </ng-container>
-    
-        <ng-template #locationlist>
-    
+
+    </ng-container>
+
+    <ng-template #locationPage>
+
+        <div class="container-fluid">
+
             <div class="d-flex justify-content-between align-items-center mb-4">
         
                 <div class="page-header">LOCATION</div>
@@ -51,16 +55,16 @@
                         <ng-container matColumnDef="SL#" sticky>
                 
                             <th mat-header-cell *matHeaderCellDef> SL# </th>
-              
+                
                             <td mat-cell *matCellDef="let locationDet; let index = index">
             
                                 {{ index + 1 }}   
-                              
+                                
                             </td>
-              
-                          </ng-container>  
+                
+                            </ng-container>  
         
-                          <ng-container matColumnDef="LOCATION" sticky>
+                            <ng-container matColumnDef="LOCATION" sticky>
                     
                             <th mat-header-cell *matHeaderCellDef> Location </th>
             
@@ -141,10 +145,10 @@
                 </div>        
         
             </div>        
-            
-        </ng-template>
 
-    </div>
+        </div>
+        
+    </ng-template>
 
 </div>
 

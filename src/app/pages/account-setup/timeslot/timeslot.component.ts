@@ -38,7 +38,11 @@ export class TimeslotComponent {
   sessionStatus: any = { "AM": false, "PM": false };
   isLoading: boolean = false;
 
-  constructor(private service: CommonService) { 
+  loaderUrlList: any = ['/app/workingHrs/list','/app/timeslot/list'];
+
+  constructor(public service: CommonService) { 
+
+    this.service.setApiLoaders({ 'isLoading': true, 'url': this.loaderUrlList });
 
     this.loadForm();
 
@@ -64,9 +68,9 @@ export class TimeslotComponent {
 
           this.workingDayDetails = _.first(res.data) || {};
 
-          // this.workingDayDetails = {}
-
           if(!_.isEmpty(this.workingDayDetails)) this.getTimeSlots();
+
+          else this.service.setApiLoaders({ 'isLoading': false, 'url': ['/app/timeslot/list'] });
           
         }
 

@@ -9,6 +9,7 @@ import { CommonToastrComponent } from '@shared/components';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as _ from 'lodash';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LoadingService } from '../loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,20 +18,14 @@ export class CommonService {
 
   pageSizeList: any = [10, 25, 50, 100];
 
-  public userDetails: any = JSON.parse(this.session({ "method": "get", "key": "UserDetails" })) || {};
-  public companyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CompanyDetails" })) || {};
+  public userDetails: any = {};
+  public companyDetails: any = {};
   public currencyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" })) || {};
 
-  public isLoading = new BehaviorSubject(false);
-  public loaderApiUrls = new BehaviorSubject<any>([]);
   public userDetailsObs = new Subject();
   public imgBasePath = APP_CONFIG.imgBasePath;
 
-  constructor(private router: Router, private apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder) {
-
-    if(this.session({ "method": "get", "key": "AuthToken" })) { setTimeout(()=>{ this.updateUserDetails(); },100) }
-
-  }
+  constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) { }
 
   updateUserDetails() {
 
@@ -70,7 +65,7 @@ export class CommonService {
 
   get getUserDetails(): any {
 
-    return this.getService({ "url": "/me" });
+    return this.getService({ "url": "/me", "options": { "loaderState": true } });
 
   }
 
@@ -100,11 +95,21 @@ export class CommonService {
 
   }  
 
+  setApiLoaders({ isLoading = false, url = [] }: { isLoading: boolean, url: any }) {
+
+    for(let i=0; i<url.length; i++) {
+
+      this._loading.setLoading({ loading: isLoading, url: this.apiservice.baseUrl + url[i] });
+
+    }
+
+  }
+
   // POST API Method While Pass JSON Data
   
   postService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {
 
-    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+    if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 
     return this.apiservice.postService({ url, payload, params, options });
     
@@ -114,7 +119,7 @@ export class CommonService {
 
   patchService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {
 
-    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+    if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 
     return this.apiservice.patchService({ url, payload, params, options });
 
@@ -124,7 +129,7 @@ export class CommonService {
 
   putService({ url = "", payload = {}, params = {}, options = {} }: { url: string, payload?: any, params?: any, options?: any }): any {
 
-    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });    
+    if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });    
 
     return this.apiservice.putService({ url, payload, params, options });
 
@@ -134,7 +139,7 @@ export class CommonService {
 
   getService({ url = "", params = {}, options = {} } : { url: string, params?: any, options?: any }): any {
 
-    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+    if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 
     return this.apiservice.getService({ url, params, options });
 
@@ -152,7 +157,7 @@ export class CommonService {
 
   postFile({ url = "", formData = {}, params = {}, options = {} }: { url: string, formData: any, params?: any, options?: any }): any {
 
-    if(options.loaderState) this.loaderApiUrls.subscribe(item => { item.push(this.apiservice.baseUrl + url); });
+    if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 
     return this.apiservice.postFile({ url, formData, params, options });
 

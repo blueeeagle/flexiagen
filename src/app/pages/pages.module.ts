@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PagesRoutingModule } from './pages-routing.module';
 import { PagesComponent } from './pages.component';
 import { LayoutModule } from '@core/layout/layout.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 
 @NgModule({
@@ -13,6 +14,9 @@ import { LayoutModule } from '@core/layout/layout.module';
   imports: [
     CommonModule,
     PagesRoutingModule,
+
+    NgxSpinnerModule,
+
     LayoutModule
   ]
 })

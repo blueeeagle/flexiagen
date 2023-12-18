@@ -4,8 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Enable animations module
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 import { NgbActiveModal, NgbModule,  } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+
 import { MainInterceptor } from '@core/interceptor/main.interceptor';
 import { SharedModule } from '@shared/shared.module';
 import { CommonService } from '@shared/services/common/common.service';
@@ -22,6 +25,7 @@ import "@shared/utils/prototypes";
     NgbModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgxSpinnerModule,
     SharedModule
   ],
   providers: [
