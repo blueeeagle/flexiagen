@@ -1,4 +1,4 @@
-<div class="my-products-container">
+<div class="my-products-container" *ngIf="_.size(service._loading.loadingMap)==0">
 
     <div class="container-fluid">
 
@@ -25,121 +25,137 @@
                 </button>
         
             </div>
-
-            <ng-template #emptyAgentProducts>
-        
-                <div class="empty-page">
-        
-                    <div class="empty-content">
-            
-                        <h4 class="fw-600">You have not added any products</h4>
-                    
-                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                        
-                        <a class="btn btn-md btn-primary bi bi-plus-lg" (click)="otherProductsBtn.click()">
-                        
-                            <span class="ms-3">Add New</span>
-                        
-                        </a>
-
-                    </div>
-        
-                </div>
-        
-            </ng-template>
-    
-            <ng-template #emptyProducts>
-        
-                <div class="empty-page">
-        
-                    <div class="empty-content">
-            
-                        <h4 class="fw-600">Already you have added all products</h4>
-                    
-                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                        
-                        <a class="btn btn-md btn-primary" (click)="myProductsBtn.click()">
-                        
-                            <span class="ms-1">My Products</span>
-                        
-                        </a>
-                        
-                    </div>
-        
-                </div>
-        
-            </ng-template>            
     
             <div class="tab-content mt-3" id="nav-tabContent">
-    
+
                 <div class="tab-pane fade show active" id="my-products" role="tabpanel">
+
+                    <ng-container *ngIf="!_.isUndefined(agentProdcuts)">
     
-                    <div class="row" *ngIf="_.size(agentProdcuts) >0;else emptyAgentProducts">
-    
-                        <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let productDet of agentProdcuts">
+                        <ng-container *ngIf="_.size(agentProdcuts) == 0;else agentProductsPage">
                         
-                            <div class="card my-2">
-    
-                                <div class="card-body">
-    
-                                    <div class="product-image mx-auto" style="background : url({{productDet?.productId?.productImageURL}});width: 200px;height: 200px;"></div> 
-    
-                                    <div class="d-flex justify-content-center">
-    
-                                        <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
-                                            
-                                            {{productDet?.productId?.productName}}
-    
-                                            <i class="bi bi-pencil-square ms-2"></i>
-    
-                                        </a>
-    
-                                    </div>
-    
-                                </div>
-    
-                            </div>
-    
-                        </div>
-    
-                    </div>
-    
-                </div>
-    
-                <div class="tab-pane fade show" id="other-products" role="tabpanel" >
-    
-                    <div class="row" *ngIf="_.size(otherProducts) >0;else emptyProducts">
-    
-                        <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let productDet of otherProducts">
+                            <div class="empty-page">
+                
+                                <div class="empty-content">
                         
-                            <div class="card my-2">
-    
-                                <div class="card-body">
-    
-                                    <div class="product-image mx-auto" style="background : url({{productDet?.productImageURL}});width: 200px;height: 200px;"></div> 
-    
-                                    <div class="d-flex justify-content-center">
-    
-                                        <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
-                                            
-                                            {{productDet?.productName}}
-    
-                                            <i class="bi bi-plus-square ms-2"></i>
-    
-                                        </a>
-    
-                                    </div>
-    
+                                    <h4 class="fw-600">You have not added any products</h4>
+                                
+                                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                                    
+                                    <a class="btn btn-md btn-primary bi bi-plus-lg" (click)="otherProductsBtn.click()">
+                                    
+                                        <span class="ms-3">Add New</span>
+                                    
+                                    </a>
+            
                                 </div>
-    
+                    
                             </div>
+                    
+                        </ng-container>
     
+                    </ng-container>
+    
+                    <ng-template #agentProductsPage>                
+    
+                        <div class="row">
+        
+                            <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let productDet of agentProdcuts">
+                            
+                                <div class="card my-2">
+        
+                                    <div class="card-body">
+        
+                                        <div class="product-image mx-auto" style="background : url({{productDet?.productId?.productImageURL}});width: 200px;height: 200px;"></div> 
+        
+                                        <div class="d-flex justify-content-center">
+        
+                                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
+                                                
+                                                {{productDet?.productId?.productName}}
+        
+                                                <i class="bi bi-pencil-square ms-2"></i>
+        
+                                            </a>
+        
+                                        </div>
+        
+                                    </div>
+        
+                                </div>
+        
+                            </div>
+        
                         </div>
+            
+                    </ng-template>                     
+
+                </div>                   
+          
+                <div class="tab-pane fade" id="other-products" role="tabpanel" >
+
+                    <ng-container *ngIf="!_.isUndefined(otherProducts)">
+
+                        <ng-container *ngIf="_.size(otherProducts) == 0;else otherProductsPage">
+                        
+                            <div class="empty-page">
+                
+                                <div class="empty-content">
+                        
+                                    <h4 class="fw-600">Already you have added all products</h4>
+                                
+                                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                                    
+                                    <a class="btn btn-md btn-primary" (click)="myProductsBtn.click()">
+                                    
+                                        <span class="ms-1">My Products</span>
+                                    
+                                    </a>
+                                    
+                                </div>
+                    
+                            </div>
+                    
+                        </ng-container>
+                
+                    </ng-container>
+
+                    <ng-template #otherProductsPage>
     
-                    </div>
+                        <div class="row">
+        
+                            <div class="col-xl-3 col-md-4 col-sm-6" *ngFor="let productDet of otherProducts">
+                            
+                                <div class="card my-2">
+        
+                                    <div class="card-body">
+        
+                                        <div class="product-image mx-auto" style="background : url({{productDet?.productImageURL}});width: 200px;height: 200px;"></div> 
+        
+                                        <div class="d-flex justify-content-center">
+        
+                                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
+                                                
+                                                {{productDet?.productName}}
+        
+                                                <i class="bi bi-plus-square ms-2"></i>
+        
+                                            </a>
+        
+                                        </div>
+        
+                                    </div>
+        
+                                </div>
+        
+                            </div>
+        
+                        </div>
+
+                    </ng-template>
     
-                </div>            
-    
+                </div>      
+                    
             </div>
     
         </div>        
@@ -152,7 +168,7 @@
 
     <div class="row" [formGroup]="productForm">
 
-        <h5 class="text-secondary">Product Info</h5>
+        <h6 class="text-secondary">Product Info</h6>
 
         <div class="d-flex align-items-center">
 
@@ -170,44 +186,69 @@
 
         <hr class="my-3 border-secondary-subtle border-3">
 
-        <h5 class="text-secondary">Price Info</h5>
+        <h6 class="text-secondary">Charge Type</h6>
+        
+        <div class="col-sm-6">
+
+            <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': selectedChargeType == 'normal' }" (click)="selectedChargeType = 'normal'"> 
+                
+                Normal 
+            
+            </button>
+            
+        </div>
+
+        <div class="col-sm-6 mt-3 mt-sm-0">
+
+            <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': selectedChargeType == 'urgent' }" (click)="selectedChargeType = 'urgent'"> 
+                
+                Urgent 
+            
+            </button>
+
+        </div>
+
+        <h6 class="text-secondary mt-3">Price Info</h6>
 
         <div formArrayName="priceList">
 
             <ng-container  *ngFor="let chargeForm of cf.controls; let index = index">
 
-                <div class="form-group d-flex align-items-center" [formGroup]="chargeForm" *ngIf="chargeForm.controls as cf">
+                <ng-container *ngIf="chargeForm.value.chargeType == selectedChargeType">
 
-                    <div class="product-image me-2" style="background : url({{cf.imgURL.value}});width: 120px;height: 35px;"></div> 
-
-                    <h6 class="align-self-center mb-0" style="min-width: 150px;">{{cf.chargeName.value | titlecase }}</h6>
-
-                    <div>
-
-                        <input type="text" class="form-control form-control-lg" style="width: 140px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
+                    <div class="form-group d-flex align-items-center" [formGroup]="chargeForm" *ngIf="chargeForm.controls as cf">
     
-                        <div class="invalid-feedback" *ngIf="cf.amount.invalid && cf.amount.touched">
-                            
-                            <div *ngIf="cf.amount.errors?.required">Amount is required</div>
-                            
+                        <div class="product-image me-2" style="background : url({{cf.imgURL.value}});width: 120px;height: 35px;"></div> 
+    
+                        <h6 class="align-self-center mb-0" style="min-width: 150px;">{{cf.chargeName.value | titlecase }}</h6>
+    
+                        <div>
+    
+                            <input type="text" class="form-control form-control-lg" style="width: 140px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
+        
+                            <div class="invalid-feedback" *ngIf="cf.amount.invalid && cf.amount.touched">
+                                
+                                <div *ngIf="cf.amount.errors?.required">Amount is required</div>
+                                
+                            </div>
+    
                         </div>
-
+        
+        
+                        <div class="form-check form-switch ps-0 w-100">
+                                        
+                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" formControlName="is_active" (change)="changeValue({ 'fieldName': 'is_active', index })">
+                        
+                        </div>                       
+        
                     </div>
-    
-    
-                    <div class="form-check form-switch ps-0 w-100">
-                                    
-                        <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" formControlName="is_active" (change)="changeValue({ 'fieldName': 'is_active', index })">
-                    
-                    </div>                       
-    
-                </div>
 
+                </ng-container>
+                
             </ng-container>
             
         </div>
 
     </div>
     
-
 </asidebar>

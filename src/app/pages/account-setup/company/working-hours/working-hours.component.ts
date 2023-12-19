@@ -35,8 +35,11 @@ export class WorkingHoursComponent {
   ];
   userSubscribe: any;
   isLoading: boolean = false;
+  _: any = _;
 
-	constructor(private service: CommonService) {
+	constructor(public service: CommonService) {
+
+    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/app/workingHrs/list'] });
 
     if(!_.isEmpty(this.service.companyDetails)) this.getWorkingHours();
 

@@ -16,7 +16,9 @@ export class AccountDetailsComponent {
   _: any = _;
   userSubscribe: any;
 
-	constructor(private service: CommonService) {
+	constructor(public service: CommonService) {
+    
+    this.loadForm();
 
     this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 
@@ -26,11 +28,7 @@ export class AccountDetailsComponent {
 
   }
 
-	ngOnInit() {
-
-    this.loadForm();
-	
-	}
+	ngOnInit() {}
 
   loadForm() {
 

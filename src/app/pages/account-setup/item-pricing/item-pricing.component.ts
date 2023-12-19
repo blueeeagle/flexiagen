@@ -13,17 +13,21 @@ import { forkJoin } from 'rxjs';
 export class ItemPricingComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
-  agentProdcuts: any[] = [];
-  otherProducts: any[] = [];
+  agentProdcuts!: Array<any>;
+  otherProducts!: Array<any>;
   productCharges: any[] = [];
   userSubscribe: any;
   openCanvas: boolean = false;
   _: any = _;
   productForm: any;
   mode: 'Create' | 'Update' = 'Create';
+  chargeTypes: Array<any> = [ { name: 'Normal', value: 'normal', selected: true }, { name: 'Urgent', value: 'urgent', selected: false } ];
+  selectedChargeType: 'normal' | 'urgent' = 'normal';
   editData: any = {};
 
   constructor(public service: CommonService) { 
+
+    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/master/productCharges','/master/agentProducts','/master/otherProducts'] });
 
     this.loadForm();
 
@@ -48,6 +52,18 @@ export class ItemPricingComponent {
     this.service.getService({ "url": "/master/productCharges" }).subscribe((res: any) => {
 
       this.productCharges = res.status == "ok" ? res.data : [];
+
+      this.productCharges = _.flatten(_.map(this.productCharges, (obj: any) => {
+
+        obj.chargeType = 'normal';
+
+        let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
+        
+        return [obj, obj2];
+
+      }));
+
+      this.loadForm();
 
       this.getMyProducts();
 
@@ -111,6 +127,7 @@ export class ItemPricingComponent {
 
     });
 
+
     _.map(this.editData?.priceList || this.productCharges,(chargeDet:any, index: number)=>{
 
       this.cf.push(this.getChargeForm({ chargeDet }));
@@ -129,6 +146,8 @@ export class ItemPricingComponent {
 
     return this.service.fb.group({
 
+      '_id': [chargeDet._id || null],
+
       'chargeId': [chargeDet.chargeId?._id || chargeDet._id, Validators.required],
 
       'chargeName': [chargeDet.chargeId?.chargeName || chargeDet.chargeName, Validators.required],
@@ -137,7 +156,9 @@ export class ItemPricingComponent {
 
       'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
 
-      'is_active': [this.mode == 'Create' ? true : chargeDet.is_active],
+      'chargeType': [chargeDet?.chargeType || chargeDet.chargeType || 'normal', Validators.required],
+
+      'is_active': [this.mode == 'Create' ? true : chargeDet?.is_active ],
 
     });
 
@@ -181,8 +202,6 @@ export class ItemPricingComponent {
 
     } else if(fieldName == 'amount') {
 
-      console.log(this.cf.at(index).value);
-
     }
 
   }
@@ -197,7 +216,7 @@ export class ItemPricingComponent {
 
       e['amount'] = parseFloat(e['amount'] || 0);
 
-      return _.omit(e, ['chargeName']);
+      return _.omit(e, ['chargeName', 'imgURL', ...e._id == null ? ['chargeId'] : [] ]);
 
     });
 

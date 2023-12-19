@@ -13,8 +13,9 @@ export class CompanyDetailsComponent {
   formSubmitted: boolean = false;
   isLoading: boolean = false;
   userSubscribe: any;
+  _: any = _;
 
-	constructor(private service: CommonService) {
+	constructor(public service: CommonService) {
 
     this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 

@@ -13,8 +13,9 @@ export class ServiceDetailsComponent {
   serviceDetailsFrom: FormGroup = new FormGroup({});
   isLoading: boolean = false;
   userSubscribe: any;
+  _: any = _;
 
-	constructor(private service: CommonService, private cdr: ChangeDetectorRef) {
+	constructor(public service: CommonService, private cdr: ChangeDetectorRef) {
 
     this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 

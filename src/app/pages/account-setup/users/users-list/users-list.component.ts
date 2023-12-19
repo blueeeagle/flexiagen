@@ -35,6 +35,8 @@ export class UsersListComponent {
 
   ngOnInit() {
 
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/users","/setup/roles","/address/dailCode"] });
+
     this.loadForm();
 
     this.getBaseDetails();
