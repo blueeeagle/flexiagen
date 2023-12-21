@@ -15,6 +15,8 @@ export class ItemPricingComponent {
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
   agentProdcuts!: Array<any>;
   otherProducts!: Array<any>;
+  agenProductsCount: number = 0;
+  otherProductsCount: number = 0;
   productCharges: any[] = [];
   userSubscribe: any;
   openCanvas: boolean = false;
@@ -75,15 +77,21 @@ export class ItemPricingComponent {
 
     this.service.postService({ "url": "/master/agentProducts" }).subscribe((res: any) => {
 
-      this.agentProdcuts = res.status == "ok" ? res.data : [];
+      if(res.status == "ok") {
 
-      this.agentProdcuts = _.map(this.agentProdcuts, (e: any) => {
+        this.agentProdcuts = res.data;
 
-        e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
-        
-        return e;
+        this.agentProdcuts = _.map(this.agentProdcuts, (e: any) => {
+  
+          e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
+          
+          return e;
+  
+        });
+  
+        this.agenProductsCount = res.totalCount;
 
-      });
+      }
 
       this.getProducts();
 
@@ -91,28 +99,34 @@ export class ItemPricingComponent {
 
   }
 
-  getFullImagePath(imgUrl: any): string {
-    // Replace backslashes with forward slashes
-    const imagePath = imgUrl.replace(/\\/g, '/');
-    return (this.service.imgBasePath + imagePath).toString();
-  }
-
   getProducts() {
 
     this.service.postService({ "url": "/master/otherProducts" }).subscribe((res: any) => {
 
-      this.otherProducts = res.status == "ok" ? res.data : [];
+      if(res.status == "ok") {
 
-      this.otherProducts = _.map(this.otherProducts, (e: any) => {
+        this.otherProducts = res.data;
 
-        e.productImageURL = this.getFullImagePath(e?.productImageURL);
-        
-        return e;
+        this.otherProducts = _.map(this.otherProducts, (e: any) => {
+  
+          e.productImageURL = this.getFullImagePath(e?.productImageURL);
+          
+          return e;
+  
+        });
 
-      });
+        this.otherProductsCount = res.totalCount;
+
+      }
 
     });
 
+  }  
+
+  getFullImagePath(imgUrl: any): string {
+    // Replace backslashes with forward slashes
+    const imagePath = imgUrl.replace(/\\/g, '/');
+    return (this.service.imgBasePath + imagePath).toString();
   }
 
   loadForm() { 
@@ -168,6 +182,8 @@ export class ItemPricingComponent {
 
     this.editData = data || {};
 
+    this.selectedChargeType = 'normal';
+
     this.mode = _.isEmpty(data.companyId) ? 'Create' : 'Update';
 
     if(this.mode == 'Create') this.editData['productId'] = data;
@@ -200,9 +216,7 @@ export class ItemPricingComponent {
 
       this.cf.at(index).get('amount').updateValueAndValidity();
 
-    } else if(fieldName == 'amount') {
-
-    }
+    } 
 
   }
 
@@ -216,7 +230,7 @@ export class ItemPricingComponent {
 
       e['amount'] = parseFloat(e['amount'] || 0);
 
-      return _.omit(e, ['chargeName', 'imgURL', ...e._id == null ? ['chargeId'] : [] ]);
+      return _.omit(e, ['chargeName', 'imgURL', ...e._id == null ? ['_id'] : [] ]);
 
     });
 

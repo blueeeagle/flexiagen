@@ -4,7 +4,7 @@
 
          <div class="row">
 
-            <div class="page-header col-sm-6">ITEMS PRICING</div>
+            <div class="page-header">ITEMS PRICING</div>
         
         </div>
     
@@ -12,15 +12,15 @@
     
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
     
-                <button class="nav-link active border-bottom border-0" #myProductsBtn data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
+                <button class="nav-link fw-500 active border-bottom border-0" #myProductsBtn data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
                     
-                    My Products
+                    My Products ({{agenProductsCount}})
                 
                 </button>
         
-                <button class="nav-link border-bottom border-0" #otherProductsBtn data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
+                <button class="nav-link fw-500 border-bottom border-0" #otherProductsBtn data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
                     
-                    Other Products
+                    Other Products ({{otherProductsCount}})
                 
                 </button>
         
@@ -154,7 +154,7 @@
 
                     </ng-template>
     
-                </div>      
+                </div>
                     
             </div>
     
@@ -216,30 +216,43 @@
 
                 <ng-container *ngIf="chargeForm.value.chargeType == selectedChargeType">
 
-                    <div class="form-group d-flex align-items-center" [formGroup]="chargeForm" *ngIf="chargeForm.controls as cf">
-    
-                        <div class="product-image me-2" style="background : url({{cf.imgURL.value}});width: 120px;height: 35px;"></div> 
-    
-                        <h6 class="align-self-center mb-0" style="min-width: 150px;">{{cf.chargeName.value | titlecase }}</h6>
-    
-                        <div>
-    
-                            <input type="text" class="form-control form-control-lg" style="width: 140px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
+                    <div class="form-group d-flex align-items-center justify-content-between" [formGroup]="chargeForm" *ngIf="chargeForm.controls as cf">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="product-image me-2" style="background : url({{cf.imgURL.value}});width: 35px;height: 35px;"></div> 
         
-                            <div class="invalid-feedback" *ngIf="cf.amount.invalid && cf.amount.touched">
-                                
-                                <div *ngIf="cf.amount.errors?.required">Amount is required</div>
-                                
-                            </div>
+                            <h6 class="align-self-center mb-0" style="min-width: 150px;">{{cf.chargeName.value | titlecase }}</h6>
+
+                            <div>
+
+                                <div class="d-flex position-relative">
+        
+                                    <input type="text" class="form-control form-control-lg" style="width: 150px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
     
+                                    <span class="d-flex align-items-center fw-500 me-2 position-absolute end-0" style="top: 0;bottom: 0;">
+                                        
+                                        {{ service.currencyDetails.currencyCode }}
+                                    
+                                    </span>
+            
+                                </div>
+        
+                                <div class="invalid-feedback d-block" *ngIf="cf.amount.invalid && cf.amount.touched">
+                                        
+                                    <div *ngIf="cf.amount.errors?.required">Amount is required</div>
+                                    
+                                </div>
+    
+                            </div>                            
+
                         </div>
-        
-        
-                        <div class="form-check form-switch ps-0 w-100">
+                
+                        <div class="form-check form-switch ps-0">
                                         
                             <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" formControlName="is_active" (change)="changeValue({ 'fieldName': 'is_active', index })">
                         
-                        </div>                       
+                        </div>
         
                     </div>
 

@@ -1,5 +1,6 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 import { NgControl } from '@angular/forms';
+import { CommonService } from '@shared/services/common/common.service';
 declare var $: any;
 
 @Directive({
@@ -9,7 +10,7 @@ export class DecimalNumberDirective {
 
   @Input() digits: number = 3;
 
-  constructor(private _el: ElementRef, private control: NgControl) { }
+  constructor(private _el: ElementRef, private control: NgControl, private service: CommonService) { }
 
   @HostListener('input', ['$event']) onInputChange(event: any) {
     
@@ -31,7 +32,7 @@ export class DecimalNumberDirective {
 
   @HostListener('change', ['$event']) onChange(event: any) {
 
-    this._el.nativeElement.value = parseFloat(this._el.nativeElement.value).toFixed(this.digits);
+    this._el.nativeElement.value = parseFloat(this._el.nativeElement.value || 0).toFixed(this.service.currencyDetails.decimalPoints || this.digits);
 
     if($(this._el.nativeElement).attr('formControlName')) this.control.control?.setValue(this._el.nativeElement.value);
 

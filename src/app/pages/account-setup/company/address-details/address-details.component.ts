@@ -25,6 +25,14 @@ export class AddressDetailsComponent {
 
   constructor(public service: CommonService) { 
 
+    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/address/countries'] });
+
+    this.getCountries();
+
+    this.service.companyDetails = JSON.parse(this.service.session({ "key": "CompanyDetails", "method": "get" }) || '{}');
+
+    this.loadForm();
+
     this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 
       if(!_.isEmpty(value)) this.loadForm();
@@ -37,10 +45,6 @@ export class AddressDetailsComponent {
 
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.    
-    
-    this.loadForm();
-
-    this.getCountries();
 
   }
 
@@ -134,6 +138,12 @@ export class AddressDetailsComponent {
       this.getCities({ 'fieldName': this.f.stateId.value ? 'stateId' : 'countryId' }); // Get Cities based on State
 
       this.getAreas(); // Get Areas based on City
+
+      this.service.setApiLoaders({ 'isLoading': true, 'url': [
+        `/address/states/${this.f.countryId.value}`, 
+        `/address/cities/${this.f.stateId.value ? 'state' : 'country' }/${this.f[this.f.stateId.value ? 'stateId' : 'countryId'].value}`, 
+        `/address/areas/${this.f.cityId.value}`
+      ] });
 
     }
 

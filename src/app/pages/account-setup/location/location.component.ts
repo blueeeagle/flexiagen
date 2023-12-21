@@ -92,13 +92,13 @@ export class LocationComponent {
 
       "companyId": this.editData?.companyId || this.service.userDetails?.companyId || 0,
 
-      "areaId": [ this.mode == 'Update' ? this.editData?.areaId?._id : null, [Validators.required]],
+      "areaId": [ this.mode == 'Update' ? this.editData.areaId._id : null, [Validators.required]],
 
-      "minOrderAmt" : [this.editData?.minOrderAmt || null, [Validators.required]],
+      "minOrderAmt" : [ this.mode == 'Update' ? this.editData.minOrderAmt.toCustomFixed() : null, [Validators.required]],
 
       "isFreeDelivery":  this.editData?.isFreeDelivery || false,
 
-      "deliveryCharge":  [this.editData?.deliveryCharge || null, [Validators.required]],
+      "deliveryCharge":  [ this.mode == 'Update' ? this.editData.deliveryCharge.toCustomFixed() : null, [Validators.required]],
     
     });
 
