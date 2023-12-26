@@ -1,6 +1,6 @@
-<sidebar [menuStatus]="isMenuOpen" (menuEvent)="isMenuOpen = $event"></sidebar>
+<sidebar [menuStatus]="isMenuOpen" (menuEvent)="isMenuOpen = $event" (pageTitleEvent)="pageTitle = $event"></sidebar>
 
-<top-navbar [menuStatus]="isMenuOpen" (menuEvent)="isMenuOpen = $event"></top-navbar>
+<top-navbar [menuStatus]="isMenuOpen" (menuEvent)="isMenuOpen = $event" [pageTitle]="pageTitle"></top-navbar>
 
 <div class="main-content" [ngClass]="{ 'menu-closed': !isMenuOpen }">
 

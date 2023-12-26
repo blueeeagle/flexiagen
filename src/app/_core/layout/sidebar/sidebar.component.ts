@@ -38,6 +38,8 @@ export class SidebarComponent implements OnInit {
   get menuStatus() { return this.isMenuOpen; }
 
   @Output() menuEvent: EventEmitter<Boolean> = new EventEmitter();
+
+  @Output() pageTitleEvent: EventEmitter<String> = new EventEmitter();
   
   menuList: any = [
     {
@@ -196,6 +198,8 @@ export class SidebarComponent implements OnInit {
       menuDet['isExpand'] = menuDet.url == url[0];
 
       menuDet['isSelected'] = menuDet.url == url[0];
+
+      if(menuDet['isExpand']) this.pageTitleEvent.emit(menuDet.label);
 
       menuDet['subMenu'] = _.map(menuDet.subMenu,(subMenuOneDet: any)=>{
 

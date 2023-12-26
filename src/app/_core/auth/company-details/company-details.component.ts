@@ -251,7 +251,7 @@ export class CompanyDetailsComponent {
 
         'areaName': areaDet?.name || '',
         
-        'zipcode': areaDet?.zipCode || '' 
+        'zipcode': areaDet?.zipcode || '' 
       
       });
 

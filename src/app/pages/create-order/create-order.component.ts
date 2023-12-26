@@ -3,6 +3,7 @@ import { FormArray, Validators } from '@angular/forms';
 import { OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-create-order',
@@ -18,47 +19,72 @@ export class CreateOrderComponent {
 
   agentProdcuts!: Array<any>;
   otherProducts: Array<any> = [];
-  productCharges: any[] = [];
+  selectedCustomerDet: any = {};
+  selectedItemDet: any = {};
   customerDetail!: any;
   agentProductsCount: number = 0;
   userSubscribe: any;
   _: any = _;
+  filterForm: any = this.service.fb.group({
+    'search': '',
+    'category': null
+  });
   productForm: any;
   orderForm: any;
   customerForm: any;
   basketForm: any;
-  openCanvas: any = {
-    customer: false,
-    addProduct: false,
-    productBasket: false,
-    applyDiscount: false
-  };
+  openCanvas: any = false;
+  canvasName: any = 'addCustomer';
+  canvasTitle: any = 'Add Customer';
   masterList: any = {
     dialCodeList: [],
     countryList: [],
     stateList: [],
     cityList: [],
-    areaList: []
+    areaList: [],
+    customerList: [],
+    productCharges: [],
+    categoryList: []
+  };
+  formSubmitted: any = {
+    customerForm: false,
+    productForm: false,
+    orderForm: false
   };
     
   constructor(public service: CommonService) {
 
-    this.getCountries();
+    this.service.setApiLoaders({ 'isLoading': true, 'url': [
+      '/master/productCharges', '/master/agentProducts', '/master/otherProducts', '/address/countries', '/address/dialCode', '/master/categories', '/master/customers'
+    ] });
 
-    this.userSubscribe = this.service.userDetailsObs.subscribe((value) => {
+    this.getBaseDetails();
 
-      if (!_.isEmpty(value)) {
+    if(!_.isEmpty(this.service.companyDetails)) {
 
-        this.loadForm();
-        this.loadProductForm();
-        this.loadCustomerForm();
-        this.loadBasketForm();
-        this.getCharges();
-        this.getMyProducts();
+      this.loadForm();
+      this.loadProductForm();
+      this.loadCustomerForm();
+      this.loadBasketForm({});
+      this.getMyProducts();
 
-      }
+    } else {
 
-    });
+      this.userSubscribe = this.service.userDetailsObs.subscribe((value) => {
+
+        if (!_.isEmpty(value)) {
+  
+          this.loadForm();
+          this.loadProductForm();
+          this.loadCustomerForm();
+          this.loadBasketForm({});
+          this.getMyProducts();
+  
+        }
+  
+      });      
+
+    }
 
   }
 
@@ -68,37 +94,71 @@ export class CreateOrderComponent {
     this.loadForm();
     this.loadProductForm();
     this.loadCustomerForm();
-    this.loadBasketForm();
+    this.loadBasketForm({});
 
   }
 
-  getCategories() {
-    
-    this.service.getService({ "url": "/master/categories" }).subscribe((res: any) => {
+  getBaseDetails() {
 
-      this.masterList['categoryList'] = res.status=='ok' ? res.data : [];
+    forkJoin({
+
+      "countries": this.service.getService({ "url": "/address/countries" }),
+
+      "dialCodes": this.service.getService({ "url": "/address/dialCode" }),
+
+      "categories": this.service.postService({ "url": "/master/categories" }),
+
+      "charges": this.service.getService({ "url": "/master/productCharges" }),
+
+    }).subscribe((res: any) => {
+
+      this.masterList["countryList"] = res.countries.status == "ok" ? res.countries.data : [];
+
+      this.masterList["dialCodeList"] = res.dialCodes.status == "ok" ? res.dialCodes.data : [];
+
+      this.masterList["categoryList"] = res.categories.status == "ok" ? res.categories.data : [];
+
+      if(res.charges.status == "ok") {
+
+        this.masterList['productCharges'] = res.charges.data;
+
+        this.masterList['productCharges'] = _.flatten(_.map(this.masterList['productCharges'], (obj: any) => {
+
+          obj.chargeType = 'normal';
+
+          let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
+          
+          return [obj, obj2];
+
+        }));
+
+        this.loadProductForm();
+
+      }
 
     });
 
+    this.getCustomers();
+
   }
 
-  getCharges() {
+  getCustomers() {
 
-    this.service.getService({ "url": "/master/productCharges" }).subscribe((res: any) => {
+    this.service.postService({ "url": "/master/customers" }).subscribe((res: any) => {
 
-      this.productCharges = res.status == "ok" ? res.data : [];
+      if(res.status == "ok") {
 
-      this.productCharges = _.flatten(_.map(this.productCharges, (obj: any) => {
+        this.masterList['customerList'] = _.concat([],_.map(res.data, (e: any) => {
 
-        obj.chargeType = 'normal';
+          e.customerImageURL = _.isEmpty(e?.customerImageURL) ? './assets/images/customer-profile.svg' : this.getFullImagePath(e?.customerImageURL);
 
-        let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
-        
-        return [obj, obj2];
+          e.addressInfo = _.find(e.addresses, { 'isDefault': true });
+          
+          return e;
+  
+        }));
 
-      }));
-
-      this.loadProductForm();
+      }
 
     });
 
@@ -124,13 +184,13 @@ export class CreateOrderComponent {
 
       }
 
-      this.getProducts();
+      this.getOtherProducts();
 
     });
 
   }
 
-  getProducts() {
+  getOtherProducts() {
 
     this.service.postService({ "url": "/master/otherProducts" }).subscribe((res: any) => {
 
@@ -151,38 +211,19 @@ export class CreateOrderComponent {
     });
 
   }  
-
-  getDialCodes() {
-
-    this.service.getService({ "url": "/address/dialCode" }).subscribe((res: any) => {
-
-      this.masterList['dialCodeList'] = res.status=='ok' ? res.data : [];
-
-    });
-
-  }
-
-  // Get Countries List
-
-  getCountries() {
-
-    this.masterList['countryList'] = [];
-
-    this.service.getService({ "url": "/address/countries" }).subscribe((res: any) => {
-
-      this.masterList['countryList'] = res.status=='ok' ? res.data : [];
-
-    });
-
+    
+  getFullImagePath(imgUrl: any): string {
+    // Replace backslashes with forward slashes
+    const imagePath = imgUrl.replace(/\\/g, '/');
+    return (this.service.imgBasePath + imagePath).toString();
   }
 
   // Get States based on Country
-
   getStates() {
 
     this.masterList['stateList'] = [];
 
-    this.service.getService({ "url": `/address/states/${this.f.countryId.value}` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/states/${this.af.countryId.value}` }).subscribe((res: any) => {
 
       this.masterList['stateList'] = res.status=='ok' ? res.data : [];
 
@@ -201,25 +242,18 @@ export class CreateOrderComponent {
 
     this.masterList['cityList'] = [];
 
-    this.service.getService({ "url": `/address/cities/${fieldName == 'countryId' ? 'country' : 'state' }/${this.f[fieldName].value}` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/cities/${fieldName == 'countryId' ? 'country' : 'state' }/${this.af[fieldName].value}` }).subscribe((res: any) => {
 
       this.masterList['cityList'] = res.status=='ok' ? res.data : [];
 
     });
 
-  }    
-  
-  getFullImagePath(imgUrl: any): string {
-    // Replace backslashes with forward slashes
-    const imagePath = imgUrl.replace(/\\/g, '/');
-    return (this.service.imgBasePath + imagePath).toString();
   }
 
   // Get Areas based on City
-
   getAreas() {
 
-    this.service.getService({ "url": `/address/areas/${this.f.cityId.value}` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/address/areas/${this.af.cityId.value}` }).subscribe((res: any) => {
 
       this.masterList['areaList'] = res.status=='ok' ? res.data : [];
 
@@ -231,7 +265,7 @@ export class CreateOrderComponent {
 
     this.orderForm = this.service.fb.group({
 
-      'customerId': ['', Validators.required],
+      'customerId': [ null, Validators.required],
 
       'paymentStatus': ['Pending'],
 
@@ -277,13 +311,13 @@ export class CreateOrderComponent {
 
     });
 
-    _.map(this.productCharges,(chargeDet:any, index: number)=>{
+    _.map(this.masterList['productCharges'],(chargeDet:any, index: number)=>{
 
       this.cf.push(this.getChargeForm({ chargeDet }));
 
       this.changeValue({ fieldName: 'is_active', index });
 
-    });    
+    });
 
   }
 
@@ -309,33 +343,37 @@ export class CreateOrderComponent {
 
   }
 
-  loadBasketForm() {
+  loadBasketForm({ productDet = {} }: {productDet?: any}) {
 
     this.basketForm = this.service.fb.group({
 
-      'productId': [ null, Validators.required],
+      'productId': [ productDet?._id , Validators.required],
 
-      'qty': [ null, Validators.required],
+      'qty': [ productDet?.qty || null, Validators.required],
 
-      'netAmt': [0, Validators.required],
+      'netAmt': [ productDet?.netAmt || 0, Validators.required],
 
       'priceList': this.service.fb.array([])
 
     });
 
-    _.map(this.productCharges,(chargeDet:any, index: number)=>{
+    productDet['priceList'] = _.find(this.f.itemList.value,{ 'productId': productDet._id })?.priceList || _.filter(productDet?.priceList,{ 'chargeType': this.f.orderType.value, 'is_active': true });
+
+    _.map(productDet.priceList,(chargeDet:any, index: number)=>{
+
+      chargeDet = { ...chargeDet, ..._.find(this.selectedItemDet.priceList, { 'chargeId': { '_id': chargeDet.chargeId } }) };
 
       this.bf.priceList.push(this.service.fb.group({
 
-        'chargeId': [chargeDet._id, Validators.required],
+        'chargeId': [chargeDet?.chargeId?._id, Validators.required],
 
-        'chargeName': [chargeDet.chargeName, Validators.required],
+        'chargeName': [chargeDet?.chargeId?.chargeName, Validators.required],
 
-        'imgURL': [this.getFullImagePath(chargeDet.imgURL), Validators.required],
+        'imgURL': [this.getFullImagePath(chargeDet?.chargeId?.imgURL), Validators.required],
 
-        'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
+        'amount': [ (chargeDet?.amount || 0).toCustomFixed(), Validators.required],
 
-        'qty': [ 0, Validators.required],
+        'qty': [ chargeDet?.qty || 0, Validators.required],
 
       }));
 
@@ -347,23 +385,31 @@ export class CreateOrderComponent {
 
     this.customerForm = this.service.fb.group({
 
+      'companyId': [ this.service?.companyDetails?._id, Validators.required],
+
       'firstName': [ null, Validators.required ],
 
       'lastName': [ null, Validators.required ],  
 
-      'email': [ null, Validators.required ],
+      'email': [ null, Validators.email ],
 
       'dialCode': [ null, [Validators.required]],
 
       'mobile': [ null, [Validators.required]],
 
+      'gender': [ 'male' ],
+
       'customerType': 'pos',
 
       'addressDetails': this.service.fb.group({
 
-        'addressLine1': [ null, Validators.required ],
+        'street': [ null, Validators.required ],
 
-        'addressLine2': [ null ],
+        'building': [ null ],
+
+        'block': [ null ],
+
+        'others': [ null ],
 
         'areaId': [ null, Validators.required ],
 
@@ -373,7 +419,9 @@ export class CreateOrderComponent {
 
         'countryId': [ null, Validators.required ],
 
-        'pincode': [ null, Validators.required ],
+        'zipcode': [ null, Validators.required ],
+
+        'isDefault': true
 
       })
       
@@ -387,7 +435,7 @@ export class CreateOrderComponent {
 
       let countryDet = _.find(this.masterList['countryList'], { '_id': value });
 
-      this.cf.addressDetailspatchValue({ 'cityId': null, 'stateId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
+      this.cusf.addressDetails.patchValue({ 'cityId': null, 'stateId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
 
       if(countryDet.hasState) {
 
@@ -411,7 +459,7 @@ export class CreateOrderComponent {
 
       this.masterList['areaList'] = []; // Reset Area List
 
-      this.cf.addressDetailspatchValue({ 'cityId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
+      this.cusf.addressDetails.patchValue({ 'cityId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
 
     });
 
@@ -421,7 +469,7 @@ export class CreateOrderComponent {
 
       this.getAreas(); // Get Areas based on City
 
-      this.cf.addressDetailspatchValue({ 'areaId': null, 'zipcode': null });
+      this.cusf.addressDetails.patchValue({ 'areaId': null, 'zipcode': null });
 
     });
 
@@ -429,9 +477,9 @@ export class CreateOrderComponent {
 
     this.af['areaId'].valueChanges.subscribe((value: any) => {
 
-      this.cf.addressDetailspatchValue({ 
+      this.cusf.addressDetails.patchValue({ 
         
-        'zipcode': _.get(_.find(this.masterList['areaList'], { '_id': value }), 'zipCode', null) 
+        'zipcode': _.get(_.find(this.masterList['areaList'], { '_id': value }), 'zipcode', null) 
       
       });
 
@@ -443,25 +491,49 @@ export class CreateOrderComponent {
 
   get pf(): any { return this.productForm.controls; }
 
+  get cf(): any { return this.pf.priceList as FormArray; }  
+
   get cusf(): any { return this.customerForm.controls; }
 
   get af(): any { return this.cusf.addressDetails.controls; }
 
   get bf(): any { return this.basketForm.controls; }
 
-  get cf(): any { return this.pf.priceList as FormArray; }
+  openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addProduct' | 'addBasket' | 'addDiscount', data?: any }) {
 
+    this.canvasName = canvasName;
+    
+    this.openCanvas = true;
 
+    if(canvasName == 'addProduct') {
 
-  openAsidebar({ canvasName = 'customer' }:  { canvasName: 'customer' | 'addProduct' | 'productBasket' | 'applyDiscount' }) {
+      this.canvasTitle = 'Add Product';
 
-    this.openCanvas[canvasName+'Canvas'] = true;
+      this.formSubmitted['productForm'] = false;
+      
+      this.loadProductForm();
 
-    if(canvasName == 'addProduct') this.loadProductForm();
+    }
 
-    if(canvasName == 'customer') this.loadCustomerForm();
+    if(canvasName == 'addCustomer') {
 
-    if(canvasName == 'productBasket') this.loadBasketForm();
+      this.canvasTitle = 'Add Customer';
+
+      this.formSubmitted['customerForm'] = false;
+      
+      this.loadCustomerForm();
+
+    }
+
+    if(canvasName == 'addBasket') {
+
+      this.canvasTitle = 'Add New Item';
+
+      this.selectedItemDet = data;
+      
+      this.loadBasketForm({ 'productDet': data });
+
+    }
 
   }
 
@@ -488,6 +560,53 @@ export class CreateOrderComponent {
       this.cf.at(index).get('amount').updateValueAndValidity();
 
     } 
+
+  }
+  
+  asidebarSubmit() {
+
+    if(this.canvasName == 'addCustomer') {
+
+      this.formSubmitted.customerForm = true;
+
+      if(this.customerForm.invalid) return;
+  
+      let payload = _.cloneDeep(this.customerForm.value);
+  
+      payload['addresses'] = [payload['addressDetails']];
+  
+      delete payload['addressDetails'];
+  
+      this.service.postService({ "url": "/master/customer", "payload": payload }).subscribe((res: any) => {
+  
+        if(res.status == "ok") {
+  
+          this.masterList['customerList'].push(res.data);
+  
+          this.selectedCustomerDet = res.data;
+  
+          this.customerCanvas?.close();
+  
+          this.getCustomers();
+  
+          this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
+  
+        }
+  
+      }, (err: any) => {
+  
+        this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+  
+      });
+
+    } else if(this.canvasName == 'addProduct') {
+
+
+    } else if(this.canvasName == 'addBasket') {
+
+      console.log(this.basketForm.value);
+
+    }
 
   }
 

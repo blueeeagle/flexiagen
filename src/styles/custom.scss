@@ -19,6 +19,13 @@ section {
     }
 }
 
+.ng-select.form-control.border-2 {
+
+    .ng-select-container {
+        border-width: 2px;
+    }
+}
+
 .ng-select.form-control.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
     box-shadow: none !important;
     border-color: #1e4894 !important;

@@ -2,25 +2,52 @@
 
     <div class="container-fluid">
 
-         <div class="row">
+        <div class="row mt-3">
+            
+            <div class="col-md-3 col-lg-3 col-xxl-2 mb-2 align-self-center mb-md-0 mb-2">
 
-            <div class="page-header">ITEMS PRICING</div>
-        
+                <div class="page-header">ITEMS PRICING</div>
+
+                <p class="text-secondary small fw-500"> {{agenProductsCount}} Products Found</p>
+
+            </div>
+
+            <div class="col-sm-6 col-md-5 col-xl-3 mb-2">
+
+                <input type="text" class="form-control form-control-lg border-2" placeholder="Search by item name...">
+    
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-xl-3 mb-2">
+
+                <custom-ng-select 
+                    [value]="f.categoryId?.value"
+                    [from]="filterForm"     
+                    formControlField="areaId"
+                    [multiple]="true"
+                    [items]="productCategories"
+                    bindLabel="item?.categoryName.toTitleCase()"
+                    bindValue="_id"
+                    placeholder="Categories"
+                ></custom-ng-select>                
+    
+            </div>
+
         </div>
     
         <div class="row mt-3">
     
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
     
-                <button class="nav-link fw-500 active border-bottom border-0" #myProductsBtn data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
+                <button class="nav-link fw-500 active border-bottom border-0" id="myProductsBtn" #myProductsBtn data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
                     
-                    My Products ({{agenProductsCount}})
+                    My Products
                 
                 </button>
         
-                <button class="nav-link fw-500 border-bottom border-0" #otherProductsBtn data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
+                <button class="nav-link fw-500 border-bottom border-0" id="otherProductsBtn" #otherProductsBtn data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
                     
-                    Other Products ({{otherProductsCount}})
+                    Other Products
                 
                 </button>
         

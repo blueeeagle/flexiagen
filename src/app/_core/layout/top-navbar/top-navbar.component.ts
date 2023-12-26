@@ -11,10 +11,15 @@ export class TopNavbarComponent {
 
   isMenuOpen: Boolean = true;
   logoUrl: any;
+  _pageTitle: any = "Dashboard";
 
   @Input() set menuStatus(value: Boolean) { this.isMenuOpen = value }
 
   get menuStatus() { return this.isMenuOpen; }
+  
+  @Input() set pageTitle(value: any) { this._pageTitle = value }
+
+  get pageTitle() { return this._pageTitle; }
 
   @Output() menuEvent: EventEmitter<Boolean> = new EventEmitter();
 

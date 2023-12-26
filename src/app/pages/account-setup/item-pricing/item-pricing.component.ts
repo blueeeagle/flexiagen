@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
@@ -18,6 +19,7 @@ export class ItemPricingComponent {
   agenProductsCount: number = 0;
   otherProductsCount: number = 0;
   productCharges: any[] = [];
+  productCategories: any[] = [];
   userSubscribe: any;
   openCanvas: boolean = false;
   _: any = _;
@@ -26,8 +28,9 @@ export class ItemPricingComponent {
   chargeTypes: Array<any> = [ { name: 'Normal', value: 'normal', selected: true }, { name: 'Urgent', value: 'urgent', selected: false } ];
   selectedChargeType: 'normal' | 'urgent' = 'normal';
   editData: any = {};
+  filterForm: any;
 
-  constructor(public service: CommonService) { 
+  constructor(public service: CommonService, private activateRoute: ActivatedRoute) { 
 
     this.service.setApiLoaders({ 'isLoading': true, 'url': ['/master/productCharges','/master/agentProducts','/master/otherProducts'] });
 
@@ -49,25 +52,67 @@ export class ItemPricingComponent {
 
   }
 
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    
+    this.filterForm = this.service.fb.group({
+      
+      'search': [''],
+
+      'categoryId': ['']
+
+    });
+
+  }
+
+  get ff(): any { return this.filterForm.controls; }
+
   getCharges() {
 
-    this.service.getService({ "url": "/master/productCharges" }).subscribe((res: any) => {
+    forkJoin({
 
-      this.productCharges = res.status == "ok" ? res.data : [];
+      "productCharges": this.service.getService({ "url": "/master/productCharges" }),
 
-      this.productCharges = _.flatten(_.map(this.productCharges, (obj: any) => {
+      "productCategories": this.service.postService({ "url": "/master/categories" }),
 
-        obj.chargeType = 'normal';
+    }).subscribe({
 
-        let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
-        
-        return [obj, obj2];
+      next: (res: any) => {
 
-      }));
+        if(res.productCategories.status == "ok") {
 
-      this.loadForm();
+          this.productCategories = res.productCategories.data;
 
-      this.getMyProducts();
+        }
+
+        if(res.productCharges.status == "ok") {
+
+          this.productCharges = res.productCharges.data;
+
+          this.productCharges = _.flatten(_.map(this.productCharges, (obj: any) => {
+
+            obj.chargeType = 'normal';
+  
+            let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
+            
+            return [obj, obj2];
+  
+          }));
+
+          this.loadForm();
+
+          this.getMyProducts();
+
+        }
+
+      },
+
+      error: (error: any) => {
+
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || `Item Pricing Listing failed` } });
+
+      }
 
     });
 
@@ -116,6 +161,17 @@ export class ItemPricingComponent {
         });
 
         this.otherProductsCount = res.totalCount;
+
+        this.activateRoute.queryParams.subscribe((params: any) => {
+
+          if(params?.view) setTimeout(()=>{
+
+            document.getElementById('otherProductsBtn')?.click();
+
+          },100)
+    
+        });
+    
 
       }
 

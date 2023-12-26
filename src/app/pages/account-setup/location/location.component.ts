@@ -29,6 +29,7 @@ export class LocationComponent {
   _: any = _;
 
   loaderUrlList: any = ['/setup/agentLocations','/master/otherNewLocations/'+JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }))?.addressDetails?.cityId?._id];
+  locationsCount: number = 0;
 
   constructor(public service: CommonService) { 
 
@@ -59,6 +60,8 @@ export class LocationComponent {
     this.service.getService({ "url": `/setup/agentLocations` }).subscribe((res: any) => {
 
       this.locationList = res.status=='ok' ? res.data : [];
+
+      this.locationsCount = _.size(this.locationList);
 
     },(error: any)=>{
 

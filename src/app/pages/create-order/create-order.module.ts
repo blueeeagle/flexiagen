@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { CreateOrderRoutingModule } from './create-order-routing.module';
 import { CreateOrderComponent } from './create-order.component';
+import { SharedModule } from '@shared/shared.module';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { CreateOrderComponent } from './create-order.component';
   ],
   imports: [
     CommonModule,
+    SharedModule,
     CreateOrderRoutingModule
   ]
 })

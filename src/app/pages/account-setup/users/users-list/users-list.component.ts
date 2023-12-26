@@ -35,7 +35,7 @@ export class UsersListComponent {
 
   ngOnInit() {
 
-    this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/users","/setup/roles","/address/dailCode"] });
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/users","/setup/roles","/address/dialCode"] });
 
     this.loadForm();
 
@@ -44,6 +44,24 @@ export class UsersListComponent {
     this.getUsersList();
 	
   }
+
+  getUsersList() {
+    
+    this.service.postService({ url: "/agent/users" }).subscribe((res: any) => {
+      
+      if (res.status == "ok") {
+          
+        this.usersList = res.data;
+
+      }
+      
+    },
+      (error: any) => {
+      
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+    })
+  }
+
   
   getBaseDetails() {
     
@@ -51,7 +69,7 @@ export class UsersListComponent {
 
       "roles": this.service.getService({ url: "/setup/roles" }),
       
-      "dialCodes": this.service.getService({ "url": "/address/dailCode" }) 
+      "dialCodes": this.service.getService({ "url": "/address/dialCode" }) 
       
     }).subscribe((res: any) => {
 
@@ -62,7 +80,6 @@ export class UsersListComponent {
     });
     
   }
-
 
   // Load Form
 
@@ -118,23 +135,6 @@ export class UsersListComponent {
 
     this.modalstatus = true
 
-  }
-
-  getUsersList() {
-    
-    this.service.postService({ url: "/agent/users" }).subscribe((res: any) => {
-      
-      if (res.status == "ok") {
-          
-        this.usersList = res.data;
-
-      }
-      
-    },
-      (error: any) => {
-      
-        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
-    })
   }
 
   submit() {

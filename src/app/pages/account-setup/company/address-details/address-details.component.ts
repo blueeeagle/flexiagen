@@ -199,7 +199,7 @@ export class AddressDetailsComponent {
 
       this.addressDetailsFrom.patchValue({ 
         
-        'zipcode': _.get(_.find(this.masterList['areaList'], { '_id': value }), 'zipCode', null) 
+        'zipcode': _.get(_.find(this.masterList['areaList'], { '_id': value }), 'zipcode', null) 
       
       });
 

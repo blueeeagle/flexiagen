@@ -30,7 +30,7 @@ export class RegisterComponent {
 
   getCountries() {
 
-    this.service.getService({ "url": "/address/dailCode" }).subscribe((res: any) => {
+    this.service.getService({ "url": "/address/dialCode" }).subscribe((res: any) => {
 
       this.dialCodeList = res.status=='ok' ? res.data : [];
 

@@ -14,6 +14,7 @@ import { delay } from 'rxjs';
 export class PagesComponent {
 
   isMenuOpen:Boolean = true;
+  pageTitle: any = "Dashboard";
 
   constructor(private service: CommonService, private _loading: LoadingService, private spinner: NgxSpinnerService, private router: Router) {
 
