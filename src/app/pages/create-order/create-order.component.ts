@@ -69,6 +69,7 @@ export class CreateOrderComponent {
       this.loadCustomerForm();
       this.loadBasketForm({});
       this.getMyProducts();
+      this.getCustomers();
 
     } else {
 
@@ -81,6 +82,7 @@ export class CreateOrderComponent {
           this.loadCustomerForm();
           this.loadBasketForm({});
           this.getMyProducts();
+          this.getCustomers();
   
         }
   
@@ -140,13 +142,11 @@ export class CreateOrderComponent {
 
     });
 
-    this.getCustomers();
-
   }
 
   getCustomers() {
 
-    this.service.postService({ "url": "/master/customers" }).subscribe((res: any) => {
+    this.service.postService({ "url": "/master/customers", "payload": { "companyId": this.service.companyDetails._id } }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
