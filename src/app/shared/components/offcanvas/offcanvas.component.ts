@@ -9,48 +9,71 @@ declare var bootstrap: any;
 })
 export class OffcanvasComponent implements OnInit {
 
-  @Input() showApplyBtn: boolean = true;
-  @Input() showCancelBtn: boolean = true;
-  @Input() applyBtnTxt: string = "SAVE";
-  @Input() cancelBtnTxt: string = "CLEAR";
-  @Input() backdrop: boolean = true;
-  @Input() keyboard: boolean = true;
-  @Input() scroll: boolean = false;
-  @Input() position: "start" | "end" | "top" | "bottom"  = "end"; 
+  _showApplyBtn: boolean = true;
+  _showCancelBtn: boolean = true;
+  _applyBtnTxt: string = "SAVE";
+  _cancelBtnTxt: string = "CLEAR";
+  _backdrop: boolean = true;
+  _keyboard: boolean = true;
+  _scroll: boolean = false;
+  _position: "start" | "end" | "top" | "bottom"  = "end";
+  _title: string = "Filters";
+  _openCanvas: boolean= false;
+  offcanvas: any;
 
-  @Output() onSubmit: EventEmitter<any> = new EventEmitter();
-  @Output() onClose: EventEmitter<any> = new EventEmitter();
+  @Input() set showApplyBtn(value: boolean) { this._showApplyBtn = value; }
 
-  canvasTitle: string = "Filters";
-  isCanvasOpen: boolean= false;
-  offcanvas: any ;
+  get showApplyBtn(): boolean { return this._showApplyBtn; }
 
-  get title(): string {
+  @Input() set showCancelBtn(value: boolean) { this._showCancelBtn = value; }
 
-    return this.canvasTitle;
+  get showCancelBtn(): boolean { return this._showCancelBtn; }
 
-  }
+  @Input() set applyBtnTxt(value: string) { this._applyBtnTxt = value; }
+
+  get applyBtnTxt(): string { return this._applyBtnTxt; }  
   
-  @Input() set title(value: string) {
-    
-    this.canvasTitle = value;
+  @Input() set cancelBtnTxt(value: string) { this._cancelBtnTxt = value; }
 
-  }
+  get cancelBtnTxt(): string { return this._cancelBtnTxt; }
 
+  @Input() set backdrop(value: boolean) { this._backdrop = value; }
+
+  get backdrop(): boolean { return this._backdrop; }
+
+  @Input() set keyboard(value: boolean) { this._keyboard = value; }
+
+  get keyboard(): boolean { return this._keyboard; }
+
+  @Input() set scroll(value: boolean) { this._scroll = value; }
+
+  get scroll(): boolean { return this._scroll; }
+
+  @Input() set position(value: "start" | "end" | "top" | "bottom") { this._position = value; }
+
+  get position(): "start" | "end" | "top" | "bottom" { return this._position; }
+
+  @Input() set title(value: string) { this._title = value; }
+
+  get title(): string { return this._title; }
+  
   @Input() set openCanvas(value: boolean) {
 
     this.offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvas'), { 'backdrop': this.backdrop, 'scroll': this.scroll, 'keyboard': this.keyboard });
     
-    this.isCanvasOpen = value;
+    this._openCanvas = value;
 
-    if(this.isCanvasOpen) this.offcanvas.show();
+    if(this._openCanvas) this.offcanvas.show();
 
     else this.offcanvas.hide();
 
   }
 
-  get openCanvas(): boolean { return this.isCanvasOpen; }
-  
+  get openCanvas(): boolean { return this._openCanvas; }
+
+  @Output() onSubmit: EventEmitter<any> = new EventEmitter();
+  @Output() onCancel: EventEmitter<any> = new EventEmitter();
+  @Output() onClose: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
 

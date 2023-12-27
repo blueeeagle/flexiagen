@@ -162,7 +162,7 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="{{mode}} Location" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" title="{{mode}} Location" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false" (onCancel)="openCanvas = false" (onSubmit)="submit()">
 
     <div [formGroup]="locationForm">
 

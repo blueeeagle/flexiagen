@@ -12,10 +12,7 @@ import { forkJoin } from 'rxjs';
 })
 export class CreateOrderComponent {
 
-  @ViewChild('customerCanvas') customerCanvas: OffcanvasComponent | undefined;
-  @ViewChild('addProductCanvas') addProductCanvas: OffcanvasComponent | undefined;
-  @ViewChild('productBasketCanvas') productBasketCanvas: OffcanvasComponent | undefined;
-  @ViewChild('applyDiscountCanvas') applyDiscountCanvas: OffcanvasComponent | undefined;
+  @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
   agentProdcuts!: Array<any>;
   otherProducts: Array<any> = [];
@@ -34,8 +31,13 @@ export class CreateOrderComponent {
   customerForm: any;
   basketForm: any;
   openCanvas: any = false;
-  canvasName: any = 'addCustomer';
-  canvasTitle: any = 'Add Customer';
+  canvasConfig: any = {
+    "canvasName": "addCustomer",
+    "canvasTitle": "Add Customer",
+    "applyBtnTxt": "Save",
+    "cancelBtnTxt": "Clear",
+    "showCloseBtn": true
+  }
   masterList: any = {
     dialCodeList: [],
     countryList: [],
@@ -287,6 +289,8 @@ export class CreateOrderComponent {
 
       'itemList': this.service.fb.array([]),
 
+      'qty': [0, Validators.required],
+
       'netAmt': [0, Validators.required],
 
       'discAmt': [0, Validators.required],
@@ -347,7 +351,11 @@ export class CreateOrderComponent {
 
     this.basketForm = this.service.fb.group({
 
-      'productId': [ productDet?._id , Validators.required],
+      'productId': [ productDet?._id || this.selectedItemDet.productId?._id, Validators.required],
+
+      'productName': [ productDet?.productName || this.selectedItemDet.productId?.productName, Validators.required],
+
+      'productImageURL': [productDet?.productImageURL || this.selectedItemDet.productId?.productImageURL, Validators.required],
 
       'qty': [ productDet?.qty || null, Validators.required],
 
@@ -357,11 +365,11 @@ export class CreateOrderComponent {
 
     });
 
-    productDet['priceList'] = _.find(this.f.itemList.value,{ 'productId': productDet._id })?.priceList || _.filter(productDet?.priceList,{ 'chargeType': this.f.orderType.value, 'is_active': true });
+    let priceList = productDet?.priceList || _.filter(this.selectedItemDet?.priceList,{ 'chargeType': this.f.orderType.value, 'is_active': true });
 
-    _.map(productDet.priceList,(chargeDet:any, index: number)=>{
+    _.map(priceList,(chargeDet:any, index: number)=>{
 
-      chargeDet = { ...chargeDet, ..._.find(this.selectedItemDet.priceList, { 'chargeId': { '_id': chargeDet.chargeId } }) };
+      chargeDet = { ...chargeDet, ..._.find(this.selectedItemDet.priceList, { 'chargeId': { '_id': _.isEmpty(productDet) ? chargeDet.chargeId?._id : chargeDet?.chargeId } }) };
 
       this.bf.priceList.push(this.service.fb.group({
 
@@ -374,6 +382,8 @@ export class CreateOrderComponent {
         'amount': [ (chargeDet?.amount || 0).toCustomFixed(), Validators.required],
 
         'qty': [ chargeDet?.qty || 0, Validators.required],
+
+        'netAmt': [ chargeDet?.netAmt || 0, Validators.required],
 
       }));
 
@@ -489,6 +499,8 @@ export class CreateOrderComponent {
 
   get f(): any { return this.orderForm.controls; }
 
+  get if(): any { return this.f.itemList as FormArray; }
+
   get pf(): any { return this.productForm.controls; }
 
   get cf(): any { return this.pf.priceList as FormArray; }  
@@ -501,13 +513,17 @@ export class CreateOrderComponent {
 
   openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addProduct' | 'addBasket' | 'addDiscount', data?: any }) {
 
-    this.canvasName = canvasName;
+    this.canvasConfig['canvasName'] = canvasName;
+
+    this.canvasConfig['applyBtnTxt'] = 'Save';
+
+    this.canvasConfig['cancelBtnTxt'] = 'Clear';
     
     this.openCanvas = true;
 
     if(canvasName == 'addProduct') {
 
-      this.canvasTitle = 'Add Product';
+      this.canvasConfig['canvasTitle'] = 'Add Product';
 
       this.formSubmitted['productForm'] = false;
       
@@ -517,7 +533,7 @@ export class CreateOrderComponent {
 
     if(canvasName == 'addCustomer') {
 
-      this.canvasTitle = 'Add Customer';
+      this.canvasConfig['canvasTitle'] = 'Add Customer';
 
       this.formSubmitted['customerForm'] = false;
       
@@ -527,17 +543,51 @@ export class CreateOrderComponent {
 
     if(canvasName == 'addBasket') {
 
-      this.canvasTitle = 'Add New Item';
-
       this.selectedItemDet = data;
+
+      const productDet = _.find(this.f.itemList.value,{ 'productId': data.productId._id }) || {};
+
+      this.canvasConfig['canvasTitle'] = `${_.isEmpty(productDet) ? 'Add New' : 'Update Existing' } Item`;
+
+      this.canvasConfig['applyBtnTxt'] = `${_.isEmpty(productDet) ? 'Add to Basket' : 'Update in Basket' }`;
+
+      this.canvasConfig['cancelBtnTxt'] = `${_.isEmpty(productDet) ? 'Clear' :  'Remove Item' }`;
       
-      this.loadBasketForm({ 'productDet': data });
+      this.loadBasketForm({ productDet });
 
     }
 
   }
 
-  changeValue({ fieldName, index }: { fieldName: string, index: number }) {
+  changeValue({ fieldName, index = 0, data }: { fieldName: string, index?: number, data?: any }) {
+
+    if(fieldName == 'qty') {
+
+      const priceForm = this.bf.priceList.at(index);
+
+      let qty = priceForm.value.qty + data;
+
+      qty = qty < 0 ? 0 : qty;
+
+      this.bf.priceList.at(index).patchValue({ 
+        
+        'qty': qty,
+
+        'netAmt': (qty * parseFloat(priceForm.value.amount)).toCustomFixed() 
+      
+      });
+
+      this.basketForm.patchValue({ 
+
+        'qty': _.sumBy(this.bf.priceList.value,(e: any)=>parseFloat(e.qty)),
+        
+        'netAmt': _.sumBy(this.bf.priceList.value,(e: any)=>parseFloat(e.netAmt)) 
+      
+      });
+
+      this.canvasConfig['applyBtnTxt'] = this.canvasConfig['applyBtnTxt'].split('(')[0] + (this.basketForm.value.qty > 0 ? `(${this.basketForm.value.qty})` : '');
+
+    }
 
     if(fieldName == 'is_active') {
 
@@ -565,7 +615,7 @@ export class CreateOrderComponent {
   
   asidebarSubmit() {
 
-    if(this.canvasName == 'addCustomer') {
+    if(this.canvasConfig['canvasName'] == 'addCustomer') {
 
       this.formSubmitted.customerForm = true;
 
@@ -585,7 +635,7 @@ export class CreateOrderComponent {
   
           this.selectedCustomerDet = res.data;
   
-          this.customerCanvas?.close();
+          this.canvas?.close();
   
           this.getCustomers();
   
@@ -599,12 +649,92 @@ export class CreateOrderComponent {
   
       });
 
-    } else if(this.canvasName == 'addProduct') {
+    } else if(this.canvasConfig['canvasName'] == 'addProduct') {
 
 
-    } else if(this.canvasName == 'addBasket') {
+    } else if(this.canvasConfig['canvasName'] == 'addBasket') {
 
-      console.log(this.basketForm.value);
+      if(this.basketForm.value.qty <= 0) return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
+
+      let itemIndex = _.findIndex(this.if.value, { 'productId': this.basketForm.value.productId });
+
+      if(itemIndex > -1 ) {
+
+        this.if.removeAt(itemIndex);
+        
+        this.if.insert(itemIndex,this.basketForm);
+
+      }
+
+      else this.if.push(this.basketForm);
+
+      if(itemIndex >= 0) {
+
+        this.orderForm.patchValue({
+
+          'qty': _.sumBy(this.if.value,(e: any)=>parseFloat(e.qty)),
+
+          'grossAmt': _.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+
+          'netAmt': (_.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+
+        });
+
+      } else {
+
+        this.orderForm.patchValue({
+  
+          'qty': _.sumBy(this.if.value,(e: any)=>parseFloat(e.qty)),
+  
+          'grossAmt': _.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+  
+          'netAmt': (_.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+  
+        });
+
+      }
+
+      this.service.showToastr({ "data": { "message": `Item ${ itemIndex > -1 ? 'added to basket' : 'Updated in basket' }`, "type": "success" } });
+
+      this.canvas?.close();
+
+    }
+
+  }
+
+  asidebarCancel() {
+
+    if(this.canvasConfig['canvasName'] == 'addCustomer') {
+
+      this.canvas?.close();
+
+    } else if(this.canvasConfig['canvasName'] == 'addProduct') {
+
+      this.canvas?.close();
+
+    } else if(this.canvasConfig['canvasName'] == 'addBasket') {
+
+      let itemIndex = _.findIndex(this.if.value, { 'productId': this.basketForm.value.productId });
+
+      if(itemIndex >= 0) {
+
+        this.if.removeAt(itemIndex);
+
+        this.orderForm.patchValue({
+
+          'qty': _.sumBy(this.if.value,(e: any)=>parseFloat(e.qty)),
+
+          'grossAmt': _.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+
+          'netAmt': (_.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+
+        });
+
+        this.service.showToastr({ "data": { "message": "Item removed from basket", "type": "success" } });
+
+        this.canvas?.close();
+
+      } else this.canvas?.close();
 
     }
 

@@ -168,7 +168,7 @@ export class ItemPricingComponent {
 
             document.getElementById('otherProductsBtn')?.click();
 
-          },100)
+          },50)
     
         });
     

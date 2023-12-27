@@ -279,7 +279,7 @@ export class CompanyDetailsComponent {
 
     payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
 
-    this.service.postService({ "url": `/app/company`, 'payload': payload, 'options': { 'Content-Type': 'application/x-www-form-urlencoded' } }).subscribe((res: any) => {
+    this.service.postService({ "url": `/app/company`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 

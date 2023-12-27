@@ -184,7 +184,7 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="Add New user" (onClose)="openCanvas = false" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" title="Add New user" (onClose)="openCanvas = false" (onCancel)="openCanvas = false" (onSubmit)="submit()">
 
     <div [formGroup]="addUserForm">
 
