@@ -308,10 +308,36 @@
                 
                                         </mat-expansion-panel-header>
     
-                                        <div class="mt-2" style="min-height: 175px;">
-        
+                                        <div class="pt-3 px-4" style="min-height: 175px;">
+
+                                            <div class="d-flex align-items-center justify-content-between">
+
+                                                <h6 for="orderType" class="d-flex align-items-center fw-600 mb-0">
+                                                    
+                                                    <img src="./assets/images/pickup-clock.svg" class="me-2" style="width: 36px;">
+                                                    
+                                                    Urgent/Normal
+                                                
+                                                </h6>
+
+                                                <div>
+
+                                                    <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="f.orderType.setValue(f.orderType.value ? 'normal' : 'urgent')">
+                
+                                                    <label for="orderType" style="width: 110px">
+                                                        
+                                                        <span class="on">Normal</span>
+                                                        
+                                                        <span class="off" style="margin-left: 2rem">Urgent</span>
+                                                    
+                                                    </label>
+
+                                                </div>
+
+                                            </div>
+
                                         </div>
-    
+        
                                     </mat-expansion-panel>
     
                                     <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
