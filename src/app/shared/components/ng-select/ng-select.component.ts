@@ -25,6 +25,7 @@ export class NgSelectComponent implements OnInit {
   _: any = _;
   searchValue: string = "";
   ngSelectCount: number = 0;
+  _classList: any = "";
 
   @Output() change = new EventEmitter(); // Emit the value of selected item
 
@@ -103,6 +104,10 @@ export class NgSelectComponent implements OnInit {
   @Input() set appendTo(value : any) { this.appendProperty = value }
 
   get appendTo() : any { return this.appendProperty }
+
+  @Input() set classList(value : any) { this._classList = value }
+
+  get classList() : any { return this._classList }
 
   constructor() {}
 

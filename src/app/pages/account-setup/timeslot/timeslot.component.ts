@@ -124,6 +124,8 @@ export class TimeslotComponent {
 
       "day": [ this.selectedDay, Validators.required ],
 
+      "workingHrsId": [ this.workingDayDetails?._id || '' ],
+
       "timeSlots": this.service.fb.array([])
 
     });
@@ -178,7 +180,7 @@ export class TimeslotComponent {
 
         this.service.postService({ 'url': '/app/timeslot', 'payload': payload }) :
 
-        this.service.patchService({ 'url': `/app/timeslot/${this.editData._id}`, 'payload': payload })
+        this.service.patchService({ 'url': `/app/timeslot/${this.editData._id}`, 'payload': _.omit(payload, ['workingHrsId']) }),
 
     }).subscribe({
 

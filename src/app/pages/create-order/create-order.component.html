@@ -30,43 +30,32 @@
 
         <ng-template #agentProductsPage>
 
-            <div class="row mt-2">
+            <div class="d-flex mt-2">
 
-                <div class="col-xl-8 col-md-6 pe-0">
+                <div style="max-width: calc(100% - 555px);">
 
-                    <div class="row mb-2" [formGroup]="filterForm">
+                    <div class="d-flex flex-wrap align-items-center mb-2" [formGroup]="filterForm">
 
-                        <div class="col-sm-6 col-md-5 col-xl-3 mb-2">
-    
-                            <input type="text" class="form-control form-control-lg border-2" formControlName="search" placeholder="Search by item name...">
+                        <input type="text" class="form-control form-control-lg border-2 me-2 mb-2 w-auto" formControlName="search" placeholder="Search by item name...">
+
+                        <custom-ng-select 
+                            [value]="filterForm.controls.categoryId?.value"
+                            [from]="filterForm"     
+                            formControlField="areaId"
+                            [multiple]="true"
+                            [items]="masterList['categoryList']"
+                            bindLabel="item?.categoryName.toTitleCase()"
+                            bindValue="_id"
+                            placeholder="Categories"
+                            classList="mb-2 me-2"
+                        ></custom-ng-select>                                
                 
-                        </div>
-            
-                        <div class="col-sm-6 col-md-4 col-xl-3 mb-2">
-            
-                            <custom-ng-select 
-                                [value]="filterForm.controls.categoryId?.value"
-                                [from]="filterForm"     
-                                formControlField="areaId"
-                                [multiple]="true"
-                                [items]="masterList['categoryList']"
-                                bindLabel="item?.categoryName.toTitleCase()"
-                                bindValue="_id"
-                                placeholder="Categories"
-                            ></custom-ng-select>                
-                
-                        </div>
+                        <a class="btn btn-lg text-primary bg-primary-subtle fs-6 bi-file-earmark-plus mb-2 me-3 ms-auto" [routerLink]="'/pages/account-setup/item-pricing'" [queryParams]="{ 'view': 'other-products' }">
         
-                        <div class="col-md-3 col-xl-5 mb-2 align-self-center text-end mb-md-0 mb-2">
-            
-                            <a class="btn btn-lg text-primary bg-primary-subtle fs-6 bi-file-earmark-plus" [routerLink]="'/pages/account-setup/item-pricing'" [queryParams]="{ 'view': 'other-products' }">
-            
-                                Add Item
+                            Add Item
 
-                            </a>
+                        </a>
             
-                        </div>                          
-
                     </div>
 
                     <div class="fw-500 text-secondary"><span class="fs-5">Products</span> ({{agentProductsCount}})</div>
@@ -75,7 +64,7 @@
 
                         <div class="d-flex flex-wrap">
     
-                            <a class="card product-card border-2 m-2" *ngFor="let productDet of agentProdcuts" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })">
+                            <a class="card product-card py-2 border-2 m-2" height="220px" *ngFor="let productDet of agentProdcuts" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })">
         
                                 <div class="card-body">
     
@@ -103,292 +92,287 @@
 
                 </div>
 
-                <div class="col-xl-4 col-md-6 ps-0 ">
+                <div class="create-order-section border-2 border-start">
 
-                    <div class="create-order-section border-2 border-start">
+                    <div class="card-header p-3 d-flex justify-content-between border-2 border-bottom">
 
-                        <div class="card-header p-3 d-flex justify-content-between border-2 border-bottom">
+                        <span class="modal-title text-secondary h6 mb-0">CART</span>
 
-                            <span class="modal-title text-secondary h6 mb-0">CART</span>
+                        <div class="d-flex align-items-center text-primary-emphasis fs-6">
 
-                            <div class="d-flex align-items-center text-primary-emphasis fs-6">
+                            <i class="bx bx-refresh fs-5"></i>
 
-                                <i class="bx bx-refresh fs-5"></i>
-    
-                                <span class="fst-normal fw-medium">Reset</span>
+                            <span class="fst-normal fw-medium">Reset</span>
 
-                            </div>
-                        
                         </div>
+                    
+                    </div>
 
-                        <div class="card-body" [formGroup]="orderForm">
+                    <div class="card-body" [formGroup]="orderForm">
 
-                            <mat-accordion multi>
+                        <mat-accordion multi>
+
+                            <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
+
+                                <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
+
+                                    <div class="mb-0 text-primary fw-500 small">Customer</div>
+        
+                                </mat-expansion-panel-header>
+
+                                <div class="pt-3 px-4">
+                                
+                                    <div class="d-flex align-items-center">
+        
+                                        <ng-select class="form-control form-control-lg border-2" placeholder="Search Customers" formControlName="customerId" [clearable]="false" (scrollToEnd)="getCustomers()" (change)="selectedCustomerDet = _.find(masterList['customerList'],{ '_id': f.customerId.value })">
+
+                                            <ng-option *ngFor="let customerDet of masterList['customerList']" [value]="customerDet._id">
+
+                                                {{customerDet.firstName + ' ' + customerDet.lastName}}
+
+                                            </ng-option>
+
+                                        </ng-select>
+            
+                                        <button class="btn rounded-pill ms-3" style="width: 45px;height: 45px;background: #288BE6;" (click)="openAsidebar({ 'canvasName': 'addCustomer' })">
+            
+                                            <img src="./assets/images/add-user.svg">
+            
+                                        </button>
+        
+                                    </div>
+
+                                </div>
+
+                                <hr>
+        
+                                <div class="px-4" style="min-height: 175px;" [ngClass]="{ 'd-flex justify-content-center align-items-center': _.isEmpty(selectedCustomerDet)  }">
+    
+                                    <ng-container *ngIf="_.isEmpty(selectedCustomerDet); else customerInfo">
+    
+                                        <p class="text-secondary">No Customer Added</p>
+                                    
+                                    </ng-container>
+    
+                                    <ng-template #customerInfo>
+
+                                        <div class="d-flex align-items-center border-bottom border-1 py-3 px-2">
+
+                                            <div class="customer-image product-image" style="background: url({{selectedCustomerDet?.customerImageURL}}); width: 35px; height: 35px;"></div>
+
+                                            <h6 class="ms-2 mb-0 fw-600">{{selectedCustomerDet?.firstName + ' ' + selectedCustomerDet?.lastName}}</h6>
+
+                                        </div>
+                                    
+                                        <div class="d-flex align-items-start border-bottom border-1 py-3 px-2">
+
+                                            <i class="bi bi-geo-alt text-primary fs-5"></i>
+
+                                            <p class="ms-2 mb-0 fw-500 text-secondary" *ngIf="selectedCustomerDet?.addressInfo as addressDet">
+
+                                                {{ addressDet?.street }}, 
+                                                {{ !_.isEmpty(addressDet?.block) ? addressDet?.block + ',' : ''}} 
+                                                {{ !_.isEmpty(addressDet?.building) ? addressDet?.building + ',' : '' }}
+                                                {{ addressDet?.areaId?.name }}, 
+                                                {{ addressDet?.cityId?.name }}, 
+                                                {{ addressDet?.countryId?.name }} - 
+                                                {{ addressDet?.zipcode }}
+
+                                            </p>
+
+                                        </div>
+
+                                        <div class="d-flex align-items-center pt-3 px-2">
+
+                                            <div class="d-flex">
+
+                                                <i class="bi bi-telephone text-primary fs-5"></i>
+
+                                                <p class="ms-2 mb-0 fw-500 text-secondary">{{ selectedCustomerDet?.dialCode }} {{selectedCustomerDet?.mobile}}</p>
+
+                                            </div>
+
+                                            <div class="d-flex ms-auto">
+
+                                                <i class="bi bi-envelope text-primary fs-5"></i>
+
+                                                <p class="ms-2 mb-0 fw-500 text-secondary">{{selectedCustomerDet?.email}}</p>
+
+                                            </div>
+
+                                        </div>
+    
+                                    </ng-template>
+    
+                                </div>
+
+                            </mat-expansion-panel>
+
+                            <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
+
+                                <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white" >
+
+                                    <div class="mb-0 text-primary fw-500 small">Items {{ f.qty.value }}</div>
+        
+                                </mat-expansion-panel-header>
+
+                                <div class="pt-3 px-4">
+                                    
+                                    <div style="min-height: 175px;" [ngClass]="{ 'd-flex justify-content-center align-items-center': _.isEmpty(f.itemList.controls)  }">
+
+                                        <ng-container *ngIf="_.isEmpty(f.itemList.controls); else basketInfo">
+        
+                                            <p class="text-secondary">No Items Added</p>
+                                        
+                                        </ng-container>
+        
+                                        <ng-template #basketInfo>
+
+                                            <ng-container  *ngFor="let productDet of this.if.value; let index = index">
+
+                                                <ng-container *ngFor="let priceDet of productDet.priceList">
+
+                                                    <div class="form-group d-flex align-items-center justify-content-between" *ngIf="priceDet.qty > 0">
+
+                                                        <div class="d-flex py-2">
+
+                                                            <div class="product-img-card border border-2 rounded p-2 me-3">
+
+                                                                <div class="product-image" style="background : url({{productDet.productImageURL}});width: 75px;height: 75px;"></div> 
+
+                                                            </div>
+                                        
+                                                            <div>
+                                            
+                                                                <h6 class="align-self-center mb-0 fw-600" style="min-width: 150px;">{{productDet.productName | titlecase }}</h6>
+
+                                                                <p class="text-secondary fw-500 mb-3 small">{{ priceDet.chargeName | titlecase }}</p>
+                                                                
+                                                                <div class="d-flex align-items-center">
+
+                                                                    <i class="bx bx-cart fs-4 me-3 text-primary"></i>
+
+                                                                    <p class="text-secondary mb-0 fw-500 small">{{ priceDet.amount +' '+ service.currencyDetails.currencyCode }}</p>
+
+                                                                </div>
+                                            
+                                                            </div>
+                                            
+                                                        </div>
+
+                                                        <div class="d-flex align-items-center">
+
+                                                            <i class="fw-500 bx bx-x fs-6 text-secondary"></i>
+
+                                                            <p class="fw-600 mb-0">{{priceDet.qty}}</p>
+
+                                                        </div>
+
+                                                        <h6 class="mb-0 fw-600">{{ priceDet.netAmt + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                                                    </div>
+
+                                                </ng-container>
+
+                                            </ng-container>
+                                            
+                                        </ng-template>
+        
+                                    </div>
+        
+                                </div>
+
+                            </mat-expansion-panel>
+
+                            <ng-container *ngIf="!_.isEmpty(f.itemList.controls)">
 
                                 <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
 
                                     <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
 
-                                        <div class="mb-0 text-primary fw-500 small">Customer</div>
+                                        <div class="mb-0 text-primary fw-500 small">Pickup & Delivery</div>
             
                                     </mat-expansion-panel-header>
 
-                                    <div class="pt-3 px-4">
-                                    
-                                        <div class="d-flex align-items-center">
+                                    <div class="pt-3 px-4" style="min-height: 175px;">
+
+                                        <div class="d-flex align-items-center justify-content-between">
+
+                                            <h6 for="orderType" class="d-flex align-items-center fw-600 mb-0">
+                                                
+                                                <img src="./assets/images/pickup-clock.svg" class="me-2" style="width: 36px;">
+                                                
+                                                Urgent/Normal
+                                            
+                                            </h6>
+
+                                            <div>
+
+                                                <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="f.orderType.setValue(f.orderType.value ? 'normal' : 'urgent')">
             
-                                            <ng-select class="form-control form-control-lg border-2" placeholder="Search Customers" formControlName="customerId" [clearable]="false" (scrollToEnd)="getCustomers()" (change)="selectedCustomerDet = _.find(masterList['customerList'],{ '_id': f.customerId.value })">
+                                                <label for="orderType" style="width: 110px">
+                                                    
+                                                    <span class="on">Normal</span>
+                                                    
+                                                    <span class="off" style="margin-left: 2rem">Urgent</span>
+                                                
+                                                </label>
 
-                                                <ng-option *ngFor="let customerDet of masterList['customerList']" [value]="customerDet._id">
+                                            </div>
 
-                                                    {{customerDet.firstName + ' ' + customerDet.lastName}}
-
-                                                </ng-option>
-
-                                            </ng-select>
-                
-                                            <button class="btn rounded-pill ms-3" style="width: 45px;height: 45px;background: #288BE6;" (click)="openAsidebar({ 'canvasName': 'addCustomer' })">
-                
-                                                <img src="./assets/images/add-user.svg">
-                
-                                            </button>
-            
                                         </div>
 
                                     </div>
-
-                                    <hr>
-            
-                                    <div class="px-4" style="min-height: 175px;" [ngClass]="{ 'd-flex justify-content-center align-items-center': _.isEmpty(selectedCustomerDet)  }">
-        
-                                        <ng-container *ngIf="_.isEmpty(selectedCustomerDet); else customerInfo">
-        
-                                            <p class="text-secondary">No Customer Added</p>
-                                        
-                                        </ng-container>
-        
-                                        <ng-template #customerInfo>
-
-                                            <div class="d-flex align-items-center border-bottom border-1 py-3 px-2">
-
-                                                <div class="customer-image product-image" style="background: url({{selectedCustomerDet?.customerImageURL}}); width: 35px; height: 35px;"></div>
-
-                                                <h6 class="ms-2 mb-0 fw-600">{{selectedCustomerDet?.firstName + ' ' + selectedCustomerDet?.lastName}}</h6>
-
-                                            </div>
-                                        
-                                            <div class="d-flex align-items-start border-bottom border-1 py-3 px-2">
-
-                                                <i class="bi bi-geo-alt text-primary fs-5"></i>
-
-                                                <p class="ms-2 mb-0 fw-500 text-secondary" *ngIf="selectedCustomerDet?.addressInfo as addressDet">
-
-                                                    {{ addressDet?.street }}, 
-                                                    {{ !_.isEmpty(addressDet?.block) ? addressDet?.block + ',' : ''}} 
-                                                    {{ !_.isEmpty(addressDet?.building) ? addressDet?.building + ',' : '' }}
-                                                    {{ addressDet?.areaId?.name }}, 
-                                                    {{ addressDet?.cityId?.name }}, 
-                                                    {{ addressDet?.countryId?.name }} - 
-                                                    {{ addressDet?.zipcode }}
-
-                                                </p>
-
-                                            </div>
-
-                                            <div class="d-flex align-items-center pt-3 px-2">
-
-                                                <div class="d-flex">
-
-                                                    <i class="bi bi-telephone text-primary fs-5"></i>
-
-                                                    <p class="ms-2 mb-0 fw-500 text-secondary">{{ selectedCustomerDet?.dialCode }} {{selectedCustomerDet?.mobile}}</p>
-
-                                                </div>
-
-                                                <div class="d-flex ms-auto">
-
-                                                    <i class="bi bi-envelope text-primary fs-5"></i>
-
-                                                    <p class="ms-2 mb-0 fw-500 text-secondary">{{selectedCustomerDet?.email}}</p>
-
-                                                </div>
-
-                                            </div>
-        
-                                        </ng-template>
-        
-                                    </div>
-
+    
                                 </mat-expansion-panel>
 
                                 <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
 
-                                    <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white" >
+                                    <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
 
-                                        <div class="mb-0 text-primary fw-500 small">Items {{ f.qty.value }}</div>
+                                        <div class="mb-0 text-primary fw-500 small">Check Out</div>
             
                                     </mat-expansion-panel-header>
 
-                                    <div class="pt-3 px-4">
-                                        
-                                        <div style="min-height: 175px;" [ngClass]="{ 'd-flex justify-content-center align-items-center': _.isEmpty(f.itemList.controls)  }">
-    
-                                            <ng-container *ngIf="_.isEmpty(f.itemList.controls); else basketInfo">
-            
-                                                <p class="text-secondary">No Items Added</p>
-                                            
-                                            </ng-container>
-            
-                                            <ng-template #basketInfo>
+                                    <div class="mt-3" style="min-height: 175px;">
 
-                                                <ng-container  *ngFor="let productDet of this.if.value; let index = index">
+                                        <div class="d-flex justify-content-between align-items-center px-4">
 
-                                                    <ng-container *ngFor="let priceDet of productDet.priceList">
+                                            <h6 class="text-secondary fw-500 mb-0">Subtotal</h6>
 
-                                                        <div class="form-group d-flex align-items-center justify-content-between" *ngIf="priceDet.qty > 0">
+                                            <h6 class="mb-0 fw-600">{{ f.grossAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
 
-                                                            <div class="d-flex py-2">
-
-                                                                <div class="product-img-card border border-2 rounded p-2 me-3">
-
-                                                                    <div class="product-image" style="background : url({{productDet.productImageURL}});width: 75px;height: 75px;"></div> 
-
-                                                                </div>
-                                            
-                                                                <div>
-                                                
-                                                                    <h6 class="align-self-center mb-0 fw-600" style="min-width: 150px;">{{productDet.productName | titlecase }}</h6>
-
-                                                                    <p class="text-secondary fw-500 mb-3 small">{{ priceDet.chargeName | titlecase }}</p>
-                                                                    
-                                                                    <div class="d-flex align-items-center">
-
-                                                                        <i class="bx bx-cart fs-4 me-3 text-primary"></i>
-
-                                                                        <p class="text-secondary mb-0 fw-500 small">{{ priceDet.amount +' '+ service.currencyDetails.currencyCode }}</p>
-
-                                                                    </div>
-
-                                                
-                                                                </div>
-                                                
-                                                            </div>
-
-                                                            <div class="d-flex align-items-center">
-
-                                                                <i class="fw-500 bx bx-x fs-6 text-secondary"></i>
-
-                                                                <p class="fw-600 mb-0">{{priceDet.qty}}</p>
-
-                                                            </div>
-
-                                                            <h6 class="mb-0 fw-600">{{ priceDet.netAmt + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                                                        </div>
-
-                                                    </ng-container>
-
-                                                </ng-container>
-                                                
-                                            </ng-template>
-            
                                         </div>
-            
+
+                                        <hr>
+
+                                        <div class="d-flex justify-content-between align-items-center px-4">
+
+                                            <h6 class="text-secondary fw-500 mb-0">Total</h6>
+
+                                            <h6 class="mb-0 fw-600">{{ f.netAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                                        </div>                                            
+
                                     </div>
 
                                 </mat-expansion-panel>
-
-                                <ng-container *ngIf="!_.isEmpty(f.itemList.controls)">
-
-                                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
-    
-                                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
-    
-                                            <div class="mb-0 text-primary fw-500 small">Pickup & Delivery</div>
-                
-                                        </mat-expansion-panel-header>
-    
-                                        <div class="pt-3 px-4" style="min-height: 175px;">
-
-                                            <div class="d-flex align-items-center justify-content-between">
-
-                                                <h6 for="orderType" class="d-flex align-items-center fw-600 mb-0">
-                                                    
-                                                    <img src="./assets/images/pickup-clock.svg" class="me-2" style="width: 36px;">
-                                                    
-                                                    Urgent/Normal
-                                                
-                                                </h6>
-
-                                                <div>
-
-                                                    <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="f.orderType.setValue(f.orderType.value ? 'normal' : 'urgent')">
-                
-                                                    <label for="orderType" style="width: 110px">
-                                                        
-                                                        <span class="on">Normal</span>
-                                                        
-                                                        <span class="off" style="margin-left: 2rem">Urgent</span>
-                                                    
-                                                    </label>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-        
-                                    </mat-expansion-panel>
-    
-                                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
-    
-                                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
-    
-                                            <div class="mb-0 text-primary fw-500 small">Check Out</div>
-                
-                                        </mat-expansion-panel-header>
-    
-                                        <div class="mt-3" style="min-height: 175px;">
-
-                                            <div class="d-flex justify-content-between align-items-center px-4">
-
-                                                <h6 class="text-secondary fw-500 mb-0">Subtotal</h6>
-
-                                                <h6 class="mb-0 fw-600">{{ f.grossAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                                            </div>
-
-                                            <hr>
-
-                                            <div class="d-flex justify-content-between align-items-center px-4">
-
-                                                <h6 class="text-secondary fw-500 mb-0">Total</h6>
-
-                                                <h6 class="mb-0 fw-600">{{ f.netAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                                            </div>                                            
-
-                                        </div>
-    
-                                    </mat-expansion-panel>
-                                
-                                </ng-container>
-
-                            </mat-accordion>                            
-
-                        </div>
-
-                        <div class="card-footer border-top border-2 px-3 py-2 pt-3">
-
-                            <button class="btn btn-primary btn btn-lg btn-primary fw-light fs-6">
-
-                                <i class="bi bi-file-earmark-plus"></i>
-                                
-                                Create New Order
                             
-                            </button>
+                            </ng-container>
 
-                        </div>
+                        </mat-accordion>                            
+
+                    </div>
+
+                    <div class="card-footer border-top border-2 px-3 py-2 pt-3">
+
+                        <button class="btn btn-primary btn btn-lg btn-primary fw-light fs-6">
+
+                            <i class="bi bi-file-earmark-plus"></i>
+                            
+                            Create New Order
+                        
+                        </button>
 
                     </div>
 
