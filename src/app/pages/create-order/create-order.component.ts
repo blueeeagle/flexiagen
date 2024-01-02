@@ -3,6 +3,7 @@ import { FormArray, Validators } from '@angular/forms';
 import { OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -14,8 +15,6 @@ export class CreateOrderComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
-  agentProdcuts!: Array<any>;
-  otherProducts: Array<any> = [];
   selectedCustomerDet: any = {};
   selectedItemDet: any = {};
   customerDetail!: any;
@@ -36,7 +35,7 @@ export class CreateOrderComponent {
     "canvasTitle": "Add Customer",
     "applyBtnTxt": "Save",
     "cancelBtnTxt": "Clear",
-    "showCloseBtn": true
+    "showCancelBtn": true
   }
   masterList: any = {
     dialCodeList: [],
@@ -53,6 +52,7 @@ export class CreateOrderComponent {
     productForm: false,
     orderForm: false
   };
+  moment: any = moment;
     
   constructor(public service: CommonService) {
 
@@ -144,6 +144,66 @@ export class CreateOrderComponent {
 
   }
 
+  getWorkingHours(fieldName: string) {
+
+    const timeFieldName = fieldName == 'pickupDate' ? 'pickupTimeSlot' : 'expDeliveryTimeSlot';
+
+    if(this.f.pickupDate.value && this.f.expDeliveryDate.value && moment(this.f.pickupDate.value).isAfter(this.f.expDeliveryDate.value)) {
+
+      this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
+
+      if(fieldName == 'pickupDate') return this.service.showToastr({ "data": { "message": "Pickup date should be less than or equal to expected delivery date", "type": "info" } });
+
+      return this.service.showToastr({ "data": { "message": "Expected delivery date should be greater than or equal to pickup date", "type": "info" } });
+
+    }
+
+    let payload = { "day": moment(this.f[fieldName].value).format('dddd'), "date": this.f[fieldName].value };
+
+    this.masterList[fieldName] = {
+
+      'workingHours': {},
+
+      'timeSlots': []
+
+    };
+
+    this.service.postService({ "url": "/master/workingHours", payload }).subscribe((res: any) => {
+
+      if(res.status == "ok") {
+
+        if(res.data.is_active) {
+
+          this.masterList[fieldName]['workingHours'] = res.data;
+
+          this.masterList[fieldName]['timeSlots'] = res.data?.timeSlotId?.timeSlots || [];
+
+          if(_.size(this.masterList[fieldName]['timeSlots']) == 0) {
+
+            this.service.showToastr({ "data": { "message": "Please add time slots for selected day", "type": "info" } });
+
+            this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
+
+          }
+
+        } else {
+
+          this.masterList[fieldName]['workingHours'] = {};
+
+          this.masterList[fieldName]['timeSlots'] = [];
+
+          this.service.showToastr({ "data": { "message": "Selected date is not a working day", "type": "info" } });
+
+          this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
+
+        }
+
+      }
+
+    });
+
+  }
+
   getCustomers() {
 
     this.service.postService({ "url": "/master/customers", "payload": { "companyId": this.service.companyDetails._id } }).subscribe((res: any) => {
@@ -172,9 +232,9 @@ export class CreateOrderComponent {
 
       if(res.status == "ok") {
 
-        this.agentProdcuts = res.data;
+        this.masterList['agentProducts'] = res.data;
 
-        this.agentProdcuts = _.map(this.agentProdcuts, (e: any) => {
+        this.masterList['agentProducts'] = _.map(this.masterList['agentProducts'], (e: any) => {
   
           e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
           
@@ -198,9 +258,9 @@ export class CreateOrderComponent {
 
       if(res.status == "ok") {
 
-        this.otherProducts = res.data;
+        this.masterList['otherProducts'] = res.data;
 
-        this.otherProducts = _.map(this.otherProducts, (e: any) => {
+        this.masterList['otherProducts'] = _.map(this.masterList['otherProducts'], (e: any) => {
   
           e.productImageURL = this.getFullImagePath(e?.productImageURL);
           
@@ -283,21 +343,43 @@ export class CreateOrderComponent {
 
       'pickupTimeSlot': [null],
 
-      'expectedDeliveryDate': [null],
+      'pickupTimeSlotDet': [null],
 
-      'expectedDeliveryTimeSlot': [null],
+      'expDeliveryDate': [null],
+
+      'expDeliveryTimeSlot': [null],
+
+      'expDeliveryTimeSlotDet': [null],
 
       'itemList': this.service.fb.array([]),
+
+      'discApplied': [false],
+
+      'discType': ['percentage'],
+
+      'discPercentage': [null],
 
       'qty': [0, Validators.required],
 
       'netAmt': [0, Validators.required],
 
-      'discAmt': [0, Validators.required],
+      'discAmt': [null, Validators.required],
 
       'grossAmt': [0, Validators.required],
 
-      'paymentMode': ['', Validators.required],      
+      'paymentMode': ['cash', Validators.required],      
+
+    });
+
+    this.orderForm.get('pickupDate')?.valueChanges.subscribe((value: any) => {
+
+      console.log(value);
+
+    });
+
+    this.orderForm.get('expDeliveryDate')?.valueChanges.subscribe((value: any) => {
+
+      console.log(value);
 
     });
 
@@ -351,7 +433,7 @@ export class CreateOrderComponent {
 
     this.basketForm = this.service.fb.group({
 
-      'productId': [ productDet?._id || this.selectedItemDet.productId?._id, Validators.required],
+      'productId': [ productDet?._id || this.selectedItemDet?._id, Validators.required],
 
       'productName': [ productDet?.productName || this.selectedItemDet.productId?.productName, Validators.required],
 
@@ -369,7 +451,17 @@ export class CreateOrderComponent {
 
     _.map(priceList,(chargeDet:any, index: number)=>{
 
-      chargeDet = { ...chargeDet, ..._.find(this.selectedItemDet.priceList, { 'chargeId': { '_id': _.isEmpty(productDet) ? chargeDet.chargeId?._id : chargeDet?.chargeId } }) };
+      chargeDet = { 
+        
+        ...chargeDet, 
+        
+        ..._.find(this.selectedItemDet.priceList, { 
+          
+          'chargeId': { '_id': _.isEmpty(productDet) ? chargeDet.chargeId?._id : chargeDet?.chargeId }, "chargeType": this.f.orderType.value || "normal"
+        
+        }) 
+      
+      };
 
       this.bf.priceList.push(this.service.fb.group({
 
@@ -499,11 +591,11 @@ export class CreateOrderComponent {
 
   get f(): any { return this.orderForm.controls; }
 
-  get if(): any { return this.f.itemList as FormArray; }
+  get itf(): any { return this.f.itemList as FormArray; }
 
   get pf(): any { return this.productForm.controls; }
 
-  get cf(): any { return this.pf.priceList as FormArray; }  
+  get cf(): any { return this.pf.priceList as FormArray; }
 
   get cusf(): any { return this.customerForm.controls; }
 
@@ -518,34 +610,16 @@ export class CreateOrderComponent {
     this.canvasConfig['applyBtnTxt'] = 'Save';
 
     this.canvasConfig['cancelBtnTxt'] = 'Clear';
+
+    this.canvasConfig['showCancelBtn'] = true;
     
     this.openCanvas = true;
-
-    if(canvasName == 'addProduct') {
-
-      this.canvasConfig['canvasTitle'] = 'Add Product';
-
-      this.formSubmitted['productForm'] = false;
-      
-      this.loadProductForm();
-
-    }
-
-    if(canvasName == 'addCustomer') {
-
-      this.canvasConfig['canvasTitle'] = 'Add Customer';
-
-      this.formSubmitted['customerForm'] = false;
-      
-      this.loadCustomerForm();
-
-    }
 
     if(canvasName == 'addBasket') {
 
       this.selectedItemDet = data;
 
-      const productDet = _.find(this.f.itemList.value,{ 'productId': data.productId._id }) || {};
+      const productDet = _.find(this.f.itemList.value,{ 'productId': data._id }) || {};
 
       this.canvasConfig['canvasTitle'] = `${_.isEmpty(productDet) ? 'Add New' : 'Update Existing' } Item`;
 
@@ -555,7 +629,31 @@ export class CreateOrderComponent {
       
       this.loadBasketForm({ productDet });
 
-    }
+    } else if(canvasName == 'addCustomer') {
+
+      this.canvasConfig['canvasTitle'] = 'Add Customer';
+
+      this.formSubmitted['customerForm'] = false;
+      
+      this.loadCustomerForm();
+
+    } else if(canvasName == 'addDiscount') {
+
+      this.canvasConfig['canvasTitle'] = 'Apply Discount';
+      
+      this.canvasConfig['applyBtnTxt'] = 'Apply Discount';
+
+      this.canvasConfig['showCancelBtn'] = false;
+    
+    } else if(canvasName == 'addProduct') {
+
+      this.canvasConfig['canvasTitle'] = 'Add Product';
+
+      this.formSubmitted['productForm'] = false;
+      
+      this.loadProductForm();
+
+    } 
 
   }
 
@@ -587,9 +685,7 @@ export class CreateOrderComponent {
 
       this.canvasConfig['applyBtnTxt'] = this.canvasConfig['applyBtnTxt'].split('(')[0] + (this.basketForm.value.qty > 0 ? `(${this.basketForm.value.qty})` : '');
 
-    }
-
-    if(fieldName == 'is_active') {
+    } else if(fieldName == 'is_active') {
 
       if(!this.cf.at(index).value.is_active) {
 
@@ -609,7 +705,41 @@ export class CreateOrderComponent {
 
       this.cf.at(index).get('amount').updateValueAndValidity();
 
-    } 
+    } else if(fieldName == 'orderType') {
+
+      this.f.orderType.setValue(this.f.orderType.value ? 'normal' : 'urgent');
+
+      _.forEach(this.itf.value, (elem: any, i: number) => {
+
+        let itemDet = _.find(this.masterList['agentProducts'], { '_id': elem.productId });
+
+        _.forEach(elem.priceList,(priceDet:any, index: number)=>{
+
+          let itemPriceDet = _.find(itemDet?.priceList, { 'chargeId': { '_id': priceDet.chargeId }, 'chargeType': this.f.orderType.value });
+
+          this.itf.at(i).get('priceList').at(index).patchValue({
+
+            'amount': (itemPriceDet?.amount || 0).toCustomFixed(),
+
+            'netAmt': ((itemPriceDet?.amount || 0) * parseFloat(priceDet.qty)).toCustomFixed()
+
+          });
+
+        });
+
+      });
+      
+      this.orderForm.patchValue({
+
+        'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
+
+        'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+
+        'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+
+      });
+
+    }
 
   }
   
@@ -656,27 +786,27 @@ export class CreateOrderComponent {
 
       if(this.basketForm.value.qty <= 0) return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
 
-      let itemIndex = _.findIndex(this.if.value, { 'productId': this.basketForm.value.productId });
+      let itemIndex = _.findIndex(this.itf.value, { 'productId': this.basketForm.value.productId });
 
       if(itemIndex > -1 ) {
 
-        this.if.removeAt(itemIndex);
+        this.itf.removeAt(itemIndex);
         
-        this.if.insert(itemIndex,this.basketForm);
+        this.itf.insert(itemIndex,this.basketForm);
 
       }
 
-      else this.if.push(this.basketForm);
+      else this.itf.push(this.basketForm);
 
       if(itemIndex >= 0) {
 
         this.orderForm.patchValue({
 
-          'qty': _.sumBy(this.if.value,(e: any)=>parseFloat(e.qty)),
+          'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
 
-          'grossAmt': _.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+          'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
 
-          'netAmt': (_.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+          'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
 
         });
 
@@ -684,11 +814,11 @@ export class CreateOrderComponent {
 
         this.orderForm.patchValue({
   
-          'qty': _.sumBy(this.if.value,(e: any)=>parseFloat(e.qty)),
+          'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
   
-          'grossAmt': _.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+          'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
   
-          'netAmt': (_.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+          'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
   
         });
 
@@ -714,19 +844,19 @@ export class CreateOrderComponent {
 
     } else if(this.canvasConfig['canvasName'] == 'addBasket') {
 
-      let itemIndex = _.findIndex(this.if.value, { 'productId': this.basketForm.value.productId });
+      let itemIndex = _.findIndex(this.itf.value, { 'productId': this.basketForm.value.productId });
 
       if(itemIndex >= 0) {
 
-        this.if.removeAt(itemIndex);
+        this.itf.removeAt(itemIndex);
 
         this.orderForm.patchValue({
 
-          'qty': _.sumBy(this.if.value,(e: any)=>parseFloat(e.qty)),
+          'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
 
-          'grossAmt': _.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
+          'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
 
-          'netAmt': (_.sumBy(this.if.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+          'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
 
         });
 
@@ -737,6 +867,22 @@ export class CreateOrderComponent {
       } else this.canvas?.close();
 
     }
+
+  }
+
+  submit() {
+
+    this.formSubmitted.orderForm = true;
+
+    if(this.orderForm.value.customerId == null) return this.service.showToastr({ "data": { "message": "Please select customer", "type": "info" } });
+
+    else if(this.orderForm.value.qty <= 0) return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
+
+    else if(this.orderForm.invalid) return console.log(this.orderForm);
+
+    let payload = _.cloneDeep(this.orderForm.value);
+
+    console.log(payload);
 
   }
 

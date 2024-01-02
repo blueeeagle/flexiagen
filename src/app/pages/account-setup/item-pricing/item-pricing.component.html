@@ -57,9 +57,9 @@
 
                 <div class="tab-pane fade show active" id="my-products" role="tabpanel">
 
-                    <ng-container *ngIf="!_.isUndefined(agentProdcuts)">
+                    <ng-container *ngIf="!_.isUndefined(agentProducts)">
     
-                        <ng-container *ngIf="_.size(agentProdcuts) == 0;else agentProductsPage">
+                        <ng-container *ngIf="_.size(agentProducts) == 0;else agentProductsPage">
                         
                             <div class="empty-page">
                 
@@ -87,7 +87,7 @@
     
                         <div class="d-flex flex-wrap">
         
-                            <div class="card m-2" *ngFor="let productDet of agentProdcuts">
+                            <div class="card m-2" *ngFor="let productDet of agentProducts">
     
                                 <div class="card-body">
     

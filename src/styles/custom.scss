@@ -461,9 +461,9 @@ input[type="checkbox"].toggle+label {
     -o-transition: all 0.25s ease-in;
     -webkit-transition: all 0.25s ease-in;
     transition: all 0.25s ease-in;
-    // -moz-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5);
-    // -webkit-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5);
-    // box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0px 0px 2px rgba(0, 0, 0, 0.5);
 }
 
 input[type="checkbox"].toggle+label:before,
@@ -493,8 +493,10 @@ input[type="checkbox"].toggle+label .on {
 }
 
 input[type="checkbox"].toggle+label .off {
-    margin-left: 46px;
+    text-align: end;
     display: inline-block;
+    width: 100%;
+    padding-right: 0.5rem;
 }
 
 input[type="checkbox"].toggle+label .on {
@@ -506,7 +508,6 @@ input[type="checkbox"].toggle:checked+label .off {
 }
 
 input[type="checkbox"].toggle:checked+label .on {
-    margin-right: 46px;
     display: inline-block;
 }
 
@@ -521,6 +522,6 @@ input[type="checkbox"].toggle:focus:checked+label:before,
 input[type="checkbox"].toggle:focus:checked+label:hover:before {
     background-position: 0 0;
     top: 4px;
-    left: 115%;
-    margin-left: -48px;
+    right: 5px;
+    left: auto;
 }

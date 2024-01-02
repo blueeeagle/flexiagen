@@ -72,3 +72,21 @@
         }
     }
 }
+
+input[type=checkbox].toggle-sm + label {
+    width: 70px;
+    height: 28px;
+    line-height: 28px;
+}
+
+input[type=checkbox].toggle-sm:checked + label:before, input[type=checkbox].toggle-sm:checked + label:hover:before, input[type=checkbox].toggle-sm:focus:checked + label:before, input[type=checkbox].toggle-sm:focus:checked + label:hover:before {
+    background-position: 0 0;
+    top: 4px;
+    right: 5px;
+    left: auto;
+}
+
+input[type=checkbox].toggle-sm + label:before, input[type=checkbox].toggle-sm + label:hover:before {
+    width: 16px;
+    height: 16px;
+}

@@ -33,21 +33,20 @@ import {
 import { ConfirmationDialogService } from './components/confirmation-dialog/confirmation.service';
 
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { RouterModule } from '@angular/router';
 
 export const MY_FORMATS = {
-    parse: {
-      dateInput: "DD-MM-YYYY"
-    },
-    display: {
-      dateInput: "DD-MM-YYYY",
-      monthYearLabel: "MMM YYYY",
-      dateA11yLabel: "DD-MM-YYYY",
-      monthYearA11yLabel: "MMMM YYYY"
-    }
+  parse: {
+    dateInput: 'DD-MM-YYYY'
+  },
+  display: {
+    dateInput: 'DD-MM-YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
 };
-
 
 @NgModule({
   declarations: [
@@ -106,9 +105,9 @@ export const MY_FORMATS = {
   ],
   providers: [
     ConfirmationDialogService,
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [ MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS ] },
-    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: MY_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    { provide: DateAdapter, useClass: MomentDateAdapter },
     DecimalPipe,
     DatePipe
   ]

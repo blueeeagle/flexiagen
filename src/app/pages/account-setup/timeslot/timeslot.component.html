@@ -78,7 +78,11 @@
                     
                                                     <input class="form-check-input cursor-pointer" type="checkbox" id="AM{{index}}" formControlName="is_active">
                     
-                                                    <label for="AM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">{{ sf.label.value }}</label>
+                                                    <label for="AM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">
+                                                        
+                                                        {{ getLabel(sf.label.value) }}
+                                                    
+                                                    </label>
                     
                                                 </div>
                 
@@ -110,7 +114,11 @@
                     
                                                     <input class="form-check-input cursor-pointer" type="checkbox" id="PM{{index}}" formControlName="is_active">
                     
-                                                    <label for="PM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">{{ sf.label.value }}</label>
+                                                    <label for="PM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">
+                                                        
+                                                        {{ getLabel(sf.label.value) }}
+                                                    
+                                                    </label>
                     
                                                 </div>
                 

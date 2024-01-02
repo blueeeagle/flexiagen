@@ -134,7 +134,7 @@ export class TimeslotComponent {
 
       slotDet = _.find(this.editData?.timeSlots, { 'startTime': slotDet.startTime, 'endTime': slotDet.endTime }) || slotDet;
 
-      slotDet['label'] = `${moment(slotDet.startTime,'HH:mm').format('hh:mm')} - ${moment(slotDet.endTime,'HH:mm').format('hh:mm')}`;
+      slotDet['label'] = `${moment(slotDet.startTime,'HH:mm').format('hh:mm A')} - ${moment(slotDet.endTime,'HH:mm').format('hh:mm A')}`;
 
       this.ts.push(this.getTimeSlotForm({ slotDet }));
 
@@ -148,9 +148,17 @@ export class TimeslotComponent {
 
   get ts(): any { return this.f.timeSlots as FormArray; }
 
+  getLabel(label: any): string {
+
+    return label.replace(/\b(?:AM|PM)\b/g, '');
+
+  }
+
   getTimeSlotForm({ slotDet = {} }: { slotDet?: any }) {
 
     return this.service.fb.group({
+
+      "_id": slotDet._id || null,
 
       "startTime": slotDet.startTime || '',
 
@@ -172,7 +180,7 @@ export class TimeslotComponent {
 
     let payload: any = _.cloneDeep(this.timeslotForm.value);
 
-    payload['timeSlots'] = _.map(payload['timeSlots'], (slotDet: any) => _.omit(slotDet, ['label']));
+    payload['timeSlots'] = _.map(payload['timeSlots'], (slotDet: any) => _.omit(slotDet, _.isNull(slotDet._id) ? ['_id'] : []));
 
     forkJoin({
 

@@ -2,9 +2,9 @@
 
     <div class="container-fluid">
 
-        <ng-container *ngIf="!_.isUndefined(agentProdcuts)">
+        <ng-container *ngIf="!_.isUndefined(masterList['agentProducts'])">
             
-            <ng-container *ngIf="_.size(agentProdcuts) == 0;else agentProductsPage">
+            <ng-container *ngIf="_.size(masterList['agentProducts']) == 0;else agentProductsPage">
             
                 <div class="empty-page">
 
@@ -64,7 +64,7 @@
 
                         <div class="d-flex flex-wrap">
     
-                            <a class="card product-card py-2 border-2 m-2" height="220px" *ngFor="let productDet of agentProdcuts" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })">
+                            <a class="card product-card py-2 border-2 m-2" height="220px" *ngFor="let productDet of masterList['agentProducts']" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })">
         
                                 <div class="card-body">
     
@@ -228,7 +228,7 @@
         
                                         <ng-template #basketInfo>
 
-                                            <ng-container  *ngFor="let productDet of this.if.value; let index = index">
+                                            <ng-container  *ngFor="let productDet of this.itf.value; let index = index">
 
                                                 <ng-container *ngFor="let priceDet of productDet.priceList">
 
@@ -308,19 +308,107 @@
 
                                             <div>
 
-                                                <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="f.orderType.setValue(f.orderType.value ? 'normal' : 'urgent')">
+                                                <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="changeValue({ fieldName: 'orderType' })">
             
                                                 <label for="orderType" style="width: 110px">
                                                     
                                                     <span class="on">Normal</span>
                                                     
-                                                    <span class="off" style="margin-left: 2rem">Urgent</span>
+                                                    <span class="off">Urgent</span>
                                                 
                                                 </label>
 
                                             </div>
 
                                         </div>
+
+                                        <div class="d-flex align-items-center my-3">
+
+                                            <label for="pickupDate" class="text-secondary fw-600 me-2">Pickup Time</label>
+
+                                            <input type="checkbox" id="pickupAvailable" class="toggle toggle-sm" formControlName="pickupAvailable" [checked]="f.pickupAvailable.value">
+            
+                                            <label for="pickupAvailable">
+                                                
+                                                <span class="on">Yes</span>
+                                                
+                                                <span class="off">No</span>
+                                            
+                                            </label>
+
+                                        </div>
+
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+
+                                            <div class="pe-1 w-100 position-relative">
+
+                                                <input class="form-control form-control-lg border-2" type="text" id="pickupDate" formControlName="pickupDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupDate.touched) && f.pickupDate.errors }" (dateChange)="f.pickupDate.setValue(moment($event.value).format('YYYY-MM-DD'));getWorkingHours('pickupDate')" [matDatepicker]="pickupDatepicker">
+
+                                                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="pickupDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                                                <mat-datepicker #pickupDatepicker></mat-datepicker>
+                                                
+                                            </div>
+
+                                            <div class="ps-1 w-100">
+
+                                                <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)">
+                                                
+                                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [value]="slotDet._id">
+                                                        
+                                                        {{ slotDet.label }}
+                                                    
+                                                    </ng-option>
+
+                                                </ng-select>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="d-flex align-items-center my-3">
+
+                                            <label for="expDeliveryDate" class="text-secondary fw-600 me-2">Expected Delivery Time</label>
+
+                                            <input type="checkbox" id="deliveryAvailable" class="toggle toggle-sm" formControlName="deliveryAvailable" [checked]="f.deliveryAvailable.value">
+            
+                                            <label for="deliveryAvailable">
+                                                
+                                                <span class="on">Yes</span>
+                                                
+                                                <span class="off">No</span>
+                                            
+                                            </label>
+
+                                        </div>                                        
+
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+
+                                            <div class="pe-1 w-100 position-relative">
+
+                                                <input class="form-control form-control-lg border-2" type="text" id="expDeliveryDate" formControlName="expDeliveryDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryDate.touched) && f.expDeliveryDate.errors }" (dateChange)="f.expDeliveryDate.setValue(moment($event.value).format('YYYY-MM-DD'));getWorkingHours('expDeliveryDate')" [matDatepicker]="expDeliveryDatepicker">
+
+                                                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="expDeliveryDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                                                <mat-datepicker #expDeliveryDatepicker></mat-datepicker>
+                                                
+                                            </div>
+
+                                            <div class="ps-1 w-100">
+
+                                                <ng-select class="form-control border-2" formControlName="expDeliveryTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryTimeSlot.touched) && f.expDeliveryTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.expDeliveryDate?.timeSlots)">
+                                                
+                                                    <ng-option *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots" [value]="slotDet._id">
+                                                        
+                                                        {{ slotDet.label }}
+                                                    
+                                                    </ng-option>
+
+                                                </ng-select>
+
+                                            </div>                                            
+
+                                        </div>                                        
 
                                     </div>
     
@@ -344,6 +432,20 @@
 
                                         </div>
 
+                                        <div class="d-flex justify-content-between align-items-center mt-3 px-4">
+
+                                            <a class="text-primary fw-500 mb-0 d-flex align-items-center bg-primary-subtle px-2 py-1 rounded-pill" (click)="openAsidebar({ canvasName: 'addDiscount' })">
+
+                                                <img src="./assets/images/discount.svg" class="me-2" alt="">
+                                                
+                                                {{ f.discApplied.value ? 'Discount' : 'Apply Discount' }}
+                                            
+                                            </a>
+
+                                            <h6 *ngIf="f.discApplied.value" class="mb-0 fw-600">{{ f.discAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                                        </div>                                        
+
                                         <hr>
 
                                         <div class="d-flex justify-content-between align-items-center px-4">
@@ -366,7 +468,7 @@
 
                     <div class="card-footer border-top border-2 px-3 py-2 pt-3">
 
-                        <button class="btn btn-primary btn btn-lg btn-primary fw-light fs-6">
+                        <button class="btn btn-primary btn btn-lg btn-primary fw-light fs-6" (click)="submit()">
 
                             <i class="bi bi-file-earmark-plus"></i>
                             
@@ -386,7 +488,7 @@
 
 </div>
 
-<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()"   (onSubmit)="asidebarSubmit()">
+<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()"   (onSubmit)="asidebarSubmit()">
 
     <ng-container *ngIf="canvasConfig['canvasName'] == 'addCustomer'">
     
@@ -704,6 +806,32 @@
             <h6 class="fw-500">Total</h6>
 
             <h5 class="text-primary fw-bold">{{ bf.netAmt.value +' '+ service.currencyDetails.currencyCode }}</h5>
+
+        </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="canvasConfig['canvasName'] == 'addDiscount'">
+    
+        <div class="d-flex" [formGroup]="orderForm">
+
+            <div class="d-flex align-items-center me-2">
+
+                <a class="px-3 d-flex align-items-center h-100 border" [ngClass]="f.discType.value == 'percentage' ? 'border-primary-subtle bg-secondary-subtle' : 'border-end-0 text-secondary'" (click)="f.discType.setValue('percentage')">
+                    
+                    <i class="bi bi-percent"></i>
+                
+                </a>
+
+                <a class="px-3 d-flex align-items-center h-100 border" [ngClass]="f.discType.value == 'amount' ? 'border-primary-subtle bg-secondary-subtle' : 'border-start-0 text-secondary'" (click)="f.discType.setValue('amount')">
+
+                    {{ service.currencyDetails.currencyCode }}
+
+                </a>
+
+            </div>
+
+            <input type="text" class="form-control form-control-lg rounded-0" [formControlName]="f.discType.value == 'amount' ? 'discAmt' : 'discPercentage'" placeholder="Enter {{f.discType.value}}">
 
         </div>
 

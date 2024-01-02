@@ -14,7 +14,7 @@ import { forkJoin } from 'rxjs';
 export class ItemPricingComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
-  agentProdcuts!: Array<any>;
+  agentProducts!: Array<any>;
   otherProducts!: Array<any>;
   agenProductsCount: number = 0;
   otherProductsCount: number = 0;
@@ -124,9 +124,9 @@ export class ItemPricingComponent {
 
       if(res.status == "ok") {
 
-        this.agentProdcuts = res.data;
+        this.agentProducts = res.data;
 
-        this.agentProdcuts = _.map(this.agentProdcuts, (e: any) => {
+        this.agentProducts = _.map(this.agentProducts, (e: any) => {
   
           e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
           
@@ -316,7 +316,7 @@ export class ItemPricingComponent {
 
             data['productId']['productImageURL'] = this.getFullImagePath(data?.productId?.productImageURL);
             
-            this.agentProdcuts.splice(_.findIndex(this.agentProdcuts, { _id: this.editData._id }), 1, res.result.data);
+            this.agentProducts.splice(_.findIndex(this.agentProducts, { _id: this.editData._id }), 1, res.result.data);
 
           }
   
