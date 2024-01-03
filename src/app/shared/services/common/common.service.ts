@@ -236,5 +236,21 @@ export class CommonService {
     }
 
   }  
+
+  updateValidators({ formGroup = new FormGroup({}), formControls = [] , validators = [] }: { formGroup: FormGroup, formControls: Array<any>, validators?: Array<any> }) {
+
+    for (const element of formControls) {
+
+      validators = _.isString(element) ? validators : element.validators || validators;
+
+      const fieldName = _.isString(element) ? element : element.fieldName;
+
+      formGroup.controls[fieldName]?.setValidators(validators);
+
+      formGroup.controls[fieldName]?.updateValueAndValidity();
+
+    }
+
+  }
   
 }

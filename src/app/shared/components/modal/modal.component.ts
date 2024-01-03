@@ -30,6 +30,7 @@ export class ModalComponent implements OnInit {
   @Input() closeBtnTxt    : string = "Close";
   @Input() toggleBtnTxt   : string = "";
   @Input() isFullModal: boolean = false;
+  @Input() modalBodyClass: string = "";
   
   @Output() onSubmit: EventEmitter<any> = new EventEmitter();
   @Output() onPrint: EventEmitter<any> = new EventEmitter();

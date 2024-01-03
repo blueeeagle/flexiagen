@@ -361,6 +361,10 @@ ng-select.form-control {
     top: 102%;
 }
 
+.ng-dropdown-panel.ng-select-bottom, .ng-dropdown-panel.ng-select-top {
+    z-index: 1065 !important;
+}
+
 .ng-select {
 
     .ng-select-container {
@@ -375,6 +379,10 @@ ng-select.form-control {
         border-bottom-right-radius: 0.25rem;
     }                    
 
+}
+
+.ng-dropdown-panel.form-control {
+    padding: 0 !important;
 }
 
 

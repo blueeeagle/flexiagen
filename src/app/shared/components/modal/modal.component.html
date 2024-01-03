@@ -1,14 +1,14 @@
 <ng-template #modal>
 
-    <div class="modal-header">
+    <div class="modal-header bg-secondary-subtle justify-content-center">
 
-      <h5 class="modal-title">{{ modalTitle }}</h5>
+      <h6 class="modal-title fw-600">{{ modalTitle }}</h6>
 
-      <button type="button" id="close-modal" class="btn-close"  *ngIf="showCloseIcon" (click)="close()"></button>
+      <i class='cursor-pointer bx bx-x text-primary border border-primary rounded position-absolute end-0 me-3' *ngIf="showCloseIcon" (click)="close()"></i>
 
     </div>
 
-    <div class="modal-body">
+    <div class="modal-body {{modalBodyClass}}">
 
       <ng-content></ng-content>
 

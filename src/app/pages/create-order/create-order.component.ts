@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormArray, Validators } from '@angular/forms';
-import { OffcanvasComponent } from '@shared/components';
+import { ModalComponent, OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -14,6 +14,7 @@ import { forkJoin } from 'rxjs';
 export class CreateOrderComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
+  @ViewChild('orderPreviewModal') orderPreviewModal: ModalComponent | undefined;
 
   selectedCustomerDet: any = {};
   selectedItemDet: any = {};
@@ -157,6 +158,8 @@ export class CreateOrderComponent {
       return this.service.showToastr({ "data": { "message": "Expected delivery date should be greater than or equal to pickup date", "type": "info" } });
 
     }
+
+    if(moment(this.f[fieldName].value).format('dddd') == 'Invalid date') return this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
 
     let payload = { "day": moment(this.f[fieldName].value).format('dddd'), "date": this.f[fieldName].value };
 
@@ -371,19 +374,39 @@ export class CreateOrderComponent {
 
     });
 
-    this.orderForm.get('pickupDate')?.valueChanges.subscribe((value: any) => {
+    this.orderForm.get("pickupAvailable").valueChanges.subscribe((value: any) => {
 
-      console.log(value);
+      this.orderForm.patchValue({ 'pickupDate': null, 'pickupTimeSlot': null, 'pickupTimeSlotDet': null });
+
+      if(value) {
+
+        this.f.pickupDate.setValue(moment().format('YYYY-MM-DD'));
+        
+        this.getWorkingHours('pickupDate');
+
+      }
+
+      this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['pickupDate', 'pickupTimeSlot'], 'validators': value ? [Validators.required] : [] });
 
     });
 
-    this.orderForm.get('expDeliveryDate')?.valueChanges.subscribe((value: any) => {
+    this.orderForm.get("deliveryAvailable").valueChanges.subscribe((value: any) => {
 
-      console.log(value);
+      this.orderForm.patchValue({ 'expDeliveryDate': null, 'expDeliveryTimeSlot': null, 'expDeliveryTimeSlotDet': null });
+
+      if(value) {
+
+        this.f.expDeliveryDate.setValue(moment().format('YYYY-MM-DD'));
+
+        this.getWorkingHours('expDeliveryDate');
+
+      } 
+
+      this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['expDeliveryDate', 'expDeliveryTimeSlot'], 'validators': value ? [Validators.required] : [] });
 
     });
 
-  }  
+  }
 
   loadProductForm() {
 
@@ -727,17 +750,15 @@ export class CreateOrderComponent {
 
         });
 
-      });
-      
-      this.orderForm.patchValue({
+        this.itf.at(i).patchValue({
 
-        'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
+          'netAmt': _.sumBy(this.itf.at(i).value.priceList,(e: any)=>parseFloat(e.netAmt)).toCustomFixed()
 
-        'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
-
-        'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
+        });
 
       });
+
+      this.calculateOrderFormValue();
 
     }
 
@@ -779,9 +800,6 @@ export class CreateOrderComponent {
   
       });
 
-    } else if(this.canvasConfig['canvasName'] == 'addProduct') {
-
-
     } else if(this.canvasConfig['canvasName'] == 'addBasket') {
 
       if(this.basketForm.value.qty <= 0) return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
@@ -798,37 +816,46 @@ export class CreateOrderComponent {
 
       else this.itf.push(this.basketForm);
 
-      if(itemIndex >= 0) {
-
-        this.orderForm.patchValue({
-
-          'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
-
-          'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
-
-          'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
-
-        });
-
-      } else {
-
-        this.orderForm.patchValue({
-  
-          'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
-  
-          'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
-  
-          'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
-  
-        });
-
-      }
+      this.calculateOrderFormValue();
 
       this.service.showToastr({ "data": { "message": `Item ${ itemIndex > -1 ? 'added to basket' : 'Updated in basket' }`, "type": "success" } });
 
       this.canvas?.close();
 
-    }
+    } else if(this.canvasConfig['canvasName'] == 'addDiscount') {
+
+
+
+      this.canvas?.close();
+
+    } else if(this.canvasConfig['canvasName'] == 'addProduct') {
+
+
+    } 
+
+  }
+
+  calculateOrderFormValue() {
+
+    this.orderForm.patchValue({
+
+      'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
+
+      'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed()
+
+    });
+
+    if(this.f.discType.value == 'percentage') this.f.discAmt.setValue(((parseFloat(this.f.discPercentage.value || 0)/100) * parseFloat(this.f.grossAmt.value)).toCustomFixed());
+
+    else this.f.discPercentage.setValue(((parseFloat(this.f.discAmt.value || 0)/parseFloat(this.f.grossAmt.value)) * 100).toCustomFixed());      
+
+    this.orderForm.patchValue({
+
+      'discApplied': parseFloat(this.f.discAmt.value || 0) > 0,
+
+      'netAmt': (parseFloat(this.f.grossAmt.value) - parseFloat(this.f.discAmt.value || 0)).toCustomFixed()
+
+    });
 
   }
 
@@ -850,15 +877,7 @@ export class CreateOrderComponent {
 
         this.itf.removeAt(itemIndex);
 
-        this.orderForm.patchValue({
-
-          'qty': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.qty)),
-
-          'grossAmt': _.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)).toCustomFixed(),
-
-          'netAmt': (_.sumBy(this.itf.value,(e: any)=>parseFloat(e.netAmt)) - parseFloat(this.orderForm.value.discAmt)).toCustomFixed()
-
-        });
+        this.calculateOrderFormValue();
 
         this.service.showToastr({ "data": { "message": "Item removed from basket", "type": "success" } });
 
@@ -883,6 +902,8 @@ export class CreateOrderComponent {
     let payload = _.cloneDeep(this.orderForm.value);
 
     console.log(payload);
+
+    this.orderPreviewModal?.open();
 
   }
 
