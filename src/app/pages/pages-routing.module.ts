@@ -20,6 +20,10 @@ const routes: Routes = [
         loadChildren: () => import('./create-order/create-order.module').then(m => m.CreateOrderModule)
       },      
       {
+        path : "customers",
+        loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule)
+      },      
+      {
         path : "notification",
         loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule)
       },
