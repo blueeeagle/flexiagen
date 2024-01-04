@@ -330,15 +330,19 @@ export class CreateOrderComponent {
 
     this.orderForm = this.service.fb.group({
 
-      'customerId': [ null, Validators.required],
+      'companyId': [ this.service.companyDetails._id, Validators.required],
 
-      'paymentStatus': ['Pending'],
+      'customerId': [ null, Validators.required],
 
       "orderDate": [moment().format('YYYY-MM-DD')],
 
-      'orderStatus': ['Pending'],
+      "currencyId": [this.service.currencyDetails._id],
+
+      'orderStatus': ['Order Placed'],
 
       'orderType': ['normal'],
+
+      'orderMode': ['POS'],
 
       'deliveryAvailable': [false],
 
@@ -350,9 +354,9 @@ export class CreateOrderComponent {
 
       'pickupTimeSlotDet': [null],
 
-      'expDeliveryDate': [null],
+      'expDeliveryDate': [null, [Validators.required]],
 
-      'expDeliveryTimeSlot': [null],
+      'expDeliveryTimeSlot': [null, [Validators.required]],
 
       'expDeliveryTimeSlotDet': [null],
 
@@ -372,7 +376,7 @@ export class CreateOrderComponent {
 
       'grossAmt': [0, Validators.required],
 
-      'paymentMode': ['cash'],      
+      'paymentMode': ['Cash'],      
 
       "paymentOnDelivery": [false],
 
@@ -400,27 +404,39 @@ export class CreateOrderComponent {
 
     });
 
-    this.orderForm.get("deliveryAvailable").valueChanges.subscribe((value: any) => {
+    // this.orderForm.get("deliveryAvailable").valueChanges.subscribe((value: any) => {
 
-      this.orderForm.patchValue({ 'expDeliveryDate': null, 'expDeliveryTimeSlot': null, 'expDeliveryTimeSlotDet': null });
+    //   this.orderForm.patchValue({ 'expDeliveryDate': null, 'expDeliveryTimeSlot': null, 'expDeliveryTimeSlotDet': null });
 
-      if(value) {
+    //   if(value) {
 
-        this.f.expDeliveryDate.setValue(moment().format('YYYY-MM-DD'));
+    //     this.f.expDeliveryDate.setValue(moment().format('YYYY-MM-DD'));
 
-        this.getWorkingHours('expDeliveryDate');
+    //     this.getWorkingHours('expDeliveryDate');
 
-      } 
+    //   } 
 
-      this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['expDeliveryDate', 'expDeliveryTimeSlot'], 'validators': value ? [Validators.required] : [] });
+    //   this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['expDeliveryDate', 'expDeliveryTimeSlot'], 'validators': value ? [Validators.required] : [] });
 
-    });
+    // });
 
     this.orderForm.get('paymentOnDelivery').valueChanges.subscribe((value: any) => {
 
-      this.orderForm.patchValue({ 'paymentMode': !value ? 'cash' : null, 'paymentReceived': 0, 'paymentPending': this.f.netAmt.value });
+      this.orderForm.patchValue({ 'paymentMode': !value ? 'Cash' : null, 'paymentReceived': 0, 'paymentPending': this.f.netAmt.value });
 
       this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['paymentReceived'], 'validators': !value ? [Validators.required] : [] });
+
+    });
+
+    this.orderForm.get('pickupTimeSlot').valueChanges.subscribe((value: any) => {
+
+      this.orderForm.patchValue({ 'pickupTimeSlotDet': _.omit(_.find(this.masterList['pickupDate']?.timeSlots, { '_id': value }),['is_active','_id']) || {} });
+
+    });
+
+    this.orderForm.get('expDeliveryTimeSlot').valueChanges.subscribe((value: any) => {
+
+      this.orderForm.patchValue({ 'expDeliveryTimeSlotDet': _.omit(_.find(this.masterList['expDeliveryDate']?.timeSlots, { '_id': value }),['is_active','_id']) || {} });
 
     });
 
@@ -939,11 +955,63 @@ export class CreateOrderComponent {
 
   createOrder() {
 
+    if(parseFloat(this.f.paymentReceived.value) == 0 && !this.f.paymentOnDelivery.value) 
+    
+      return this.service.showToastr({ "data": { "message": "Please enter received payment amount", "type": "info" } });
+
     if(this.orderForm.invalid) return;
 
     let payload = _.cloneDeep(this.orderForm.value);
 
-    console.log(payload);
+    payload['itemList'] = _.flatten(_.map(payload.itemList,(itemDet)=>{
+
+      return _.map(itemDet.priceList,(priceDet)=>({ "productId": itemDet.productId, ..._.omit(priceDet,["imgURL","chargeName"]) }))
+      
+    }))
+
+    payload['itemList'] = _.filter(payload.itemList,(itemDet)=>itemDet.qty > 0);
+
+    if(!payload.paymentOnDelivery) payload['paymentList'] = [{
+
+      "isAdvance": true,
+
+      "paymentMode": payload.paymentMode,
+
+      "paymentDate": moment().format('YYYY-MM-DD'),
+
+      "transactionStatus": "Success",
+
+      "amount": payload.paymentReceived
+
+    }];
+
+    payload = _.omit(payload,["paymentMode","paymentOnDelivery"]);
+
+    payload['paymentStatus'] = parseFloat(payload.paymentReceived) == 0 ? 'Unpaid' : parseFloat(payload.paymentReceived) >= parseFloat(payload.netAmt) ? 'Paid' : 'Partly Paid';
+
+    this.service.postService({ "url": "/agent/order", "payload": payload }).subscribe((res: any) => {
+
+      if(res.status == "ok") {
+
+        this.orderPreviewModal?.close();
+
+        this.service.showToastr({ "data": { "message": "Order Created Successfully", "type": "success" } });
+
+        this.loadForm();
+
+        this.loadProductForm();
+
+        this.loadCustomerForm();
+
+        this.loadBasketForm({});
+
+      }
+
+    }, (err: any) => {
+
+      this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+
+    });
 
   }
 
