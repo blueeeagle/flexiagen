@@ -149,7 +149,6 @@ export class LocationComponent {
     
     this.openCanvas = true;
 
-
   }
   
   get f(): any { return this.locationForm.controls }
