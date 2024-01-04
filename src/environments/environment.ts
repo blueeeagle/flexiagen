@@ -8,12 +8,12 @@ export const APP_CONFIG = {
 	secretKey: "",
 
 	domain: 'http://192.168.0.114:9000/api/v1',
-	
-	// domain: 'http://localhost:9000/api/v1',
 
-	imgBasePath: 'http://192.168.0.114:9000/',
+    // domain: 'http://localhost:9000/api/v1',
 
-	// imgBasePath: 'http://localhost:9000/',
+    imgBasePath: 'http://192.168.0.114:9000/',
 
+    // imgBasePath: 'http://localhost:9000/',
 };
+
  
