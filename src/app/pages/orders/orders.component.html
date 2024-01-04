@@ -46,7 +46,7 @@
 
                 <div class="col-sm-4 col-md-7 col-lg-8 col-xl-8 text-end mb-2 align-self-center">
 
-                    <button class="btn btn-md btn-outline-primary bi bi-sliders"> 
+                    <button class="btn btn-md btn-outline-primary bi bi-sliders" (click)="openAsideBar()"> 
                 
                         <span class="ms-3">Filter</span>
                     
@@ -209,3 +209,8 @@
     </ng-template>
 
 </div>
+
+<asidebar #canvas [openCanvas]="openCanvas" title="Filters" position="end" [showCancelBtn]="true" (onClose)="closeBar()" (onCancel)="openCanvas = false" >
+
+
+</asidebar>

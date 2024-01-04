@@ -99,12 +99,19 @@ export class OrdersComponent {
     
   }
 
-  openAsideBar(data?: any){
+  openAsideBar(){
     
     this.openCanvas = true;
 
   }
 
+  closeBar(){
+
+    this.openCanvas = false;
+
+  }
+
 
 }
+
 
