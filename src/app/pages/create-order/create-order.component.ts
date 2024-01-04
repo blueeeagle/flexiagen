@@ -334,6 +334,8 @@ export class CreateOrderComponent {
 
       'paymentStatus': ['Pending'],
 
+      "orderDate": [moment().format('YYYY-MM-DD')],
+
       'orderStatus': ['Pending'],
 
       'orderType': ['normal'],
@@ -370,7 +372,15 @@ export class CreateOrderComponent {
 
       'grossAmt': [0, Validators.required],
 
-      'paymentMode': ['cash', Validators.required],      
+      'paymentMode': ['cash'],      
+
+      "paymentOnDelivery": [false],
+
+      "paymentList": this.service.fb.array([]),
+
+      "paymentReceived": [0, [Validators.required]],
+
+      "paymentPending": [0],
 
     });
 
@@ -403,6 +413,14 @@ export class CreateOrderComponent {
       } 
 
       this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['expDeliveryDate', 'expDeliveryTimeSlot'], 'validators': value ? [Validators.required] : [] });
+
+    });
+
+    this.orderForm.get('paymentOnDelivery').valueChanges.subscribe((value: any) => {
+
+      this.orderForm.patchValue({ 'paymentMode': !value ? 'cash' : null, 'paymentReceived': 0, 'paymentPending': this.f.netAmt.value });
+
+      this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['paymentReceived'], 'validators': !value ? [Validators.required] : [] });
 
     });
 
@@ -760,6 +778,18 @@ export class CreateOrderComponent {
 
       this.calculateOrderFormValue();
 
+    } else if(fieldName == 'paymentReceived') {
+
+      if(parseFloat(this.f.paymentReceived.value) > parseFloat(this.f.netAmt.value)) {
+        
+        this.f.paymentReceived.setValue(this.f.netAmt.value);
+
+        this.service.showToastr({ "data": { "message": "Payment received amount should be less than or equal to net amount", "type": "info" } });
+
+      }
+
+      this.orderForm.patchValue({ 'paymentPending': (parseFloat(this.f.netAmt.value) - parseFloat(this.f.paymentReceived.value || 0)).toCustomFixed() });
+
     }
 
   }
@@ -853,9 +883,11 @@ export class CreateOrderComponent {
 
       'discApplied': parseFloat(this.f.discAmt.value || 0) > 0,
 
-      'netAmt': (parseFloat(this.f.grossAmt.value) - parseFloat(this.f.discAmt.value || 0)).toCustomFixed()
+      'netAmt': (parseFloat(this.f.grossAmt.value) - parseFloat(this.f.discAmt.value || 0)).toCustomFixed(),
 
     });
+
+    this.f.paymentPending.setValue(this.f.netAmt.value);
 
   }
 
@@ -899,11 +931,19 @@ export class CreateOrderComponent {
 
     else if(this.orderForm.invalid) return console.log(this.orderForm);
 
+    this.f.paymentReceived.setValue((0).toCustomFixed());
+
+    this.orderPreviewModal?.open();
+
+  }
+
+  createOrder() {
+
+    if(this.orderForm.invalid) return;
+
     let payload = _.cloneDeep(this.orderForm.value);
 
     console.log(payload);
-
-    this.orderPreviewModal?.open();
 
   }
 

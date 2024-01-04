@@ -365,3 +365,11 @@ a {
 .app-secondary-bg {
     background-color: #d3e2fe;
 }
+
+.mat-mdc-radio-button.mat-accent {
+    --mdc-radio-selected-focus-icon-color: var(--bs-primary);
+    --mdc-radio-selected-hover-icon-color: var(--bs-primary);
+    --mdc-radio-selected-icon-color: var(--bs-primary);
+    --mdc-radio-selected-pressed-icon-color: var(--bs-primary);
+    --mat-radio-checked-ripple-color: var(--bs-primary);
+}
