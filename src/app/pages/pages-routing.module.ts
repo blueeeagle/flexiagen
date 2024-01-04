@@ -18,7 +18,11 @@ const routes: Routes = [
       {
         path : "create-order",
         loadChildren: () => import('./create-order/create-order.module').then(m => m.CreateOrderModule)
-      },      
+      },
+      {
+        path : "orders",
+        loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule)
+      },  
       {
         path : "notification",
         loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule)
