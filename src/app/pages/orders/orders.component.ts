@@ -16,86 +16,38 @@ export class OrdersComponent {
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
   openCanvas : boolean = false;
-
-  orderList: any = [
-
-    {
-
-      "orderNo" : "ORD-0001",
-      "orderDate" : "2021-09-01",
-      "customerName" : "Rajesh",
-      "mobile" : "9876543210",
-      "mail" : "rajesj14@gmail.com",
-      "noOfItems" : 5,
-      "bookedVia" : "App",
-      "orderStatus" : "Delivered",
-      "paymentStatus" : "Paid"
-
-    },
-    {
-
-      "orderNo" : "ORD-0001",
-      "orderDate" : "2021-09-01",
-      "customerName" : "Rajesh",
-      "mobile" : "9876543210",
-      "mail" : "rajesj14@gmail.com",
-      "noOfItems" : 5,
-      "bookedVia" : "App",
-      "orderStatus" : "Delivered",
-      "paymentStatus" : "Paid"
-
-    },
-    {
-
-      "orderNo" : "ORD-0001",
-      "orderDate" : "2021-09-01",
-      "customerName" : "Rajesh",
-      "mobile" : "9876543210",
-      "mail" : "rajesj14@gmail.com",
-      "noOfItems" : 5,
-      "bookedVia" : "App",
-      "orderStatus" : "Delivered",
-      "paymentStatus" : "Paid"
-
-    },
-    {
-
-      "orderNo" : "ORD-0001",
-      "orderDate" : "2021-09-01",
-      "customerName" : "Rajesh",
-      "mobile" : "9876543210",
-      "mail" : "rajesj14@gmail.com",
-      "noOfItems" : 5,
-      "bookedVia" : "App",
-      "orderStatus" : "Delivered",
-      "paymentStatus" : "Paid"
-
-    },
-    {
-
-      "orderNo" : "ORD-0001",
-      "orderDate" : "2021-09-01",
-      "customerName" : "Rajesh",
-      "mobile" : "9876543210",
-      "mail" : "rajesj14@gmail.com",
-      "noOfItems" : 5,
-      "bookedVia" : "App",
-      "orderStatus" : "Delivered",
-      "paymentStatus" : "Paid"
-
-    },
-
-  ]
-
+  orderList: any = [];
+  totalCount: number = 0;
   tableColumns = ['ORDER NO', 'ORDER DATE', 'CUSTOMER NAME', 'MOBILE', 'MAIL','NOOFITEMS' ,'BOOKEDVIA','ORDER STATUS','PAYMENT STATUS','ACTION'];
-
   _: any = _;
 
   constructor(public service: CommonService, ){}
 
   ngOnInit() {
 
-    // this.service.setApiLoaders({ "isLoading": true, "url": ["/master/customers"] });
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/orders"] });
+
+    this.getOrderList();
+    
+  }
+
+  getOrderList() {
+
+    this.service.postService({ url: "/agent/orders" }).subscribe((res: any) => {
+      
+      if (res.status == "ok") {
+
+        this.orderList = res.data;
+
+        this.totalCount = res.data.totalCount;
+
+      }
+      
+    },
+      (error: any) => {
+      
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+    })
     
   }
 

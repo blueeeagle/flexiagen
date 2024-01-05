@@ -14,7 +14,7 @@ export class CustomersComponent {
   customerList!: Array<any>;
   tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'MOBILE','REGISTERED ON','REGISTERED VIA', 'STATUS', 'ACTION'];
   _: any = _;
-  customerCount: number = 0;
+  totalCount: number = 0;
   moment: any = moment;
 
   constructor(public service: CommonService,private confirmationDialog: ConfirmationDialogService){}
@@ -24,10 +24,10 @@ export class CustomersComponent {
 
     this.service.setApiLoaders({ "isLoading": true, "url": ["/master/customers"] });
 
-    this.getCustomersList();
+    this.getCustomerList();
   }
 
-  getCustomersList(){
+  getCustomerList() {
 
     this.service.postService({ url: "/master/customers" }).subscribe((res: any) => {
       
@@ -35,7 +35,7 @@ export class CustomersComponent {
 
         this.customerList = res.data;
 
-        this.customerCount = _.size(this.customerList);
+        this.totalCount = res.data.totalCount;
 
       }
       
@@ -44,6 +44,7 @@ export class CustomersComponent {
       
         this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
     })
+
   }
 
 }

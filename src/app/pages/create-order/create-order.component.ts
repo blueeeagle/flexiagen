@@ -179,7 +179,7 @@ export class CreateOrderComponent {
 
           this.masterList[fieldName]['workingHours'] = res.data;
 
-          this.masterList[fieldName]['timeSlots'] = res.data?.timeSlotId?.timeSlots || [];
+          this.masterList[fieldName]['timeSlots'] = res.data?.timeSlots || [];
 
           if(_.size(this.masterList[fieldName]['timeSlots']) == 0) {
 
