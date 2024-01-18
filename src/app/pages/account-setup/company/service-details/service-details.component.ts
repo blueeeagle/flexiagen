@@ -13,13 +13,30 @@ export class ServiceDetailsComponent {
   serviceDetailsFrom: FormGroup = new FormGroup({});
   isLoading: boolean = false;
   userSubscribe: any;
+  appServiceChargeDet: any = { 'pos': '0', 'online': '0', 'logistics': '0' };
   _: any = _;
 
 	constructor(public service: CommonService, private cdr: ChangeDetectorRef) {
 
+    if(!_.isEmpty(this.service.companyDetails)) {
+
+      this.service.setApiLoaders({ 'isLoading': true, 'url': [`/setup/charges/${this.service.companyDetails.addressDetails.countryId._id}`] });
+      
+      this.getAppServiceCharges();
+
+    }
+
     this.userSubscribe = this.service.userDetailsObs.subscribe((value)=>{
 
-      if(!_.isEmpty(value)) this.loadForm();
+      if(!_.isEmpty(value)) {
+
+        this.loadForm();
+
+        this.service.setApiLoaders({ 'isLoading': true, 'url': [`/setup/charges/${this.service.companyDetails.addressDetails.countryId._id}`] });
+
+        this.getAppServiceCharges();
+
+      }
       
     })
 
@@ -30,6 +47,34 @@ export class ServiceDetailsComponent {
     this.loadForm();
 	
 	}
+
+  // Get Application Service List
+
+  getAppServiceCharges() {
+
+    this.appServiceChargeDet = { 'pos': '0', 'online': '0', 'logistics': '0' };
+
+    this.service.getService({ "url": `/setup/charges/${this.service.companyDetails.addressDetails.countryId._id}` }).subscribe((res: any) => {
+
+      if(res.status=='ok') {
+
+        _.reduce({ 'pos': '0', 'online': '0', 'logistics': '0' }, (result: any, v: any, key: any) => {
+
+          let chargesDet = _.find(res.data.charges, { 'name': key });
+
+          const { value, type } = chargesDet;
+
+          result[key] = type == 'percentage' ? `${value}%` : `${value.toFixed(this.service.currencyDetails.decimalPoints || 3)} ${this.service.currencyDetails.currencyCode}`;
+
+          return result;
+
+        }, this.appServiceChargeDet);
+
+      }
+
+    });
+
+  }  
 
   loadForm() {
 
@@ -42,6 +87,18 @@ export class ServiceDetailsComponent {
       'logistics': [ this.service.userDetails?.logistics || false ],
 
     });
+
+    this.serviceDetailsFrom.get('online')?.valueChanges.subscribe((value: any) => {
+
+      if(value) this.serviceDetailsFrom.get('logistics')?.enable();
+
+      else this.f.logistics.disable();
+
+      this.f.logistics.setValue(value);
+
+      this.f.logistics.updateValueAndValidity();
+
+    });    
 
   }
 

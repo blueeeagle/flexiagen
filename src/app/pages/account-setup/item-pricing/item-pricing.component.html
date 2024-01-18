@@ -8,27 +8,30 @@
 
                 <div class="page-header">ITEMS PRICING</div>
 
-                <p class="text-secondary small fw-500"> {{agenProductsCount}} Products Found</p>
+                <p class="text-secondary small fw-500"> 
+                    
+                    {{ (agenProductsCount + otherProductsCount) > 0 ? (agenProductsCount + otherProductsCount) : 'No' }} Products Found
+                
+                </p>
 
             </div>
 
             <div class="col-sm-6 col-md-5 col-xl-3 mb-2">
 
-                <input type="text" class="form-control form-control-lg border-2" placeholder="Search by item name...">
+                <input type="text" class="form-control form-control-lg border-2" placeholder="Search by item name..." [(ngModel)]="searchValue" (ngModelChange)="getProducts({})">
     
             </div>
 
             <div class="col-sm-6 col-md-4 col-xl-3 mb-2">
 
                 <custom-ng-select 
-                    [value]="f.categoryId?.value"
-                    [from]="filterForm"     
-                    formControlField="areaId"
+                    [value]="selectedCategories"
                     [multiple]="true"
                     [items]="productCategories"
                     bindLabel="item?.categoryName.toTitleCase()"
                     bindValue="_id"
                     placeholder="Categories"
+                    (change)="selectedCategories = $event; getProducts({})"
                 ></custom-ng-select>                
     
             </div>
@@ -37,145 +40,75 @@
     
         <div class="row mt-3">
     
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    
-                <button class="nav-link fw-500 active border-bottom border-0" id="myProductsBtn" #myProductsBtn data-bs-toggle="tab" data-bs-target="#my-products" role="tab">
-                    
-                    My Products
-                
-                </button>
+            <div class="d-flex flex-wrap" *ngIf="(agenProductsCount + otherProductsCount) > 0; else noRecords">
         
-                <button class="nav-link fw-500 border-bottom border-0" id="otherProductsBtn" #otherProductsBtn data-bs-toggle="tab" data-bs-target="#other-products" role="tab">
-                    
-                    Other Products
-                
-                </button>
-        
-            </div>
-    
-            <div class="tab-content mt-3 position-relative" id="nav-tabContent" style="min-height: calc(100vh - 300px)">
+                <div class="card m-2" *ngFor="let productDet of agentProducts">
 
-                <div class="tab-pane fade show active" id="my-products" role="tabpanel">
+                    <div class="card-body">
 
-                    <ng-container *ngIf="!_.isUndefined(agentProducts)">
-    
-                        <ng-container *ngIf="_.size(agentProducts) == 0;else agentProductsPage">
-                        
-                            <div class="empty-page">
-                
-                                <div class="empty-content">
-                        
-                                    <h4 class="fw-600">You have not added any products</h4>
+                        <div class="product-image mx-auto" style="background : url({{productDet?.productId?.productImageURL}});width: 200px;height: 200px;"></div> 
+
+                        <div class="d-flex justify-content-center">
+
+                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
                                 
-                                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                                    
-                                    <a class="btn btn-md btn-primary bi bi-plus-lg" (click)="otherProductsBtn.click()">
-                                    
-                                        <span class="ms-3">Add New</span>
-                                    
-                                    </a>
-            
-                                </div>
-                    
-                            </div>
-                    
-                        </ng-container>
-    
-                    </ng-container>
-    
-                    <ng-template #agentProductsPage>                
-    
-                        <div class="d-flex flex-wrap">
-        
-                            <div class="card m-2" *ngFor="let productDet of agentProducts">
-    
-                                <div class="card-body">
-    
-                                    <div class="product-image mx-auto" style="background : url({{productDet?.productId?.productImageURL}});width: 200px;height: 200px;"></div> 
-    
-                                    <div class="d-flex justify-content-center">
-    
-                                        <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
-                                            
-                                            {{productDet?.productId?.productName}}
-    
-                                            <i class="bi bi-pencil-square ms-2"></i>
-    
-                                        </a>
-    
-                                    </div>
-    
-                                </div>
-    
-                            </div>
-        
-                        </div>
-            
-                    </ng-template>                     
+                                {{productDet?.productId?.productName}}
 
-                </div>                   
-          
-                <div class="tab-pane fade" id="other-products" role="tabpanel" >
+                                <i class="bi bi-pencil-square ms-2"></i>
 
-                    <ng-container *ngIf="!_.isUndefined(otherProducts)">
+                            </a>
 
-                        <ng-container *ngIf="_.size(otherProducts) == 0;else otherProductsPage">
-                        
-                            <div class="empty-page">
-                
-                                <div class="empty-content">
-                        
-                                    <h4 class="fw-600">Already you have added all products</h4>
-                                
-                                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                                    
-                                    <a class="btn btn-md btn-primary" (click)="myProductsBtn.click()">
-                                    
-                                        <span class="ms-1">My Products</span>
-                                    
-                                    </a>
-                                    
-                                </div>
-                    
-                            </div>
-                    
-                        </ng-container>
-                
-                    </ng-container>
-
-                    <ng-template #otherProductsPage>
-    
-                        <div class="d-flex flex-wrap">
-                        
-                            <div class="card m-2" *ngFor="let productDet of otherProducts">
-    
-                                <div class="card-body">
-    
-                                    <div class="product-image mx-auto" style="background : url({{productDet?.productImageURL}});width: 200px;height: 200px;"></div> 
-    
-                                    <div class="d-flex justify-content-center">
-    
-                                        <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
-                                            
-                                            {{productDet?.productName}}
-    
-                                            <i class="bi bi-plus-square ms-2"></i>
-    
-                                        </a>
-    
-                                    </div>
-    
-                                </div>
-    
-                            </div>
-        
                         </div>
 
-                    </ng-template>
-    
+                    </div>
+
                 </div>
-                    
+
+                <div class="card m-2" *ngFor="let productDet of otherProducts">
+
+                    <div class="card-body">
+
+                        <div class="product-image mx-auto" style="background : url({{productDet?.productImageURL}});width: 200px;height: 200px;"></div> 
+
+                        <div class="d-flex justify-content-center">
+
+                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
+                                
+                                {{productDet?.productName}}
+
+                                <i class="bi bi-plus-square ms-2"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>                            
+
             </div>
+
+            <ng-template #noRecords>
+
+                <div class="empty-page d-flex justify-content-center align-items-center position-relative mt-5">
+
+                    <div class="empty-content">
+            
+                        <h4 class="fw-600">No Records Found</h4>
+                    
+                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                        
+                        <!-- <button class="btn btn-md btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
+                    
+                            <span class="ms-3">Add New</span>
+                        
+                        </button> -->
+                        
+                    </div>
+        
+                </div>                
+
+            </ng-template>
     
         </div>        
 
@@ -183,7 +116,7 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="{{mode}} Product" position="end" (onClose)="openCanvas = false" (onCancel)="openCanvas = false" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" title="{{mode}} Product" position="end" cancelBtnTxt="Close" (onClose)="openCanvas = false" (onCancel)="canvas.close()" (onSubmit)="submit()">
 
     <div class="row" [formGroup]="productForm">
 

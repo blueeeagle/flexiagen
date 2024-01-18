@@ -48,15 +48,15 @@
 
                                 <div class="col-sm-8 text-start mt-4">
                                     
-                                    <p class="fw-400"> FLEXICLEAN XNMAN SUPPORT </p>
+                                    <p class="fw-400"> Fleci Clean Logistics Support </p>
 
-                                    <p class="text-light"> Fees 20% </p>
+                                    <p class="text-light"> Fees {{appServiceChargeDet.logistics}}</p>
 
                                 </div>
 
                                 <div class="col-sm-4 align-self-center  mt-3 mt-sm-0">
                                     
-                                    <input type="checkbox" id="logistics" class="toggle" formControlName="logistics" [checked]="f.logistics.value">
+                                    <input type="checkbox" id="logistics" class="toggle" formControlName="logistics" [checked]="f.logistics.value" [ngClass]="{ 'opacity-75': f.logistics.status == 'DISABLED' }">
 
                                     <label for="logistics"><span class="on">YES</span><span class="off">NO</span></label>
 

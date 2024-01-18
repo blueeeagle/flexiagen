@@ -4,9 +4,9 @@
 
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
 
-            <button class="nav-link active border-bottom border-0" data-bs-toggle="tab" data-bs-target="#roles" role="tab">ROLES</button>
+            <button class="nav-link active border-bottom border-0" #roles data-bs-toggle="tab" data-bs-target="#roles" role="tab">ROLES</button>
     
-            <button class="nav-link border-bottom border-0" data-bs-toggle="tab" data-bs-target="#permission" role="tab">PERMISSIONS</button>
+            <button class="nav-link border-bottom border-0" #permission data-bs-toggle="tab" data-bs-target="#permission" role="tab">PERMISSIONS</button>
     
         </div>
     
@@ -40,20 +40,6 @@
     
                                     <div class="form-group mb-4">
     
-                                        <label for="status">Status</label>
-    
-                                        <input type="text" class="form-control form-control-lg" id="status" formControlName="status" placeholder="Enter Status" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.status.touched) && f.status.errors }">
-    
-                                        <div *ngIf="(formSubmitted || f.status.touched) && f.status.errors" class="invalid-feedback">
-    
-                                            <div *ngIf="f.status.errors.required">Status is required</div>
-    
-                                        </div>
-    
-                                    </div>
-    
-                                    <div class="form-group mb-4">
-    
                                         <label for="description">Description</label>
     
                                         <input type="text" class="form-control form-control-lg" id="description" formControlName="description" placeholder="Enter Description" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.description.touched) && f.description.errors }">
@@ -65,12 +51,26 @@
                                         </div>
     
                                     </div>
+
+                                    <div class="form-group mb-4">
+    
+                                        <label for="is_active">Status</label>
+    
+                                        <ng-select [searchable]="false" [clearable]="false" formControlName="is_active">
+                                        
+                                            <ng-option [value]="true">Active</ng-option>
+
+                                            <ng-option [value]="false">Inactive</ng-option>
+
+                                        </ng-select>
+    
+                                    </div>                                    
     
                                 </div>
     
                             </div>
     
-                            <div class="row px-4 pt-4">
+                            <div class="row px-4 pt-4"> 
     
                                 <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
     
@@ -80,7 +80,7 @@
     
                                 <div class="col-sm-6">
     
-                                    <button class="btn btn-block btn-lg w-100 btn-primary">Next</button>
+                                    <button class="btn btn-block btn-lg w-100 btn-primary" (click)="next()">Next</button>
     
                                 </div>
     
@@ -118,16 +118,17 @@
             
                                                     <ng-container [formGroup]="permissionForm" *ngIf="permissionForm.controls as pf">
                                     
-                                                        <tr *ngFor="let role of roleList;let i=index">
+                                                        <tr>
                                                             
                                                             <td class="d-flex justify-content-between">
                                                                 
-                                                                <label class="text-decoration-none cursor-pointer" [for]="'isChecked' + i">
+                                                                <label class="text-decoration-none cursor-pointer" for="allow{{i}}">
     
                                                                     <p>
     
-                                                                        <span class="fw-bold text-dark">{{role.roleName}}</span><br>
-                                                                        <span class="text-light">{{role.description}}</span>
+                                                                        <span class="fw-600 text-dark">{{pf.permission.value}}</span><br>
+
+                                                                        <span class="fw-500 text-light">{{pf.description.value}}</span>
     
                                                                     </p>
     
@@ -135,7 +136,7 @@
     
                                                                 <div class="form-check form-group">
     
-                                                                    <input class="form-check-input" type="checkbox" [id]="'isChecked' + i" formControlName="isChecked">
+                                                                    <input class="form-check-input" type="checkbox" id="allow{{i}}" formControlName="allow">
                                     
                                                                 </div>
     
@@ -159,7 +160,7 @@
     
                                 <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
     
-                                    <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="loadForm()">CLEAR</div>
+                                    <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="roles.click()">Back</div>
     
                                 </div>
     

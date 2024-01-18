@@ -92,7 +92,7 @@ export class OffcanvasComponent implements OnInit {
   }
 
   close() {
-    
+
     this.offcanvas.hide();
 
     this.onClose.emit();

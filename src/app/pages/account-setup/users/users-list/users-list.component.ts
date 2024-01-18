@@ -22,11 +22,14 @@ export class UsersListComponent {
   modalstatus: boolean = false ;
   dialCodeList: Array<any> = [];
   masterList : any = {};
-  addUserForm: FormGroup = new FormGroup({});
+  userForm: FormGroup = new FormGroup({});
+  profileImg: any = '';
   usersList!: Array<any>;
   roles: Array<any> = [];
   mode: 'Create' | 'Update' = 'Create';
   _: any = _;
+
+  searchValue: string = '';
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService){}
   
@@ -35,7 +38,7 @@ export class UsersListComponent {
 
   ngOnInit() {
 
-    this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/users","/setup/roles","/address/dialCode"] });
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/users","/setup/roles","/address/dialCode"] });
 
     this.loadForm();
 
@@ -47,7 +50,7 @@ export class UsersListComponent {
 
   getUsersList() {
     
-    this.service.postService({ url: "/agent/users" }).subscribe((res: any) => {
+    this.service.postService({ url: "/setup/users", params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
       
       if (res.status == "ok") {
           
@@ -55,11 +58,12 @@ export class UsersListComponent {
 
       }
       
-    },
-      (error: any) => {
+    },(error: any) => {
       
-        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
-    })
+      this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+
+    });
+
   }
 
   
@@ -73,9 +77,9 @@ export class UsersListComponent {
       
     }).subscribe((res: any) => {
 
-      if (res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
+      if(res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
 
-      if (res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
+      if(res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
       
     });
     
@@ -85,11 +89,11 @@ export class UsersListComponent {
 
   loadForm() {
 
-    this.addUserForm = this.service.fb.group({
+    this.userForm = this.service.fb.group({
 
       'name': [ this.editData?.name || '', Validators.required ],
 
-      'email': [ this.editData?.email || '', Validators.required ],
+      'email': [ this.editData?.email || '', [Validators.required,Validators.email] ],
 
       'userName': [ this.editData?.userName || '', Validators.required ],
 
@@ -101,17 +105,29 @@ export class UsersListComponent {
 
       'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
 
-      'profile': [this.editData?.profile || null ],
+      'profileImg': [this.editData?.profileImg ? this.service.IMG_BASE_URL + this.editData.profileImg : '' ],
 
     });
+
+    if(_.isEmpty(this.editData)) {
+
+      fetch('https://ipapi.co/json/').then((res: any) => res.json()).then((res: any) => {
+  
+        this.userForm.get('dialCode')?.setValue(res.country_calling_code);
+  
+      });   
+
+    }
 
   }
 
   // convenience getter for easy access to form fields
 
-  get f(): any { return this.addUserForm.controls; }
+  get f(): any { return this.userForm.controls; }
 
   openAsideBar(data?: any) {
+
+    this.formSubmitted = false;
     
     this.editData = data || {};
 
@@ -123,27 +139,36 @@ export class UsersListComponent {
 
   }
 
-  open(){
+  uploadFile(event:any) {
 
-    this.editData = {
+    const file = event.target?.files[0]; // Here we use only the first file (single file)
 
-      imgSrc : '/assets/images/card.png',
+    if(file) {
 
-      'content' : 'Card Details added  Successfully'
+      // File Preview
+      const reader = new FileReader();
+  
+      reader.onload = () => {
+
+        this.f.profileImg.setValue(reader.result as string);
+
+        this.profileImg = file;
+
+      }
+  
+      reader.readAsDataURL(file);
 
     }
 
-    this.modalstatus = true
-
   }
-
+  
   submit() {
         
     this.formSubmitted = true;
 
-    if (this.addUserForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
+    if (this.userForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
 
-    const payload = this.addUserForm.getRawValue();
+    const payload = _.omit(this.userForm.getRawValue(),'profileImg');
 
     payload["companyId"] = this.service.companyDetails._id;
 
@@ -151,13 +176,15 @@ export class UsersListComponent {
 
     formData.append("data", JSON.stringify(payload));
 
+    if(this.profileImg) formData.append("profileImg", this.profileImg);
+
     forkJoin({
 
       "result": this.mode == 'Create' ? 
       
-          this.service.postService({ url: "/agent/user", payload : formData })
+          this.service.postService({ url: "/setup/user", payload : formData })
         
-            : this.service.patchService({ url: `/agent/user/${this.editData?._id}`, payload : formData })
+            : this.service.patchService({ url: `/setup/user/${this.editData?._id}`, payload : formData })
       
     }).subscribe({
       
@@ -195,7 +222,7 @@ export class UsersListComponent {
     
     formData.append("data", JSON.stringify(payload));
 
-    this.service.patchService({ "url": `/agent/user/${data?._id}`, "payload": formData }).subscribe((res: any) => {
+    this.service.patchService({ "url": `/setup/user/${data?._id}`, "payload": formData }).subscribe((res: any) => {
   
       if(res.status=='ok') {
 

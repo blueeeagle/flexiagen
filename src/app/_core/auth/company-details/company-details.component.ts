@@ -44,7 +44,7 @@ export class CompanyDetailsComponent {
 
     this.appServiceChargeDet = { 'pos': '0', 'online': '0', 'logistics': '0' };
 
-    this.service.getService({ "url": `/app/charges/${this.af.countryId.value}` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/setup/charges/${this.af.countryId.value}` }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -75,6 +75,12 @@ export class CompanyDetailsComponent {
     this.service.getService({ "url": "/address/countries", 'params': { 'incl': 'currencyDetails' } }).subscribe((res: any) => {
 
       this.masterList['countryList'] = res.status=='ok' ? res.data : [];
+
+      fetch('https://ipapi.co/json/').then((res: any) => res.json()).then((res: any) => {
+
+        this.af.countryId.setValue(_.find(this.masterList['countryList'], { 'iso3': res.country_code_iso3 })?._id || null);
+
+      });    
 
     });
 
@@ -279,7 +285,7 @@ export class CompanyDetailsComponent {
 
     payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
 
-    this.service.postService({ "url": `/app/company`, 'payload': payload }).subscribe((res: any) => {
+    this.service.postService({ "url": `/setup/company`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 

@@ -1,9 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
 import { OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
-import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -43,27 +41,18 @@ export class OrdersComponent {
 
       }
       
-    },
-      (error: any) => {
+    },(error: any) => {
       
-        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+      this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+
     })
     
   }
 
-  openAsideBar(){
+  openAsideBar() {
     
     this.openCanvas = true;
 
   }
 
-  closeBar(){
-
-    this.openCanvas = false;
-
-  }
-
-
 }
-
-

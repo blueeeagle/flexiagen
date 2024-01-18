@@ -14,7 +14,7 @@
                 
             </div>
 
-        </div>                
+        </div>
 
     </ng-container>    
 
@@ -30,16 +30,28 @@
 
             <div class="row mt-2">
             
-                <div class="col-xxl-9 col-xl-10">
+                <div class="col-xxl-9">
         
-                    <div class="d-flex flex-wrap">
-        
-                        <a *ngFor="let day of days" class="day-badge bg-primary-subtle btn btn-md me-3 mt-3 text-primary fw-semibold" [ngClass]="{ 'bg-secondary-subtle text-light': selectedDay != day }" (click)="selectedDay = day;getWorkingHours()">
-                            
-                            {{ day | slice:0:3 }}
-                        
-                        </a>
-        
+                    <div class="d-flex flex-wrap align-items-end">
+
+                        <div *ngFor="let day of days" >
+
+                            <p class="fw-norma text-center text-light mb-1" style="font-size: 0.75rem;">{{ day.date ? (day.date | date: 'dd MMM') : 'Default' }}</p>
+
+                            <a class="day-badge bg-primary-subtle btn btn-md me-2 text-primary fw-semibold" [ngClass]="{ 'bg-secondary-subtle text-light': selectedDay.day != day.day, 'opacity-50 shadow-none': !_.includes(activeDays, day.day) }" style="height: fit-content" (click)="!_.includes(activeDays, day.day) ? null :getTimeSlots(day)">
+                                
+                                {{ day.day | slice:0:3 }}
+    
+                            </a>
+
+                        </div>
+
+                        <ng-select [searchable]="false" [clearable]="false" style="min-width: 240px;" [(ngModel)]="selectedWeek" (ngModelChange)="changeValue({ 'fieldName': 'selectedWeek' })">
+
+                            <ng-option *ngFor="let week of weekOptions" [value]="week.label">{{ week.label }}</ng-option>
+
+                        </ng-select>
+
                     </div>
         
                     <form [formGroup]="timeslotForm">
@@ -71,22 +83,26 @@
                                     <div class="d-flex flex-wrap">
                 
                                         <ng-container *ngFor="let slotForm of ts.controls;let index = index" [formGroup]="slotForm">
-                
-                                            <a class="timeslot-badge btn btn-md px-2 me-3 mt-3 fw-semibold" *ngIf="slotForm.value.session == 'AM' && slotForm.controls as sf" [ngClass]="sf.is_active.value ? 'bg-primary-subtle text-primary' : 'border'">
-                
-                                                <div class="form-check me-3 cursor-pointer">
+
+                                            <ng-container *ngIf="checkIsActiveHour(slotForm.value.startTime) as slotStatus">
+
+                                                <a class="timeslot-badge btn btn-md px-2 me-3 mt-3 fw-semibold" *ngIf="slotForm.value.session == 'AM' && slotForm.controls as sf;" [ngClass]="{ 'bg-primary-subtle text-primary': sf.is_active.value, 'border' : !sf.is_active.value, 'disabled': slotStatus != 'active' }">
                     
-                                                    <input class="form-check-input cursor-pointer" type="checkbox" id="AM{{index}}" formControlName="is_active">
-                    
-                                                    <label for="AM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">
+                                                    <div class="form-check me-3 cursor-pointer">
+                        
+                                                        <input class="form-check-input cursor-pointer" type="checkbox" id="AM{{index}}" formControlName="is_active">
+                        
+                                                        <label for="AM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">
+                                                            
+                                                            {{ getLabel(sf.label.value) }}
                                                         
-                                                        {{ getLabel(sf.label.value) }}
-                                                    
-                                                    </label>
+                                                        </label>
+                        
+                                                    </div>
                     
-                                                </div>
-                
-                                            </a>
+                                                </a>
+
+                                            </ng-container>
                 
                                         </ng-container>
                                         
@@ -107,22 +123,26 @@
                                     <div class="d-flex flex-wrap">
                 
                                         <ng-container *ngFor="let slotForm of ts.controls;let index = index" [formGroup]="slotForm">
+
+                                            <ng-container *ngIf="checkIsActiveHour(slotForm.value.startTime) as slotStatus">
                 
-                                            <a class="timeslot-badge btn btn-md px-2 me-3 mt-3 fw-semibold" *ngIf="slotForm.value.session == 'PM' && slotForm.controls as sf" [ngClass]="sf.is_active.value ? 'bg-primary-subtle text-primary' : 'border'">
-                
-                                                <div class="form-check me-3 cursor-pointer">
+                                                <a class="timeslot-badge btn btn-md px-2 me-3 mt-3 fw-semibold" *ngIf="slotForm.value.session == 'PM' && slotForm.controls as sf" [ngClass]="{ 'bg-primary-subtle text-primary': sf.is_active.value, 'border' : !sf.is_active.value, 'disabled': slotStatus != 'active' }">
                     
-                                                    <input class="form-check-input cursor-pointer" type="checkbox" id="PM{{index}}" formControlName="is_active">
-                    
-                                                    <label for="PM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">
+                                                    <div class="form-check me-3 cursor-pointer">
+                        
+                                                        <input class="form-check-input cursor-pointer" type="checkbox" id="PM{{index}}" formControlName="is_active">
+                        
+                                                        <label for="PM{{index}}" class="form-check-label cursor-pointer" [ngClass]="{ 'text-dark': sf.is_active.value }">
+                                                            
+                                                            {{ getLabel(sf.label.value) }}
                                                         
-                                                        {{ getLabel(sf.label.value) }}
-                                                    
-                                                    </label>
+                                                        </label>
+                        
+                                                    </div>
                     
-                                                </div>
-                
-                                            </a>
+                                                </a>
+
+                                            </ng-container>
                 
                                         </ng-container>
                                         

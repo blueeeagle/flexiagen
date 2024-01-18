@@ -208,7 +208,7 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="Filters" position="end" [showCancelBtn]="true" (onClose)="closeBar()" (onCancel)="openCanvas = false" >
+<asidebar #canvas [openCanvas]="openCanvas" title="Filters" position="end" [showCancelBtn]="true" (onClose)="openCanvas = false" (onCancel)="canvas.close()" >
 
 
 </asidebar>

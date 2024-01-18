@@ -1,192 +1,184 @@
 <div class="usersList-container" *ngIf="_.size(service._loading.loadingMap) == 0">
 
-    <ng-container *ngIf="!_.isUndefined(usersList)">
+    <div class="container-fluid">
 
-        <ng-container *ngIf="_.size(usersList) == 0;else userslist">
-    
-            <div class="empty-page">
-    
-                <div class="empty-content">
+        <div class="d-flex">
+            
+            <div class="page-header">USERS / DRIVERS</div>
         
-                    <h4 class="fw-600">You have not added any users</h4>
-                
-                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
-                    
-                    <button class="btn btn-md btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
-                
-                        <span class="ms-3" >Add New</span>
-                    
-                    </button>
-                    
-                </div>
+        </div>
+    
+        <div class="row d-flex justify-content-between mt-2">
+    
+            <div class="col-sm-8 col-md-5 col-lg-4 col-xl-3 mb-2">
+
+                <input type="text" class="form-control form-control-lg border-2" placeholder="Search Name, Mobile..." [(ngModel)]="searchValue" (ngModelChange)="getUsersList()">
     
             </div>
     
-        </ng-container>
-
-    </ng-container>
-
-    <ng-template #userslist>
-
-        <div class="container-fluid">
+            <div class="col-sm-4 col-md-7 col-lg-8 col-xl-9 text-end mb-2 align-self-center">
     
-            <div class="d-flex">
+                <button class="btn btn-primary btn-md bi bi-plus-lg" (click)="openAsideBar()"> 
+        
+                    <span class="ms-3" >Add New</span>
                 
-                <div class="page-header">USERS / DRIVERS</div>
-            
+                </button>
+
             </div>
-        
-            <div class="row d-flex justify-content-between mt-2">
-        
-                <div class="col-sm-8 col-md-5 col-lg-4 col-xl-3 mb-2">
+    
+        </div>
 
-                    <input type="text" class="form-control form-control-lg border-2" placeholder="Search Name, Mobile...">
-        
-                </div>
-        
-                <div class="col-sm-4 col-md-7 col-lg-8 col-xl-9 text-end mb-2 align-self-center">
-        
-                    <button class="btn btn-primary btn-md bi bi-plus-lg" (click)="openAsideBar()"> 
-            
-                        <span class="ms-3" >Add New</span>
-                    
-                    </button>
+        <div class="card border-0">
 
-                </div>
+            <div class="table-responsive" *ngIf="_.size(usersList) > 0; else noRecords">
         
-            </div>
-
-            <div class="card border-0">
-
-                <div class="table-responsive">
+                <table class="table table-bordered bg-white" mat-table [dataSource]="usersList">
+        
+                    <ng-container matColumnDef="SL#" sticky>
+    
+                        <th mat-header-cell *matHeaderCellDef> SL#</th>
             
-                    <table class="table table-bordered bg-white" mat-table [dataSource]="usersList">
-            
-                        <ng-container matColumnDef="SL#" sticky>
-            
-                            <th mat-header-cell *matHeaderCellDef> SL#</th>
-                
-                            <td mat-cell *matCellDef="let userDet; let index = index">
-            
-                                {{ index + 1 }}   
-                                
-                            </td>
-                
-                            </ng-container>      
+                        <td mat-cell *matCellDef="let userDet; let index = index">
+        
+                            {{ index + 1 }}   
                             
-                            <ng-container matColumnDef="NAME" sticky>
-                
-                                <th mat-header-cell *matHeaderCellDef> NAME</th>
-                
-                                <td mat-cell *matCellDef="let userDet">
-                
-                                {{ userDet?.name | uppercase }}
-                
-                                </td>
-            
-                            </ng-container>
-            
-                            <ng-container matColumnDef="EMAIL ID">
-                
-                                <th mat-header-cell *matHeaderCellDef> EMAIL ID</th>
-                
-                                <td mat-cell *matCellDef="let userDet">
-                
-                                {{ userDet?.email || '--Nil--'  }}
-                
-                                </td>
-            
-                            </ng-container>
-            
-                            <ng-container matColumnDef="USERNAME">
-                
-                                <th mat-header-cell *matHeaderCellDef> USERNAME</th>
-                
-                                <td mat-cell *matCellDef="let userDet">
-                
-                                {{ userDet?.userName || 'N/A'}}
-                
-                                </td>
-            
-                            </ng-container>
-            
-                            <ng-container matColumnDef="ROLE">
-                
-                                <th mat-header-cell *matHeaderCellDef> ROLE</th>
-                
-                                <td mat-cell *matCellDef="let userDet">
-                
-                                {{ userDet?.role?.roleName | uppercase }}
-                
-                                </td>
-            
-                            </ng-container>
-            
-                            <ng-container matColumnDef="MOBILE">
-                
-                                <th mat-header-cell *matHeaderCellDef> MOBILE</th>
-                
-                                <td mat-cell *matCellDef="let userDet">
-                
-                                    {{ userDet.dialCode }} {{ userDet?.mobile }}
-                
-                                </td>
-            
-                            </ng-container>
-            
-                            <ng-container matColumnDef="STATUS">
-            
-                                <th mat-header-cell *matHeaderCellDef class="text-center"> STATUS</th>
-            
-                                <td mat-cell *matCellDef="let userDet">
-                                
-                                    <div class="form-check form-switch ps-0 w-100 justify-content-end flex-row-reverse d-flex">
-                                    
-                                        <label class="form-check-label text-dark ms-2" for="active"> {{ (userDet.is_active) ? 'Active' : 'In-Active' }} </label>
-                                    
-                                        <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" [(ngModel)]="userDet['is_active']" [ngModelOptions]="{standalone: true}" (change)="updateUserAction(userDet)">
-                                    
-                                    </div>                        
-            
-                                </td>
-            
-                            </ng-container>
-            
-                            <ng-container matColumnDef="ACTION" stickyEnd>
-            
-                                <th mat-header-cell *matHeaderCellDef class="text-center"> ACTION</th>
-            
-                                <td mat-cell *matCellDef="let userDet">
-                                
-                                    <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(userDet)">
-                                    
-                                        <i class="bi bi-pencil-square me-2"></i> Update
-                                    
-                                    </a>                        
-            
-                                </td>
-            
-                            </ng-container>
-                            
-                            <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
-            
-                            <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>              
-            
-                    </table>
-                    
-                </div>
-            
-            </div>                   
+                        </td>
         
-        </div> 
+                    </ng-container>      
+                    
+                    <ng-container matColumnDef="NAME" sticky>
+        
+                        <th mat-header-cell *matHeaderCellDef> NAME</th>
+        
+                        <td mat-cell *matCellDef="let userDet">
+        
+                        {{ userDet?.name | uppercase }}
+        
+                        </td>
+    
+                    </ng-container>
+    
+                    <ng-container matColumnDef="EMAIL ID">
+        
+                        <th mat-header-cell *matHeaderCellDef> EMAIL ID</th>
+        
+                        <td mat-cell *matCellDef="let userDet">
+        
+                        {{ userDet?.email || '--Nil--'  }}
+        
+                        </td>
+    
+                    </ng-container>
+    
+                    <ng-container matColumnDef="USERNAME">
+        
+                        <th mat-header-cell *matHeaderCellDef> USERNAME</th>
+        
+                        <td mat-cell *matCellDef="let userDet">
+        
+                        {{ userDet?.userName || 'N/A'}}
+        
+                        </td>
+    
+                    </ng-container>
+    
+                    <ng-container matColumnDef="ROLE">
+        
+                        <th mat-header-cell *matHeaderCellDef> ROLE</th>
+        
+                        <td mat-cell *matCellDef="let userDet">
+        
+                        {{ userDet?.role?.roleName | uppercase }}
+        
+                        </td>
+    
+                    </ng-container>
+    
+                    <ng-container matColumnDef="MOBILE">
+        
+                        <th mat-header-cell *matHeaderCellDef> MOBILE</th>
+        
+                        <td mat-cell *matCellDef="let userDet">
+        
+                            {{ userDet.dialCode }} {{ userDet?.mobile }}
+        
+                        </td>
+    
+                    </ng-container>
+    
+                    <ng-container matColumnDef="STATUS">
+    
+                        <th mat-header-cell *matHeaderCellDef class="text-center"> STATUS</th>
+    
+                        <td mat-cell *matCellDef="let userDet">
+                        
+                            <div class="form-check form-switch ps-0 w-100 justify-content-end flex-row-reverse d-flex">
+                            
+                                <label class="form-check-label text-dark ms-2" for="active"> {{ (userDet.is_active) ? 'Active' : 'In-Active' }} </label>
+                            
+                                <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" [(ngModel)]="userDet['is_active']" [ngModelOptions]="{standalone: true}" (change)="updateUserAction(userDet)">
+                            
+                            </div>                        
+    
+                        </td>
+    
+                    </ng-container>
+    
+                    <ng-container matColumnDef="ACTION" stickyEnd>
+    
+                        <th mat-header-cell *matHeaderCellDef class="text-center"> ACTION</th>
+    
+                        <td mat-cell *matCellDef="let userDet">
+                        
+                            <a class="text-primary d-flex align-items-center justify-content-center" (click)="openAsideBar(userDet)">
+                            
+                                <i class="bi bi-pencil-square me-2"></i> Update
+                            
+                            </a>                        
+    
+                        </td>
+    
+                    </ng-container>
+                    
+                    <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
+    
+                    <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>              
+        
+                </table>
+                
+            </div>
 
-    </ng-template>
+            <ng-template #noRecords>
+
+                <div class="empty-page d-flex justify-content-center align-items-center position-relative mt-5">
+
+                    <div class="empty-content">
+            
+                        <h4 class="fw-600">No Records Found</h4>
+                    
+                        <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                        
+                        <button class="btn btn-md btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
+                    
+                            <span class="ms-3">Add New</span>
+                        
+                        </button>
+                        
+                    </div>
+        
+                </div>
+
+            </ng-template>
+        
+        </div>                   
+    
+    </div> 
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="Add New user" (onClose)="openCanvas = false" (onCancel)="openCanvas = false" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" title="Add New user" (onClose)="openCanvas = false;" (onCancel)="canvas?.close();" (onSubmit)="submit()">
 
-    <div [formGroup]="addUserForm">
+    <div [formGroup]="userForm">
 
         <div class="form-group">
 
@@ -211,6 +203,8 @@
             <div *ngIf="(formSubmitted || f.email.touched) && f.email.errors" class="invalid-feedback">
     
                 <div *ngIf="f.email.errors.required">Email is required</div>
+
+                <div *ngIf="f.email.errors.email">Email is invalid</div>
 
             </div>
 
@@ -314,15 +308,29 @@
 
             <label for="profile">Profile</label>
 
-            <input type="file" class="upload" style="display: none;" #fileInput formControlName="profile">
+            <input type="file" class="upload" style="display: none;" #fileInput formControlName="profileImg" (change)="uploadFile($event)">
 
-            <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img" (click)="fileInput.click()">
-                                
-                <i class="bi bi-file-earmark-plus fs-4"></i> 
-                
-                <span class="mx-1">Upload</span>  
+            <ng-container *ngIf="f.profileImg.value != ''; else noImg">
+
+                <br>
             
-           </a>            
+                <img [src]="f.profileImg.value" class="img-fluid" alt="profile"/>
+
+            </ng-container>
+
+            <ng-template #noImg>
+
+                <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img" (click)="fileInput.click()">
+                                    
+                    <i class="bi bi-file-earmark-plus fs-4"></i> 
+                    
+                    <span class="mx-1">Upload</span>  
+                
+               </a>            
+
+            </ng-template>
+            
+
 
         </div>
 

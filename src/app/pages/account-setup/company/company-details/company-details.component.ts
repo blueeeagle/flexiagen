@@ -93,7 +93,7 @@ export class CompanyDetailsComponent {
 
     this.isLoading = true;
 
-    this.service.patchService({ "url": `/app/company/details/${this.service.companyDetails._id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.patchService({ "url": `/setup/company/details/${this.service.companyDetails._id}`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 

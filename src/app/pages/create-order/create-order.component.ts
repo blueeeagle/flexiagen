@@ -58,7 +58,7 @@ export class CreateOrderComponent {
   constructor(public service: CommonService) {
 
     this.service.setApiLoaders({ 'isLoading': true, 'url': [
-      '/master/productCharges', '/master/agentProducts', '/master/otherProducts', '/address/countries', '/address/dialCode', '/master/categories', '/master/customers'
+      '/master/productCharges', '/setup/agentProducts', '/master/products', '/address/countries', '/address/dialCode', '/master/categories', '/master/customers'
     ] });
 
     this.getBaseDetails();
@@ -231,7 +231,7 @@ export class CreateOrderComponent {
 
   getMyProducts() {
 
-    this.service.postService({ "url": "/master/agentProducts" }).subscribe((res: any) => {
+    this.service.postService({ "url": "/setup/agentProducts" }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
@@ -257,7 +257,7 @@ export class CreateOrderComponent {
 
   getOtherProducts() {
 
-    this.service.postService({ "url": "/master/otherProducts" }).subscribe((res: any) => {
+    this.service.postService({ "url": "/master/products" }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
@@ -280,7 +280,7 @@ export class CreateOrderComponent {
   getFullImagePath(imgUrl: any): string {
     // Replace backslashes with forward slashes
     const imagePath = imgUrl.replace(/\\/g, '/');
-    return (this.service.imgBasePath + imagePath).toString();
+    return (this.service.IMG_BASE_URL + imagePath).toString();
   }
 
   // Get States based on Country
@@ -1014,5 +1014,11 @@ export class CreateOrderComponent {
     });
 
   }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
+  }  
 
 }

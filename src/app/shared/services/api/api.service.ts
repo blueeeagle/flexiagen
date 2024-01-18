@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 })
 export class ApiService {
 
-  public baseUrl: string = APP_CONFIG.domain;
+  public baseUrl: string = APP_CONFIG.APP_DOMAIN;
   public encryptedReq = APP_CONFIG.encryptedReq;
 
   constructor(private http: HttpClient) { }

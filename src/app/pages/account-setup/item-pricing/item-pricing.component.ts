@@ -28,11 +28,14 @@ export class ItemPricingComponent {
   chargeTypes: Array<any> = [ { name: 'Normal', value: 'normal', selected: true }, { name: 'Urgent', value: 'urgent', selected: false } ];
   selectedChargeType: 'normal' | 'urgent' = 'normal';
   editData: any = {};
-  filterForm: any;
+  selectedCategories: Array<any> = [];
+  isAllProductsAdded: boolean = false;
+
+  searchValue: string = '';
 
   constructor(public service: CommonService, private activateRoute: ActivatedRoute) { 
 
-    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/master/productCharges','/master/agentProducts','/master/otherProducts'] });
+    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/master/productCharges','/master/categories','/setup/agentProducts','/master/products'] });
 
     this.loadForm();
 
@@ -52,22 +55,6 @@ export class ItemPricingComponent {
 
   }
 
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    
-    this.filterForm = this.service.fb.group({
-      
-      'search': [''],
-
-      'categoryId': ['']
-
-    });
-
-  }
-
-  get ff(): any { return this.filterForm.controls; }
-
   getCharges() {
 
     forkJoin({
@@ -83,6 +70,8 @@ export class ItemPricingComponent {
         if(res.productCategories.status == "ok") {
 
           this.productCategories = res.productCategories.data;
+
+          this.selectedCategories = _.map(this.productCategories, '_id');
 
         }
 
@@ -102,7 +91,7 @@ export class ItemPricingComponent {
 
           this.loadForm();
 
-          this.getMyProducts();
+          this.getProducts({ onInit: true });
 
         }
 
@@ -118,71 +107,68 @@ export class ItemPricingComponent {
 
   }
 
-  getMyProducts() {
+  getProducts({ onInit = false }: { onInit?: boolean }) {
 
-    this.service.postService({ "url": "/master/agentProducts" }).subscribe((res: any) => {
+    forkJoin({
 
-      if(res.status == "ok") {
+      'agentProducts': this.service.postService({ "url": "/setup/agentProducts", "params": { "searchValue": this.searchValue }, "payload": { "categoryId": this.selectedCategories } }),
 
-        this.agentProducts = res.data;
+      'otherProducts': this.service.postService({ "url": "/master/products", "params": { "searchValue": this.searchValue }, "payload": { "categoryId": this.selectedCategories } })
 
-        this.agentProducts = _.map(this.agentProducts, (e: any) => {
-  
-          e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
-          
-          return e;
-  
-        });
-  
-        this.agenProductsCount = res.totalCount;
+    }).subscribe({
 
-      }
+      next: (res: any) => {
 
-      this.getProducts();
+        if(res.agentProducts.status == "ok") {
 
-    });
+          this.agentProducts = res.agentProducts.data;
 
-  }
-
-  getProducts() {
-
-    this.service.postService({ "url": "/master/otherProducts" }).subscribe((res: any) => {
-
-      if(res.status == "ok") {
-
-        this.otherProducts = res.data;
-
-        this.otherProducts = _.map(this.otherProducts, (e: any) => {
-  
-          e.productImageURL = this.getFullImagePath(e?.productImageURL);
-          
-          return e;
-  
-        });
-
-        this.otherProductsCount = res.totalCount;
-
-        this.activateRoute.queryParams.subscribe((params: any) => {
-
-          if(params?.view) setTimeout(()=>{
-
-            document.getElementById('otherProductsBtn')?.click();
-
-          },50)
+          this.agentProducts = _.map(this.agentProducts, (e: any) => {
     
-        });
+            e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
+            
+            return e;
     
+          });
+    
+          this.agenProductsCount = res.agentProducts.totalCount;
+
+        }
+
+        if(res.otherProducts.status == "ok") {
+
+          this.otherProducts = res.otherProducts.data;
+
+          this.isAllProductsAdded = onInit ? _.size(this.otherProducts) == 0 : this.isAllProductsAdded;
+
+          this.otherProducts = _.map(this.otherProducts, (e: any) => {
+    
+            e.productImageURL = this.getFullImagePath(e?.productImageURL);
+            
+            return e;
+    
+          });
+
+          this.otherProductsCount = res.otherProducts.totalCount;
+
+        }
+
+      },
+
+      error: (error: any) => {
+
+        this.service.showToastr({ data: { type: "error", message: error?.error?.message || `Item Pricing Listing failed` } });
 
       }
 
     });
 
-  }  
+  }   
 
   getFullImagePath(imgUrl: any): string {
     // Replace backslashes with forward slashes
     const imagePath = imgUrl.replace(/\\/g, '/');
-    return (this.service.imgBasePath + imagePath).toString();
+    return (this.service.IMG_BASE_URL + imagePath).toString();
   }
 
   loadForm() { 
@@ -294,9 +280,9 @@ export class ItemPricingComponent {
 
       "result": this.mode == 'Create' ? 
       
-          this.service.postService({ url: "/master/agentProduct", payload })
+          this.service.postService({ url: "/setup/agentProduct", payload })
         
-            : this.service.patchService({ url: `/master/agentProduct/${this.editData?._id}`, payload })
+            : this.service.patchService({ url: `/setup/agentProduct/${this.editData?._id}`, payload })
       
     }).subscribe({
       
@@ -308,9 +294,21 @@ export class ItemPricingComponent {
 
           this.service.showToastr({ data: { type: "success", message:  `Product ${this.mode == 'Create' ? 'Added' : 'Updated'} Success` } });
 
-          if(this.mode == 'Create') this.getMyProducts();
+          if(this.mode == 'Create') {
 
-          else {
+            let data: any = _.first(res.result.data);
+
+            data['productId']['productImageURL'] = this.getFullImagePath(data?.productId?.productImageURL);
+
+            this.agentProducts.push(data);
+
+            this.otherProducts.splice(_.findIndex(this.otherProducts, { "_id": data.productId._id }), 1);
+
+            this.agenProductsCount++;
+
+            this.otherProductsCount--;
+
+          } else {
 
             let data = res.result.data;
 
@@ -332,6 +330,12 @@ export class ItemPricingComponent {
 
     });
 
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
   }
 
 }

@@ -17,7 +17,7 @@ export class WorkingHoursComponent {
   editData: any = {};
   formSubmitted: boolean = false;
   mode: 'Create' | 'Update' = 'Create';
-  daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  daysOfWeek = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   timeOptions = [
     { "value": "00:00", "label": "12:00 AM" }, { "value": "01:00", "label": "01:00 AM" },
     { "value": "02:00", "label": "02:00 AM" }, { "value": "03:00", "label": "03:00 AM" },
@@ -39,7 +39,7 @@ export class WorkingHoursComponent {
 
 	constructor(public service: CommonService) {
 
-    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/app/workingHrs/list'] });
+    this.service.setApiLoaders({ 'isLoading': true, 'url': ['/setup/workingHrs/list'] });
 
     if(!_.isEmpty(this.service.companyDetails)) this.getWorkingHours();
 
@@ -61,7 +61,7 @@ export class WorkingHoursComponent {
 
   getWorkingHours() {
 
-    this.service.postService({ 'url': '/app/workingHrs/list', 'payload': { 'companyId': this.service.companyDetails._id, 'isDefault': true } }).subscribe((res: any) => {
+    this.service.postService({ 'url': '/setup/workingHrs/list' }).subscribe((res: any) => {
 
       if(res.status == 'ok') {
 
@@ -277,9 +277,9 @@ export class WorkingHoursComponent {
 
       result: this.mode == 'Create' ? 
 
-        this.service.postService({ 'url': '/app/workingHrs', 'payload': payload }) :
+        this.service.postService({ 'url': '/setup/workingHrs', 'payload': payload }) :
 
-          this.service.patchService({ 'url': '/app/workingHrs', 'payload': payload })
+          this.service.patchService({ 'url': '/setup/workingHrs', 'payload': payload })
 
     }).subscribe({
 

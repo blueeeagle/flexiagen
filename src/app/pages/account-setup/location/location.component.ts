@@ -28,7 +28,9 @@ export class LocationComponent {
   isLoading: boolean = false;
   _: any = _;
 
-  loaderUrlList: any = ['/setup/agentLocations','/master/otherNewLocations/'+JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }))?.addressDetails?.cityId?._id];
+  searchValue: string = '';
+
+  loaderUrlList: any = ['/setup/agentLocations','/master/locations/'+JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }))?.addressDetails?.cityId?._id];
   locationsCount: number = 0;
 
   constructor(public service: CommonService) { 
@@ -57,7 +59,7 @@ export class LocationComponent {
 
   getAgentLocations() {
 
-    this.service.getService({ "url": `/setup/agentLocations` }).subscribe((res: any) => {
+    this.service.getService({ "url": `/setup/agentLocations`, params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
 
       this.locationList = res.status=='ok' ? res.data : [];
 
@@ -73,7 +75,7 @@ export class LocationComponent {
 
   getAreaList() {
 
-    this.service.getService({ "url": `/master/otherNewLocations/${this.service.companyDetails?.addressDetails?.cityId?._id}`, "options": { "loaderState": true } }).subscribe((res: any) => {
+    this.service.getService({ "url": `/master/locations/${this.service.companyDetails?.addressDetails?.cityId?._id}`, "options": { "loaderState": true } }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 

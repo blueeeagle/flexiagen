@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingService } from '../loading/loading.service';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,9 +24,17 @@ export class CommonService {
   public currencyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" })) || {};
 
   public userDetailsObs = new Subject();
-  public imgBasePath = APP_CONFIG.imgBasePath;
+  public IMG_BASE_URL = APP_CONFIG.IMG_BASE_URL;
 
-  constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) { }
+  constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) {
+
+    // this.getPosition().then((res:any)=>{
+
+    //   console.log(res);
+
+    // })
+
+  }
 
   updateUserDetails() {
 
@@ -67,6 +76,17 @@ export class CommonService {
 
     return this.getService({ "url": "/me", "options": { "loaderState": true } });
 
+  }
+
+  getPosition(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resp => {
+        resolve({lng: resp.coords.longitude, lat: resp.coords.latitude});
+      },
+      err => {
+        reject(err);
+      });
+    });
   }
 
   // Set/Get/Remove for Session storage

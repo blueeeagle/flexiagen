@@ -219,7 +219,7 @@ export class AddressDetailsComponent {
 
     let payload: any = this.addressDetailsFrom.value;
 
-    this.service.patchService({ "url": `/app/company/addressDetails/${this.service.companyDetails._id}`, 'payload': payload}).subscribe((res: any) => {
+    this.service.patchService({ "url": `/setup/company/addressDetails/${this.service.companyDetails._id}`, 'payload': payload}).subscribe((res: any) => {
 
       if(res.status=='ok') {
 

@@ -43,7 +43,7 @@ export class MainInterceptor implements HttpInterceptor {
 
         }, (err: any) => {
 
-          if (err.status == 403) {
+          if (err.status == 401) {
 
             this.service.showToastr({ "data": { message: 'Sorry Session Expired 👋', type: 'error' } });
 

@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
@@ -39,10 +39,10 @@ export class CustomersComponent {
 
       }
       
-    },
-      (error: any) => {
+    },(error: any) => {
       
-        this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+      this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+
     })
 
   }

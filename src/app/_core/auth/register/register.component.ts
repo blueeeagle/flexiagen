@@ -21,7 +21,7 @@ export class RegisterComponent {
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-    
+
     this.loadForm();
 
     this.getCountries();
@@ -72,6 +72,19 @@ export class RegisterComponent {
 
     });
 
+    
+    fetch('https://ipapi.co/json/').then((res: any) => res.json()).then((res: any) => {
+
+      this.registerForm.get('dialCode')?.setValue(res.country_calling_code);
+
+    });    
+
+    this.registerForm.get('mobile')?.valueChanges.subscribe((value: any) => {
+
+      this.registerForm.patchValue({ 'mobile': value.replace(/\D/g,'') },{ emitEvent: false });
+
+    });
+
     this.registerForm.get('online')?.valueChanges.subscribe((value: any) => {
 
       if(value) this.registerForm.get('logistics')?.enable();
@@ -87,7 +100,6 @@ export class RegisterComponent {
   }
 
   // convenience getter for easy access to form fields
-
   get f(): any { return this.registerForm.controls }
 
   // Register user
