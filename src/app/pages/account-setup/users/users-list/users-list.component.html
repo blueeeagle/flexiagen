@@ -310,7 +310,7 @@
 
             <input type="file" class="upload" style="display: none;" #fileInput formControlName="profileImg" (change)="uploadFile($event)">
 
-            <ng-container *ngIf="f.profileImg.value != ''; else noImg">
+            <ng-container *ngIf="!_.isEmpty(f.profileImg.value); else noImg">
 
                 <br>
             

@@ -113,25 +113,31 @@ export class AddressDetailsComponent {
 
     this.formSubmitted = false;
 
+    let addressDetails: any = this.service.companyDetails?.addressDetails || {};
+
     this.addressDetailsFrom = this.service.fb.group({
 
-      'addressLine1': [this.service.companyDetails?.addressDetails?.addressLine1 || '', [Validators.required]],
+      "street": [ addressDetails?.street || '', [Validators.required]],
 
-      'addressLine2': [this.service.companyDetails?.addressDetails?.addressLine2 || ''],
+      "building": [ addressDetails?.building || ''],
 
-      'areaId': [this.service.companyDetails?.addressDetails?.areaId?._id || null, [Validators.required]],  
-      
-      'cityId': [this.service.companyDetails?.addressDetails?.cityId?._id || null, [Validators.required]],
+      "block": [ addressDetails?.block || ''],
 
-      'stateId': [this.service.companyDetails?.addressDetails?.stateId?._id || null],
+      "others": [ addressDetails?.others || ''],      
 
-      'countryId': [this.service.companyDetails?.addressDetails?.countryId?._id || null, [Validators.required]],
+      "areaId": [ addressDetails?.areaId?._id || null, [Validators.required]],
 
-      'zipcode': [this.service.companyDetails?.addressDetails?.zipcode || null, [Validators.required]],
+      'cityId': [addressDetails?.cityId?._id || null, [Validators.required]],
+
+      'stateId': [addressDetails?.stateId?._id || null],
+
+      'countryId': [addressDetails?.countryId?._id || null, [Validators.required]],
+
+      'zipcode': [addressDetails?.zipcode || null, [Validators.required]],
 
     });
 
-    if(!_.isEmpty(this.service.companyDetails?.addressDetails)) {
+    if(!_.isEmpty(addressDetails)) {
 
       this.getStates(); // Get States based on Country
   

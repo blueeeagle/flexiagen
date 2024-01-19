@@ -22,19 +22,44 @@
         
                                 <label for="street">NO & STREET/ROAD *</label>
                 
-                                <input type="text" class="form-control form-control-lg" id="addressLine1" formControlName="addressLine1"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.addressLine1.touched) && f.addressLine1?.errors }">
+                                <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.street.touched) && f.street?.errors }">
                 
                             </div>
         
                             <div class="form-group mb-4">
-        
-                                <label for="appartment">APARTMENT, BUILDING, FLAT</label>
                 
-                                <input type="text" class="form-control form-control-lg" id="addressLine2" formControlName="addressLine2"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.addressLine2.touched) && f.addressLine2?.errors }">
+                                <label for="building">APARTMENT, BUILDING, FLAT</label>
+                
+                                <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
                 
                             </div>
+                    
         
                             <div class="row">
+
+                                <div class="col-md-6 ps-2 ps-md-1">            
+                        
+                                    <div class="form-group">
+                        
+                                        <label for="block">BLOCK</label>
+                        
+                                        <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
+                        
+                                    </div>
+                        
+                                </div>
+                        
+                                <div class="col-md-6 ps-2 ps-md-1">            
+                        
+                                    <div class="form-group">
+                        
+                                        <label for="others">Others</label>
+                        
+                                        <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
+                        
+                                    </div>
+                        
+                                </div>                                
 
                                 <div class="col-md-6 pe-2 pe-md-1">
         

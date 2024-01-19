@@ -60,23 +60,59 @@
     
                             </div>   
 
-                            <ng-container [formGroup]="f.addressDetails">
-                                
+                            <ng-container [formGroup]="f.addressDetails">                                      
+
                                 <div class="form-group">
+                
+                                    <label for="street">NO & STREET/ROAD *</label>
+                        
+                                    <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || af.street.touched) && af.street?.errors }">
+
+                                    <div *ngIf="(formSubmitted || af.street.touched) && af.street.errors" class="invalid-feedback">
         
-                                    <label for="addressLine1" class="fw-600">Address</label>
+                                        <div *ngIf="af.street.errors.required">No & Street is required</div>
         
-                                    <input type="text" class="form-control" id="addressLine1" formControlName="addressLine1" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || af.addressLine1.touched) && af.addressLine1.errors }">
-        
-                                    <div *ngIf="(formSubmitted || af.addressLine1.touched) && af.addressLine1.errors" class="invalid-feedback">
-        
-                                        <div *ngIf="af.addressLine1.errors.required">addressLine1 is required</div>
-        
-                                    </div>
-        
-                                </div>                                          
+                                    </div>                                    
+                        
+                                </div>                          
                                 
-                                <div class="row">                            
+                                <div class="row">    
+                                    
+                                    <div class="col-md-6 pe-2 pe-md-1">
+                        
+                                        <div class="form-group">
+                            
+                                            <label for="building">APARTMENT, BUILDING, FLAT</label>
+                            
+                                            <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
+                            
+                                        </div>
+                            
+                                    </div>
+                            
+                                    <div class="col-md-6 ps-2 ps-md-1">            
+                            
+                                        <div class="form-group">
+                            
+                                            <label for="block">BLOCK</label>
+                            
+                                            <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
+                            
+                                        </div>
+                            
+                                    </div>
+                            
+                                    <div class="col-md-6 ps-2 ps-md-1">            
+                            
+                                        <div class="form-group">
+                            
+                                            <label for="others">Others</label>
+                            
+                                            <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
+                            
+                                        </div>
+                            
+                                    </div>                                           
         
                                     <div class="col-md-6 pe-2 pe-md-1">
         
@@ -209,7 +245,7 @@
 
                                     <p class="mb-0">
 
-                                        {{ formValue.addressLine1 }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
+                                        {{ formValue.street }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
                                         
                                         {{ formValue.stateName }}, {{ formValue.countryName }} - {{ formValue.zipcode }}
 

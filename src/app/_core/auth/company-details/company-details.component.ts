@@ -147,9 +147,13 @@ export class CompanyDetailsComponent {
 
       "addressDetails": this.service.fb.group({
 
-        'addressLine1': ['', [Validators.required]],
+        "street": [ '', [Validators.required]],
 
-        'addressLine2': '',
+        "building": [''],
+  
+        "block": [''],
+  
+        "others": [''],
 
         'areaId': [null, [Validators.required]],  
 

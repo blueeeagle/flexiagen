@@ -5,6 +5,7 @@ import { ConfirmationDialogService } from '@shared/components/confirmation-dialo
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-users-list',
@@ -31,7 +32,7 @@ export class UsersListComponent {
 
   searchValue: string = '';
 
-  constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService){}
+  constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
   
   @Input() editData: any = {};
 
@@ -150,7 +151,9 @@ export class UsersListComponent {
   
       reader.onload = () => {
 
-        this.f.profileImg.setValue(reader.result as string);
+        const objectURL = URL.createObjectURL(file);
+
+        this.f.profileImg.setValue(this.sanitizer.bypassSecurityTrustUrl(objectURL));
 
         this.profileImg = file;
 
@@ -176,6 +179,8 @@ export class UsersListComponent {
 
     formData.append("data", JSON.stringify(payload));
 
+    console.log(this.profileImg);
+    
     if(this.profileImg) formData.append("profileImg", this.profileImg);
 
     forkJoin({

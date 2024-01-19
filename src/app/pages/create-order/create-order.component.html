@@ -620,7 +620,7 @@
     
                         <label for="building">APARTMENT, BUILDING, FLAT</label>
     
-                        <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || af.building.touched) && af.building?.errors }">
+                        <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
     
                     </div>
     
@@ -632,11 +632,23 @@
     
                         <label for="block">BLOCK</label>
     
-                        <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || af.block.touched) && af.block?.errors }">
+                        <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
     
                     </div>
     
                 </div>
+
+                <div class="col-md-6 ps-2 ps-md-1">            
+    
+                    <div class="form-group mb-4">
+    
+                        <label for="others">Others</label>
+    
+                        <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
+    
+                    </div>
+    
+                </div>                
     
                 <div class="col-md-6 pe-2 pe-md-1">
     
