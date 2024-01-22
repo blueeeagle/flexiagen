@@ -58,7 +58,7 @@ export class CreateOrderComponent {
   constructor(public service: CommonService) {
 
     this.service.setApiLoaders({ 'isLoading': true, 'url': [
-      '/master/productCharges', '/setup/agentProducts', '/master/products', '/address/countries', '/address/dialCode', '/master/categories', '/master/customers'
+      '/master/productCharges', '/setup/agentProducts', '/address/countries', '/address/dialCode', '/master/categories', '/master/customers'
     ] });
 
     this.getBaseDetails();
@@ -82,7 +82,6 @@ export class CreateOrderComponent {
           this.loadProductForm();
           this.loadCustomerForm();
           this.loadBasketForm({});
-          this.getMyProducts();
           this.getCustomers();
   
         }
@@ -122,6 +121,8 @@ export class CreateOrderComponent {
       this.masterList["dialCodeList"] = res.dialCodes.status == "ok" ? res.dialCodes.data : [];
 
       this.masterList["categoryList"] = res.categories.status == "ok" ? res.categories.data : [];
+
+      this.getMyProducts();
 
       if(res.charges.status == "ok") {
 
@@ -231,7 +232,7 @@ export class CreateOrderComponent {
 
   getMyProducts() {
 
-    this.service.postService({ "url": "/setup/agentProducts" }).subscribe((res: any) => {
+    this.service.postService({ "url": "/setup/agentProducts", "payload": { "categoryId": _.map(this.masterList['categoryList'],'_id') } }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
@@ -249,34 +250,10 @@ export class CreateOrderComponent {
 
       }
 
-      this.getOtherProducts();
-
     });
 
   }
 
-  getOtherProducts() {
-
-    this.service.postService({ "url": "/master/products" }).subscribe((res: any) => {
-
-      if(res.status == "ok") {
-
-        this.masterList['otherProducts'] = res.data;
-
-        this.masterList['otherProducts'] = _.map(this.masterList['otherProducts'], (e: any) => {
-  
-          e.productImageURL = this.getFullImagePath(e?.productImageURL);
-          
-          return e;
-  
-        });
-
-      }
-
-    });
-
-  }  
-    
   getFullImagePath(imgUrl: any): string {
     // Replace backslashes with forward slashes
     const imagePath = imgUrl.replace(/\\/g, '/');

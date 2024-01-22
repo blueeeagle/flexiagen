@@ -106,7 +106,7 @@ export class UsersListComponent {
 
       'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
 
-      'profileImg': [this.editData?.profileImg ? this.service.IMG_BASE_URL + this.editData.profileImg : '' ],
+      'profileImg': [this.editData?.profileImg ? this.service.getFullImagePath(this.editData.profileImg) : '' ],
 
     });
 
@@ -146,20 +146,43 @@ export class UsersListComponent {
 
     if(file) {
 
-      // File Preview
       const reader = new FileReader();
-  
-      reader.onload = () => {
 
-        const objectURL = URL.createObjectURL(file);
+      // validate file type & size
 
-        this.f.profileImg.setValue(this.sanitizer.bypassSecurityTrustUrl(objectURL));
+      const validFileExtensions = ['image/jpeg','image/jpg','image/png'];
 
-        this.profileImg = file;
+      if(!validFileExtensions.includes(file.type)) return this.service.showToastr({ data: { type: "error", message: "Invalid file type" } });
 
-      }
-  
-      reader.readAsDataURL(file);
+      if(file.size > 1048576) return this.service.showToastr({ data: { type: "error", message: "File size should not exceed 1MB" } });
+
+      // check dimensions of image
+
+      // const img = new Image();
+
+      // img.src = window.URL.createObjectURL(file);
+
+      // img.onload = () => {
+
+      //   if(img.width != 150 || img.height != 150) return this.service.showToastr({ data: { type: "error", message: "Image should be 150px X 150px" } });
+
+      //   else {
+
+          // File Preview
+      
+          reader.onload = () => {
+
+            this.userForm.patchValue({ "profileImg": reader.result as string });
+
+            this.profileImg = file;
+
+          }
+
+          reader.readAsDataURL(file);
+
+      //   }
+
+      // }
 
     }
 
@@ -179,8 +202,6 @@ export class UsersListComponent {
 
     formData.append("data", JSON.stringify(payload));
 
-    console.log(this.profileImg);
-    
     if(this.profileImg) formData.append("profileImg", this.profileImg);
 
     forkJoin({

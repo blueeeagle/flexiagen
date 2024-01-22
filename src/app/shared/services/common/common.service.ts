@@ -125,6 +125,12 @@ export class CommonService {
 
   }
 
+  getFullImagePath(imgUrl: any): string {
+    // Replace backslashes with forward slashes
+    const imagePath = imgUrl.replace(/\\/g, '/');
+    return (this.IMG_BASE_URL + imagePath).toString();
+  }
+
   // POST API Method While Pass JSON Data
   
   postService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {

@@ -13,6 +13,7 @@ export class CompanyDetailsComponent {
   formSubmitted: boolean = false;
   isLoading: boolean = false;
   userSubscribe: any;
+  companyLogo: any = '';
   _: any = _;
 
 	constructor(public service: CommonService) {
@@ -51,7 +52,8 @@ export class CompanyDetailsComponent {
       
       ],
 
-      'companyLogo': [ this.service.companyDetails?.companyLogo ],
+      'companyLogo': [this.service.companyDetails?.companyLogo ? this.service.getFullImagePath(this.service.companyDetails.companyLogo) : '' ],
+
 
     });
 
@@ -81,6 +83,54 @@ export class CompanyDetailsComponent {
 
   get f(): any { return this.companyDetailsFrom.controls; }
 
+  uploadFile(event:any) {
+
+    const file = event.target?.files[0]; // Here we use only the first file (single file)
+
+    if(file) {
+
+      const reader = new FileReader();
+
+      // validate file type & size
+
+      const validFileExtensions = ['image/jpeg','image/jpg','image/png'];
+
+      if(!validFileExtensions.includes(file.type)) return this.service.showToastr({ data: { type: "error", message: "Invalid file type" } });
+
+      if(file.size > 204800) return this.service.showToastr({ data: { type: "error", message: "File size should not exceed 200KB" } });
+
+      // check dimensions of image
+
+      // const img = new Image();
+
+      // img.src = window.URL.createObjectURL(file);
+
+      // img.onload = () => {
+
+      //   if(img.width != 150 || img.height != 150) return this.service.showToastr({ data: { type: "error", message: "Image should be 150px X 150px" } });
+
+      //   else {
+
+          // File Preview
+      
+          reader.onload = () => {
+
+            this.companyDetailsFrom.patchValue({ "companyLogo": reader.result as string });
+
+            this.companyLogo = file;
+
+          }
+
+          reader.readAsDataURL(file);
+
+      //   }
+
+      // }
+
+    }
+
+  }  
+
   // Submit Form
 
   submit() {
@@ -89,11 +139,19 @@ export class CompanyDetailsComponent {
 
     if(this.companyDetailsFrom.invalid) return;
 
-    let payload = _.omit(this.companyDetailsFrom.value,['companyLogo']);
+    let payload = _.omit(this.companyDetailsFrom.getRawValue(),'companyLogo');
+
+    payload["companyId"] = this.service.companyDetails._id;
+
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify(payload));
+
+    if(this.companyLogo) formData.append("companyLogo", this.companyLogo);    
 
     this.isLoading = true;
 
-    this.service.patchService({ "url": `/setup/company/details/${this.service.companyDetails._id}`, 'payload': payload }).subscribe((res: any) => {
+    this.service.patchService({ "url": `/setup/company/details/${this.service.companyDetails._id}`, 'payload': formData }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -106,6 +164,10 @@ export class CompanyDetailsComponent {
         this.service.companyDetails = _.omit(res.data,'agentId');
 
         this.service.userDetails = _.get(res.data,'agentId');
+
+        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
+
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
 
         this.service.userDetailsObs.next(res.data);
 

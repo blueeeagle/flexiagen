@@ -235,6 +235,10 @@ export class AddressDetailsComponent {
 
         this.service.userDetails = _.get(res.data,'agentId');
 
+        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
+
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
+
         this.service.userDetailsObs.next(this.service.userDetails);
 
       }

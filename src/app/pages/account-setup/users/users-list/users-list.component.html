@@ -308,29 +308,11 @@
 
             <label for="profile">Profile</label>
 
-            <input type="file" class="upload" style="display: none;" #fileInput formControlName="profileImg" (change)="uploadFile($event)">
+            <input type="file" class="upload" style="display: none;" #fileInput (change)="uploadFile($event)">
 
-            <ng-container *ngIf="!_.isEmpty(f.profileImg.value); else noImg">
-
-                <br>
+            <br>
             
-                <img [src]="f.profileImg.value" class="img-fluid" alt="profile"/>
-
-            </ng-container>
-
-            <ng-template #noImg>
-
-                <a class="align-items-center h5 border border-primary d-flex opacity-75 h5 justify-content-center py-3 rounded text-primary upload-img" (click)="fileInput.click()">
-                                    
-                    <i class="bi bi-file-earmark-plus fs-4"></i> 
-                    
-                    <span class="mx-1">Upload</span>  
-                
-               </a>            
-
-            </ng-template>
-            
-
+            <img [src]="f.profileImg.value" class="img-fluid btn p-0" [ngClass]="{ 'border-2 border': f.profileImg.value != '' }" style="max-width: 300px;" alt="profile" onerror="this.src = './assets/images/upload-img.png'" (click)="fileInput.click()"/>
 
         </div>
 

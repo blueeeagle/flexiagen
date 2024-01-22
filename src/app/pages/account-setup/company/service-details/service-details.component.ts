@@ -124,6 +124,10 @@ export class ServiceDetailsComponent {
 
         this.service.companyDetails = _.get(res.data,'companyId');
 
+        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
+
+        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
+
         this.service.userDetailsObs.next(res.data);
 
       }
