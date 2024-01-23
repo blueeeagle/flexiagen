@@ -1,10 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormArray, Validators } from '@angular/forms';
+import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { ModalComponent, OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
+declare var $: any;
 
 @Component({
   selector: 'app-create-order',
@@ -23,8 +25,8 @@ export class CreateOrderComponent {
   userSubscribe: any;
   _: any = _;
   filterForm: any = this.service.fb.group({
-    'search': '',
-    'category': null
+    'searchValue': '',
+    'categoryId': []
   });
   productForm: any;
   orderForm: any;
@@ -44,21 +46,23 @@ export class CreateOrderComponent {
     stateList: [],
     cityList: [],
     areaList: [],
-    customerList: [],
     productCharges: [],
-    categoryList: []
+    categoryList: [],
+    workingHours: [],
+    activeDays: [],
   };
   formSubmitted: any = {
     customerForm: false,
     productForm: false,
-    orderForm: false
+    orderForm: false,
+    customerSearched: false
   };
   moment: any = moment;
     
   constructor(public service: CommonService) {
 
     this.service.setApiLoaders({ 'isLoading': true, 'url': [
-      '/master/productCharges', '/setup/agentProducts', '/address/countries', '/address/dialCode', '/master/categories', '/master/customers'
+      '/master/productCharges', '/setup/agentProducts', '/address/countries', '/address/dialCode', '/master/categories', '/setup/workingHrs/list'
     ] });
 
     this.getBaseDetails();
@@ -69,8 +73,6 @@ export class CreateOrderComponent {
       this.loadProductForm();
       this.loadCustomerForm();
       this.loadBasketForm({});
-      this.getMyProducts();
-      this.getCustomers();
 
     } else {
 
@@ -82,8 +84,6 @@ export class CreateOrderComponent {
           this.loadProductForm();
           this.loadCustomerForm();
           this.loadBasketForm({});
-          this.getCustomers();
-  
         }
   
       });      
@@ -100,6 +100,12 @@ export class CreateOrderComponent {
     this.loadCustomerForm();
     this.loadBasketForm({});
 
+    this.filterForm.get('searchValue').valueChanges.subscribe((value: any) => {
+
+      this.getMyProducts({ searchValue: value });
+
+    });
+
   }
 
   getBaseDetails() {
@@ -114,6 +120,8 @@ export class CreateOrderComponent {
 
       "charges": this.service.getService({ "url": "/master/productCharges" }),
 
+      "workingHours": this.service.postService({ "url": "/setup/workingHrs/list", "payload": { "is_active": true } })
+
     }).subscribe((res: any) => {
 
       this.masterList["countryList"] = res.countries.status == "ok" ? res.countries.data : [];
@@ -122,7 +130,13 @@ export class CreateOrderComponent {
 
       this.masterList["categoryList"] = res.categories.status == "ok" ? res.categories.data : [];
 
-      this.getMyProducts();
+      this.masterList["workingHours"] = res.workingHours.status == "ok" ? res.workingHours.data : [];
+
+      this.masterList['activeDays'] = _.map(this.masterList['workingHours'], 'day');
+
+      this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
+
+      this.getMyProducts({});
 
       if(res.charges.status == "ok") {
 
@@ -164,39 +178,17 @@ export class CreateOrderComponent {
 
     let payload = { "day": moment(this.f[fieldName].value).format('dddd'), "date": this.f[fieldName].value };
 
-    this.masterList[fieldName] = {
+    this.masterList[fieldName] = { 'timeSlots': [] };
 
-      'workingHours': {},
-
-      'timeSlots': []
-
-    };
-
-    this.service.postService({ "url": "/master/workingHours", payload }).subscribe((res: any) => {
+    this.service.postService({ "url": "/setup/timeslot/list", payload }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
-        if(res.data.is_active) {
+        this.masterList[fieldName]['timeSlots'] = res.data || [];
 
-          this.masterList[fieldName]['workingHours'] = res.data;
+        if(_.size(this.masterList[fieldName]['timeSlots']) == 0) {
 
-          this.masterList[fieldName]['timeSlots'] = res.data?.timeSlots || [];
-
-          if(_.size(this.masterList[fieldName]['timeSlots']) == 0) {
-
-            this.service.showToastr({ "data": { "message": "Please add time slots for selected day", "type": "info" } });
-
-            this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
-
-          }
-
-        } else {
-
-          this.masterList[fieldName]['workingHours'] = {};
-
-          this.masterList[fieldName]['timeSlots'] = [];
-
-          this.service.showToastr({ "data": { "message": "Selected date is not a working day", "type": "info" } });
+          this.service.showToastr({ "data": { "message": "Please add time slots for selected day", "type": "info" } });
 
           this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
 
@@ -210,19 +202,17 @@ export class CreateOrderComponent {
 
   getCustomers() {
 
-    this.service.postService({ "url": "/master/customers", "payload": { "companyId": this.service.companyDetails._id } }).subscribe((res: any) => {
+    this.formSubmitted.customerSearched = true;
+
+    this.service.postService({ "url": "/master/customers" }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
-        this.masterList['customerList'] = _.concat([],_.map(res.data, (e: any) => {
+        this.selectedCustomerDet = _.first(res.data) || {};
 
-          e.customerImageURL = _.isEmpty(e?.customerImageURL) ? './assets/images/customer-profile.svg' : this.getFullImagePath(e?.customerImageURL);
+        this.selectedCustomerDet['addressInfo'] = _.find(this.selectedCustomerDet.addresses, { 'isDefault': true });
 
-          e.addressInfo = _.find(e.addresses, { 'isDefault': true });
-          
-          return e;
-  
-        }));
+        this.selectedCustomerDet['profileImg'] = _.isEmpty(this.selectedCustomerDet?.profileImg) ? './assets/images/customer-profile.svg' : this.service.getFullImagePath(this.selectedCustomerDet?.profileImg);
 
       }
 
@@ -230,9 +220,11 @@ export class CreateOrderComponent {
 
   }
 
-  getMyProducts() {
+  getMyProducts({ searchValue = "" }: { searchValue?: string }) {
 
-    this.service.postService({ "url": "/setup/agentProducts", "payload": { "categoryId": _.map(this.masterList['categoryList'],'_id') } }).subscribe((res: any) => {
+    let params = { searchValue };
+
+    this.service.postService({ "url": "/setup/agentProducts", params, "payload": _.pick(this.filterForm.value,"categoryId") }).subscribe((res: any) => {
 
       if(res.status == "ok") {
 
@@ -240,11 +232,19 @@ export class CreateOrderComponent {
 
         this.masterList['agentProducts'] = _.map(this.masterList['agentProducts'], (e: any) => {
   
-          e.productId.productImageURL = this.getFullImagePath(e?.productId?.productImageURL);
+          e.productId.productImageURL = this.service.getFullImagePath(e?.productId?.productImageURL);
           
           return e;
   
         });
+
+        setTimeout(() => {
+
+          $('#searchValue').click();
+
+          $('#searchValue').focus()
+
+        }, 100);
   
         this.agentProductsCount = res.totalCount;
 
@@ -254,11 +254,9 @@ export class CreateOrderComponent {
 
   }
 
-  getFullImagePath(imgUrl: any): string {
-    // Replace backslashes with forward slashes
-    const imagePath = imgUrl.replace(/\\/g, '/');
-    return (this.service.IMG_BASE_URL + imagePath).toString();
-  }
+  checkIsWorkingDay = (d: Date | null): boolean => {
+    return _.includes(this.masterList['activeDays'], moment(d).format('dddd'));
+  };
 
   // Get States based on Country
   getStates() {
@@ -306,6 +304,8 @@ export class CreateOrderComponent {
   loadForm() {
 
     this.orderForm = this.service.fb.group({
+
+      'searchCustomer': [ null ],
 
       'companyId': [ this.service.companyDetails._id, Validators.required],
 
@@ -381,22 +381,6 @@ export class CreateOrderComponent {
 
     });
 
-    // this.orderForm.get("deliveryAvailable").valueChanges.subscribe((value: any) => {
-
-    //   this.orderForm.patchValue({ 'expDeliveryDate': null, 'expDeliveryTimeSlot': null, 'expDeliveryTimeSlotDet': null });
-
-    //   if(value) {
-
-    //     this.f.expDeliveryDate.setValue(moment().format('YYYY-MM-DD'));
-
-    //     this.getWorkingHours('expDeliveryDate');
-
-    //   } 
-
-    //   this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['expDeliveryDate', 'expDeliveryTimeSlot'], 'validators': value ? [Validators.required] : [] });
-
-    // });
-
     this.orderForm.get('paymentOnDelivery').valueChanges.subscribe((value: any) => {
 
       this.orderForm.patchValue({ 'paymentMode': !value ? 'Cash' : null, 'paymentReceived': 0, 'paymentPending': this.f.netAmt.value });
@@ -451,7 +435,7 @@ export class CreateOrderComponent {
 
       'chargeName': [chargeDet.chargeId?.chargeName || chargeDet.chargeName, Validators.required],
 
-      'imgURL': [this.getFullImagePath(chargeDet.chargeId?.imgURL || chargeDet.imgURL), Validators.required],
+      'imgURL': [this.service.getFullImagePath(chargeDet.chargeId?.imgURL || chargeDet.imgURL), Validators.required],
 
       'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
 
@@ -503,7 +487,7 @@ export class CreateOrderComponent {
 
         'chargeName': [chargeDet?.chargeId?.chargeName, Validators.required],
 
-        'imgURL': [this.getFullImagePath(chargeDet?.chargeId?.imgURL), Validators.required],
+        'imgURL': [this.service.getFullImagePath(chargeDet?.chargeId?.imgURL), Validators.required],
 
         'amount': [ (chargeDet?.amount || 0).toCustomFixed(), Validators.required],
 
@@ -805,13 +789,13 @@ export class CreateOrderComponent {
   
         if(res.status == "ok") {
   
-          this.masterList['customerList'].push(res.data);
-  
           this.selectedCustomerDet = res.data;
   
-          this.canvas?.close();
+          this.selectedCustomerDet['addressInfo'] = _.find(this.selectedCustomerDet.addresses, { 'isDefault': true });
+
+          this.selectedCustomerDet['profileImg'] = _.isEmpty(this.selectedCustomerDet?.profileImg) ? './assets/images/customer-profile.svg' : this.service.getFullImagePath(this.selectedCustomerDet?.profileImg);
   
-          this.getCustomers();
+          this.canvas?.close();
   
           this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
   
@@ -938,7 +922,7 @@ export class CreateOrderComponent {
 
     if(this.orderForm.invalid) return;
 
-    let payload = _.cloneDeep(this.orderForm.value);
+    let payload: any = _.omit(_.cloneDeep(this.orderForm.value),["searchCustomer"]);
 
     payload['itemList'] = _.flatten(_.map(payload.itemList,(itemDet)=>{
 
