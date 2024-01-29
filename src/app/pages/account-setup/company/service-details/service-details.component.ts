@@ -106,7 +106,7 @@ export class ServiceDetailsComponent {
 
   submit() {
 
-    let payload = this.serviceDetailsFrom.value;
+    let payload = this.serviceDetailsFrom.getRawValue();
 
     if(!payload.pos && !payload.online) return this.service.showToastr({ "data": { "message": "Please select atleast one service", "type": "error" } });    
 
@@ -131,7 +131,7 @@ export class ServiceDetailsComponent {
         this.service.userDetailsObs.next(res.data);
 
       }
-
+    
     });
 
   }

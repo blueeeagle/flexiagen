@@ -1,0 +1,197 @@
+<div class="permission-container">
+
+    <div class="container-fluid">
+
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+
+            <button class="nav-link active border-bottom border-0" #roles data-bs-toggle="tab" data-bs-target="#roles" role="tab">ROLES</button>
+    
+            <button class="nav-link border-bottom border-0" #permission data-bs-toggle="tab" data-bs-target="#permission" role="tab">PERMISSIONS</button>
+    
+        </div>
+    
+        <form [formGroup]="permissionForm">
+    
+            <div class="row mt-2">
+    
+                <div class="tab-content" id="nav-tabContent">
+    
+                    <div class="tab-pane fade show active" id="roles" role="tabpanel">
+    
+                        <div class="col-xl-6 col-lg-7">
+    
+                            <div class="card border-opacity-10 border-dark">
+    
+                                <div class="card-body">
+    
+                                    <div class="form-group mb-4">
+    
+                                        <label for="roleName">Role Name</label>
+    
+                                        <input type="text" class="form-control form-control-lg" id="roleName" formControlName="roleName" placeholder="Enter Role Name" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.roleName.touched) && f.roleName.errors }">
+    
+                                        <div *ngIf="(formSubmitted || f.roleName.touched) && f.roleName.errors" class="invalid-feedback">
+    
+                                            <div *ngIf="f.roleName.errors.required">Company name is required</div>
+    
+                                        </div>
+    
+                                    </div>
+    
+                                    <div class="form-group mb-4">
+    
+                                        <label for="description">Description</label>
+    
+                                        <input type="text" class="form-control form-control-lg" id="description" formControlName="description" placeholder="Enter Description" autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.description.touched) && f.description.errors }">
+    
+                                        <div *ngIf="(formSubmitted || f.description.touched) && f.description.errors" class="invalid-feedback">
+    
+                                            <div *ngIf="f.description.errors.required">Description is required</div>
+    
+                                        </div>
+    
+                                    </div>
+
+                                    <div class="form-group mb-4">
+    
+                                        <label for="is_active">Status</label>
+    
+                                        <ng-select [searchable]="false" [clearable]="false" formControlName="is_active">
+                                        
+                                            <ng-option [value]="true">Active</ng-option>
+
+                                            <ng-option [value]="false">Inactive</ng-option>
+
+                                        </ng-select>
+    
+                                    </div>                                    
+    
+                                </div>
+    
+                            </div>
+    
+                            <div class="row px-4 pt-4"> 
+    
+                                <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+    
+                                    <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="loadForm()">CLEAR</div>
+    
+                                </div>
+    
+                                <div class="col-sm-6">
+    
+                                    <button class="btn btn-block btn-lg w-100 btn-primary" (click)="next()">Next</button>
+    
+                                </div>
+    
+                            </div>
+    
+                        </div>
+    
+                    </div>
+    
+                    <div class="tab-pane fade show" id="permission" role="tabpanel">
+    
+                        <div class="col-xl-6 col-lg-7">
+    
+                            <div class="row mx-0">
+    
+                                <ng-container formArrayName="permissions">
+    
+                                    <div class="table-responsive w-fit-content">
+    
+                                        <table class="table table-bordered form-table">
+    
+                                            <thead>
+    
+                                                <tr>
+                                
+                                                    <th scope="col" style="width: 780px;">Laundry Customers</th>
+    
+                                                </tr>
+    
+                                            </thead>
+    
+                                            <tbody>
+                                            
+                                                <ng-container *ngFor="let permissionForm of f.permissions.controls; let i = index; let last = last; let first = first">
+            
+                                                    <ng-container [formGroup]="permissionForm" *ngIf="permissionForm.controls as pf">
+                                    
+                                                        <tr>
+                                                            
+                                                            <td class="d-flex justify-content-between">
+                                                                
+                                                                <label class="text-decoration-none cursor-pointer" for="allow{{i}}">
+    
+                                                                    <p>
+    
+                                                                        <span class="fw-600 text-dark">{{pf.permission.value}}</span><br>
+
+                                                                        <span class="fw-500 text-light">{{pf.description.value}}</span>
+    
+                                                                    </p>
+    
+                                                                </label>
+    
+                                                                <div class="form-check form-group">
+    
+                                                                    <input class="form-check-input" type="checkbox" id="allow{{i}}" formControlName="allow">
+                                    
+                                                                </div>
+    
+                                                            </td>
+                            
+                                                        </tr>
+    
+                                                    </ng-container>
+    
+                                                </ng-container>
+    
+                                        </table>
+    
+                                    </div>
+    
+                                </ng-container>
+    
+                            </div>
+                            
+                            <div class="row px-4 pt-4">
+    
+                                <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+    
+                                    <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="roles.click()">Back</div>
+    
+                                </div>
+    
+                                <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
+    
+                                    <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="(formSubmitted && permissionForm.invalid) || isLoading" (click)="submit()">
+            
+                                        <ng-container *ngIf="!isLoading">SAVE</ng-container>
+                
+                                        <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+                
+                                            <span class="visually-hidden">Loading...</span>
+                
+                                        </div>
+                
+                                    </button>                         
+            
+                                </div> 
+    
+                            </div>
+    
+                        </div>
+    
+                    </div>
+    
+                </div>
+    
+            </div>
+    
+        </form>
+        
+    </div>
+
+</div>

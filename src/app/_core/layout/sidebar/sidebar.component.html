@@ -30,8 +30,7 @@
                             [ngClass]="{ 'active': menuDet.isSelected }"
                             [routerLink]="_.size(menuDet.subMenu) > 0 ? [] : menuDet.url" 
                             [routerLinkActive]="_.size(menuDet.subMenu) > 0 ? '' :'active'"
-                            (click)="openMenu({ 'path': menuDet.url, 'menuLevel': 0 });"
-                            *ngIf="menuDet.allow">
+                            (click)="openMenu({ 'path': menuDet.url, 'menuLevel': 0 });">
 
                             <i [class]='menuDet.icon'></i>
 
@@ -54,8 +53,7 @@
                                     [ngClass]="{ 'active': subMenuOneDet.isSelected }"
                                     [routerLink]="_.size(subMenuOneDet.subMenu) > 0 ? [] : subMenuOneDet.url" 
                                     [routerLinkActive]="_.size(subMenuOneDet.subMenu) > 0 ? '' : 'active'"
-                                    (click)="openMenu({ 'path': subMenuOneDet.url, 'menuLevel': 1 });"
-                                    *ngIf="subMenuOneDet.allow">
+                                    (click)="openMenu({ 'path': subMenuOneDet.url, 'menuLevel': 1 });">
 
                                     <i [class]="subMenuOneDet.icon || 'bi bi-dash'"></i>
 
@@ -77,8 +75,7 @@
                                             [ngClass]="{ 'active': subMenuTwoDet.isSelected }" 
                                             [routerLink]="subMenuTwoDet.url" 
                                             routerLinkActive="active" 
-                                            (click)="openMenu({ 'path': subMenuTwoDet.url, 'menuLevel': 2 })"
-                                            *ngIf="subMenuTwoDet.allow">
+                                            (click)="openMenu({ 'path': subMenuTwoDet.url, 'menuLevel': 2 })">
 
                                             <i class="bi bi-dash me-2"></i>
 

@@ -136,12 +136,6 @@
                     
                         <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
                         
-                        <button class="btn btn-md btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
-                    
-                            <span class="ms-3">Add New</span>
-                        
-                        </button>
-                        
                     </div>
         
                 </div>
@@ -164,7 +158,7 @@
 
                 <small class="mt-2">LOCATION</small>                
 
-                <!-- <custom-ng-select 
+                <custom-ng-select 
                     [value]="f.areaId?.value"
                     [from]="locationForm"     
                     formControlField="areaId"
@@ -174,13 +168,7 @@
                     bindValue="_id"
                     placeholder="SELECT LOCATIONS"
                     [showError]="(formSubmitted || f.areaId.touched) && f.areaId?.errors"
-                ></custom-ng-select>                 -->
-
-                <ng-select [searchable]="false" [clearable]="false" formControlName="areaId" placeholder="Search Location">
-                
-                    <ng-option *ngFor="let area of masterList['areaList']" [value]="area._id"> {{ area.name }} </ng-option> 
-
-                </ng-select>
+                ></custom-ng-select> 
 
                 <div *ngIf="(formSubmitted || f.areaId.touched) && f.areaId?.errors" class="d-block invalid-feedback">
 
@@ -210,51 +198,7 @@
 
             </ng-container>
 
-        </div>
-
-        <div class="form-group mb-4">
-                
-            <label for="street">NO & STREET/ROAD *</label>
-
-            <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || f.street.touched) && f.street?.errors }" (change)="getAddressInfo()">
-
-        </div>
-
-        <div class="col-md-6 pe-2 pe-md-1">
-
-            <div class="form-group mb-4">
-
-                <label for="building">APARTMENT, BUILDING, FLAT</label>
-
-                <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
-
-            </div>
-
-        </div>
-
-        <div class="col-md-6 ps-2 ps-md-1">            
-
-            <div class="form-group mb-4">
-
-                <label for="block">BLOCK</label>
-
-                <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
-
-            </div>
-
-        </div>
-
-        <div class="col-md-6 pe-2 pe-md-1">            
-
-            <div class="form-group mb-4">
-
-                <label for="others">Others</label>
-
-                <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
-
-            </div>
-
-        </div>        
+        </div> 
 
         <div class="form-group mt-3">
 

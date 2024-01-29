@@ -32,7 +32,6 @@ export class LocationComponent {
 
   loaderUrlList: any = ['/setup/agentLocations','/master/locations/'+JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }))?.addressDetails?.cityId?._id];
   locationsCount: number = 0;
-  addressInfo: any = {};
 
   constructor(public service: CommonService) { 
 
@@ -100,16 +99,6 @@ export class LocationComponent {
 
       "areaId": [ this.mode == 'Update' ? this.editData.areaId._id : null, [Validators.required]],
 
-      "street": [ this.editData.street || null, [Validators.required]],
-
-      "building": [ this.editData.building || null],
-
-      "block": [ this.editData.block || null],
-
-      "others": [ this.editData.others || null],
-
-      "landmark": [ this.editData.landmark || null, [Validators.required]],
-
       "minOrderAmt" : [ this.mode == 'Update' ? this.editData.minOrderAmt.toCustomFixed() : null, [Validators.required]],
 
       "isFreeDelivery":  this.editData?.isFreeDelivery || false,
@@ -146,25 +135,23 @@ export class LocationComponent {
 
   get f(): any { return this.locationForm.controls }
 
-  getAddressInfo(): any {
+  // getAddressInfo(): any {
 
-    if(!this.f.street.value) return this.addressInfo = {};
+  //   if(!this.f.street.value) return this.addressInfo = {};
 
-    let areaDetails = this.mode == 'Create' ? _.find(this.masterList['areaList'],{ '_id': this.f.areaId.value }) : this.editData.areaId;
+  //   let areaDetails = this.mode == 'Create' ? _.find(this.masterList['areaList'],{ '_id': this.f.areaId.value }) : this.editData.areaId;
 
-    this.service.getService({ "url": "/setup/addressInfo", "params": { "address": this.f.street.value + ' ' + areaDetails.name + ' ' + areaDetails.cityId?.name, 'country': areaDetails.countryId?.name, 'zipcode': areaDetails.zipcode } }).subscribe((res: any) => {
+  //   this.service.getService({ "url": "/setup/addressInfo", "params": { "address": this.f.street.value + ' ' + areaDetails.name + ' ' + areaDetails.cityId?.name, 'country': areaDetails.countryId?.name, 'zipcode': areaDetails.zipcode } }).subscribe((res: any) => {
 
-      if(res.status == 'ok') {
+  //     if(res.status == 'ok') {
 
-        this.addressInfo = _.first(res.data) || {};
+  //       this.addressInfo = _.first(res.data) || {};
 
-        console.log(this.addressInfo);
+  //     }
 
-      }
+  //   });
 
-    });
-
-  }
+  // }
 
   openAsideBar(data?: any){
 
@@ -210,6 +197,12 @@ export class LocationComponent {
 
     let payload = _.cloneDeep(this.locationForm.value);
 
+    if(this.mode == 'Create') {
+
+      payload = _.map(payload['areaId'],(areaId: any)=>{ return { ...payload, areaId } });
+
+    }
+
     this.isLoading = true;
     
     forkJoin({
@@ -234,11 +227,7 @@ export class LocationComponent {
 
           this.getAgentLocations();
 
-          if(this.mode == 'Create') {
-
-            this.masterList['areaList'] = _.filter(this.masterList['areaList'],(e: any)=>e._id != payload['areaId']);
-
-          }
+          if(this.mode == 'Create') this.getAreaList();
 
           this.loadForm();
 

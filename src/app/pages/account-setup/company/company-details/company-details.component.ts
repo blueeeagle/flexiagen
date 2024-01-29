@@ -54,8 +54,9 @@ export class CompanyDetailsComponent {
 
       'companyLogo': [this.service.companyDetails?.companyLogo ? this.service.getFullImagePath(this.service.companyDetails.companyLogo) : '' ],
 
-
     });
+
+    console.log(this.companyDetailsFrom.value);
 
     this.f.haveTax?.valueChanges.subscribe((value: boolean) => {
 

@@ -31,7 +31,7 @@ export class WorkingHoursComponent {
     { "value": "18:00", "label": "06:00 PM" }, { "value": "19:00", "label": "07:00 PM" }, 
     { "value": "20:00", "label": "08:00 PM" }, { "value": "21:00", "label": "09:00 PM" }, 
     { "value": "22:00", "label": "10:00 PM" }, { "value": "23:00", "label": "11:00 PM" },
-    { "value": "00:00", "label": "12:00 AM" }
+    { "value": "24:00", "label": "12:00 AM" }
   ];
   userSubscribe: any;
   isLoading: boolean = false;
@@ -71,6 +71,16 @@ export class WorkingHoursComponent {
 
           'workingDays': _.map(res.data, (value: any) => {
 
+            value.availableTimes = _.map(value.availableTimes, (e)=> {
+
+              e.startTime = e.startTime.hour.toString().padStart(2, '0') + ':' + e.startTime.minute.toString().padStart(2, '0');
+
+              e.endTime = e.endTime.hour.toString().padStart(2, '0') + ':' + e.endTime.minute.toString().padStart(2, '0');
+
+              return e;
+
+            });
+
             return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
 
           })
@@ -91,7 +101,7 @@ export class WorkingHoursComponent {
 
     this.workingHoursFrom = this.service.fb.group({
 
-      'companyId': [ this.editData?.companyId?._id || this.service.companyDetails._id, Validators.required ],
+      'companyId': [ this.editData?.companyId || this.service.companyDetails._id, Validators.required ],
 
       'workingDays': this.service.fb.array([]),
 
@@ -143,7 +153,7 @@ export class WorkingHoursComponent {
 
         'day': value?.day || '',
 
-        'is_active': value ? value.is_active : true,
+        'is_active': value?.is_active || false,
 
         'availableTimes': this.service.fb.array([]),
 
@@ -271,53 +281,85 @@ export class WorkingHoursComponent {
 
     this.isLoading = true;
 
-    if(this.mode == 'Create') payload = _.map(payload, (e)=> _.omit(e, '_id'));
+    if(this.mode == 'Create') {
+      
+      payload = _.map(payload, (e)=> _.omit(e, '_id'));
 
-    forkJoin({
-
-      result: this.mode == 'Create' ? 
-
-        this.service.postService({ 'url': '/setup/workingHrs', 'payload': payload }) :
-
-          this.service.patchService({ 'url': '/setup/workingHrs', 'payload': payload })
-
-    }).subscribe({
-
-      next: (res: any) => {
+      if(_.size(_.filter(payload,{ "is_active": true })) == 0) {
 
         this.isLoading = false;
-
-        if(res.result.status == 'ok') {
-
-          this.editData = _.size(res.result.data) > 0 ? {
-
-            'companyId': res.result.data[0]?.companyId,
-  
-            'workingDays': _.map(res.result.data, (value: any) => {
-  
-              return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
-  
-            })
-  
-          } : {};
-  
-          this.mode = 'Update';
-
-          this.loadForm();
-
-          this.service.showToastr({ 'data': { 'message': res.result.message, 'type': 'success' } });
-
-        }
-
-      },
-
-      error: (err: any) => {
-
-        this.isLoading = false;
+        
+        return this.service.showToastr({ 'data': { 'message': 'Please  select atleast one day', 'type': 'error' } });
 
       }
 
-    });
+    }
+
+    payload = _.map(payload, (item)=> {
+
+      item.availableTimes = _.map(item.availableTimes, (e)=>{
+
+        e.startTime = { hour: parseInt(e.startTime.split(":")[0]), minute: parseInt(e.startTime.split(":")[1]) };
+
+        e.endTime = { hour: parseInt(e.endTime.split(":")[0]), minute: parseInt(e.endTime.split(":")[1]) };
+
+        return e
+
+      });
+
+      return item;
+
+    }); 
+
+    console.log(payload);
+
+    this.isLoading = false;
+
+    // forkJoin({
+
+    //   result: this.mode == 'Create' ? 
+
+    //     this.service.postService({ 'url': '/setup/workingHrs', 'payload': payload }) :
+
+    //       this.service.patchService({ 'url': '/setup/workingHrs', 'payload': payload })
+
+    // }).subscribe({
+
+    //   next: (res: any) => {
+
+    //     this.isLoading = false;
+
+    //     if(res.result.status == 'ok') {
+
+    //       this.editData = _.size(res.result.data) > 0 ? {
+
+    //         'companyId': res.result.data[0]?.companyId,
+  
+    //         'workingDays': _.map(res.result.data, (value: any) => {
+  
+    //           return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
+  
+    //         })
+  
+    //       } : {};
+  
+    //       this.mode = 'Update';
+
+    //       this.loadForm();
+
+    //       this.service.showToastr({ 'data': { 'message': res.result.message, 'type': 'success' } });
+
+    //     }
+
+    //   },
+
+    //   error: (err: any) => {
+
+    //     this.isLoading = false;
+
+    //   }
+
+    // });
 
   }
 
