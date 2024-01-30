@@ -259,11 +259,9 @@ export class WorkingHoursComponent {
 
     this.formSubmitted = true;
 
-    if(this.workingHoursFrom.invalid) return this.service.showToastr({ 'data': { 'message': 'Please fill all the required fields', 'type': 'error' } });
+    if(this.wdf.at(index).invalid) return this.service.showToastr({ 'data': { 'message': 'Please fill all the required fields', 'type': 'error' } });
 
     let payload = _.cloneDeep(this.wdf.at(index).getRawValue());
-
-    console.log(payload);
 
     // this.isLoading = true;
 
