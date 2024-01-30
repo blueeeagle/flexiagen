@@ -240,7 +240,7 @@ export class UsersListComponent {
 
   }
 
-  updateUserAction(data: any) {
+  updateActiveStatus(data: any) {
 
     const formData = new FormData();
 

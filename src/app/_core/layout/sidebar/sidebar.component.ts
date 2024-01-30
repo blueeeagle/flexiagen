@@ -89,13 +89,9 @@ export class SidebarComponent implements OnInit {
                         "url": "account-setup/users/users"
                     },
                     {
-                        "label": "Permissions",
-                        "url": "account-setup/users/roles-and-permissions"
-                    },
-                    {
-                        "label": "Create Role",
-                        "url": "account-setup/users/roles"
-                    },  
+                        "label": "Roles & Permissions",
+                        "url": "account-setup/users/roles-and-permissions" 
+                    }
                 ]
             },
             {

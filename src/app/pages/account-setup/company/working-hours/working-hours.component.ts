@@ -14,9 +14,8 @@ import { forkJoin } from "rxjs";
 export class WorkingHoursComponent {
 
   workingHoursFrom: FormGroup = new FormGroup({});
-  editData: any = {};
+  workingDays: any = [];
   formSubmitted: boolean = false;
-  mode: 'Create' | 'Update' = 'Create';
   daysOfWeek = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   timeOptions = [
     { "value": "00:00", "label": "12:00 AM" }, { "value": "01:00", "label": "01:00 AM" },
@@ -65,29 +64,21 @@ export class WorkingHoursComponent {
 
       if(res.status == 'ok') {
 
-        this.editData = _.size(res.data) > 0 ? {
+        this.workingDays = _.map(res.data, (value: any) => {
 
-          'companyId': res.data[0]?.companyId,
+          value.availableTimes = _.map(value.availableTimes, (e)=> {
 
-          'workingDays': _.map(res.data, (value: any) => {
+            e.startTime = e.startTime.hour.toString().padStart(2, '0') + ':' + e.startTime.minute.toString().padStart(2, '0');
 
-            value.availableTimes = _.map(value.availableTimes, (e)=> {
+            e.endTime = e.endTime.hour.toString().padStart(2, '0') + ':' + e.endTime.minute.toString().padStart(2, '0');
 
-              e.startTime = e.startTime.hour.toString().padStart(2, '0') + ':' + e.startTime.minute.toString().padStart(2, '0');
+            return e;
 
-              e.endTime = e.endTime.hour.toString().padStart(2, '0') + ':' + e.endTime.minute.toString().padStart(2, '0');
+          });
 
-              return e;
+          return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
 
-            });
-
-            return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
-
-          })
-
-        } : {};
-
-        this.mode = _.size(res.data) > 0 ? 'Update' : 'Create';
+        });
 
         this.loadForm();
 
@@ -101,17 +92,16 @@ export class WorkingHoursComponent {
 
     this.workingHoursFrom = this.service.fb.group({
 
-      'companyId': [ this.editData?.companyId || this.service.companyDetails._id, Validators.required ],
-
       'workingDays': this.service.fb.array([]),
 
     });
 
-    if(this.mode == 'Create') {
 
       this.daysOfWeek.forEach((day: string, index: number) => {
 
-        this.wdf.push(this.getFormArray({ 'value': { day } }));
+        let dayDetails = _.find(this.workingDays, { 'day': day }) || {};
+
+        this.wdf.push(this.getFormArray({ 'value': _.isEmpty(dayDetails) ? { day } : dayDetails }));
 
         this.whf(index).push(this.getFormArray({ 'type': 'workingHours' }));
 
@@ -119,9 +109,8 @@ export class WorkingHoursComponent {
         
       });
 
-    } else if(this.mode == 'Update') {
 
-      this.editData.workingDays.forEach((day: any, index: number) => {
+      this.workingDays.forEach((day: any, index: number) => {
 
         this.wdf.push(this.getFormArray({ 'value': day }));
 
@@ -133,7 +122,6 @@ export class WorkingHoursComponent {
 
       });
 
-    }
 
   }
 
@@ -150,6 +138,8 @@ export class WorkingHoursComponent {
       return this.service.fb.group({
 
         '_id': value?._id || null,
+
+        'companyId': value?.companyId || this.service.companyDetails?._id || null,
 
         'day': value?.day || '',
 
@@ -265,59 +255,33 @@ export class WorkingHoursComponent {
 
   }
 
-  submit() {
+  submit(index: number) {
 
     this.formSubmitted = true;
 
     if(this.workingHoursFrom.invalid) return this.service.showToastr({ 'data': { 'message': 'Please fill all the required fields', 'type': 'error' } });
 
-    let payload = _.cloneDeep(this.workingHoursFrom.value);
-
-    payload = _.map(payload.workingDays, (value: any) => {
-
-      return { ..._.omit(payload,'workingDays'), ...value };
-
-    });
-
-    this.isLoading = true;
-
-    if(this.mode == 'Create') {
-      
-      payload = _.map(payload, (e)=> _.omit(e, '_id'));
-
-      if(_.size(_.filter(payload,{ "is_active": true })) == 0) {
-
-        this.isLoading = false;
-        
-        return this.service.showToastr({ 'data': { 'message': 'Please  select atleast one day', 'type': 'error' } });
-
-      }
-
-    }
-
-    payload = _.map(payload, (item)=> {
-
-      item.availableTimes = _.map(item.availableTimes, (e)=>{
-
-        e.startTime = { hour: parseInt(e.startTime.split(":")[0]), minute: parseInt(e.startTime.split(":")[1]) };
-
-        e.endTime = { hour: parseInt(e.endTime.split(":")[0]), minute: parseInt(e.endTime.split(":")[1]) };
-
-        return e
-
-      });
-
-      return item;
-
-    }); 
+    let payload = _.cloneDeep(this.wdf.at(index).getRawValue());
 
     console.log(payload);
 
-    this.isLoading = false;
+    // this.isLoading = true;
+
+    payload['availableTimes'] = _.map(payload.availableTimes, (e)=>{
+
+      e.startTime = { hour: parseInt(e.startTime.split(":")[0]), minute: parseInt(e.startTime.split(":")[1]) };
+
+      e.endTime = { hour: parseInt(e.endTime.split(":")[0]), minute: parseInt(e.endTime.split(":")[1]) };
+
+      return e
+
+    });
+
+    console.log(payload);
 
     // forkJoin({
 
-    //   result: this.mode == 'Create' ? 
+    //   result: _.isNull(payload._id) ? 
 
     //     this.service.postService({ 'url': '/setup/workingHrs', 'payload': payload }) :
 

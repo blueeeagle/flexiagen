@@ -116,7 +116,7 @@
                             
                                 <label class="form-check-label text-dark ms-2" for="active"> {{ (userDet.is_active) ? 'Active' : 'In-Active' }} </label>
                             
-                                <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" [(ngModel)]="userDet['is_active']" [ngModelOptions]="{standalone: true}" (change)="updateUserAction(userDet)">
+                                <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" [(ngModel)]="userDet['is_active']" [ngModelOptions]="{standalone: true}" (change)="updateActiveStatus(userDet)">
                             
                             </div>                        
     

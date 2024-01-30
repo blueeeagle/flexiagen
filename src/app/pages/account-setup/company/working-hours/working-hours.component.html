@@ -66,19 +66,30 @@
                                             
                                         </div>
         
-                                        <div class="col-md-2 col-sm-4 mb-2 align-self-center">
+                                        <div class="col-md-2 col-sm-4 mb-2 ps-0 justify-content-center align-items-center d-flex">
 
-                                            <a class="btn btn-sm btn-outline-danger p-2 py-1 me-2" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ? whf(wdIndx).removeAt(timeIndx) : null" *ngIf="!first">
+                                            <a class="btn btn-sm btn-outline-danger px-2 py-1 me-1" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ? whf(wdIndx).removeAt(timeIndx) : null" *ngIf="!first">
         
-                                                <i class="fas fa-trash-alt"></i>
-        
-                                            </a>
-        
-                                            <a class="btn btn-sm btn-outline-primary p-2 py-1" [ngClass]="{ 'opacity-50': !df.is_active.value }" (click)="df.is_active.value ?addWorkingHours(wdIndx) : null" *ngIf="last">
-        
-                                                <i class="fas fa-plus"></i>
+                                                <i class="bx bx-trash-alt fs-5"></i>
         
                                             </a>
+
+                                            <ng-container *ngIf="last && df.is_active.value">
+
+                                                <a class="btn btn-sm btn-outline-primary px-2 py-1 me-1" (click)="addWorkingHours(wdIndx)">
+            
+                                                    <i class="bx bx-plus fs-5"></i>
+            
+                                                </a>
+    
+                                                <a class="btn btn-sm btn-primary px-2 py-1" (click)="submit(wdIndx)">
+            
+                                                    <i class="bx bx-save fs-5"></i>
+            
+                                                </a>                                            
+                                            
+                                            </ng-container>
+        
         
                                         </div>
         
@@ -91,32 +102,6 @@
                         </ng-container>
         
                     </ng-container>
-
-                    <div class="row">
-
-                        <div class="col-sm-6 pt-4 order-sm-first order-last mt-3 mt-sm-0">
-        
-                            <button class="btn btn-block btn-lg w-100 btn-outline-primary">CLEAR</button>
-        
-                        </div>
-        
-                        <div class="col-sm-6 pt-4">
-        
-                            <button class="btn btn-block btn-lg w-100 btn-primary" [disabled]="isLoading" (click)="submit()">
-
-                                <ng-container *ngIf="!isLoading">SAVE</ng-container>
-
-                                <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
-
-                                    <span class="visually-hidden">Loading...</span>
-
-                                </div>
-
-                            </button>
-        
-                        </div>
-
-                    </div>
         
                 </form>
 
