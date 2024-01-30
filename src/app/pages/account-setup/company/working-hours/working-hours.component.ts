@@ -34,6 +34,7 @@ export class WorkingHoursComponent {
   ];
   userSubscribe: any;
   isLoading: boolean = false;
+  submitIndex: number = 0;
   _: any = _;
 
 	constructor(public service: CommonService) {
@@ -96,32 +97,31 @@ export class WorkingHoursComponent {
 
     });
 
+    this.daysOfWeek.forEach((day: string, index: number) => {
 
-      this.daysOfWeek.forEach((day: string, index: number) => {
+      let dayDetails = _.find(this.workingDays, { 'day': day }) || {};
 
-        let dayDetails = _.find(this.workingDays, { 'day': day }) || {};
+      if(_.isEmpty(dayDetails)) {
 
-        this.wdf.push(this.getFormArray({ 'value': _.isEmpty(dayDetails) ? { day } : dayDetails }));
-
+        this.wdf.push(this.getFormArray({ 'value':  { day } }));
+  
         this.whf(index).push(this.getFormArray({ 'type': 'workingHours' }));
-
+  
         this.whf(index).at(0).patchValue({ 'startTime': '09:00', 'endTime': '17:00' });
-        
-      });
 
+      } else {
 
-      this.workingDays.forEach((day: any, index: number) => {
+        this.wdf.push(this.getFormArray({ 'value': dayDetails }));
 
-        this.wdf.push(this.getFormArray({ 'value': day }));
-
-        day.availableTimes.forEach((timeDet: any, indexTwo: number) => {
+        dayDetails.availableTimes.forEach((timeDet: any, indexTwo: number) => {
 
           this.whf(index).push(this.getFormArray({ 'value': timeDet, 'type': 'workingHours' }));
 
         });
 
-      });
-
+      }
+      
+    });
 
   }
 
@@ -263,7 +263,9 @@ export class WorkingHoursComponent {
 
     let payload = _.cloneDeep(this.wdf.at(index).getRawValue());
 
-    // this.isLoading = true;
+    this.submitIndex = index;
+
+    this.isLoading = true;
 
     payload['availableTimes'] = _.map(payload.availableTimes, (e)=>{
 
@@ -275,53 +277,37 @@ export class WorkingHoursComponent {
 
     });
 
-    console.log(payload);
+    forkJoin({
 
-    // forkJoin({
+      result: _.isNull(payload._id) ? 
 
-    //   result: _.isNull(payload._id) ? 
+        this.service.postService({ 'url': '/setup/workingHrs', 'payload': _.omit(payload,'_id') }) :
 
-    //     this.service.postService({ 'url': '/setup/workingHrs', 'payload': payload }) :
+          this.service.patchService({ 'url': '/setup/workingHrs', 'payload': payload })
 
-    //       this.service.patchService({ 'url': '/setup/workingHrs', 'payload': payload })
+    }).subscribe({
 
-    // }).subscribe({
+      next: (res: any) => {
 
-    //   next: (res: any) => {
+        this.isLoading = false;
 
-    //     this.isLoading = false;
+        if(res.result.status == 'ok') {
 
-    //     if(res.result.status == 'ok') {
+          this.wdf.at(index).patchValue({ '_id': res.result.data._id });
 
-    //       this.editData = _.size(res.result.data) > 0 ? {
+          this.service.showToastr({ 'data': { 'message': res.result.message, 'type': 'success' } });
 
-    //         'companyId': res.result.data[0]?.companyId,
-  
-    //         'workingDays': _.map(res.result.data, (value: any) => {
-  
-    //           return { ..._.pick(value, ['_id','availableTimes','day','is_active']) };
-  
-    //         })
-  
-    //       } : {};
-  
-    //       this.mode = 'Update';
+        }
 
-    //       this.loadForm();
+      },
 
-    //       this.service.showToastr({ 'data': { 'message': res.result.message, 'type': 'success' } });
+      error: (err: any) => {
 
-    //     }
+        this.isLoading = false;
 
-    //   },
+      }
 
-    //   error: (err: any) => {
-
-    //     this.isLoading = false;
-
-    //   }
-
-    // });
+    });
 
   }
 

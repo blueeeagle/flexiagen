@@ -56,8 +56,6 @@ export class CompanyDetailsComponent {
 
     });
 
-    console.log(this.companyDetailsFrom.value);
-
     this.f.haveTax?.valueChanges.subscribe((value: boolean) => {
 
       this.f.taxationNumber.enable();

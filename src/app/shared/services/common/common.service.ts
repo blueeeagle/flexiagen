@@ -28,12 +28,6 @@ export class CommonService {
 
   constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) {
 
-    // this.getPosition().then((res:any)=>{
-
-    //   console.log(res);
-
-    // })
-
   }
 
   updateUserDetails() {
