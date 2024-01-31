@@ -265,7 +265,7 @@ export class WorkingHoursComponent {
 
     this.submitIndex = index;
 
-    this.isLoading = true;
+    // this.isLoading = true;
 
     payload['availableTimes'] = _.map(payload.availableTimes, (e)=>{
 
@@ -283,7 +283,7 @@ export class WorkingHoursComponent {
 
         this.service.postService({ 'url': '/setup/workingHrs', 'payload': _.omit(payload,'_id') }) :
 
-          this.service.patchService({ 'url': '/setup/workingHrs', 'payload': payload })
+          this.service.patchService({ 'url': `/setup/workingHrs/${payload._id}`, 'payload': payload })
 
     }).subscribe({
 
@@ -304,6 +304,8 @@ export class WorkingHoursComponent {
       error: (err: any) => {
 
         this.isLoading = false;
+
+        this.service.showToastr({ 'data': { 'message': err?.error?.message || 'Something went wrong', 'type': 'error' } });
 
       }
 
