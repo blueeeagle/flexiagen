@@ -50,7 +50,7 @@
 
                             <p class="fw-normal text-center text-light mb-1" style="font-size: 0.75rem;">{{ day.date ? (day.date | date: 'dd MMM') : 'Default' }}</p>
 
-                            <a class="day-badge bg-primary-subtle btn btn-md me-2 text-primary fw-semibold" [ngClass]="{ 'bg-secondary-subtle text-light': selectedDay.day != day.day, 'opacity-50 shadow-none': !_.includes(activeDays, day.day) }" style="height: fit-content" (click)="!_.includes(activeDays, day.day) ? null :getTimeSlots(day)">
+                            <a class="day-badge bg-primary-subtle btn btn-md me-2 text-primary fw-semibold" [ngClass]="{ 'bg-secondary-subtle text-light': selectedDay?.day != day.day, 'opacity-50 shadow-none': !_.includes(activeDays, day.day) }" style="height: fit-content" (click)="!_.includes(activeDays, day.day) ? null :getTimeSlots(day)">
                                 
                                 {{ day.day | slice:0:3 }}
     

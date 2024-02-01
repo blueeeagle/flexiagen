@@ -110,7 +110,7 @@ export class TimeslotComponent {
 
     this.selectedDay = day;
 
-    this.selectedDate = day.date;
+    this.selectedDate = day?.date;
 
     this.service.postService({ 'url': '/setup/timeslot/list', 'payload': _.pickBy({ 'companyId': this.service.companyDetails._id, ...this.selectedDay }), "options": { "loaderState": true } }).subscribe((res:any)=>{
 
@@ -154,7 +154,7 @@ export class TimeslotComponent {
 
   checkIsActiveHour(startTime: any): string {
 
-    return this.selectedDay.date == moment().format("YYYY-MM-DD") ? moment(startTime,'HH:mm').isAfter(moment()) ? 'active' : 'Inactive' : 'active';
+    return this.selectedDay?.date == moment().format("YYYY-MM-DD") ? moment(startTime,'HH:mm').isAfter(moment()) ? 'active' : 'Inactive' : 'active';
 
   }
 
@@ -188,7 +188,7 @@ export class TimeslotComponent {
 
   }
 
-  changeValue({ fieldName = "" }: { fieldName: string }) {
+  changeValue({ fieldName = "" }: { fieldName: string }): any {
 
     if(fieldName == 'selectedWeek') {
 
@@ -211,6 +211,14 @@ export class TimeslotComponent {
         return moment(selectedWeekRange.value.start).add(index, 'days').format('YYYY-MM-DD')
 
       });
+
+      if(this.activeDays.length == 0) {
+
+        this.weekOptions.splice(this.selectedWeekIndex,1); 
+
+        return this.changeValue({ 'fieldName': 'selectedWeek' });
+
+      }
 
       this.selectedDay = _.find(this.days,{ 'day': _.first(this.activeDays) });
 
