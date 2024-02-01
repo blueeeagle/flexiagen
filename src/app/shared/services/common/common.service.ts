@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import * as _ from 'lodash';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoadingService } from '../loading/loading.service';
+import * as moment from 'moment';
 
 
 @Injectable({
@@ -18,7 +19,7 @@ import { LoadingService } from '../loading/loading.service';
 export class CommonService {
 
   pageSizeList: any = [10, 25, 50, 100];
-
+  todayDate: Date = moment().toDate();
   public userDetails: any = {};
   public companyDetails: any = {};
   public currencyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" })) || {};

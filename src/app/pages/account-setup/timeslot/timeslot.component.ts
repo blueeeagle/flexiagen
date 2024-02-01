@@ -40,38 +40,31 @@ export class TimeslotComponent {
     { startTime: '22:00', endTime: '23:00', session: 'PM' }, { startTime: '23:00', endTime: '24:00', session: 'PM' }
   ];
   availTimeSlots: any = [];
-  editData: any = {};
-  mode: 'Create' | 'Update' = 'Create';
+  editData: any = [];
   userSubscribe: any;
   workingDayDetails: Array<any> = [];
   sessionStatus: any = { "AM": false, "PM": false };
   isLoading: boolean = false;
   weekOptions: Array<any> = [];
-  selectedWeek: any = 'Default Timeslots';
+  selectedWeekIndex: any = 0;
+  selectedDate: any = moment().format('YYYY-MM-DD');
   loaderUrlList: any = ['/setup/workingHrs/list','/setup/timeslot/list'];
 
   constructor(public service: CommonService) { 
 
-    this.weekOptions = _.map(Array(30), (val, index) => {
+    this.weekOptions = _.map(Array(56), (val, index) => {
 
-      let start = moment().add(index > 1 ? index-0 : 0, 'weeks').startOf('week');
+      let start = moment().add(index, 'weeks').startOf('week');
 
-      let end = moment().add(index > 1 ? index-0 : 0, 'weeks').endOf('week');
+      let end = moment().add(index, 'weeks').endOf('week');
 
-      return index == 0 ? 
+      return { 
       
-        { 'label': 'Default Timeslots', 'value': null } : 
-        
-        { 
-          'label': index == 1 ? 
-          
-              'This Week' : 
-              
-              `${start.format('DD MMM YY')} to ${end.format('DD MMM YY')}`,
-        
-          'value': { 'start': start.format('YYYY-MM-DD'), 'end': end.format('YYYY-MM-DD') } 
-        
-        };
+        'label': `${start.format('DD MMM YY')} to ${end.format('DD MMM YY')}`,
+      
+        'value': { 'start': start.format('YYYY-MM-DD'), 'end': end.format('YYYY-MM-DD') } 
+      
+      };
 
     });
 
@@ -91,7 +84,7 @@ export class TimeslotComponent {
 
   getWorkingHours() {
     
-    this.service.postService({ 'url': '/setup/workingHrs/list', "payload": { "is_active": true } }).subscribe((res: any) => {
+    this.service.postService({ 'url': '/setup/workingHrs/list' }).subscribe((res: any) => {
 
         if(res.status=='ok') {
 
@@ -105,7 +98,7 @@ export class TimeslotComponent {
 
           if(_.isEmpty(this.workingDayDetails)) this.service.setApiLoaders({ 'isLoading': false, 'url': ['/setup/timeslot/list'] });
 
-          else this.getTimeSlots(_.find(this.days,{ 'day': _.first(this.activeDays) }));
+          else this.changeValue({ 'fieldName': 'selectedWeek' });
           
         }
 
@@ -117,33 +110,11 @@ export class TimeslotComponent {
 
     this.selectedDay = day;
 
+    this.selectedDate = day.date;
+
     this.service.postService({ 'url': '/setup/timeslot/list', 'payload': _.pickBy({ 'companyId': this.service.companyDetails._id, ...this.selectedDay }), "options": { "loaderState": true } }).subscribe((res:any)=>{
 
-      this.editData = res?.status == 'ok' ? res.data : {};
-
-      this.availTimeSlots = [];
-
-      // Iterate through each total slot
-      for (const slotDet of this.totalTimeSlots) {
-
-        // check if the slot is inbetween any of the shop available times
-        const isAvail = _.some(_.find(this.workingDayDetails,{ "day": this.selectedDay.day }).availableTimes, timeDet =>
-          moment(slotDet.startTime,"HH:mm").isBetween(moment(timeDet.startTime,"HH:mm"), moment(timeDet.endTime,"HH:mm"), undefined, '[)') &&
-          moment(slotDet.endTime,"HH:mm").isBetween(moment(timeDet.startTime,"HH:mm"), moment(timeDet.endTime,"HH:mm"), undefined, '(]')
-        );
-
-        // if the slot is available, push it to the available slots array
-        if (isAvail) {
-
-          this.availTimeSlots.push({
-            'startTime': moment(slotDet.startTime,"HH:mm").format('HH:mm'),
-            'endTime': moment(slotDet.endTime,"HH:mm").format('HH:mm'),
-            'session': slotDet.session
-          });
-
-        }
-
-      }
+      this.editData = res?.status == 'ok' ? res.data : [];
 
       this.loadForm();
       
@@ -155,31 +126,23 @@ export class TimeslotComponent {
 
     this.timeslotForm = this.service.fb.group({
 
-      "_id": [ !_.isEmpty(this.editData) && (moment(this.editData.date).format("YYYY-MM-DD") == this.selectedDay.date || this.editData.date == this.selectedDay.date) ? this.editData._id : null ],
-
-      "companyId": [ this.service.companyDetails?._id || null ],
-
-      "day": [ this.selectedDay.day, Validators.required ],
-
       "date": [ this.selectedDay?.date || null ],
 
-      "timeSlots": this.service.fb.array([])
+      "timeSlots": this.service.fb.array([]),
 
     });
 
-    this.mode = this.f._id.value ? 'Update' : 'Create';
+    this.editData.forEach((slotDet: any) => {
 
-    this.availTimeSlots.forEach((slotDet: any) => {
+      slotDet['startTime'] = moment(slotDet['startTime']['hour'].toString().padStart(2,'0') + ':' + slotDet['startTime']['minute'].toString().padStart(2,'0'), 'HH:mm').format('HH:mm');
 
-      slotDet = _.find(this.editData?.timeSlots, { 'startTime': slotDet.startTime, 'endTime': slotDet.endTime }) || slotDet;
-
-      slotDet['label'] = `${moment(slotDet.startTime,'HH:mm').format('hh:mm A')} - ${moment(slotDet.endTime,'HH:mm').format('hh:mm A')}`;
+      slotDet['endTime'] = moment(slotDet['endTime']['hour'].toString().padStart(2,'0') + ':' + slotDet['endTime']['minute'].toString().padStart(2,'0'), 'HH:mm').format('HH:mm');
 
       this.ts.push(this.getTimeSlotForm({ slotDet }));
 
     });
 
-    this.sessionStatus = { "AM": !_.isEmpty(_.find(this.availTimeSlots,{ 'session': 'AM' })), "PM": !_.isEmpty(_.find(this.availTimeSlots,{ 'session': 'PM' })) };
+    this.sessionStatus = { "AM": !_.isEmpty(_.find(this.editData,{ 'session': 'AM' })), "PM": !_.isEmpty(_.find(this.editData,{ 'session': 'PM' })) };
 
   }
 
@@ -187,11 +150,7 @@ export class TimeslotComponent {
 
   get ts(): any { return this.f.timeSlots as FormArray; }
 
-  getLabel(label: any): string {
-
-    return label.replace(/\b(?:AM|PM)\b/g, '');
-
-  }
+  getLabel(label: any): string { return label.replace(/\b(?:am|pm)\b/g, ''); }
 
   checkIsActiveHour(startTime: any): string {
 
@@ -199,11 +158,21 @@ export class TimeslotComponent {
 
   }
 
+  checkIsWorkingDay = (d: Date | null): boolean => {
+    return _.includes(_.map(this.workingDayDetails,'day'), moment(d).format('dddd'));
+  };
+
   getTimeSlotForm({ slotDet = {} }: { slotDet?: any }) {
 
     return this.service.fb.group({
 
       "_id": slotDet._id || null,
+
+      "companyId": slotDet.companyId || null,
+
+      "day": slotDet.day,
+
+      "isDefault": slotDet.isDefault,
 
       "startTime": slotDet.startTime || '',
 
@@ -223,39 +192,39 @@ export class TimeslotComponent {
 
     if(fieldName == 'selectedWeek') {
 
-      let selectedWeekRange = _.find(this.weekOptions,{ 'label': this.selectedWeek });
+      let selectedWeekRange = this.weekOptions[this.selectedWeekIndex];
 
       this.activeDays = _.map(this.workingDayDetails, 'day');
 
-      // sort active days based on days array order
-
       this.activeDays = _.sortBy(this.activeDays, (day: string) => _.findIndex(this.days, { 'day': day }));
 
-      if(selectedWeekRange.label !== 'Default Timeslots') {
-        
-        _.map(Array(7), (value: any,index: number) => {
+      _.map(Array(7), (value: any,index: number) => {
+    
+        this.days[index]['date'] = moment(selectedWeekRange.value.start).add(index, 'days').format('YYYY-MM-DD');
+
+        if(moment(this.days[index]['date']).isBefore(moment().format('YYYY-MM-DD'))) {
+
+          this.activeDays = _.without(this.activeDays, this.days[index]['day']);
+
+        }
       
-          this.days[index]['date'] = moment(selectedWeekRange.value.start).add(index, 'days').format('YYYY-MM-DD');
+        return moment(selectedWeekRange.value.start).add(index, 'days').format('YYYY-MM-DD')
 
-          if(moment(this.days[index]['date']).isBefore(moment().format('YYYY-MM-DD'))) {
-
-            this.activeDays = _.without(this.activeDays, this.days[index]['day']);
-
-          }
-        
-          return moment(selectedWeekRange.value.start).add(index, 'days').format('YYYY-MM-DD')
-
-        });
-
-      } else {
-
-        _.map(this.days, (day: any) => day['date'] = null);
-
-      }
+      });
 
       this.selectedDay = _.find(this.days,{ 'day': _.first(this.activeDays) });
 
       this.getTimeSlots(this.selectedDay);
+
+    }
+
+    if(fieldName == 'selectedDate') {
+
+      let selectedIndex = _.findIndex(this.weekOptions, { 'label': `${_.cloneDeep(this.selectedDate).startOf('week').subtract(1,'d').format('DD MMM YY')} to ${_.cloneDeep(this.selectedDate).endOf('week').subtract(1,'d').format('DD MMM YY')}` });
+
+      this.selectedWeekIndex = selectedIndex > -1 ? selectedIndex : this.selectedWeekIndex;
+
+      this.changeValue({ 'fieldName': 'selectedWeek' });  
 
     }
 
@@ -267,35 +236,45 @@ export class TimeslotComponent {
 
     let payload: any = _.cloneDeep(this.timeslotForm.value);
 
-    payload['timeSlots'] = _.map(payload['timeSlots'], (slotDet: any) => _.omit(slotDet, _.isNull(slotDet._id) ? ['_id'] : []));
+    payload = _.map(payload['timeSlots'],(item)=>{
 
-    forkJoin({
+      item["date"] = payload['date'];
 
-      'result': this.mode == 'Create' ?
+      item['startTime'] = {
+        
+        "hour": moment(item['startTime'],'HH:mm').format('HH'),
 
-        this.service.postService({ 'url': '/setup/timeslot', 'payload': _.omit(payload,'_id') }) :
+        "minute": moment(item['startTime'],'HH:mm').format('mm')
 
-        this.service.patchService({ 'url': `/setup/timeslot/${payload._id}`, 'payload': payload }),
+      };
 
-    }).subscribe({
+      item['endTime'] = {
+        
+        "hour": moment(item['endTime'],'HH:mm').format('HH'),
 
-      next: (res: any) => {
+        "minute": moment(item['endTime'],'HH:mm').format('mm')
 
-        this.isLoading = false;
+      };
 
-        if(this.mode == 'Create') this.getTimeSlots(this.selectedDay);
+      return item;
 
-        if(res.result.status == 'ok') {
+    });
 
-          this.service.showToastr({ 'data': { 'message': 'Timeslot updated successfully', 'type': 'success' } });
+    this.service.patchService({ 'url': `/setup/timeslot`, 'payload': payload }).subscribe((res: any)=>{
 
-        }
+      this.isLoading = false;
 
-      },error: (err: any) => {
+      if(res.status == 'ok') {
 
-        this.isLoading = false;
+        this.getTimeSlots(this.selectedDay);
+
+        this.service.showToastr({ 'data': { 'message': 'Timeslot updated successfully', 'type': 'success' } });
 
       }
+      
+    },(err: any)=>{
+      
+      this.isLoading = false;
 
     });
 

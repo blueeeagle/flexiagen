@@ -34,23 +34,53 @@
         
                     <div class="d-flex flex-wrap align-items-end">
 
-                        <div *ngFor="let day of days" >
+                        <div>
 
-                            <p class="fw-norma text-center text-light mb-1" style="font-size: 0.75rem;">{{ day.date ? (day.date | date: 'dd MMM') : 'Default' }}</p>
+                            <p class="fw-normal text-center text-light mb-1" style="font-size: 0.75rem;"></p>
+
+                            <button class="day-badge btn-primary btn btn-md me-2" style="height: fit-content" [disabled]="selectedWeekIndex == 0" (click)="selectedWeekIndex = selectedWeekIndex - 1;changeValue({ fieldName: 'selectedWeek' })" >
+
+                                <i class="fas fa-chevron-left"></i> 
+
+                            </button>
+
+                        </div>
+
+                        <div *ngFor="let day of days;let isFirst = first; let isLast = last">
+
+                            <p class="fw-normal text-center text-light mb-1" style="font-size: 0.75rem;">{{ day.date ? (day.date | date: 'dd MMM') : 'Default' }}</p>
 
                             <a class="day-badge bg-primary-subtle btn btn-md me-2 text-primary fw-semibold" [ngClass]="{ 'bg-secondary-subtle text-light': selectedDay.day != day.day, 'opacity-50 shadow-none': !_.includes(activeDays, day.day) }" style="height: fit-content" (click)="!_.includes(activeDays, day.day) ? null :getTimeSlots(day)">
                                 
                                 {{ day.day | slice:0:3 }}
     
-                            </a>
+                            </a>                            
 
                         </div>
 
-                        <ng-select [searchable]="false" [clearable]="false" style="min-width: 240px;" [(ngModel)]="selectedWeek" (ngModelChange)="changeValue({ 'fieldName': 'selectedWeek' })">
+                        <div>
 
-                            <ng-option *ngFor="let week of weekOptions" [value]="week.label">{{ week.label }}</ng-option>
+                            <p class="fw-normal text-center text-light mb-1" style="font-size: 0.75rem;"></p>
 
-                        </ng-select>
+                            <button class="day-badge btn-primary btn btn-md me-2" style="height: fit-content" [disabled]="selectedWeekIndex == _.size(weekOptions) - 1" (click)="selectedWeekIndex = selectedWeekIndex + 1;changeValue({ fieldName: 'selectedWeek' })">
+
+                                <i class="fas fa-chevron-right"></i>
+
+                            </button>
+
+                        </div>
+
+                        <div class="position-relative">
+
+                            <input type="text" class="form-control form-control-lg border-2" [(ngModel)]="selectedDate" placeholder="Select Date" (dateChange)="changeValue({ fieldName: 'selectedDate' })"  [matDatepicker]="datePicker" [matDatepickerFilter]="checkIsWorkingDay" [min]="service.todayDate" [max]="weekOptions[_.size(weekOptions)-1].value.end">
+
+                            <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="datePicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                            <mat-datepicker #pickupDatepicker></mat-datepicker>
+
+                            <mat-datepicker #datePicker></mat-datepicker>
+
+                        </div>
 
                     </div>
         
