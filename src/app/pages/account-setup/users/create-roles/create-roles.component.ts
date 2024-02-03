@@ -24,7 +24,13 @@ export class CreateRolesComponent {
   mode: 'Create' | 'Update' = 'Create';
   @Input() editData: any = {};
   permissions: Array<any> = [];
-
+  permissionOptions = [
+    { label: 'View', value: 'view' },
+    { label: 'Create', value: 'create' },
+    { label: 'Edit', value: 'edit' },
+    { label: 'Delete', value: 'delete' },
+    { label: 'Print', value: 'print' }
+  ];
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private router: Router) {
 
@@ -74,13 +80,93 @@ export class CreateRolesComponent {
 
       if(res.status == 'ok') {
 
-        this.permissions = res.data;
+        this.masterList['permissions'] = _.get(_.first(res.data),"permissions");
 
-        this.loadForm();
+        this.permissions = _.cloneDeep(this.masterList['permissions']);
+
+        this.constructPermission();
 
       }
 
     });
+
+  }
+
+  constructPermission() {
+
+    this.permissions = _.map(this.permissions, (funcMenuDet: any) => {
+
+      let menuDet: any = _.find(this.editData?.permissions,{ 'label': funcMenuDet.label }) || funcMenuDet;
+
+      if(_.size(menuDet.subMenu) > 0) {
+
+        menuDet['subMenu'] = _.map(funcMenuDet.subMenu, (subMenuDet: any) => {
+  
+          let subMenuOne: any = _.find(menuDet.subMenu, { 'label': subMenuDet.label }) || subMenuDet;
+
+          if(_.size(subMenuOne.subMenu) > 0) {
+
+            subMenuOne['subMenu'] = _.map(subMenuDet.subMenu, (subMenuTwoDet: any) => {
+    
+              let subMenuTwo: any = _.find(subMenuOne.subMenu, { 'label': subMenuTwoDet.label }) || subMenuTwoDet;
+
+              subMenuTwo['permissions'] = _.map(this.permissionOptions, (permission: any) => {
+
+                return {
+
+                  "permission": permission.value,
+
+                  "allow": _.includes(subMenuTwo.permissions, permission.value)
+
+                }
+
+              });
+    
+              return subMenuTwo;
+    
+            });
+
+          } else {
+
+            subMenuOne['permissions'] = _.map(this.permissionOptions, (permission: any) => {
+
+              return {
+
+                "permission": permission.value,
+
+                "allow": _.includes(subMenuOne.permissions, permission.value)
+
+              }
+
+            });
+
+          }
+
+          return subMenuOne;
+  
+        });
+
+      } else {
+
+        menuDet['permissions'] = _.map(this.permissionOptions, (permission: any) => {
+
+          return {
+
+            "permission": permission.value,
+
+            "allow": _.includes(menuDet.permissions, permission.value)
+
+          }
+
+        });
+
+      }
+
+      return menuDet
+      
+    });
+
+    console.log(this.permissions);
 
   }
   

@@ -12,7 +12,7 @@ import { forkJoin } from 'rxjs';
 })
 export class RolesAndPermissionsComponent {
 
-  tableColumns = ['SL#', 'Role Name', 'Description', 'Status', 'ACTION'];
+  tableColumns = ['SL#', 'ROLE NAME', 'DESCRIPTION', 'STATUS', 'ACTION'];
   roleList!: Array<any>;
   isLoading: boolean = false;
   _: any = _;

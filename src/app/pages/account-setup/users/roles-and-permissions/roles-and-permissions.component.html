@@ -46,9 +46,9 @@
             
                         </ng-container>  
     
-                        <ng-container matColumnDef="Role Name" sticky>
+                        <ng-container matColumnDef="ROLE NAME" sticky>
                 
-                        <th mat-header-cell *matHeaderCellDef> Role Name </th>
+                        <th mat-header-cell *matHeaderCellDef> ROLE NAME </th>
         
                         <td mat-cell *matCellDef="let roleDet">
         
@@ -58,25 +58,13 @@
     
                     </ng-container>
     
-                    <ng-container matColumnDef="Description" sticky>
+                    <ng-container matColumnDef="DESCRIPTION" sticky>
                 
-                        <th mat-header-cell *matHeaderCellDef class="text-end"> Description </th>
+                        <th mat-header-cell *matHeaderCellDef> DESCRIPTION </th>
         
-                        <td mat-cell *matCellDef="let roleDet" class="text-end">
+                        <td mat-cell *matCellDef="let roleDet">
         
                             {{ roleDet['description'] }}
-        
-                        </td>
-    
-                    </ng-container>
-    
-                    <ng-container matColumnDef="DELIVERY CHARGES" sticky>
-                
-                        <th mat-header-cell *matHeaderCellDef class="text-end"> Delivery Charges </th>
-        
-                        <td mat-cell *matCellDef="let roleDet" class="text-end">
-        
-                            {{ !roleDet['isFreeDelivery'] ? (roleDet['deliveryCharge'] | currency: service.currencyDetails.currencyCode) : 'Free' }}
         
                         </td>
     
@@ -88,7 +76,7 @@
     
                         <td mat-cell *matCellDef="let roleDet">
                         
-                            <div class="form-check form-switch ps-0 w-100 justify-content-end flex-row-reverse d-flex">
+                            <div class="form-check form-switch ps-0 w-100 justify-content-center flex-row-reverse d-flex">
                             
                                 <label class="form-check-label text-dark ms-2" for="active"> {{ (roleDet.is_active) ? 'Active' : 'In-Active' }} </label>
                             
@@ -102,7 +90,7 @@
     
                     <ng-container matColumnDef="ACTION" stickyEnd>
                 
-                        <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> Action </th>
+                        <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> ACTION </th>
         
                         <td mat-cell *matCellDef="let roleDet">
         
