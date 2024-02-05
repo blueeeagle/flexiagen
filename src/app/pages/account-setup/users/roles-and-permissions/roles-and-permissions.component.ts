@@ -1,9 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { OffcanvasComponent } from '@shared/components';
+import { Component, } from '@angular/core';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-roles-and-permissions',

@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -28,8 +29,7 @@ export class CreateRolesComponent {
     { label: 'View', value: 'view' },
     { label: 'Create', value: 'create' },
     { label: 'Edit', value: 'edit' },
-    { label: 'Delete', value: 'delete' },
-    { label: 'Print', value: 'print' }
+    { label: 'Delete', value: 'delete' }
   ];
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private router: Router) {
@@ -166,7 +166,9 @@ export class CreateRolesComponent {
       
     });
 
-    console.log(this.permissions);
+    this.loadForm();
+
+    // console.log(this.permissions);
 
   }
   
@@ -188,7 +190,7 @@ export class CreateRolesComponent {
 
     });
 
-    this.permissions.forEach((permissionDet: any) => {
+    this.permissions.forEach((permissionDet: any, index: number) => {
 
       this.pf.push(this.getPermissionDetailForm({ permissionDet }));
 
@@ -198,17 +200,41 @@ export class CreateRolesComponent {
 
   getPermissionDetailForm({ permissionDet = {}}: {permissionDet?: any}) : FormGroup  {
     
-    return this.fb.group({
+    let form: any = this.fb.group({
 
-      "permissionId": [ permissionDet?.permissionId || permissionDet?._id || null ],
+      "label": [ permissionDet?.label || '' ],
 
-      "permission": [ permissionDet?.permission || '' ],
+      "url": [ permissionDet?.url || '' ],
 
-      "description": [ permissionDet?.description || '' ],
+      ... _.isEmpty(permissionDet?.icon) ? { "icon": [ permissionDet?.icon || null ] } : {},
 
-      "allow":  [ permissionDet?.allow || false ],
+      ... _.size(permissionDet.subMenu) > 0 ? 
+      
+        { "subMenu": this.fb.array([]) } : 
         
-    })
+          { "permissions": this.fb.array([]) }
+        
+    });
+
+    _.forEach(permissionDet.subMenu, (subMenuDet: any) => {
+
+      form.get('subMenu').push(this.getPermissionDetailForm({ "permissionDet": subMenuDet }));
+
+    });
+
+    _.forEach(permissionDet.permissions, (menuDet: any) => {
+
+      form.get('permissions').push(this.fb.group({
+
+        "allow": menuDet.allow,
+
+        "permission": menuDet.permission
+
+      }));
+
+    });
+
+    return form;
 
   } 
 
@@ -232,17 +258,89 @@ export class CreateRolesComponent {
 
     if(this.permissionForm.invalid) return;
 
-    let payload: any = this.permissionForm.value;
+    let payload: any = _.cloneDeep(this.permissionForm.value);
 
-    payload['permissions'] = _.map(payload.permissions, (permission: any)=>_.pick(permission,['permissionId','allow']));
+    payload['permissions'] = _.map(payload['permissions'],(permissionDet: any)=>{
 
-    this.service.postService({ 'url': '/setup/role', 'payload': payload }).subscribe((res: any) => {
+      if(_.size(permissionDet.subMenu) > 0) {
 
-      if(res.status == 'ok') {
+        permissionDet['subMenu'] = _.map(permissionDet.subMenu, (subMenuDet: any) => {
 
-        this.service.showToastr({ "data": { "message": "Role added successfully", "type": "success" } });
+          if(_.size(subMenuDet.subMenu) > 0) {
 
-        (document.querySelector("[data-bs-target='#roles']") as any)?.click();
+            subMenuDet['subMenu'] = _.map(subMenuDet.subMenu, (subMenuTwoDet: any) => {
+
+              subMenuTwoDet['permissions'] = _.map(_.filter(subMenuTwoDet.permissions, { allow: true }),'permission');
+
+              return subMenuTwoDet;
+
+            });
+
+          }
+
+          if(_.size(subMenuDet.permissions) > 0) subMenuDet['permissions'] = _.map(_.filter(subMenuDet.permissions, { allow: true }),'permission');
+
+          return subMenuDet;
+          
+        });
+
+      }
+
+      if(_.size(permissionDet.permissions) > 0) permissionDet['permissions'] = _.map(_.filter(permissionDet.permissions, { allow: true }),'permission');
+
+      return permissionDet;
+
+    });
+
+    payload['permissions'] = _.filter(payload['permissions'], (permissionDet: any) => {
+
+      if(_.size(permissionDet['subMenu']) > 0) 
+      
+      permissionDet['subMenu'] = _.filter(permissionDet['subMenu'], (subMenuDet: any) => {
+
+        if(_.size(subMenuDet['subMenu']) > 0) 
+        
+        subMenuDet['subMenu'] = _.filter(subMenuDet['subMenu'], (subMenuTwoDet: any) => {
+
+          return _.size(subMenuTwoDet['permissions']) > 0;
+
+        });
+
+        return _.size(subMenuDet['permissions']) > 0 || _.size(subMenuDet['subMenu']) > 0;
+
+      });
+      
+      return _.size(permissionDet['permissions']) > 0 || _.size(permissionDet['subMenu']) > 0;
+
+    });
+
+    if(_.size(payload['permissions']) == 0) return this.service.showToastr({ "data": { "message": "Please select at least one permission", "type": "error" } });
+
+    forkJoin({
+
+      "result": this.mode == 'Create' ? 
+
+        this.service.postService({ 'url': '/setup/role', 'payload': payload }) :
+
+          this.service.patchService({ 'url': `/setup/role/${this.editData._id}`, 'payload': payload })
+
+    }).subscribe({
+
+      next: (res: any) => {
+
+        if(res.result.status == 'ok') {
+
+          this.service.showToastr({ "data": { "message": `Role ${ this.mode == 'Create' ? 'added' : 'updated' } successfully`, "type": "success" } });
+
+          this.router.navigate(['/pages/account-setup/users/roles-and-permissions']);
+
+        }
+
+      },
+
+      error: (error: any) => {
+
+        this.service.showToastr({ "data": { "message": error?.message || "Something went wrong!", "type": "error" } });
 
       }
 

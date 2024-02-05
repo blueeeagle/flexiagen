@@ -7,13 +7,13 @@ export const APP_CONFIG = {
 	encryptedReq: false,
 	secretKey: "",
 
-	APP_DOMAIN: 'http://agentapi.flexiclean.me/api/v1',
+	// APP_DOMAIN: 'http://agentapi.flexiclean.me/api/v1',
 
-    IMG_BASE_URL: 'http://agentapi.flexiclean.me/'
+    IMG_BASE_URL: 'http://agentapi.flexiclean.me/',
   
 	// GOOGLE_MAP_API_KEY: '',
 
-    // APP_DOMAIN: 'http://localhost:9000/api/v1',
+    APP_DOMAIN: 'http://localhost:9000/api/v1',
     // IMG_BASE_URL: 'http://localhost:9000/',
 };
 

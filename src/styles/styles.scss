@@ -209,6 +209,15 @@ a {
 
 }
 
+.form-check-input:checked {
+    background-color: #1e4894;
+    border-color: #1b3a71;
+}
+
+.form-check-input:focus {
+    box-shadow: none;
+}
+
 .btn {
     font-family: 'Poppins';
     font-weight: 500;

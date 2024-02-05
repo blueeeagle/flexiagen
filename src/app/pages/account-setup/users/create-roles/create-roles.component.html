@@ -74,7 +74,7 @@
     
                                 <div class="col-sm-6 order-sm-first order-last mt-3 mt-sm-0">
     
-                                    <div class=" btn btn-block btn-lg w-100 btn-outline-primary" (click)="loadForm()">CLEAR</div>
+                                    <a class="btn btn-block btn-lg w-100 btn-outline-primary" routerLink="/pages/account-setup/users/roles-and-permissions">BACK</a>
     
                                 </div>
     
@@ -100,49 +100,102 @@
     
                                     <div class="table-responsive w-fit-content">
     
-                                        <table class="table table-bordered form-table">
+                                        <table class="table table-bordered border-secondary-subtle form-table">
     
                                             <thead>
     
                                                 <tr>
                                 
-                                                    <th scope="col" style="width: 780px;">Laundry Customers</th>
-    
+                                                    <th scope="col" style="width: 225px;">Laundry Customers</th>
+
+                                                    <th scope="col">View</th>
+
+                                                    <th scope="col">Create</th>
+
+                                                    <th scope="col">Edit</th>
+
+                                                    <th scope="col">Delete</th>
+
                                                 </tr>
     
                                             </thead>
     
                                             <tbody>
+
+                                                <tr *ngIf="let permissionDet of ">
+
+
+                                                </tr>
                                             
-                                                <ng-container *ngFor="let permissionForm of f.permissions.controls; let i = index; let last = last; let first = first">
+                                                <ng-container *ngFor="let permissionForm of f.permissions.controls; let i = index;">
             
                                                     <ng-container [formGroup]="permissionForm" *ngIf="permissionForm.controls as pf">
-                                    
+                                                        
                                                         <tr>
-                                                            
-                                                            <td class="d-flex justify-content-between">
-                                                                
-                                                                <label class="text-decoration-none cursor-pointer" for="allow{{i}}">
-    
-                                                                    <p>
-    
-                                                                        <span class="fw-600 text-dark">{{pf.permission.value}}</span><br>
 
-                                                                        <span class="fw-500 text-light">{{pf.description.value}}</span>
-    
-                                                                    </p>
-    
-                                                                </label>
-    
-                                                                <div class="form-check form-group">
-    
-                                                                    <input class="form-check-input" type="checkbox" id="allow{{i}}" formControlName="allow">
-                                    
-                                                                </div>
-    
+                                                            <td [ngClass]="pf.permissions?.value ? 'fw-light' : 'bg-secondary text-white'" [attr.colspan]="pf.permissions?.value ? 1 : 5">
+
+                                                                {{ pf.label.value }}
+                                                            
                                                             </td>
-                            
+
+                                                            <ng-container *ngIf="pf.permissions?.value" [ngTemplateOutlet]="permissions" [ngTemplateOutletContext]="{ 'form': pf }"></ng-container>
+
                                                         </tr>
+
+                                                        <ng-container *ngFor="let subPermissionForm of pf.subMenu?.controls; let j = index;">
+            
+                                                            <ng-container [formGroup]="subPermissionForm" *ngIf="subPermissionForm.controls as spf">
+
+                                                                <tr>
+
+                                                                    <td class="bg-secondary-subtle" [ngClass]="spf.permissions?.value ? 'fw-light' : ''" [attr.colspan]="spf.permissions?.value ? 1 : 5"> 
+                                                                        
+                                                                        <span class="ps-3"> {{ spf.label.value }} </span>
+                                                                    
+                                                                    </td>
+
+                                                                    <ng-container *ngIf="spf.permissions?.value" [ngTemplateOutlet]="permissions" [ngTemplateOutletContext]="{ 'form': spf, 'class': 'bg-secondary-subtle' }"></ng-container>
+
+                                                                </tr>
+
+                                                                <ng-container *ngFor="let childPermissionForm of spf.subMenu?.controls; let k = index; ">
+            
+                                                                    <ng-container [formGroup]="childPermissionForm" *ngIf="childPermissionForm.controls as cpf">
+
+                                                                        <tr>
+
+                                                                            <td class='bg-light fw-light'>
+                                                                                
+                                                                                <span class="ps-4"> {{ cpf.label.value }} </span>
+                                                                            
+                                                                            </td>
+
+                                                                            <ng-container [ngTemplateOutlet]="permissions" [ngTemplateOutletContext]="{ 'form': cpf, 'class': 'bg-light' }"></ng-container>
+
+                                                                        </tr>
+
+                                                                    </ng-container>
+
+                                                                </ng-container>
+
+                                                            </ng-container>
+
+                                                        </ng-container>
+
+                                                        <ng-template let-form="form" let-className="class" #permissions>
+
+                                                            <ng-container *ngFor="let accessPermission of form.permissions.controls">
+                                                                            
+                                                                <td class="text-center {{className}}" [formGroup]="accessPermission"> 
+                                                                    
+                                                                    <input class="form-check-input" type="checkbox" formControlName="allow" [ngClass]="{ 'border-dark-subtle': !accessPermission.value.allow }">
+                                                                    
+                                                                </td>
+
+                                                            </ng-container>                                                            
+
+                                                        </ng-template>
     
                                                     </ng-container>
     
