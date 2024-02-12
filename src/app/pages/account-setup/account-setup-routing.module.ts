@@ -23,6 +23,10 @@ const routes: Routes = [
     loadChildren: () => import('./users/users.module').then(m => m.UsersModule)
   },
   {
+    path: "subscription",
+    loadChildren: () => import('./my-subscription/my-subscription.module').then(m => m.MySubscriptionModule)
+  },
+  {
     path: "",
     redirectTo: "company", 
     pathMatch: "full"

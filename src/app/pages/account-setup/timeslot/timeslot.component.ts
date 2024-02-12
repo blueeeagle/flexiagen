@@ -188,7 +188,7 @@ export class TimeslotComponent {
 
   }
 
-  changeValue({ fieldName = "" }: { fieldName: string }): any {
+  changeValue({ fieldName = "", day = "" }: { fieldName: string, day?: string }): any {
 
     if(fieldName == 'selectedWeek') {
 
@@ -220,7 +220,13 @@ export class TimeslotComponent {
 
       }
 
-      this.selectedDay = _.find(this.days,{ 'day': _.first(this.activeDays) });
+      this.selectedDay = _.find(this.days,{ 'day': day || this.selectedDay?.day || _.first(this.activeDays) });
+
+      if(moment(this.selectedDay.date).isBefore(moment().format('YYYY-MM-DD'))) {
+
+        this.selectedDay = _.find(this.days,(e)=> moment(e.date).isSame(moment().format('YYYY-MM-DD')) || moment(e.date).isAfter(moment().format('YYYY-MM-DD'))); 
+
+      }
 
       this.getTimeSlots(this.selectedDay);
 
@@ -232,7 +238,7 @@ export class TimeslotComponent {
 
       this.selectedWeekIndex = selectedIndex > -1 ? selectedIndex : this.selectedWeekIndex;
 
-      this.changeValue({ 'fieldName': 'selectedWeek' });  
+      this.changeValue({ 'fieldName': 'selectedWeek', 'day': moment(this.selectedDate).format('dddd') });
 
     }
 

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PermissionDetailsComponent } from './permission-details.component';
+import { MySubscriptionComponent } from './my-subscription.component';
 
 const routes: Routes = [
   {
-    path:"",
-    component:PermissionDetailsComponent
+    path: "",
+    component: MySubscriptionComponent
   }
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class PermissionDetailsRoutingModule { }
+export class MySubscriptionRoutingModule { }

@@ -8,7 +8,7 @@ const routes: Routes = [
     component: PagesComponent,
     children: [
       {
-        path: "dashboard",
+        path: "dashboard", 
         loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
       },
       {
@@ -34,6 +34,10 @@ const routes: Routes = [
       {
         path : "reports",
         loadChildren: () => import('./reports/reports.module').then(m => m.ReportsModule)
+      },
+      {
+        path : "settings",
+        loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
       },
       {
         path: "**",

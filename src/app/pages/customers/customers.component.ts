@@ -11,6 +11,7 @@ import * as moment from "moment";
 })
 export class CustomersComponent {
 
+  userSubscribe: any;
   customerList!: Array<any>;
   tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'MOBILE','REGISTERED ON','REGISTERED VIA', 'STATUS', 'ACTION'];
   _: any = _;
@@ -22,14 +23,26 @@ export class CustomersComponent {
 
   ngOnInit() {
 
+    if(!_.isEmpty(this.service.companyDetails)) this.getCustomerList();
+
+    this.userSubscribe = this.service.userDetailsObs.subscribe((data: any) => {
+
+      if(!_.isEmpty(data)) this.getCustomerList();
+
+    });
+
+
     this.service.setApiLoaders({ "isLoading": true, "url": ["/master/customers"] });
 
-    this.getCustomerList();
   }
 
   getCustomerList() {
 
-    this.service.postService({ url: "/master/customers" }).subscribe((res: any) => {
+    let payload = { "companyId": this.service.companyDetails._id }
+
+    console.log(payload);    
+
+    this.service.postService({ "url": "/master/customers", "payload": payload }).subscribe((res: any) => {
       
       if (res.status == "ok") {
 
@@ -45,6 +58,12 @@ export class CustomersComponent {
 
     })
 
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSubscribe.unsubscribe();
   }
 
 }
