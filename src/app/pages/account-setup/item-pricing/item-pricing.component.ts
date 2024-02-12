@@ -125,7 +125,7 @@ export class ItemPricingComponent {
 
           this.agentProducts = _.map(this.agentProducts, (e: any) => {
     
-            e.productId.productImageURL = this.service.getFullImagePath(e?.productId?.productImageURL);
+            e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL });
             
             return e;
     
@@ -143,7 +143,7 @@ export class ItemPricingComponent {
 
           this.otherProducts = _.map(this.otherProducts, (e: any) => {
     
-            e.productImageURL = this.service.getFullImagePath(e?.productImageURL);
+            e.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productImageURL });
             
             return e;
     
@@ -292,7 +292,7 @@ export class ItemPricingComponent {
 
             let data: any = _.first(res.result.data);
 
-            data['productId']['productImageURL'] = this.service.getFullImagePath(data?.productId?.productImageURL);
+            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL });
 
             this.agentProducts.push(data);
 
@@ -306,7 +306,7 @@ export class ItemPricingComponent {
 
             let data = res.result.data;
 
-            data['productId']['productImageURL'] = this.service.getFullImagePath(data?.productId?.productImageURL);
+            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL });
             
             this.agentProducts.splice(_.findIndex(this.agentProducts, { _id: this.editData._id }), 1, res.result.data);
 

@@ -25,7 +25,6 @@ export class CommonService {
   public currencyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" })) || {};
 
   public userDetailsObs = new Subject();
-  public IMG_BASE_URL = APP_CONFIG.IMG_BASE_URL;
 
   constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) {
 
@@ -120,10 +119,10 @@ export class CommonService {
 
   }
 
-  getFullImagePath(imgUrl: any): string {
+  getFullImagePath({ imgUrl = "", baseUrlFrom = 'AGENT_IMG_URL' }: { imgUrl: any, baseUrlFrom?: 'AGENT_IMG_URL' | 'ADMIN_IMG_URL' | 'CUSTOMER_IMG_URL'}): string {
     // Replace backslashes with forward slashes
     const imagePath = imgUrl.replace(/\\/g, '/');
-    return (this.IMG_BASE_URL + imagePath).toString();
+    return (APP_CONFIG[baseUrlFrom] + imagePath).toString();
   }
 
   // POST API Method While Pass JSON Data

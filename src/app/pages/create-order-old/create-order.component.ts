@@ -212,7 +212,7 @@ export class CreateOrderComponent {
 
         this.selectedCustomerDet['addressInfo'] = _.find(this.selectedCustomerDet.addresses, { 'isDefault': true });
 
-        this.selectedCustomerDet['profileImg'] = _.isEmpty(this.selectedCustomerDet?.profileImg) ? './assets/images/customer-profile.svg' : this.service.getFullImagePath(this.selectedCustomerDet?.profileImg);
+        this.selectedCustomerDet['profileImg'] = _.isEmpty(this.selectedCustomerDet?.profileImg) ? './assets/images/customer-profile.svg' : this.service.getFullImagePath({ 'imgUrl': this.selectedCustomerDet?.profileImg });
 
       }
 
@@ -232,7 +232,7 @@ export class CreateOrderComponent {
 
         this.masterList['agentProducts'] = _.map(this.masterList['agentProducts'], (e: any) => {
   
-          e.productId.productImageURL = this.service.getFullImagePath(e?.productId?.productImageURL);
+          e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL });
           
           return e;
   
@@ -435,7 +435,7 @@ export class CreateOrderComponent {
 
       'chargeName': [chargeDet.chargeId?.chargeName || chargeDet.chargeName, Validators.required],
 
-      'imgURL': [this.service.getFullImagePath(chargeDet.chargeId?.imgURL || chargeDet.imgURL), Validators.required],
+      'imgURL': [this.service.getFullImagePath({ 'imgUrl': chargeDet.chargeId?.imgURL || chargeDet.imgURL }), Validators.required],
 
       'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
 
@@ -487,7 +487,7 @@ export class CreateOrderComponent {
 
         'chargeName': [chargeDet?.chargeId?.chargeName, Validators.required],
 
-        'imgURL': [this.service.getFullImagePath(chargeDet?.chargeId?.imgURL), Validators.required],
+        'imgURL': [this.service.getFullImagePath({ 'imgUrl': chargeDet?.chargeId?.imgURL }), Validators.required],
 
         'amount': [ (chargeDet?.amount || 0).toCustomFixed(), Validators.required],
 

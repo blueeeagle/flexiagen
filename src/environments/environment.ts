@@ -8,13 +8,18 @@ export const APP_CONFIG = {
 	secretKey: "",
 
 	// APP_DOMAIN: 'http://agentapi.flexiclean.me/api/v1',
-
-    IMG_BASE_URL: 'http://agentapi.flexiclean.me/',
+    AGENT_IMG_URL: 'http://agentapi.flexiclean.me/',
+	ADMIN_IMG_URL: 'http://adminapi.flexiclean.me/',
+	CUSTOMER_IMG_URL: 'http://cusapi.flexiclean.me/',
   
 	// GOOGLE_MAP_API_KEY: '',
 
     APP_DOMAIN: 'http://localhost:9000/api/v1',
-    // IMG_BASE_URL: 'http://localhost:9000/',
+    // AGENT_IMG_URL: 'http://localhost:9000/',
+	// ADMIN_IMG_URL: 'http://localhost:9500/',
+	// CUSTOMER_IMG_URL: 'http://localhost:9001/'
+
+
 };
 
  

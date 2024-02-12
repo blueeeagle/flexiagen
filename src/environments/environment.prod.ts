@@ -11,6 +11,9 @@ export const APP_CONFIG = {
 
 	APP_DOMAIN: 'http://agentapi.flexiclean.me/api/v1',
 
-    IMG_BASE_URL: 'http://agentapi.flexiclean.me/'
+    AGENT_IMG_URL: 'http://agentapi.flexiclean.me/',
+	ADMIN_IMG_URL: 'http://adminapi.flexiclean.me/',
+	CUSTOMER_IMG_URL: 'http://cusapi.flexiclean.me/',
+
 
 };

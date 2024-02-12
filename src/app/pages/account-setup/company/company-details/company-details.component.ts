@@ -52,7 +52,7 @@ export class CompanyDetailsComponent {
       
       ],
 
-      'companyLogo': [this.service.companyDetails?.companyLogo ? this.service.getFullImagePath(this.service.companyDetails.companyLogo) : '' ],
+      'companyLogo': [this.service.companyDetails?.companyLogo ? this.service.getFullImagePath({ 'imgUrl': this.service.companyDetails.companyLogo}) : '' ],
 
     });
 

@@ -106,7 +106,7 @@ export class UsersListComponent {
 
       'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
 
-      'profileImg': [this.editData?.profileImg ? this.service.getFullImagePath(this.editData.profileImg) : '' ],
+      'profileImg': [this.editData?.profileImg ? this.service.getFullImagePath({ 'imgUrl': this.editData.profileImg }) : '' ],
 
     });
 
