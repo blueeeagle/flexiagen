@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-create-order',
@@ -10,17 +12,92 @@ import * as _ from 'lodash';
 export class CreateOrderComponent {
 
   orderForm: any;
+  customerForm: any;
+  addressForm: any;
+  filterForm: any;
+  openCanvas: boolean = false;
   formSubmitted: any = {
-    customerForm: false,
-    orderForm: false,
-    customerSearched: false
+    "customerForm": false,
+    "orderForm": false,
+    "customerSearched": false
   };
-
+  canvasConfig: any = {
+    "canvasName": "addCustomer",
+    "canvasTitle": "Add Customer",
+    "applyBtnTxt": "Save",
+    "cancelBtnTxt": "Clear",
+    "showCancelBtn": true
+  };
+  masterList: any = {
+    "dialCodeList": [],
+    "countryList": [],
+    "stateList": [],
+    "cityList": [],
+    "areaList": [],
+    "productCharges": [],
+    "categoryList": [],
+    "workingHours": [],
+    "activeDays": []
+  };
   step = 0;
 
   constructor(public service: CommonService) { 
 
     this.loadForm();
+
+    this.loadCustomerForm();
+
+    this.getBasicDetails();
+
+  }
+
+  getBasicDetails() {
+
+    forkJoin({
+
+      "countries": this.service.getService({ "url": "/address/countries" }),
+
+      "dialCodes": this.service.getService({ "url": "/address/dialCode" }),
+
+      "categories": this.service.postService({ "url": "/master/categories" }),
+
+      "charges": this.service.getService({ "url": "/master/productCharges" }),
+
+      "workingHours": this.service.postService({ "url": "/setup/workingHrs/list", "payload": { "is_active": true } })
+
+    }).subscribe((res: any) => {
+
+      this.masterList["countryList"] = res.countries.status == "ok" ? res.countries.data : [];
+
+      this.masterList["dialCodeList"] = res.dialCodes.status == "ok" ? res.dialCodes.data : [];
+
+      this.masterList["categoryList"] = res.categories.status == "ok" ? res.categories.data : [];
+
+      this.masterList["workingHours"] = res.workingHours.status == "ok" ? res.workingHours.data : [];
+
+      this.masterList['activeDays'] = _.map(this.masterList['workingHours'], 'day');
+
+      this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
+
+      // this.getMyProducts({});
+
+      if(res.charges.status == "ok") {
+
+        this.masterList['productCharges'] = res.charges.data;
+
+        this.masterList['productCharges'] = _.flatten(_.map(this.masterList['productCharges'], (obj: any) => {
+
+          obj.chargeType = 'normal';
+
+          let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
+          
+          return [obj, obj2];
+
+        }));
+
+      }
+
+    });
 
   }
 
@@ -30,11 +107,73 @@ export class CreateOrderComponent {
 
       'searchCustomer': [''],
 
+      'customerDetails': {},
+
+      'customerId': ['', Validators.required],
+
+      'isExistingCustomer': [false],
+
+      'isCustomerVerified': [false],
+
+    });
+
+  }
+
+  loadCustomerForm() {
+
+    this.customerForm = this.service.fb.group({
+
+      'companyId': [ this.service?.companyDetails?._id, Validators.required],
+
+      'firstName': [ null, Validators.required ],
+
+      'lastName': [ null, Validators.required ],  
+
+      'email': [ null, Validators.email ],
+
+      'dialCode': [ null, [Validators.required]],
+
+      'mobile': [ null, [Validators.required]],
+
+      'gender': [ 'male' ],
+
+      'customerType': 'pos',
+      
+    });
+
+  }
+
+  loadAddressForm() {
+
+    this.addressForm = this.service.fb.group({
+
+      'street': [ null, Validators.required ],
+
+      'building': [ null ],
+
+      'block': [ null ],
+
+      'others': [ null ],
+
+      'areaId': [ null, Validators.required ],
+
+      'cityId': [ null, Validators.required ],
+
+      'stateId': [ null, Validators.required ],
+
+      'countryId': [ null, Validators.required ],
+
+      'zipcode': [ null, Validators.required ],
+
+      'isDefault': false
+
     });
 
   }
 
   get f() { return this.orderForm.controls; }
+
+  get cusf() { return this.customerForm.controls; }
 
   searchCustomer() {
     
@@ -61,13 +200,37 @@ export class CreateOrderComponent {
 
           this.formSubmitted.customerSearched = true;
           
-          return this.service.showToastr({ "data": { "message": "No customer found with this email or phone number", "type": "error" } });
+          return this.service.showToastr({ "data": { "message": `No customer found with this ${ _.first(_.keys(payload)) == 'email' ? 'Email Id' : 'Mobile No'  } `, "type": "error" } });
+
+        } else {
+
+          let customerDetails: any = _.first(res.data);
+
+          this.orderForm.patchValue({ 
+            
+            "customerDetails": customerDetails,
+
+            "customerId": customerDetails._id,
+
+            "isExistingCustomer": customerDetails.companyId.includes(this.service.userDetails.companyId),
+
+            "isCustomerVerified": false
+          
+          });
 
         }
 
       }
 
     });
+
+  }
+
+  asidebarCancel() {
+
+  }
+
+  asidebarSubmit() {
 
   }
 

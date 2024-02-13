@@ -43,3 +43,121 @@
     </mat-accordion>
 
 </div>
+
+<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()" (onSubmit)="asidebarSubmit()">
+
+    <ng-container *ngIf="canvasConfig['canvasName'] == 'addCustomer'">
+    
+        <div class="row" *ngIf="customerForm" [formGroup]="customerForm">
+
+            <div class="col-sm-6 pe-sm-1">
+    
+                <div class="form-group">
+    
+                    <label for="firstName"> First Name </label>
+                    
+                    <input type="text" class="form-control form-control-lg" id="firstName" formControlName="firstName" placeholder="Enter Name" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || cusf.firstName.touched) && cusf.firstName.errors }">
+        
+                    <div *ngIf="(formSubmitted.customerForm || cusf.firstName.touched) && cusf.firstName.errors" class="invalid-feedback">
+            
+                        <div *ngIf="cusf.firstName.errors.required">First Name is required</div>
+        
+                    </div>
+        
+                </div>
+    
+            </div>
+    
+            <div class="col-sm-6 ps-sm-1">
+    
+                <div class="form-group">
+    
+                    <label for="lastName"> Last Name </label>
+                    
+                    <input type="text" class="form-control form-control-lg" id="lastName" formControlName="lastName" placeholder="Enter Name" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || cusf.lastName.touched) && cusf.lastName.errors }">
+        
+                    <div *ngIf="(formSubmitted.customerForm || cusf.lastName.touched) && cusf.firstName.errors" class="invalid-feedback">
+            
+                        <div *ngIf="cusf.lastName.errors.required">Last Name is required</div>
+        
+                    </div>
+        
+                </div>
+    
+            </div>
+    
+            <div class="form-group">
+    
+                <label for="mobile">Mobile Number</label>
+    
+                <div class="input-group">
+                
+                    <div class="input-group-prepend me-1">
+                
+                        <ng-select formControlName="dialCode" [clearable]="false" placeholder="+91" class="form-control"
+                            [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || cusf.dialCode.touched) && cusf.dialCode.errors }">
+                
+                            <ng-option *ngFor="let dialCodeDet of masterList['dialCodeList']" [value]="dialCodeDet.dialCode">
+                
+                                <img class="country-flag" alt="{{ dialCodeDet.iso2 }}"
+                                    src="http://purecatamphetamine.github.io/country-flag-icons/3x2/{{ dialCodeDet['iso2'] }}.svg" /> {{
+                                dialCodeDet.dialCode }}
+                
+                            </ng-option>
+                
+                        </ng-select>
+                
+                    </div>
+                
+                    <input type="text" class="form-control" id="mobile" formControlName="mobile" placeholder="Enter"
+                        [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || cusf.mobile.touched) && cusf.mobile.errors }" numbersOnly maxlength="10">
+                
+                    <div *ngIf="(formSubmitted.customerForm || cusf.mobile.touched) && cusf.mobile.errors" class="invalid-feedback">
+                
+                        <div *ngIf="cusf.mobile.errors.required">Mobile number is required</div>
+                
+                    </div>
+                
+                </div>
+    
+            </div>
+    
+            <div class="col-md-8 pe-2 pe-md-1">
+    
+                <div class="form-group">
+    
+                    <label for="email"> Email </label>
+                    
+                    <input type="email" class="form-control form-control-lg" id="email" formControlName="email" placeholder="Enter Email" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || cusf.email.touched) && cusf.email.errors }">
+        
+                    <div *ngIf="(formSubmitted.customerForm || cusf.email.touched) && cusf.email.errors" class="invalid-feedback">
+            
+                        <div *ngIf="cusf.email.errors.required">Email is required</div>
+        
+                    </div>
+        
+                </div>
+    
+            </div>
+    
+            <div class="col-md-4 ps-2 ps-md-1">            
+    
+                <div class="form-group">
+    
+                    <label for="gender">Gender</label>
+    
+                    <ng-select class="form-control form-control-lg border-2" placeholder="Select Gender" formControlName="gender" [clearable]="false">
+    
+                        <ng-option *ngFor="let gender of ['male','female','others']" [value]="gender">
+    
+                            {{ gender | uppercase }}
+    
+                        </ng-option>
+    
+                    </ng-select>
+    
+                </div>
+    
+            </div>
+
+        

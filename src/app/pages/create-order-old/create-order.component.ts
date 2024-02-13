@@ -39,7 +39,7 @@ export class CreateOrderComponent {
     "applyBtnTxt": "Save",
     "cancelBtnTxt": "Clear",
     "showCancelBtn": true
-  }
+  };
   masterList: any = {
     dialCodeList: [],
     countryList: [],
@@ -62,7 +62,12 @@ export class CreateOrderComponent {
   constructor(public service: CommonService) {
 
     this.service.setApiLoaders({ 'isLoading': true, 'url': [
-      '/master/productCharges', '/setup/agentProducts', '/address/countries', '/address/dialCode', '/master/categories', '/setup/workingHrs/list'
+      '/master/productCharges', 
+      '/setup/agentProducts', 
+      '/address/countries', 
+      '/address/dialCode', 
+      '/master/categories', 
+      '/setup/workingHrs/list'
     ] });
 
     this.getBaseDetails();
