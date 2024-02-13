@@ -125,7 +125,7 @@ export class ItemPricingComponent {
 
           this.agentProducts = _.map(this.agentProducts, (e: any) => {
     
-            e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL });
+            e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
             
             return e;
     
@@ -143,7 +143,7 @@ export class ItemPricingComponent {
 
           this.otherProducts = _.map(this.otherProducts, (e: any) => {
     
-            e.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productImageURL });
+            e.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
             
             return e;
     
@@ -202,7 +202,7 @@ export class ItemPricingComponent {
 
       'chargeName': [chargeDet.chargeId?.chargeName || chargeDet.chargeName, Validators.required],
 
-      'imgURL': [this.service.getFullImagePath(chargeDet.chargeId?.imgURL || chargeDet.imgURL), Validators.required],
+      'imgURL': [this.service.getFullImagePath({ 'imgUrl': chargeDet.chargeId?.imgURL || chargeDet.imgURL, 'baseUrlFrom': 'ADMIN_IMG_URL' }), Validators.required],
 
       'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
 
@@ -292,7 +292,7 @@ export class ItemPricingComponent {
 
             let data: any = _.first(res.result.data);
 
-            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL });
+            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
 
             this.agentProducts.push(data);
 
@@ -306,7 +306,7 @@ export class ItemPricingComponent {
 
             let data = res.result.data;
 
-            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL });
+            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
             
             this.agentProducts.splice(_.findIndex(this.agentProducts, { _id: this.editData._id }), 1, res.result.data);
 
