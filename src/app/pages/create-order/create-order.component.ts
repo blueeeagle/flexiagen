@@ -12,6 +12,8 @@ import { forkJoin } from 'rxjs';
 export class CreateOrderComponent {
 
   orderForm: any;
+  mode: string = 'Create';
+  editData: any;
   customerForm: any;
   addressForm: any;
   filterForm: any;
@@ -39,17 +41,12 @@ export class CreateOrderComponent {
     "workingHours": [],
     "activeDays": []
   };
+  _: any = _;
   step = 0;
 
   constructor(public service: CommonService) { 
 
-    this.filterForm = this.service.fb.group({ 
-      
-      'categoryId': [],
-
-      'searchValue': ''
-    
-    });
+    this.filterForm = this.service.fb.group({ 'categoryId': [] });
 
     this.loadForm();
 
@@ -89,8 +86,6 @@ export class CreateOrderComponent {
 
       this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
 
-      // this.getMyProducts({});
-
       if(res.charges.status == "ok") {
 
         this.masterList['productCharges'] = res.charges.data;
@@ -117,13 +112,13 @@ export class CreateOrderComponent {
 
       'searchCustomer': [''],
 
-      'customerDetails': {},
+      'customerDetails': this.editData?.customerId || null,
 
-      'customerId': ['', Validators.required],
+      'customerId': [ this.editData?.customerId?._id ||'', Validators.required],
 
-      'isExistingCustomer': [false],
+      'isExistingCustomer': this.mode == 'Update',
 
-      'isCustomerVerified': [false],
+      'isCustomerVerified': this.mode == 'Update'
 
     });
 
@@ -133,7 +128,7 @@ export class CreateOrderComponent {
 
     this.customerForm = this.service.fb.group({
 
-      'companyId': [ this.service?.companyDetails?._id, Validators.required],
+      'companyId': [ [this.service?.companyDetails?._id] ],
 
       'firstName': [ null, Validators.required ],
 
