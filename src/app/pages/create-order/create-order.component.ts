@@ -43,9 +43,19 @@ export class CreateOrderComponent {
 
   constructor(public service: CommonService) { 
 
+    this.filterForm = this.service.fb.group({ 
+      
+      'categoryId': [],
+
+      'searchValue': ''
+    
+    });
+
     this.loadForm();
 
     this.loadCustomerForm();
+
+    this.loadAddressForm();
 
     this.getBasicDetails();
 
@@ -175,6 +185,8 @@ export class CreateOrderComponent {
 
   get cusf() { return this.customerForm.controls; }
 
+  get af() { return this.addressForm.controls; }
+
   searchCustomer() {
     
     // if email or phone number is empty
@@ -221,6 +233,8 @@ export class CreateOrderComponent {
         }
 
       }
+
+      console.log(this.orderForm.value);
 
     });
 

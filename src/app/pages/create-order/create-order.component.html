@@ -6,7 +6,7 @@
     
             <mat-expansion-panel-header class="px-1">
 
-                <mat-panel-title class="text-primary-emphasis"> 1.Customer </mat-panel-title>
+                <mat-panel-title class="text-primary-emphasis h5 fw-600"> 1.Customer </mat-panel-title>
 
             </mat-expansion-panel-header>        
 
@@ -27,6 +27,27 @@
                         <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched" (click)="searchCustomer()"></i>
 
                     </button>
+
+                </div>
+
+                <div class="mt-2 p-2 px-3 border border-1 rounded" *ngIf="f.customerDetails.value as customerDet">
+
+                    <div class="d-flex">
+
+                        <div class="customer-image product-image mt-3" style="background: url({{customerDet?.customerImageURL}}), url(./assets/images/dashboard/Name.png); width: 35px; height: 35px;"></div>
+
+                        <div>
+
+                            <h6>{{ customerDet.firstName }}</h6>
+
+                            <p class="small">{{ customerDet.email }}</p>
+        
+                            <p class="small mb-0">{{ customerDet.mobile }}</p>
+
+                        </div>
+
+
+                    </div>
 
                 </div>
 
