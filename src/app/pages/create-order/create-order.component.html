@@ -1,51 +1,92 @@
 <div class="create-order-section">
+
+    <div class="col-xxl-7">
+
+        <mat-accordion>
+        
+            <mat-expansion-panel class="mat-elevation-z1" [expanded]="step === 0" hideToggle>
+        
+                <mat-expansion-panel-header class="px-1 bg-body-secondary rounded-0 px-3" style="height: 50px !important;">
     
-    <mat-accordion>
+                    <mat-panel-title class="text-primary-emphasis"> 
+                        
+                        <div class="py-1 lh-1 px-2 bg-white rounded small me-2">1</div> Customer Details 
+                    
+                    </mat-panel-title>
     
-        <mat-expansion-panel class="shadow-none border-bottom rounded-0" [expanded]="step === 0" hideToggle>
+                </mat-expansion-panel-header>
     
-            <mat-expansion-panel-header class="px-1">
+                <div class="rounded-2 p-3" [formGroup]="orderForm">
+    
+                    <div class="d-flex align-items-center">
+    
+                        <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
+    
+                        <button class="btn rounded-pill ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;">
+                
+                            <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
+    
+                            <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched" (click)="searchCustomer()"></i>
+    
+                        </button>
+    
+                    </div>
+    
+                    <div class="mt-3" *ngIf="f.customerDetails.value as customerDet">
 
-                <mat-panel-title class="text-primary-emphasis"> 1.Customer </mat-panel-title>
+                        <div class="d-flex">
 
-            </mat-expansion-panel-header>        
+                            <label class="small text-secondary me-2" style="width: 50px;">Name</label>
 
-            <div class="border rounded-2 p-3" [formGroup]="orderForm">
+                            <p class="small fw-600">{{ customerDet.firstName + " " + customerDet.lastName }}</p>
 
-                <h6 class="mb-0">Customer Details</h6>
+                        </div>
 
-                <hr class="mt-1">
+                        <div class="d-flex">
 
-                <div class="d-flex align-items-center">
+                            <label class="small text-secondary me-2" style="width: 50px;">Email</label>
 
-                    <input class="form-control form-control-lg border-2 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="min-width: 280px; max-width: 360px;">
+                            <p class="small fw-600">{{ customerDet.email }}</p>
 
-                    <button class="btn rounded-pill ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;">
-            
-                        <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
+                        </div>
 
-                        <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched" (click)="searchCustomer()"></i>
+                        <div class="d-flex">
 
-                    </button>
+                            <label class="small text-secondary me-2" style="width: 50px;">Phone</label>
 
+                            <p class="small fw-600">{{ customerDet.dialCode + "" + customerDet.mobile }}</p>
+
+                        </div>
+
+                        <button class="mb-2 btn btn-primary px-4 py-2 rounded" *ngIf="!f.isExistingCustomer.value">Add Customer</button>
+                            
+                        <p class="mb-0 small text-light" style="font-size: 12px;" *ngIf="!f.isExistingCustomer.value">
+                            
+                            *The Customer is not registered with us. Please add the customer details.
+                        
+                        </p>
+    
+                    </div>
+    
                 </div>
-
-            </div>
-
-            <div class="mt-2 text-end">
-
-                <button class="btn btn-primary btn-sm px-5">Next</button>
-
-            </div>
     
-        </mat-expansion-panel>
+                <div class="px-3 pb-2 text-end" *ngIf="f.isExistingCustomer.value || _.isEmpty(f.customerDetails.value)">
     
-    </mat-accordion>
+                    <button class="btn btn-primary btn-sm px-5">CONTINUE</button>
+    
+                </div>
+        
+            </mat-expansion-panel>
+        
+        </mat-accordion>
+
+    </div>
+    
 
 </div>
 
 <asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()" (onSubmit)="asidebarSubmit()">
-
+  
     <ng-container *ngIf="canvasConfig['canvasName'] == 'addCustomer'">
     
         <div class="row" *ngIf="customerForm" [formGroup]="customerForm">
@@ -140,7 +181,7 @@
     
             </div>
     
-            <div class="col-md-4 ps-2 ps-md-1">            
+            <div class="col-md-4 ps-2 ps-md-1">
     
                 <div class="form-group">
     
@@ -160,4 +201,8 @@
     
             </div>
 
-        
+        </div>
+
+    </ng-container>
+
+</asidebar>
