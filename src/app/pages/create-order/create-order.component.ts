@@ -235,6 +235,21 @@ export class CreateOrderComponent {
 
   }
 
+  sendCustomerVerification({ isNewCustomer = false }: { isNewCustomer?: boolean}) {
+
+    if(isNewCustomer) {
+
+
+    } else {
+
+      this.service.postService({ "url": "/addCustomer/sendVerification/"+this.f.customerId.value }).subscribe((res: any) => {
+
+      });
+
+    }
+
+  }
+
   asidebarCancel() {
 
   }
