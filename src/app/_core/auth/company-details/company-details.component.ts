@@ -283,13 +283,52 @@ export class CompanyDetailsComponent {
 
     this.isLoading = true
 
-    let payload: any = this.companyForm.value;
+    let companyPayload: any = this.companyForm.value;
 
-    payload['addressDetails'] = _.omit(payload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
+    companyPayload['addressDetails'] = _.omit(companyPayload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
 
-    payload['ownerName'] = payload.ownerName.replace(/[0-9]/g, '');
+    companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
 
-    this.service.postService({ "url": `/setup/company`, 'payload': payload }).subscribe((res: any) => {
+
+    const payload = {
+
+      "amount": 100,
+      
+      "currency": "BHD",
+      
+      "customerInfo": {
+        
+        "firstName": companyPayload?.ownerName,
+        
+        "email": "akajithkumar9700@gmail.com",
+        
+      }
+
+    };
+
+    this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
+      
+      if (res.status == "ok") {
+
+        window.location.href = res.data.url;
+          
+        this.isLoading = false;
+        
+      }
+
+    },
+      (error: any) => {
+
+        this.isLoading = false;
+      
+        this.service.showToastr({ data: { message: error.error.message, type: "error" } });
+    });
+
+  }
+
+  createCompany(payload : any) {
+    
+      this.service.postService({ "url": `/setup/company`, 'payload': payload }).subscribe((res: any) => {
 
       if(res.status=='ok') {
 
@@ -321,8 +360,8 @@ export class CompanyDetailsComponent {
 
       this.service.showToastr({ "data": { "message": _.get(err, 'error.message', 'Something went wrong'), "type": "error" } });
 
-    });
-
+      });
+    
   }
 
   showCompanyDetails(event: any): any {
