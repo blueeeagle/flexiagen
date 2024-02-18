@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 @Component({
@@ -22,8 +23,8 @@ export class CompanyDetailsComponent {
   showPreview: boolean = false;
   appServiceChargeDet: any = { 'pos': '0', 'online': '0', 'logistics': '0' };
   _: any = _;
-
-  constructor(public service: CommonService) { 
+  paymentFailedMsg: String = "";
+  constructor(public service: CommonService, private route: ActivatedRoute) { 
 
   }
 
@@ -35,6 +36,48 @@ export class CompanyDetailsComponent {
     this.loadForm();
 
     this.getCountries();
+
+    this.route.params.subscribe((params: any) => {
+      
+       const validationRegex = new RegExp("^[0-9a-fA-F]{24}$");
+      
+      if (validationRegex.test(params.paymentId)) {
+
+        this.isLoading = true;
+
+        this.showPreview = true;
+              
+        const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
+
+        const formVal: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
+
+        this.companyForm.patchValue(formVal);
+                
+        this.service.getService({ "url": `/pg/getPaymentDetail/${params.paymentId}` }).subscribe((res: any) => {
+          
+          if (res.status == "ok") {
+                          
+            if (res.data?.status == "CAPTURED") this.createCompany(payload);
+
+            else {
+
+              this.paymentFailedMsg = `The initiated payment was ${res.data?.status}. Please retry/Contact admin`;
+
+              this.isLoading = false;
+            }
+              
+          }
+        },
+          (error: any) => {
+          
+            this.service.showToastr({ data: { message: "Payment status fetching failed. Please try again later" } });
+
+            this.paymentFailedMsg = `Please don't worry. If your payment was deducted we'll notify ASAP.`;
+        })
+        
+      }      
+        
+    });
 
   }
 
@@ -289,7 +332,8 @@ export class CompanyDetailsComponent {
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
 
-
+    // return;
+    
     const payload = {
 
       "amount": 100,
@@ -309,6 +353,10 @@ export class CompanyDetailsComponent {
     this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
       
       if (res.status == "ok") {
+
+        this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
+
+        this.service.session({ "method": "set", "key": "formVal", "value": JSON.stringify(this.companyForm.value) });
 
         window.location.href = res.data.url;
           
@@ -334,6 +382,8 @@ export class CompanyDetailsComponent {
 
         this.isLoading = false;
 
+        this.paymentFailedMsg = "";
+
         this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 
         this.service.companyDetails = res.data.companyDetails;
@@ -349,6 +399,12 @@ export class CompanyDetailsComponent {
         this.service.session({ "method": "set", "key": "CurrencyDetails", "value": JSON.stringify(this.service.currencyDetails) });
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
+
+        this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
+
+        this.service.session({ method: 'remove', 'key': 'payload' });
+
+        this.service.session({ method: 'remove', 'key': 'formVal' });
 
         this.service.navigate({ 'url': '/pages/dashboard' });
 

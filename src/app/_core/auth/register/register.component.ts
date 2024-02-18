@@ -128,7 +128,7 @@ export class RegisterComponent {
 
         this.service.showToastr({ "data": { "message": "Account Created Successfully", "type": "success" } });
 
-        this.service.navigate({ "url": '/auth/company-details' });
+        this.service.navigate({ "url": '/auth/company-details/new' });
 
       } else this.isLoading = false;
 
