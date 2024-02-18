@@ -10,7 +10,7 @@ const routes: Routes = [
     canActivate: [LoginGuard]
   },
   {
-    path: "company-details",
+    path: "company-details/:paymentId",
     loadChildren: () => import("./company-details/company-details.module").then(m => m.CompanyDetailsModule),
     canActivate: [companyDetailGuard]
   },
