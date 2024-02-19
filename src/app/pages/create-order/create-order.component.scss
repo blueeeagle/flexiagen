@@ -25,3 +25,57 @@
     }
 
 }
+
+
+.order-preview .create-order-section {
+
+    margin-top: 0rem !important;
+
+    .card-body {
+        height: calc(100vh - 128px);
+    }
+
+}
+
+.product-card {
+
+    &:hover {
+        border: 2px solid #1e4894;
+
+        .card-body {
+            .bx-plus {
+                display: block;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+            }
+        }
+    }
+
+    .card-body {
+        .bx-plus {
+            display: none;
+            color: #1e4894;
+            border-color: #1e4894;
+            border: 2px solid;
+        }
+    }
+}
+
+input[type=checkbox].toggle-sm + label {
+    width: 70px;
+    height: 28px;
+    line-height: 28px;
+}
+
+input[type=checkbox].toggle-sm:checked + label:before, input[type=checkbox].toggle-sm:checked + label:hover:before, input[type=checkbox].toggle-sm:focus:checked + label:before, input[type=checkbox].toggle-sm:focus:checked + label:hover:before {
+    background-position: 0 0;
+    top: 4px;
+    right: 5px;
+    left: auto;
+}
+
+input[type=checkbox].toggle-sm + label:before, input[type=checkbox].toggle-sm + label:hover:before {
+    width: 16px;
+    height: 16px;
+}

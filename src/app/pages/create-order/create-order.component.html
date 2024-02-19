@@ -1,167 +1,351 @@
 <div class="create-order-section">
 
-    <div class="col-xxl-7">
-
-        <mat-accordion>
-        
-            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 0 }" [expanded]="step === 0" hideToggle disabled>
-        
-                <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 0 }" style="height: 50px !important;">
+    <mat-accordion>
     
-                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 0 ? 'text-primary-emphasis' : 'text-secondary'"> 
-                        
-                        <div class="lh-1 me-2 px-2 py-1 rounded small text-primary-emphasis"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> CUSTOMER DETAILS 
-                    
-                    </mat-panel-title>
+        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 0 }" [expanded]="step === 0" hideToggle disabled>
     
-                </mat-expansion-panel-header>
+            <mat-expansion-panel-header 
+                class="px-1 rounded-0 px-3" 
+                [ngClass]="{ 'bg-primary-subtle': step === 0 }" 
+                [style]="{ 'height': (!_.isEmpty(selectedCustomerDet) && step != 0 ? '100' : '60') + 'px !important' }">
+
+                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 0 ? 'text-primary-emphasis' : 'text-secondary'"> 
+
+                    <div class="d-flex w-100 justify-content-between">
+
+                        <div class="d-block">
+
+                            <div class="d-flex align-items-center">
     
-                <div class="rounded-2 p-4" [formGroup]="orderForm">
-    
-                    <div class="d-flex align-items-center mb-3" *ngIf="_.isEmpty(f.customerDetails.value)">
-    
-                        <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
-    
-                        <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? addNewCustomer() : searchCustomer()">
-                
-                            <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
-    
-                            <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched"></i>
-    
-                        </button>
-    
-                    </div>
-    
-                    <ng-container *ngIf="!_.isEmpty(f.customerDetails.value) && f.customerDetails.value as customerDet; else noCustomers">
-
-                        <div class="d-flex">
-
-                            <label class="small text-secondary me-2" style="width: 50px;">Name</label>
-
-                            <p class="small fw-600">{{ customerDet.firstName + " " + customerDet.lastName }}</p>
-
-                            <a class="text-primary" (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true })">
-
-                                <i class="bi bi-pencil-square ms-3" 
-                                   (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true })">
-                                </i> Edit 
-
-                            </a>
-
-                        </div>
-
-                        <div class="d-flex">
-
-                            <label class="small text-secondary me-2" style="width: 50px;">Email</label>
-
-                            <p class="small fw-600">{{ customerDet.email }}</p>
-
-                        </div>
-
-                        <div class="d-flex">
-
-                            <label class="small text-secondary me-2" style="width: 50px;">Phone</label>
-
-                            <p class="small fw-600">{{ customerDet.dialCode + "" + customerDet.mobile }}</p>
-
-                        </div>
-
-                        <div class="d-flex align-items-center">
-
-                            <ng-container  *ngIf="!f.isExistingCustomer.value;">
-
-                                <button class="btn btn-primary btn-sm rounded" (click)="sendCustomerVerification({})">VERIFY CUSTOMER</button>
-
-                                <p class="ms-2 mb-0 small text-light" style="font-size: 12px;">
-                                    
-                                    to continue with this order.
+                                <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
                                 
-                                </p>
+                                CUSTOMER DETAILS 
+        
+                                <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0"></i>
+    
+                            </div>
+
+                            <ng-container *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0">
+
+                                <div class="d-flex">
+
+                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+    
+                                    <p class="fw-600 mb-0 text-black">{{ selectedCustomerDet.firstName + " " + selectedCustomerDet.lastName }}</p>
+
+                                </div>
                             
                             </ng-container>
 
-                            <ng-container *ngIf="f.isExistingCustomer.value">
-                                
-                                <button class="btn btn-primary btn-sm rounded">CONTINUE ORDER</button>
+                        </div>
 
+                        <div class="d-block">
+
+                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0" (click)="step = 0">CHANGE</button>
+
+                        </div>                        
+
+                    </div>
+                
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            <div class="rounded-2 p-4" [formGroup]="orderForm">
+
+                <div class="d-flex align-items-center mb-3" *ngIf="_.isEmpty(selectedCustomerDet)">
+
+                    <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
+
+                    <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? addNewCustomer() : searchCustomer()">
+            
+                        <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
+
+                        <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched"></i>
+
+                    </button>
+
+                </div>
+
+                <ng-container *ngIf="!_.isEmpty(selectedCustomerDet) && selectedCustomerDet as customerDet; else noCustomers">
+
+                    <div class="d-flex">
+
+                        <label class="small text-secondary me-2" style="width: 60px;">Name</label>
+
+                        <p class="small fw-600">{{ customerDet.firstName + " " + customerDet.lastName }}</p>
+
+                        <a class="text-primary" (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true })">
+
+                            <i class="bi bi-pencil-square ms-3" 
+                                (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true })">
+                            </i> Edit 
+
+                        </a>
+
+                    </div>
+
+                    <div class="d-flex">
+
+                        <label class="small text-secondary me-2" style="width: 60px;">Email</label>
+
+                        <p class="small fw-600">{{ customerDet.email }}</p>
+
+                    </div>
+
+                    <div class="d-flex">
+
+                        <label class="small text-secondary me-2" style="width: 60px;">Phone</label>
+
+                        <p class="small fw-600">{{ customerDet.dialCode + "" + customerDet.mobile }}</p>
+
+                    </div>
+
+                    <div class="d-flex align-items-center">
+
+                        <ng-container  *ngIf="!f.isExistingCustomer.value;">
+
+                            <button class="btn btn-primary btn-sm rounded px-3" (click)="sendCustomerVerification({})">VERIFY CUSTOMER</button>
+
+                            <p class="ms-2 mb-0 small text-light" style="font-size: 12px;">
+                                
+                                to continue with this order.
+                            
+                            </p>
+                        
+                        </ng-container>
+
+                        <ng-container *ngIf="f.isExistingCustomer.value">
+                            
+                            <button class="btn btn-primary btn-sm rounded px-5" (click)="step = 1">CONTINUE ORDER</button>
+
+                        </ng-container>
+
+                    </div>
+
+                </ng-container>
+
+                <ng-template #noCustomers>
+
+                    <div class="d-flex align-items-center justify-content-center alert alert-secondary pb-0 pt-3">
+
+                        <p class="small text-secondary">No customer found {{ formSubmitted.customerSearched ? 'with this mobile or email' : '' }}</p>
+
+                    </div>
+
+                </ng-template>
+
+            </div>
+    
+        </mat-expansion-panel>  
+
+        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 1 }" [expanded]="step === 1" hideToggle disabled>
+    
+            <mat-expansion-panel-header 
+                class="px-1 rounded-0 px-3" 
+                [ngClass]="{ 'bg-primary-subtle': step === 1 }"  
+                [style]="{ 'height': (f.selectedAddr.value > -1 && step != 1 ? '100' : '60') + 'px !important' }">
+
+                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 1 ? 'text-primary-emphasis' : 'text-secondary'"> 
+
+                    <div class="d-flex w-100 justify-content-between">
+
+                        <div class="d-block">
+
+                            <div class="d-flex align-items-center">
+    
+                                <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">2</div> 
+                                
+                                ADDRESS DETAILS
+        
+                                <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="f.selectedAddr.value > -1 && step != 1"></i>
+    
+                            </div>
+
+                            <ng-container *ngIf="f.selectedAddr.value > -1 && step != 1 && selectedCustomerDet?.addresses[f.selectedAddr.value] as addressDetail">
+
+                                <div class="d-flex">
+
+                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+    
+                                    <p class="fw-600 mb-0 text-black">
+                                        
+                                        {{ addressDetail.street | uppercase }}
+
+                                        <ng-container *ngIf="addressDetail.block || addressDetail.building">
+                                        
+                                            {{ (addressDetail.block ? (addressDetail.block + ' Block, ') : '') + ' ' + (addressDetail.building ? (addressDetail.building + ' Building') : '') }}
+
+                                        </ng-container>
+
+                                        {{ addressDetail.cityId.name + ', '+ addressDetail.stateId.name + ' - ' + addressDetail.zipcode }} 
+
+                                        {{ addressDetail.countryId.name }}
+                                    
+                                    </p>
+
+                                </div>
+                            
                             </ng-container>
 
                         </div>
-    
-                    </ng-container>
 
-                    <ng-template #noCustomers>
+                        <div class="d-block">
 
-                        <div class="d-flex align-items-center justify-content-center alert alert-secondary pb-0 pt-3">
+                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="f.selectedAddr.value > -1 && step != 1" (click)="step = 1">CHANGE</button>
+
+                        </div>                        
+
+                    </div>                        
+                    
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            <div class="rounded-2 small">
+
+                <a class="d-flex px-3 py-4" *ngFor="let addressDet of selectedCustomerDet?.addresses || []; let i =index"  [style]="{ 'background': (f.selectedAddr.value == i ? '#F3F5F9' : '#FFF') }" [ngClass]="{ 'text-secondary': f.selectedAddr.value == i }">
+
+                    <div [formGroup]="orderForm" (click)="orderForm.patchValue({ 'selectedAddr': i })">
+
+                        <input type="radio" class="form-check-input" id="address-{{i}}" formControlName="selectedAddr" [value]="i" name="selectedAddr">
+
+                    </div>
+
+                    <div class="w-100 ms-3">
+
+                        <a class="w-100" (click)="orderForm.patchValue({ 'selectedAddr': i })">
+                            <p class="mb-1">
+
+                                {{ addressDet.street | uppercase }}
     
-                            <p class="small text-secondary">No customer found {{ formSubmitted.customerSearched ? 'with this mobile or email' : '' }}</p>
+                                <ng-container *ngIf="addressDet.block || addressDet.building">
+                                
+                                    {{ (addressDet.block ? (addressDet.block + ' Block, ') : '') + ' ' + (addressDet.building ? (addressDet.building + ' Building') : '') }}
+    
+                                </ng-container>
+    
+                            </p>
+    
+                            <p class="mb-1">{{ addressDet.landmark }}</p>
+    
+                            <p class="mb-1">{{ addressDet.cityId.name + ', '+ addressDet.stateId.name + ' - ' + addressDet.zipcode }} </p>
+    
+                            <p>{{ addressDet.countryId.name }}</p>
+                                
+                        </a>
+
+                        <button class="btn btn-primary btn-sm rounded px-5" *ngIf="f.selectedAddr.value == i" (click)="step = 2">DELIVERY HERE</button>
+
+                    </div>
+                
+                </a>
+
+                <div class="d-flex px-3 py-4">
+
+                    <a class="text-primary cursor-pointer">
+
+                        <i class="fa fa-plus me-2"></i>
+                        
+                        Add New Address
+                    
+                    </a>
+
+                </div>
+
+            </div>
+    
+        </mat-expansion-panel>
+
+        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 2 }" [expanded]="step === 2" hideToggle disabled>
+    
+            <mat-expansion-panel-header 
+                class="px-1 rounded-0 px-3" 
+                [ngClass]="{ 'bg-primary-subtle': step === 2 }" 
+                [style]="{ 'height': (!_.isEmpty(f.itemList.controls) && step != 2 ? '100' : '60') + 'px !important' }">
+
+                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 2 ? 'text-primary-emphasis' : 'text-secondary'">
+                    
+                    <div class="d-flex w-100 justify-content-between">
+
+                        <div class="d-block">
+
+                            <div class="d-flex align-items-center">
+    
+                                <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">3</div> 
+                            
+                                BASKET DETAILS
+        
+                                <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(f.itemList.controls) && step != 2"></i>
+    
+                            </div>
+
+                            <ng-container *ngIf="!_.isEmpty(f.itemList.controls) && step != 2">
+
+                                <div class="d-flex">
+    
+                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+    
+                                    <p class="fw-600 mb-0 text-black">{{ _.size(f.itemList.controls) }} Items</p>
+    
+                                </div>
+                            
+                            </ng-container>
 
                         </div>
 
-                    </ng-template>
-    
-                </div>
-        
-            </mat-expansion-panel>  
+                        <div class="d-block">
 
-            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 1 }" [expanded]="step === 1" hideToggle disabled>
+                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="!_.isEmpty(f.itemList.controls) && step != 2" (click)="step = 2">CHANGE</button>
+
+                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="_.isEmpty(f.itemList.controls) && step != 2" (click)="addProductsModal.open()">ADD ITEMS</button>            
+
+                        </div>                        
+
+                    </div>                    
+
+                </mat-panel-title>
+
+            </mat-expansion-panel-header>
+
+            <div class="rounded-2 p-4">
+
+
+                <ng-container *ngIf="_.isEmpty(f.itemList.controls); else basketInfo">
         
-                <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 1 }" style="height: 50px !important;">
+                    <p class="text-secondary"></p>
+                
+                </ng-container>
+
+                <ng-template #basketInfo>
+
+
+
+                </ng-template>
+
+            </div>
     
-                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 1 ? 'text-primary-emphasis' : 'text-secondary'"> 
-                        
-                        <div class="lh-1 me-2 px-2 py-1 rounded small text-primary-emphasis" [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">2</div> ADDRESS DETAILS 
+        </mat-expansion-panel>
+        
+        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 3 }" [expanded]="step === 3" hideToggle disabled>
+    
+            <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 3 }" style="height: 60px !important;">
+
+                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 3 ? 'text-primary-emphasis' : 'text-secondary'"> 
                     
-                    </mat-panel-title>
-    
-                </mat-expansion-panel-header>
-    
-                <div class="rounded-2 p-4">
+                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis" [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">4</div> PAYMENT OPTIONS
+                
+                </mat-panel-title>
 
-                </div>
-        
-            </mat-expansion-panel>
+            </mat-expansion-panel-header>
 
-            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 2 }" [expanded]="step === 2" hideToggle disabled>
-        
-                <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 2 }" style="height: 50px !important;">
-    
-                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 2 ? 'text-primary-emphasis' : 'text-secondary'"> 
-                        
-                        <div class="lh-1 me-2 px-2 py-1 rounded small text-primary-emphasis" [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">3</div> ORDER SUMMARY
-                    
-                    </mat-panel-title>
-    
-                </mat-expansion-panel-header>
-    
-                <div class="rounded-2 p-4">
+            <div class="rounded-2 p-4">
 
-                </div>
-        
-            </mat-expansion-panel>
-            
-            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 3 }" [expanded]="step === 3" hideToggle disabled>
-        
-                <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 3 }" style="height: 50px !important;">
+            </div>
     
-                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 3 ? 'text-primary-emphasis' : 'text-secondary'"> 
-                        
-                        <div class="lh-1 me-2 px-2 py-1 rounded small text-primary-emphasis" [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">4</div> PAYMENT OPTIONS
-                    
-                    </mat-panel-title>
+        </mat-expansion-panel>            
     
-                </mat-expansion-panel-header>
-    
-                <div class="rounded-2 p-4">
-
-                </div>
-        
-            </mat-expansion-panel>            
-        
-        </mat-accordion>
-
-    </div>
-    
+    </mat-accordion>
 
 </div>
 
@@ -289,23 +473,23 @@
 
 <modal #customerVerificationModal title="Customer Verification OTP" modalBodyClass="p-4" size="md" [showCancelBtn]="false" [showSaveBtn]="false" [showCloseIcon]="false">
 
-    <div class="text-center" *ngIf="!f.isExistingCustomer.value && _.isEmpty(f.customerDetails.value) ? 'true' : 'false' as newCustomer">
+    <div class="text-center" *ngIf="!f.isExistingCustomer.value && _.isEmpty(selectedCustomerDet) ? 'true' : 'false' as newCustomer">
 
         <p class="small text-light">To {{ newCustomer == 'true' ? 'Create' : 'Add' }} customer details, Enter the OTP sent to the customer email</p>
 
         <div class="d-flex justify-content-center pt-3">
 
-            <input type="text" id="otp-inp-1" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[0]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-1' })" autocomplete="off" style="width: 50px;height: 50px;">
+            <input type="text" id="otp-inp-1" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[0]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-1' })" autocomplete="off" style="width: 60px;height: 60px;">
 
-            <input type="text" id="otp-inp-2" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[1]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-3', 'prevElement': '#otp-inp-1' })" autocomplete="off" style="width: 50px;height: 50px;">
+            <input type="text" id="otp-inp-2" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[1]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-3', 'prevElement': '#otp-inp-1' })" autocomplete="off" style="width: 60px;height: 60px;">
 
-            <input type="text" id="otp-inp-3" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[2]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-4', 'prevElement': '#otp-inp-2' })" autocomplete="off" style="width: 50px;height: 50px;">
+            <input type="text" id="otp-inp-3" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[2]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-4', 'prevElement': '#otp-inp-2' })" autocomplete="off" style="width: 60px;height: 60px;">
 
-            <input type="text" id="otp-inp-4" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[3]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-5', 'prevElement': '#otp-inp-3' })" autocomplete="off" style="width: 50px;height: 50px;">
+            <input type="text" id="otp-inp-4" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[3]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-5', 'prevElement': '#otp-inp-3' })" autocomplete="off" style="width: 60px;height: 60px;">
 
-            <input type="text" id="otp-inp-5" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[4]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-6', 'prevElement': '#otp-inp-4' })" autocomplete="off" style="width: 50px;height: 50px;">
+            <input type="text" id="otp-inp-5" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[4]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-6', 'prevElement': '#otp-inp-4' })" autocomplete="off" style="width: 60px;height: 60px;">
 
-            <input type="text" id="otp-inp-6" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[5]" maxlength="1" (keydown)="keydown({ 'event': $event, 'nextElement': '#otp-submit', 'prevElement': '#otp-inp-5' })" autocomplete="off" style="width: 50px;height: 50px;">
+            <input type="text" id="otp-inp-6" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[5]" maxlength="1" (keydown)="keydown({ 'event': $event, 'nextElement': '#otp-submit', 'prevElement': '#otp-inp-5' })" autocomplete="off" style="width: 60px;height: 60px;">
 
         </div>    
         
@@ -347,5 +531,433 @@
 
     </div>
 
+
+</modal>
+
+<modal #orderPreviewModal title="Order Details" modalBodyClass="p-0" [isFullModal]="true" [showCancelBtn]="false" [showSaveBtn]="false">
+
+    <div class="d-flex order-preview">
+
+        <div class="card w-50 mt-5 ms-5 border-0 mat-elevation-z3" style="border-radius: 18px 18px 0 0">
+
+            <div class="card-header bg-secondary rounded-top-pill"></div>
+
+            <div class="card-body">
+
+                <h6 class="text-secondary">AGENT DETAILS</h6>
+
+                <div class="d-flex align-items-center py-2">
+
+                    <img src="./assets/images/default-company-logo.svg">
+
+                    <div class="ms-3">
+
+                        <h5 class="mb-0 fw-600">{{ service.companyDetails.companyName }}</h5>
+
+                        <p class="mb-0 fw-500 text-light small" *ngIf="service.companyDetails.addressDetails as addressDet">
+                            
+                            {{ addressDet.areaId.name }}, {{ addressDet.cityId.name }}, {{ addressDet.stateId.name }}
+                        
+                        </p> 
+
+                    </div>
+
+                </div>
+
+                <h6 class="text-secondary mt-3">CUSTOMER DETAILS</h6>
+
+                <div class="d-flex align-items-start py-3">
+        
+                    <div class="customer-image product-image mt-3" style="background: url({{selectedCustomerDet?.customerImageURL}}); width: 35px; height: 35px;"></div>
+
+                    <div class="ms-3">
+
+                        <h5 class="fw-600">{{selectedCustomerDet?.firstName + ' ' + selectedCustomerDet?.lastName}}</h5>
+
+                        <p class="fw-500 text-light" *ngIf="selectedCustomerDet?.addressInfo as addressDet">
+    
+                            {{ addressDet?.street }}, 
+                            {{ !_.isEmpty(addressDet?.block) ? addressDet?.block + ',' : ''}} 
+                            {{ !_.isEmpty(addressDet?.building) ? addressDet?.building + ',' : '' }}
+                            {{ addressDet?.areaId?.name }}, <br>
+                            {{ addressDet?.cityId?.name }}, 
+                            {{ addressDet?.countryId?.name }} - 
+                            {{ addressDet?.zipcode }}
+    
+                        </p>
+        
+                    </div>
+
+                </div>
+
+                <h6 class="text-secondary mt-3">ORDER STATUS</h6>
+
+                <h6 class="fw-500 p-3 text-secondary bg-light w-75">{{ f.orderStatus.value }}</h6>
+
+                <h6 class="text-secondary mt-3">READY AT</h6>
+
+                <h6 class="fw-600">{{ f.expDeliveryDate.value | date: 'EEE  ddMMM  yyyy' }}</h6>
+
+                <h6 class="fw-500 small text-light">{{ f.expDeliveryTimeSlotDet.value?.label }}</h6>
+
+                <div class="d-flex align-items-center">
+
+                    <div class="me-5">
+
+                        <h6 class="text-secondary mt-3">CREATED BY</h6>
+    
+                        <h6>{{ service.userDetails.name | uppercase }}</h6>
+
+                    </div>
+
+                    <div>
+
+                        <h6 class="text-secondary mt-3">CREATED ON</h6>
+    
+                        <h6>{{ f.orderDate.value | date: 'EEE dd,yyyy' }}</h6>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="create-order-section border-2 border-start">
+
+            <div class="card-body" [formGroup]="orderForm">
+    
+                <mat-accordion multi>
+    
+                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
+    
+                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white" >
+    
+                            <div class="mb-0 text-primary fw-500 small">Item Summary ({{ f.qty.value }})</div>
+    
+                        </mat-expansion-panel-header>
+    
+                        <div class="pt-3 px-4">
+                            
+                            <div style="min-height: 175px;">
+
+                                <ng-container  *ngFor="let productDet of this.itf.value; let index = index">
+
+                                    <ng-container *ngFor="let priceDet of productDet.priceList">
+
+                                        <div class="form-group d-flex align-items-center justify-content-between" *ngIf="priceDet.qty > 0">
+
+                                            <div class="d-flex py-2">
+
+                                                <div class="product-img-card border border-2 rounded p-2 me-3">
+
+                                                    <div class="product-image" style="background : url({{productDet.productImageURL}});width: 75px;height: 75px;"></div> 
+
+                                                </div>
+                            
+                                                <div>
+                                
+                                                    <h6 class="align-self-center mb-0 fw-600" style="min-width: 150px;">{{productDet.productName | titlecase }}</h6>
+
+                                                    <p class="text-secondary fw-500 mb-3 small">{{ priceDet.chargeName | titlecase }}</p>
+                                                    
+                                                    <div class="d-flex align-items-center">
+
+                                                        <p class="text-secondary mb-0 fw-500 small">{{ priceDet.amount +' '+ service.currencyDetails.currencyCode }}</p>
+
+                                                    </div>
+                                
+                                                </div>
+                                
+                                            </div>
+
+                                            <div class="d-flex align-items-center">
+
+                                                <i class="fw-500 bx bx-x fs-6 text-secondary"></i>
+
+                                                <p class="fw-600 mb-0">{{priceDet.qty}}</p>
+
+                                            </div>
+
+                                            <h6 class="mb-0 fw-600">{{ priceDet.netAmt + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                                        </div>
+
+                                    </ng-container>
+
+                                </ng-container>
+
+                            </div>
+    
+                        </div>
+    
+                    </mat-expansion-panel>
+    
+                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
+
+                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
+
+                            <div class="mb-0 text-primary fw-500 small">Check Out</div>
+
+                        </mat-expansion-panel-header>
+
+                        <div class="mt-3" style="min-height: 175px;">
+
+                            <div class="d-flex justify-content-between align-items-center px-4">
+
+                                <h6 class="text-secondary fw-500 mb-0">Subtotal</h6>
+
+                                <h6 class="mb-0 fw-600">{{ f.grossAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 px-4">
+
+                                <p class="text-primary fw-500 mb-0 d-flex align-items-center bg-primary-subtle px-2 py-1 rounded-pill">
+
+                                    <img src="./assets/images/discount.svg" class="me-2" alt="">
+                                    
+                                    Discount
+                                
+                                </p>
+
+                                <h6 class="mb-0 fw-600">{{ f.discAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                            </div>                                        
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between align-items-center px-4">
+
+                                <h6 class="text-secondary fw-500 mb-0">Total</h6>
+
+                                <h6 class="mb-0 fw-600">{{ f.netAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
+
+                            </div>                                            
+
+                        </div>
+
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
+
+                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
+
+                            <div class="mb-0 text-primary fw-500 small">Payment Method</div>
+
+                        </mat-expansion-panel-header>
+
+                        <div class="mt-3" style="min-height: 175px;">
+
+                            <div class="px-4">
+
+                                <mat-radio-group class="d-flex justify-content-around align-items-center pb-3" formControlName="paymentOnDelivery">
+    
+                                    <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': !f.paymentOnDelivery?.value }" (click)="f.paymentOnDelivery.setValue(false)"> 
+                                            
+                                        <mat-radio-button [value]="false">Pay Now</mat-radio-button>
+                                    
+                                    </button>                            
+                                    
+                                    <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': f.paymentOnDelivery?.value }" (click)="f.paymentOnDelivery.setValue(true)"> 
+                                            
+                                        <mat-radio-button [value]="true">Pay on Delivery</mat-radio-button>
+                                    
+                                    </button>
+    
+                                </mat-radio-group>
+    
+                                <hr>
+
+                            </div>
+
+                            <ng-container *ngIf="!f.paymentOnDelivery.value">
+
+                                <div class="px-4">
+
+                                    <mat-radio-group formControlName="paymentMode">
+    
+                                        <div class="d-flex justify-content-around align-items-centerpt-3">
+        
+                                            <button class="btn fs-6 opt-btn text-start w-50 me-2 position-relative" [ngClass]="{ 'active': f.paymentMode.value == 'Benifit' }" (click)="f.paymentMode.setValue('Benifit')"> 
+                                                    
+                                                <mat-radio-button value="Benifit">Benifit</mat-radio-button>
+        
+                                                <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
+                                            
+                                            </button>                            
+                                            
+                                            <button class="btn fs-6 opt-btn text-start w-50 ms-2 position-relative" [ngClass]="{ 'active': f.paymentMode.value == 'Credit Card' }" (click)="f.paymentMode.setValue('Credit Card')"> 
+                                                    
+                                                <mat-radio-button value="Credit Card">Credit Card</mat-radio-button>
+        
+                                                <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
+                                            
+                                            </button>
+        
+                                        </div>
+        
+                                        <div class="d-flex justify-content-around align-items-center mt-4">
+        
+                                            <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': f.paymentMode.value == 'Cash' }" (click)="f.paymentMode.setValue('Cash')"> 
+                                                    
+                                                <mat-radio-button value="Cash">Cash</mat-radio-button>
+                                            
+                                            </button>                            
+                                            
+                                            <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': f.paymentMode.value == 'UPI/Others' }" (click)="f.paymentMode.setValue('UPI/Others')"> 
+                                                    
+                                                <mat-radio-button value="UPI/Others">UPI/Others</mat-radio-button>
+                                            
+                                            </button>
+        
+                                        </div>                                
+        
+                                    </mat-radio-group>                                    
+
+                                </div>                                
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between align-items-center px-4">
+
+                                    <h6 class="text-secondary fw-500 mb-0">Amount Received</h6>
+
+                                    <div class="d-flex align-items-center justify-content-end">
+
+                                        <h6 class="mb-0 fw-600 text-primary">{{ service.currencyDetails.currencyCode }}</h6>
+
+                                        <input type="text" class="form-control form-control-lg border-0 bg-secondary-subtle w-50 rounded-0 ms-3" formControlName="paymentReceived" decimalNumbersOnly (change)="changeValue({ fieldName: 'paymentReceived' })">
+
+                                    </div>
+
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center px-4 mt-3">
+
+                                    <h6 class="text-secondary fw-500 mb-0">Balance Paid</h6>
+
+                                    <div class="d-flex align-items-center justify-content-end">
+
+                                        <h6 class="mb-0 fw-600 fw-600 text-primary">{{ service.currencyDetails.currencyCode }}</h6>
+
+                                        <input type="text" class="form-control form-control-lg border-0 bg-secondary-subtle w-50 rounded-0 ms-3" formControlName="paymentPending" readonly>
+
+                                    </div>
+
+                                </div>
+
+                            </ng-container>
+
+                        </div>
+
+                    </mat-expansion-panel>                    
+                    
+                </mat-accordion>                            
+    
+            </div>
+    
+            <div class="card-footer border-top border-2 px-3 py-2 pt-3">               
+    
+                <button class="btn btn-primary mx-2 w-50 btn fw-light fs-6" (click)="createOrder()">
+    
+                    PayNow
+                
+                </button>
+
+                <button class="btn btn-outline-primary mx-2 w-50 btn-lg fw-light fs-6" (click)="orderPreviewModal.close()">
+    
+                    Discard
+                
+                </button>                 
+    
+            </div>
+    
+        </div>
+    
+    </div>
+
+</modal>
+
+<modal #addProductsModal title="Add Products" modalBodyClass="p-4" [isFullModal]="true" [showCancelBtn]="false" [showSaveBtn]="false">
+    
+    <div class="d-flex flex-wrap align-items-center mb-2" [formGroup]="filterForm">
+
+        <input type="text" id="searchValue" class="form-control form-control-lg border-2 me-2 mb-2 w-auto" formControlName="searchValue" placeholder="Search by item name...">
+
+        <custom-ng-select 
+            [value]="filterForm.controls.categoryId?.value"
+            [from]="filterForm"     
+            formControlField="categoryId"
+            [multiple]="true"
+            [items]="masterList['categoryList']"
+            bindLabel="item?.categoryName.toTitleCase()"
+            bindValue="_id"
+            placeholder="Categories"
+            classList="mb-2 me-2"
+            (change)="getMyProducts({})"
+        ></custom-ng-select>                                
+
+    </div>
+
+    <div class="fw-500 text-secondary"><span class="fs-5">Products</span> ({{agentProductsCount}})</div>
+
+    <div class="product-section">
+
+        <ng-container *ngIf="_.size(masterList['agentProducts']) > 0; else noRecords">
+
+            <div class="d-flex flex-wrap">
+
+                <a class="card product-card py-2 border-2 m-2" height="220px" *ngFor="let productDet of masterList['agentProducts']" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })">
+
+                    <div class="card-body">
+
+                        <i class="bx bx-plus rounded"></i>
+
+                        <div class="product-image mx-auto" style="background : url({{productDet?.productId?.productImageURL}});width: 150px;height: 150px;"></div> 
+
+                        <div class="d-flex justify-content-center">
+
+                            <a class="h5 mb-0 mt-3 text-center text-primary">
+                                
+                                {{productDet?.productId?.productName}}
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </ng-container>
+
+        <ng-template #noRecords>
+
+            <div class="empty-page d-flex justify-content-center align-items-center position-relative">
+
+                <div class="empty-content">
+        
+                    <h4 class="fw-600">No Records Found</h4>
+                
+                    <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
+                    
+                    <a class="btn btn-md btn-primary bi bi-plus-lg" [routerLink]="'/pages/account-setup/item-pricing'" > 
+                
+                        <span class="ms-3">Add New</span>
+                    
+                    </a>
+                    
+                </div>
+    
+            </div>
+
+        </ng-template> 
+
+    </div>    
 
 </modal>

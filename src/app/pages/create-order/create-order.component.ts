@@ -4,7 +4,7 @@ import { ModalComponent, OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { forkJoin } from 'rxjs';
+import { forkJoin, from } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -16,6 +16,7 @@ export class CreateOrderComponent {
 
   @ViewChild('canvas') canvas!: OffcanvasComponent;
   @ViewChild('customerVerificationModal') customerVerificationModal!: ModalComponent;
+  @ViewChild('addProductsModal') addProductsModal!: ModalComponent;
   @ViewChild('orderPreviewModal') orderPreviewModal!: ModalComponent;
   
   otp: string[] = ["", "", "", "", "", ""];
@@ -56,6 +57,8 @@ export class CreateOrderComponent {
   _: any = _;
   step = 0;
   userSubscribe: any;
+  selectedCustomerDet: any;
+  agentProductsCount: any = 0;
 
   constructor(public service: CommonService) { 
 
@@ -66,6 +69,7 @@ export class CreateOrderComponent {
       this.loadForm();
       this.loadCustomerForm();
       this.loadBasketForm({});
+      this.getBasicDetails();
 
     } else {
 
@@ -76,19 +80,20 @@ export class CreateOrderComponent {
           this.loadForm();
           this.loadCustomerForm();
           this.loadBasketForm({});
+          this.getBasicDetails();
         }
   
       });      
 
     }
 
+  }
+
+  ngOnInit(): void {
+
     this.loadForm();
-
     this.loadCustomerForm();
-
-    this.loadAddressForm({});
-
-    this.getBasicDetails();
+    this.loadBasketForm({});    
 
   }
 
@@ -118,9 +123,45 @@ export class CreateOrderComponent {
 
       this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
 
+      this.getMyProducts({});
+
     });
 
   }
+
+  getMyProducts({ searchValue = "" }: { searchValue?: string }) {
+
+    let params = { searchValue };
+
+    this.service.postService({ "url": "/setup/agentProducts", params, "payload": _.pick(this.filterForm.value,"categoryId") }).subscribe((res: any) => {
+
+      if(res.status == "ok") {
+
+        this.masterList['agentProducts'] = res.data;
+
+        this.masterList['agentProducts'] = _.map(this.masterList['agentProducts'], (e: any) => {
+  
+          e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL });
+          
+          return e;
+  
+        });
+
+        setTimeout(() => {
+
+          $('#searchValue').click();
+
+          $('#searchValue').focus()
+
+        }, 100);
+  
+        this.agentProductsCount = res.totalCount;
+
+      }
+
+    });
+
+  }  
 
   loadForm() {
 
@@ -184,7 +225,9 @@ export class CreateOrderComponent {
 
       "paymentReceived": [0, [Validators.required]],
 
-      "paymentPending": [0],      
+      "paymentPending": [0],  
+
+      "selectedAddr": -1
 
     });
 
@@ -383,15 +426,19 @@ export class CreateOrderComponent {
 
         } else {
 
-          let customerDetails: any = _.first(res.data);
+          this.selectedCustomerDet = _.first(res.data);
+
+          this.selectedCustomerDet['addresses'] = _.map(this.selectedCustomerDet.addresses,(e)=>({ ...e, "selected": e.isDefault }));
+
+          this.selectedCustomerDet['addresses'] = _.map(new Array(5).fill(0),(e,i)=>this.selectedCustomerDet.addresses[i] || { ... _.first(this.selectedCustomerDet.addresses) as any, "selected": false });
 
           this.orderForm.patchValue({ 
             
-            "customerDetails": customerDetails,
+            "customerDetails": this.selectedCustomerDet,
 
-            "customerId": customerDetails._id,
+            "customerId": this.selectedCustomerDet._id,
 
-            "isExistingCustomer": _.includes(_.map(customerDetails.companies,'companyId'),this.service.userDetails.companyId),
+            "isExistingCustomer": _.includes(_.map(this.selectedCustomerDet.companies,'companyId'),this.service.userDetails.companyId),
 
           });
 
@@ -576,6 +623,52 @@ export class CreateOrderComponent {
     }
 
   }  
+
+  openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addBasket' | 'addDiscount', data?: any }) {
+
+    this.canvasConfig['canvasName'] = canvasName;
+
+    this.canvasConfig['applyBtnTxt'] = 'Save';
+
+    this.canvasConfig['cancelBtnTxt'] = 'Clear';
+
+    this.canvasConfig['showCancelBtn'] = true;
+    
+    this.openCanvas = true;
+
+    if(canvasName == 'addBasket') {
+
+      this.selectedItemDet = data;
+
+      const productDet = _.find(this.f.itemList.value,{ 'productId': data._id }) || {};
+
+      this.canvasConfig['canvasTitle'] = `${_.isEmpty(productDet) ? 'Add New' : 'Update Existing' } Item`;
+
+      this.canvasConfig['applyBtnTxt'] = `${_.isEmpty(productDet) ? 'Add to Basket' : 'Update in Basket' }`;
+
+      this.canvasConfig['cancelBtnTxt'] = `${_.isEmpty(productDet) ? 'Clear' :  'Remove Item' }`;
+      
+      this.loadBasketForm({ productDet });
+
+    } else if(canvasName == 'addCustomer') {
+
+      this.canvasConfig['canvasTitle'] = 'Add Customer';
+
+      this.formSubmitted['customerForm'] = false;
+      
+      this.loadCustomerForm();
+
+    } else if(canvasName == 'addDiscount') {
+
+      this.canvasConfig['canvasTitle'] = 'Apply Discount';
+      
+      this.canvasConfig['applyBtnTxt'] = 'Apply Discount';
+
+      this.canvasConfig['showCancelBtn'] = false;
+    
+    }
+
+  }
 
   asidebarCancel() {
   
