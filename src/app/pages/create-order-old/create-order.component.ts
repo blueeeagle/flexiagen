@@ -28,7 +28,6 @@ export class CreateOrderComponent {
     'searchValue': '',
     'categoryId': []
   });
-  productForm: any;
   orderForm: any;
   customerForm: any;
   basketForm: any;
@@ -62,7 +61,6 @@ export class CreateOrderComponent {
   constructor(public service: CommonService) {
 
     this.service.setApiLoaders({ 'isLoading': true, 'url': [
-      '/master/productCharges', 
       '/setup/agentProducts', 
       '/address/countries', 
       '/address/dialCode', 
@@ -75,7 +73,6 @@ export class CreateOrderComponent {
     if(!_.isEmpty(this.service.companyDetails)) {
 
       this.loadForm();
-      this.loadProductForm();
       this.loadCustomerForm();
       this.loadBasketForm({});
 
@@ -86,7 +83,6 @@ export class CreateOrderComponent {
         if (!_.isEmpty(value)) {
   
           this.loadForm();
-          this.loadProductForm();
           this.loadCustomerForm();
           this.loadBasketForm({});
         }
@@ -101,7 +97,6 @@ export class CreateOrderComponent {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     this.loadForm();
-    this.loadProductForm();
     this.loadCustomerForm();
     this.loadBasketForm({});
 
@@ -123,8 +118,6 @@ export class CreateOrderComponent {
 
       "categories": this.service.postService({ "url": "/master/categories" }),
 
-      "charges": this.service.getService({ "url": "/master/productCharges" }),
-
       "workingHours": this.service.postService({ "url": "/setup/workingHrs/list", "payload": { "is_active": true } })
 
     }).subscribe((res: any) => {
@@ -142,24 +135,6 @@ export class CreateOrderComponent {
       this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
 
       this.getMyProducts({});
-
-      if(res.charges.status == "ok") {
-
-        this.masterList['productCharges'] = res.charges.data;
-
-        this.masterList['productCharges'] = _.flatten(_.map(this.masterList['productCharges'], (obj: any) => {
-
-          obj.chargeType = 'normal';
-
-          let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
-          
-          return [obj, obj2];
-
-        }));
-
-        this.loadProductForm();
-
-      }
 
     });
 
@@ -408,50 +383,6 @@ export class CreateOrderComponent {
 
   }
 
-  loadProductForm() {
-
-    this.productForm = this.service.fb.group({
-
-      'productId': [ null, Validators.required],
-
-      'companyId': [ this.service.companyDetails._id, Validators.required],
-
-      'priceList': this.service.fb.array([])
-
-    });
-
-    _.map(this.masterList['productCharges'],(chargeDet:any, index: number)=>{
-
-      this.cf.push(this.getChargeForm({ chargeDet }));
-
-      this.changeValue({ fieldName: 'is_active', index });
-
-    });
-
-  }
-
-  getChargeForm({ chargeDet = {} }: { chargeDet: any })  {
-
-    return this.service.fb.group({
-
-      '_id': [chargeDet._id || null],
-
-      'chargeId': [chargeDet.chargeId?._id || chargeDet._id, Validators.required],
-
-      'chargeName': [chargeDet.chargeId?.chargeName || chargeDet.chargeName, Validators.required],
-
-      'imgURL': [this.service.getFullImagePath({ 'imgUrl': chargeDet.chargeId?.imgURL || chargeDet.imgURL }), Validators.required],
-
-      'amount': [ (chargeDet.amount || 0).toCustomFixed(), Validators.required],
-
-      'chargeType': [chargeDet?.chargeType || chargeDet.chargeType || 'normal', Validators.required],
-
-      'is_active': [true],
-
-    });
-
-  }
-
   loadBasketForm({ productDet = {} }: {productDet?: any}) {
 
     this.basketForm = this.service.fb.group({
@@ -616,17 +547,13 @@ export class CreateOrderComponent {
 
   get itf(): any { return this.f.itemList as FormArray; }
 
-  get pf(): any { return this.productForm.controls; }
-
-  get cf(): any { return this.pf.priceList as FormArray; }
-
   get cusf(): any { return this.customerForm.controls; }
 
   get af(): any { return this.cusf.addressDetails.controls; }
 
   get bf(): any { return this.basketForm.controls; }
 
-  openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addProduct' | 'addBasket' | 'addDiscount', data?: any }) {
+  openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addBasket' | 'addDiscount', data?: any }) {
 
     this.canvasConfig['canvasName'] = canvasName;
 
@@ -668,15 +595,7 @@ export class CreateOrderComponent {
 
       this.canvasConfig['showCancelBtn'] = false;
     
-    } else if(canvasName == 'addProduct') {
-
-      this.canvasConfig['canvasTitle'] = 'Add Product';
-
-      this.formSubmitted['productForm'] = false;
-      
-      this.loadProductForm();
-
-    } 
+    }
 
   }
 
@@ -707,26 +626,6 @@ export class CreateOrderComponent {
       });
 
       this.canvasConfig['applyBtnTxt'] = this.canvasConfig['applyBtnTxt'].split('(')[0] + (this.basketForm.value.qty > 0 ? `(${this.basketForm.value.qty})` : '');
-
-    } else if(fieldName == 'is_active') {
-
-      if(!this.cf.at(index).value.is_active) {
-
-        this.cf.at(index).get('amount').setValue(null);
-
-        this.cf.at(index).get('amount').setValidators([]);
-
-        this.cf.at(index).get('amount').disable();
-
-      } else {
-
-        this.cf.at(index).get('amount').enable();
-
-        this.cf.at(index).get('amount').setValidators([Validators.required]);
-
-      }
-
-      this.cf.at(index).get('amount').updateValueAndValidity();
 
     } else if(fieldName == 'orderType') {
 
@@ -836,14 +735,9 @@ export class CreateOrderComponent {
 
     } else if(this.canvasConfig['canvasName'] == 'addDiscount') {
 
-
-
       this.canvas?.close();
 
-    } else if(this.canvasConfig['canvasName'] == 'addProduct') {
-
-
-    } 
+    }
 
   }
 
@@ -876,10 +770,6 @@ export class CreateOrderComponent {
   asidebarCancel() {
 
     if(this.canvasConfig['canvasName'] == 'addCustomer') {
-
-      this.canvas?.close();
-
-    } else if(this.canvasConfig['canvasName'] == 'addProduct') {
 
       this.canvas?.close();
 
@@ -964,8 +854,6 @@ export class CreateOrderComponent {
         this.service.showToastr({ "data": { "message": "Order Created Successfully", "type": "success" } });
 
         this.loadForm();
-
-        this.loadProductForm();
 
         this.loadCustomerForm();
 
