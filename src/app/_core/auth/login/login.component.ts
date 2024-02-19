@@ -66,7 +66,7 @@ export class LoginComponent {
 
         if(_.isEmpty(res.data.companyDetails)) { // Check the user already created company details
 
-          this.service.navigate({ 'url': '/auth/company-details' });
+          this.service.navigate({ 'url': '/auth/company-details/new' });
 
           this.service.showToastr({ "data": { "message": "Please complete your company details", "type": "info" } });
 

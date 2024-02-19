@@ -5,11 +5,11 @@ import * as _ from 'lodash';
 import * as moment from "moment";
 
 @Component({
-  selector: 'app-customers',
-  templateUrl: './customers.component.html',
-  styleUrls: ['./customers.component.scss']
+  selector: 'app-customer-list',
+  templateUrl: './customer-list.component.html',
+  styleUrls: ['./customer-list.component.scss']
 })
-export class CustomersComponent {
+export class CustomerListComponent {
 
   userSubscribe: any;
   customerList!: Array<any>;
@@ -40,15 +40,13 @@ export class CustomersComponent {
 
     let payload = { "companyId": this.service.companyDetails._id }
 
-    console.log(payload);    
-
     this.service.postService({ "url": "/master/customers", "payload": payload }).subscribe((res: any) => {
       
       if (res.status == "ok") {
 
         this.customerList = res.data;
 
-        this.totalCount = res.data.totalCount;
+        this.totalCount = _.size(res.data);
 
       }
       
@@ -65,5 +63,6 @@ export class CustomersComponent {
     //Add 'implements OnDestroy' to the class.
     this.userSubscribe.unsubscribe();
   }
+
 
 }
