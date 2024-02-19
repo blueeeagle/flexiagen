@@ -102,8 +102,6 @@ export class CreateOrderComponent {
 
       "categories": this.service.postService({ "url": "/master/categories" }),
 
-      "charges": this.service.getService({ "url": "/master/productCharges" }),
-
       "workingHours": this.service.postService({ "url": "/setup/workingHrs/list", "payload": { "is_active": true } })
 
     }).subscribe((res: any) => {
@@ -119,22 +117,6 @@ export class CreateOrderComponent {
       this.masterList['activeDays'] = _.map(this.masterList['workingHours'], 'day');
 
       this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
-
-      if(res.charges.status == "ok") {
-
-        this.masterList['productCharges'] = res.charges.data;
-
-        this.masterList['productCharges'] = _.flatten(_.map(this.masterList['productCharges'], (obj: any) => {
-
-          obj.chargeType = 'normal';
-
-          let obj2 = { ..._.cloneDeep(obj), chargeType: 'urgent' };
-          
-          return [obj, obj2];
-
-        }));
-
-      }
 
     });
 
