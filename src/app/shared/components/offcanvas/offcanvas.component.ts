@@ -56,7 +56,7 @@ export class OffcanvasComponent implements OnInit {
   @Input() set title(value: string) { this._title = value; }
 
   get title(): string { return this._title; }
-  
+
   @Input() set openCanvas(value: boolean) {
 
     this.offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvas'), { 'backdrop': this.backdrop, 'scroll': this.scroll, 'keyboard': this.keyboard });

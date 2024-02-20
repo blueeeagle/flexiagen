@@ -59,10 +59,11 @@ export class CreateOrderComponent {
   userSubscribe: any;
   selectedCustomerDet: any;
   agentProductsCount: any = 0;
+  moment: any = moment;
 
   constructor(public service: CommonService) { 
 
-    this.filterForm = this.service.fb.group({ 'categoryId': [] });
+    this.loadFilterForm();
 
     if(!_.isEmpty(this.service.companyDetails)) {
 
@@ -129,6 +130,50 @@ export class CreateOrderComponent {
 
   }
 
+  getTimeSlots({ fieldName = 'pickupDate' }: { fieldName: 'pickupDate' | 'expDeliveryDate' }) {
+
+    const timeFieldName = fieldName == 'pickupDate' ? 'pickupTimeSlot' : 'expDeliveryTimeSlot';
+
+    this.masterList[fieldName] = { 'timeSlots': [] };
+
+    if(this.f.pickupDate.value && this.f.expDeliveryDate.value && moment(this.f.pickupDate.value).isAfter(this.f.expDeliveryDate.value)) {
+
+      this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
+
+      if(fieldName == 'pickupDate') return this.service.showToastr({ "data": { "message": "Pickup date should be less than or equal to expected delivery date", "type": "info" } });
+
+      return this.service.showToastr({ "data": { "message": "Expected delivery date should be greater than or equal to pickup date", "type": "info" } });
+
+    }
+
+    if(moment(this.f[fieldName].value).format('dddd') == 'Invalid date') {
+      
+      return this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
+
+    }
+
+    let payload = { 'day': moment(this.f[fieldName].value).format('dddd'), 'date': moment(this.f[fieldName].value).format('YYYY-MM-DD') };
+
+    this.service.postService({ 'url': '/setup/timeslot/list', 'payload': _.pickBy({ 'companyId': this.service.companyDetails._id, ...payload }) }).subscribe((res:any)=>{
+
+      if(res?.status == 'ok') {
+
+        this.masterList[fieldName]['timeSlots'] = res.data || [];
+
+        if(_.size(this.masterList[fieldName]['timeSlots']) == 0) {
+
+          this.service.showToastr({ "data": { "message": "Please add time slots for selected day", "type": "info" } });
+
+          this.orderForm.patchValue({ [fieldName]: null, [timeFieldName]: null, [timeFieldName+'Det']: null });
+
+        }        
+
+      }
+
+    })
+
+  }  
+
   getMyProducts({ searchValue = "" }: { searchValue?: string }) {
 
     let params = { searchValue };
@@ -162,6 +207,65 @@ export class CreateOrderComponent {
     });
 
   }  
+
+  // Get States based on Country
+  getStates() {
+
+    this.masterList['stateList'] = [];
+
+    this.service.getService({ "url": `/address/states/${this.adf.countryId.value}` }).subscribe((res: any) => {
+
+      this.masterList['stateList'] = res.status=='ok' ? res.data : [];
+
+    });
+
+  }
+
+  // Get Cities based on Country or State
+  
+  /**
+   * 
+   * @param fieldName // countryId or stateId  
+   */
+
+  getCities({ fieldName = "countryId" }: { fieldName: 'countryId' | 'stateId' }) {
+
+    this.masterList['cityList'] = [];
+
+    this.service.getService({ "url": `/address/cities/${fieldName == 'countryId' ? 'country' : 'state' }/${this.adf[fieldName].value}` }).subscribe((res: any) => {
+
+      this.masterList['cityList'] = res.status=='ok' ? res.data : [];
+
+    });
+
+  }
+
+  // Get Areas based on City
+  getAreas() {
+
+    this.service.getService({ "url": `/address/areas/${this.adf.cityId.value}` }).subscribe((res: any) => {
+
+      this.masterList['areaList'] = res.status=='ok' ? res.data : [];
+
+    });
+
+  }   
+  
+  checkIsWorkingDay = (d: Date | null): boolean => {
+    return _.includes(this.masterList['activeDays'], moment(d).format('dddd'));
+  };  
+
+  loadFilterForm() {
+
+    this.filterForm = this.service.fb.group({ 
+      
+      'categoryId': [],
+
+      'searchValue': ''
+    
+    });
+
+  }
 
   loadForm() {
 
@@ -271,6 +375,8 @@ export class CreateOrderComponent {
 
     this.customerForm = this.service.fb.group({
 
+      'companyId': [ this.service?.companyDetails?._id, Validators.required],
+
       'firstName': [ null, Validators.required ],
 
       'lastName': [ null, Validators.required ],  
@@ -291,11 +397,89 @@ export class CreateOrderComponent {
         
       ],
 
-      'addressDetails': this.loadAddressForm({ 'getAddressForm': true })
+      'addressDetails': this.service.fb.group({
+
+        'street': [ null, Validators.required ],
+
+        'building': [ null ],
+
+        'block': [ null ],
+
+        'others': [ null ],
+
+        'areaId': [ null, Validators.required ],
+
+        'cityId': [ null, Validators.required ],
+
+        'stateId': [ null, Validators.required ],
+
+        'countryId': [ null, Validators.required ],
+
+        'zipcode': [ null, Validators.required ],
+
+        'isDefault': true
+
+      })
       
     });
 
-    this.cusf.addressDetails.patchValue({ "isDefault": true });
+    // Listen to Country changes and update State, City, Area and zipcode
+
+    this.adf['countryId'].valueChanges.subscribe((value: any) => {
+
+      this.masterList = { ...this.masterList, 'stateList': [], 'cityList': [], 'areaList': [] };
+
+      let countryDet = _.find(this.masterList['countryList'], { '_id': value });
+
+      this.cusf.addressDetails.patchValue({ 'cityId': null, 'stateId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
+
+      if(countryDet.hasState) {
+
+        this.adf['stateId'].setValidators([Validators.required]);
+
+        this.getStates(); // Get States based on Country        
+
+      } else this.adf['stateId'].setValidators([]);
+
+      this.adf['stateId'].updateValueAndValidity({ emitEvent: false });
+
+      this.getCities({ 'fieldName': 'countryId' }); // Get Cities based on Country
+
+    });
+
+    // Listen to State changes and update City, Area and zipcode
+
+    this.adf['stateId'].valueChanges.subscribe((value: any) => {
+
+      this.getCities({ 'fieldName': 'stateId' }); // Get Cities based on State
+
+      this.masterList['areaList'] = []; // Reset Area List
+
+      this.cusf.addressDetails.patchValue({ 'cityId': null, 'areaId': null, 'zipcode': null }, { emitEvent: false });
+
+    });
+
+    // Listen to City changes and update Area and zipcode
+
+    this.adf['cityId'].valueChanges.subscribe((value: any) => {
+
+      this.getAreas(); // Get Areas based on City
+
+      this.cusf.addressDetails.patchValue({ 'areaId': null, 'zipcode': null });
+
+    });
+
+    // Listen to Area changes
+
+    this.adf['areaId'].valueChanges.subscribe((value: any) => {
+
+      this.cusf.addressDetails.patchValue({ 
+        
+        'zipcode': _.get(_.find(this.masterList['areaList'], { '_id': value }), 'zipcode', null) 
+      
+      });
+
+    });        
 
   }
 
@@ -391,7 +575,7 @@ export class CreateOrderComponent {
 
   get cusf() { return this.customerForm.controls; }
 
-  get adf() { return this.cusf.get('addressDetails').controls; }
+  get adf() { return this.cusf.addressDetails.controls; }
 
   get af() { return this.addressForm.controls; }
 
@@ -457,7 +641,6 @@ export class CreateOrderComponent {
   sendCustomerVerification({ newCustomer = false }: { newCustomer?: boolean}) {
 
     if(newCustomer) {
-
 
     } else {
 
@@ -724,7 +907,33 @@ export class CreateOrderComponent {
   
       });
 
-    } 
+    } else if(this.canvasConfig['canvasName'] == 'addBasket') {
+
+      if(this.basketForm.value.qty <= 0) return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
+
+      let itemIndex = _.findIndex(this.itf.value, { 'productId': this.basketForm.value.productId });
+
+      if(itemIndex > -1 ) {
+
+        this.itf.removeAt(itemIndex);
+        
+        this.itf.insert(itemIndex,this.basketForm);
+
+      }
+
+      else this.itf.push(this.basketForm);
+
+      this.calculateOrderFormValue();
+
+      this.service.showToastr({ "data": { "message": `Item ${ itemIndex > -1 ? 'added to basket' : 'Updated in basket' }`, "type": "success" } });
+
+      this.canvas?.close();
+
+    } else if(this.canvasConfig['canvasName'] == 'addDiscount') {
+
+      this.canvas?.close();
+
+    }
 
   }
 

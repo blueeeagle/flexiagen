@@ -1,355 +1,541 @@
 <div class="create-order-section">
 
-    <mat-accordion>
+    <div class="col-xxl-7 col-xl-8 col-lg-9">
+
+        <mat-accordion>
     
-        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 0 }" [expanded]="step === 0" hideToggle disabled>
-    
-            <mat-expansion-panel-header 
-                class="px-1 rounded-0 px-3" 
-                [ngClass]="{ 'bg-primary-subtle': step === 0 }" 
-                [style]="{ 'height': (!_.isEmpty(selectedCustomerDet) && step != 0 ? '100' : '60') + 'px !important' }">
-
-                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 0 ? 'text-primary-emphasis' : 'text-secondary'"> 
-
-                    <div class="d-flex w-100 justify-content-between">
-
-                        <div class="d-block">
-
-                            <div class="d-flex align-items-center">
-    
-                                <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
-                                
-                                CUSTOMER DETAILS 
+            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 0 }" [expanded]="step === 0" hideToggle disabled>
         
-                                <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0"></i>
+                <mat-expansion-panel-header 
+                    class="px-1 rounded-0 px-3" 
+                    [ngClass]="{ 'bg-primary-subtle': step === 0 }" 
+                    [style]="{ 'height': (!_.isEmpty(selectedCustomerDet) && step != 0 ? '100' : '60') + 'px !important' }">
     
-                            </div>
-
-                            <ng-container *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0">
-
-                                <div class="d-flex">
-
-                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 0 ? 'text-primary-emphasis' : 'text-secondary'"> 
     
-                                    <p class="fw-600 mb-0 text-black">{{ selectedCustomerDet.firstName + " " + selectedCustomerDet.lastName }}</p>
-
-                                </div>
-                            
-                            </ng-container>
-
-                        </div>
-
-                        <div class="d-block">
-
-                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0" (click)="step = 0">CHANGE</button>
-
-                        </div>                        
-
-                    </div>
-                
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-
-            <div class="rounded-2 p-4" [formGroup]="orderForm">
-
-                <div class="d-flex align-items-center mb-3" *ngIf="_.isEmpty(selectedCustomerDet)">
-
-                    <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
-
-                    <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? addNewCustomer() : searchCustomer()">
-            
-                        <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
-
-                        <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched"></i>
-
-                    </button>
-
-                </div>
-
-                <ng-container *ngIf="!_.isEmpty(selectedCustomerDet) && selectedCustomerDet as customerDet; else noCustomers">
-
-                    <div class="d-flex">
-
-                        <label class="small text-secondary me-2" style="width: 60px;">Name</label>
-
-                        <p class="small fw-600">{{ customerDet.firstName + " " + customerDet.lastName }}</p>
-
-                        <a class="text-primary" (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true })">
-
-                            <i class="bi bi-pencil-square ms-3" 
-                                (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true })">
-                            </i> Edit 
-
-                        </a>
-
-                    </div>
-
-                    <div class="d-flex">
-
-                        <label class="small text-secondary me-2" style="width: 60px;">Email</label>
-
-                        <p class="small fw-600">{{ customerDet.email }}</p>
-
-                    </div>
-
-                    <div class="d-flex">
-
-                        <label class="small text-secondary me-2" style="width: 60px;">Phone</label>
-
-                        <p class="small fw-600">{{ customerDet.dialCode + "" + customerDet.mobile }}</p>
-
-                    </div>
-
-                    <div class="d-flex align-items-center">
-
-                        <ng-container  *ngIf="!f.isExistingCustomer.value;">
-
-                            <button class="btn btn-primary btn-sm rounded px-3" (click)="sendCustomerVerification({})">VERIFY CUSTOMER</button>
-
-                            <p class="ms-2 mb-0 small text-light" style="font-size: 12px;">
-                                
-                                to continue with this order.
-                            
-                            </p>
-                        
-                        </ng-container>
-
-                        <ng-container *ngIf="f.isExistingCustomer.value">
-                            
-                            <button class="btn btn-primary btn-sm rounded px-5" (click)="step = 1">CONTINUE ORDER</button>
-
-                        </ng-container>
-
-                    </div>
-
-                </ng-container>
-
-                <ng-template #noCustomers>
-
-                    <div class="d-flex align-items-center justify-content-center alert alert-secondary pb-0 pt-3">
-
-                        <p class="small text-secondary">No customer found {{ formSubmitted.customerSearched ? 'with this mobile or email' : '' }}</p>
-
-                    </div>
-
-                </ng-template>
-
-            </div>
+                        <div class="d-flex w-100 justify-content-between">
     
-        </mat-expansion-panel>  
-
-        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 1 }" [expanded]="step === 1" hideToggle disabled>
+                            <div class="d-block">
     
-            <mat-expansion-panel-header 
-                class="px-1 rounded-0 px-3" 
-                [ngClass]="{ 'bg-primary-subtle': step === 1 }"  
-                [style]="{ 'height': (f.selectedAddr.value > -1 && step != 1 ? '100' : '60') + 'px !important' }">
-
-                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 1 ? 'text-primary-emphasis' : 'text-secondary'"> 
-
-                    <div class="d-flex w-100 justify-content-between">
-
-                        <div class="d-block">
-
-                            <div class="d-flex align-items-center">
-    
-                                <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">2</div> 
-                                
-                                ADDRESS DETAILS
+                                <div class="d-flex align-items-center">
         
-                                <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="f.selectedAddr.value > -1 && step != 1"></i>
-    
-                            </div>
-
-                            <ng-container *ngIf="f.selectedAddr.value > -1 && step != 1 && selectedCustomerDet?.addresses[f.selectedAddr.value] as addressDetail">
-
-                                <div class="d-flex">
-
-                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
-    
-                                    <p class="fw-600 mb-0 text-black">
-                                        
-                                        {{ addressDetail.street | uppercase }}
-
-                                        <ng-container *ngIf="addressDetail.block || addressDetail.building">
-                                        
-                                            {{ (addressDetail.block ? (addressDetail.block + ' Block, ') : '') + ' ' + (addressDetail.building ? (addressDetail.building + ' Building') : '') }}
-
-                                        </ng-container>
-
-                                        {{ addressDetail.cityId.name + ', '+ addressDetail.stateId.name + ' - ' + addressDetail.zipcode }} 
-
-                                        {{ addressDetail.countryId.name }}
+                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
                                     
-                                    </p>
-
+                                    CUSTOMER DETAILS 
+            
+                                    <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0"></i>
+        
                                 </div>
-                            
-                            </ng-container>
-
-                        </div>
-
-                        <div class="d-block">
-
-                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="f.selectedAddr.value > -1 && step != 1" (click)="step = 1">CHANGE</button>
-
-                        </div>                        
-
-                    </div>                        
-                    
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-
-            <div class="rounded-2 small">
-
-                <a class="d-flex px-3 py-4" *ngFor="let addressDet of selectedCustomerDet?.addresses || []; let i =index"  [style]="{ 'background': (f.selectedAddr.value == i ? '#F3F5F9' : '#FFF') }" [ngClass]="{ 'text-secondary': f.selectedAddr.value == i }">
-
-                    <div [formGroup]="orderForm" (click)="orderForm.patchValue({ 'selectedAddr': i })">
-
-                        <input type="radio" class="form-check-input" id="address-{{i}}" formControlName="selectedAddr" [value]="i" name="selectedAddr">
-
-                    </div>
-
-                    <div class="w-100 ms-3">
-
-                        <a class="w-100" (click)="orderForm.patchValue({ 'selectedAddr': i })">
-                            <p class="mb-1">
-
-                                {{ addressDet.street | uppercase }}
     
-                                <ng-container *ngIf="addressDet.block || addressDet.building">
+                                <ng-container *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0">
+    
+                                    <div class="d-flex">
+    
+                                        <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 0 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+        
+                                        <p class="fw-600 mb-0 text-black">{{ selectedCustomerDet.firstName + " " + selectedCustomerDet.lastName }}</p>
+    
+                                    </div>
                                 
-                                    {{ (addressDet.block ? (addressDet.block + ' Block, ') : '') + ' ' + (addressDet.building ? (addressDet.building + ' Building') : '') }}
-    
                                 </ng-container>
     
-                            </p>
-    
-                            <p class="mb-1">{{ addressDet.landmark }}</p>
-    
-                            <p class="mb-1">{{ addressDet.cityId.name + ', '+ addressDet.stateId.name + ' - ' + addressDet.zipcode }} </p>
-    
-                            <p>{{ addressDet.countryId.name }}</p>
-                                
-                        </a>
-
-                        <button class="btn btn-primary btn-sm rounded px-5" *ngIf="f.selectedAddr.value == i" (click)="step = 2">DELIVERY HERE</button>
-
-                    </div>
-                
-                </a>
-
-                <div class="d-flex px-3 py-4">
-
-                    <a class="text-primary cursor-pointer">
-
-                        <i class="fa fa-plus me-2"></i>
-                        
-                        Add New Address
-                    
-                    </a>
-
-                </div>
-
-            </div>
-    
-        </mat-expansion-panel>
-
-        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 2 }" [expanded]="step === 2" hideToggle disabled>
-    
-            <mat-expansion-panel-header 
-                class="px-1 rounded-0 px-3" 
-                [ngClass]="{ 'bg-primary-subtle': step === 2 }" 
-                [style]="{ 'height': (!_.isEmpty(f.itemList.controls) && step != 2 ? '100' : '60') + 'px !important' }">
-
-                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 2 ? 'text-primary-emphasis' : 'text-secondary'">
-                    
-                    <div class="d-flex w-100 justify-content-between">
-
-                        <div class="d-block">
-
-                            <div class="d-flex align-items-center">
-    
-                                <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">3</div> 
-                            
-                                BASKET DETAILS
-        
-                                <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(f.itemList.controls) && step != 2"></i>
-    
                             </div>
-
-                            <ng-container *ngIf="!_.isEmpty(f.itemList.controls) && step != 2">
-
-                                <div class="d-flex">
     
-                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+                            <div class="d-block">
     
-                                    <p class="fw-600 mb-0 text-black">{{ _.size(f.itemList.controls) }} Items</p>
+                                <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3" *ngIf="!_.isEmpty(selectedCustomerDet) && step != 0" (click)="step = 0">CHANGE</button>
     
-                                </div>
+                            </div>                        
+    
+                        </div>
+                    
+                    </mat-panel-title>
+    
+                </mat-expansion-panel-header>
+    
+                <div class="rounded-2 p-4" [formGroup]="orderForm">
+    
+                    <div class="d-flex align-items-center mb-3" *ngIf="_.isEmpty(selectedCustomerDet)">
+    
+                        <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
+    
+                        <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? addNewCustomer() : searchCustomer()">
+                
+                            <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
+    
+                            <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched"></i>
+    
+                        </button>
+    
+                    </div>
+    
+                    <ng-container *ngIf="!_.isEmpty(selectedCustomerDet) && selectedCustomerDet as customerDet; else noCustomers">
+    
+                        <div class="d-flex">
+    
+                            <label class="small text-secondary me-2" style="width: 60px;">Name</label>
+    
+                            <p class="small fw-600">{{ customerDet.firstName + " " + customerDet.lastName }}</p>
+    
+                            <a class="text-primary" (click)="orderForm.patchValue({ 'customerDetails': null, 'customerId': null, 'isExistingCustomer': true, 'selectedAddr': -1 }); selectedCustomerDet = {};">
+    
+                                <i class="bi bi-pencil-square ms-3"></i> Edit  
+    
+                            </a>
+    
+                        </div>
+    
+                        <div class="d-flex">
+    
+                            <label class="small text-secondary me-2" style="width: 60px;">Email</label>
+    
+                            <p class="small fw-600">{{ customerDet.email }}</p>
+    
+                        </div>
+    
+                        <div class="d-flex">
+    
+                            <label class="small text-secondary me-2" style="width: 60px;">Phone</label>
+    
+                            <p class="small fw-600">{{ customerDet.dialCode + "" + customerDet.mobile }}</p>
+    
+                        </div>
+    
+                        <div class="d-flex align-items-center">
+    
+                            <ng-container  *ngIf="!f.isExistingCustomer.value;">
+    
+                                <button class="btn btn-primary btn-sm rounded px-3" (click)="sendCustomerVerification({})">VERIFY CUSTOMER</button>
+    
+                                <p class="ms-2 mb-0 small text-light" style="font-size: 12px;">
+                                    
+                                    to continue with this order.
+                                
+                                </p>
                             
                             </ng-container>
+    
+                            <ng-container *ngIf="f.isExistingCustomer.value">
+                                
+                                <button class="btn btn-primary btn-sm rounded px-5" (click)="step = 1">CONTINUE ORDER</button>
+    
+                            </ng-container>
+    
+                        </div>
+    
+                    </ng-container>
+    
+                    <ng-template #noCustomers>
+    
+                        <div class="d-flex align-items-center justify-content-center alert alert-secondary pb-0 pt-3">
+    
+                            <p class="small text-secondary">No customer found {{ formSubmitted.customerSearched ? 'with this mobile or email' : '' }}</p>
+    
+                        </div>
+    
+                    </ng-template>
+    
+                </div>
+        
+            </mat-expansion-panel>  
+    
+            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 1 }" [expanded]="step === 1" hideToggle disabled>
+        
+                <mat-expansion-panel-header 
+                    class="px-1 rounded-0 px-3" 
+                    [ngClass]="{ 'bg-primary-subtle': step === 1 }"  
+                    [style]="{ 'height': (f.selectedAddr.value > -1 && step != 1 ? '100' : '60') + 'px !important' }">
+    
+                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 1 ? 'text-primary-emphasis' : 'text-secondary'"> 
+    
+                        <div class="d-flex w-100 justify-content-between">
+    
+                            <div class="d-block">
+    
+                                <div class="d-flex align-items-center">
+        
+                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">2</div> 
+                                    
+                                    ADDRESS DETAILS
+            
+                                    <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="f.selectedAddr.value > -1 && step != 1"></i>
+        
+                                </div>
+    
+                                <ng-container *ngIf="f.selectedAddr.value > -1 && step != 1 && selectedCustomerDet?.addresses[f.selectedAddr.value] as addressDetail">
+    
+                                    <div class="d-flex">
+    
+                                        <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+        
+                                        <p class="fw-600 mb-0 text-black">
+                                            
+                                            {{ addressDetail.street | uppercase }}
+    
+                                            <ng-container *ngIf="addressDetail.block || addressDetail.building">
+                                            
+                                                {{ (addressDetail.block ? (addressDetail.block + ' Block, ') : '') + ' ' + (addressDetail.building ? (addressDetail.building + ' Building') : '') }}
+    
+                                            </ng-container>
+    
+                                            {{ addressDetail.cityId.name + ', '+ addressDetail.stateId.name + ' - ' + addressDetail.zipcode }} 
+    
+                                            {{ addressDetail.countryId.name }}
+                                        
+                                        </p>
+    
+                                    </div>
+                                
+                                </ng-container>
+    
+                            </div>
+    
+                            <div class="d-block">
+    
+                                <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3" *ngIf="f.selectedAddr.value > -1 && step != 1" (click)="step = 1">CHANGE</button>
+    
+                            </div>                        
+    
+                        </div>                        
+                        
+                    </mat-panel-title>
+    
+                </mat-expansion-panel-header>
+    
+                <div class="rounded-2 small">
+    
+                    <a class="d-flex px-3 py-4" *ngFor="let addressDet of selectedCustomerDet?.addresses || []; let i =index"  [style]="{ 'background': (f.selectedAddr.value == i ? '#F3F5F9' : '#FFF') }" [ngClass]="{ 'text-secondary': f.selectedAddr.value == i }">
+    
+                        <div [formGroup]="orderForm" (click)="orderForm.patchValue({ 'selectedAddr': i })">
+    
+                            <input type="radio" class="form-check-input" id="address-{{i}}" formControlName="selectedAddr" [value]="i" name="selectedAddr">
+    
+                        </div>
+    
+                        <div class="w-100 ms-3">
+    
+                            <a class="w-100" (click)="orderForm.patchValue({ 'selectedAddr': i })">
+                                <p class="mb-1">
+    
+                                    {{ addressDet.street | uppercase }}
+        
+                                    <ng-container *ngIf="addressDet.block || addressDet.building">
+                                    
+                                        {{ (addressDet.block ? (addressDet.block + ' Block, ') : '') + ' ' + (addressDet.building ? (addressDet.building + ' Building') : '') }}
+        
+                                    </ng-container>
+        
+                                </p>
+        
+                                <p class="mb-1">{{ addressDet.landmark }}</p>
+        
+                                <p class="mb-1">{{ addressDet.cityId.name + ', '+ addressDet.stateId.name + ' - ' + addressDet.zipcode }} </p>
+        
+                                <p>{{ addressDet.countryId.name }}</p>
+                                    
+                            </a>
+    
+                            <button class="btn btn-primary btn-sm rounded px-5" *ngIf="f.selectedAddr.value == i" (click)="step = 2">DELIVERY HERE</button>
+    
+                        </div>
+                    
+                    </a>
+    
+                    <div class="d-flex px-3 py-4">
+    
+                        <a class="text-primary cursor-pointer">
+    
+                            <i class="fa fa-plus me-2"></i>
+                            
+                            Add New Address
+                        
+                        </a>
+    
+                    </div>
+    
+                </div>
+        
+            </mat-expansion-panel>
+    
+            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 2 }" [expanded]="step === 2" hideToggle disabled>
+        
+                <mat-expansion-panel-header 
+                    class="px-1 rounded-0 px-3" 
+                    [ngClass]="{ 'bg-primary-subtle': step === 2 }" 
+                    [style]="{ 'height': (!_.isEmpty(f.itemList.controls) && step != 2 ? '100' : '60') + 'px !important' }">
+    
+                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 2 ? 'text-primary-emphasis' : 'text-secondary'">
+                        
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+    
+                            <div class="d-block">
+    
+                                <div class="d-flex align-items-center">
+        
+                                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">3</div> 
+                                
+                                    BASKET DETAILS
+            
+                                    <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(f.itemList.controls) && step != 2"></i>
+        
+                                </div>
+    
+                                <ng-container *ngIf="!_.isEmpty(f.itemList.controls) && step != 2">
+    
+                                    <div class="d-flex">
+        
+                                        <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 2 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+        
+                                        <p class="fw-600 mb-0 text-black">{{ _.size(f.itemList.controls) }} Items</p>
+        
+                                    </div>
+                                
+                                </ng-container>
+    
+                            </div>
+    
+                            <div class="d-block">
+    
+                                <button 
+                                    class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3" 
+                                    (click)="step = _.isEmpty(f.itemList.controls) ? step : 2; addProductsModal.open()">
+
+                                    {{ _.isEmpty(f.itemList.controls) ? 'ADD ITEMS' : 'EDIT ITEMS' }}
+
+                                </button>
+    
+                                <button 
+                                    class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
+                                    *ngIf="!_.isEmpty(f.itemList.controls) && step != 2" 
+                                    (click)="step = 2">
+
+                                    CHANGE
+
+                                </button>
+    
+                            </div>                        
+    
+                        </div>                    
+    
+                    </mat-panel-title>
+    
+                </mat-expansion-panel-header>
+    
+                <div class="rounded-2 p-4">
+    
+                    <ng-container *ngIf="_.isEmpty(f.itemList.controls);">
+            
+                        <p class="text-secondary">No Items Added</p>
+                    
+                    </ng-container>
+    
+                    <ng-container *ngFor="let productDet of itf.value; let index = index">
+    
+                        <ng-container *ngFor="let priceDet of productDet.priceList">
+    
+                            <div class="form-group d-flex align-items-center justify-content-between" *ngIf="priceDet.qty > 0">
+    
+                                <div class="d-flex py-2">
+    
+                                    <div class="product-img-card border border-2 rounded p-2 me-3">
+    
+                                        <div class="product-image" style="background : url({{productDet.productImageURL}});width: 75px;height: 75px;"></div> 
+    
+                                    </div>
+                
+                                    <div>
+                    
+                                        <h6 class="align-self-center mb-0 fw-600" style="min-width: 150px;">{{productDet.productName | titlecase }}</h6>
+    
+                                        <p class="text-secondary fw-500 mb-3 small">{{ priceDet.chargeName | titlecase }}</p>
+                                        
+                                        <div class="d-flex align-items-center">
+    
+                                            <i class="bx bx-cart fs-4 me-3 text-primary"></i>
+    
+                                            <p class="text-secondary mb-0 fw-500 small">
+
+                                                {{ priceDet.qty + ' x ' }}
+                                                
+                                                {{ priceDet.amount +' '+ service.currencyDetails.currencyCode }}
+                                            
+                                            </p>
+    
+                                        </div>
+                    
+                                    </div>
+                    
+                                </div>
+    
+                                <h6 class="mb-0 fw-600">{{ priceDet.netAmt + ' ' + service.currencyDetails.currencyCode }}</h6>
+    
+                            </div>
+    
+                        </ng-container>
+    
+                    </ng-container>
+    
+                    <ng-container *ngIf="!_.isEmpty(itf.value)">
+                                
+                        <button 
+                            class="btn btn-primary btn-sm rounded px-5" 
+                            (click)="step = 3">
+                            SET PICKUP & DELIVERY TIME
+                        </button>
+    
+                    </ng-container>
+    
+                </div>
+        
+            </mat-expansion-panel>
+            
+            <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 3 }" [expanded]="step === 3" hideToggle disabled>
+        
+                <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 3 }" style="height: 60px !important;">
+    
+                    <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 3 ? 'text-primary-emphasis' : 'text-secondary'"> 
+                        
+                        <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis" [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">4</div> PICKUP & DELIVERY TIME
+                    
+                    </mat-panel-title>
+    
+                </mat-expansion-panel-header>
+    
+                <div class="rounded-2 py-3 px-2" [formGroup]="orderForm">
+
+                    <div class="pt-3 px-4" style="min-height: 175px;">
+        
+                        <div class="d-flex align-items-center justify-content-between">
+
+                            <h6 for="orderType" class="d-flex align-items-center fw-600 mb-0">
+                                
+                                <img src="./assets/images/pickup-clock.svg" class="me-2" style="width: 36px;">
+                                
+                                Urgent/Normal
+                            
+                            </h6>
+
+                            <div>
+
+                                <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="changeValue({ fieldName: 'orderType' })">
+
+                                <label for="orderType" style="width: 110px">
+                                    
+                                    <span class="on">Normal</span>
+                                    
+                                    <span class="off">Urgent</span>
+                                
+                                </label>
+
+                            </div>
 
                         </div>
 
-                        <div class="d-block">
+                        <div class="d-flex align-items-center my-3">
 
-                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="!_.isEmpty(f.itemList.controls) && step != 2" (click)="step = 2">CHANGE</button>
+                            <label for="pickupDate" class="text-secondary fw-600 me-2">Pickup Time</label>
 
-                            <button class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-auto" *ngIf="_.isEmpty(f.itemList.controls) && step != 2" (click)="addProductsModal.open()">ADD ITEMS</button>            
+                            <input type="checkbox" id="pickupAvailable" class="toggle toggle-sm" formControlName="pickupAvailable" [checked]="f.pickupAvailable.value">
 
-                        </div>                        
+                            <label for="pickupAvailable">
+                                
+                                <span class="on">Yes</span>
+                                
+                                <span class="off">No</span>
+                            
+                            </label>
+
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+
+                            <div class="pe-1 w-100 position-relative">
+
+                                <input class="form-control form-control-lg border-2" type="text" id="pickupDate" formControlName="pickupDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupDate.touched) && f.pickupDate.errors }" (dateChange)="f.pickupDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'pickupDate' })" [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="pickupDatepicker" readonly>
+
+                                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="pickupDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                                <mat-datepicker #pickupDatepicker></mat-datepicker>
+                                
+                            </div>
+
+                            <div class="ps-1 w-100">
+
+                                <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)">
+                                
+                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [value]="slotDet._id">
+                                        
+                                        {{ slotDet.label }}
+                                    
+                                    </ng-option>
+
+                                </ng-select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex align-items-center my-3">
+
+                            <label for="expDeliveryDate" class="text-secondary fw-600 me-2">Expected Delivery Time</label>
+
+                            <input type="checkbox" id="deliveryAvailable" class="toggle toggle-sm" formControlName="deliveryAvailable" [checked]="f.deliveryAvailable.value">
+
+                            <label for="deliveryAvailable">
+                                
+                                <span class="on">Yes</span>
+                                
+                                <span class="off">No</span>
+                            
+                            </label>
+
+                        </div>                                        
+
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+
+                            <div class="pe-1 w-100 position-relative">
+
+                                <input class="form-control form-control-lg border-2" type="text" id="expDeliveryDate" formControlName="expDeliveryDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryDate.touched) && f.expDeliveryDate.errors }" (dateChange)="f.expDeliveryDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'expDeliveryDate' })"  [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="expDeliveryDatepicker" readonly>
+
+                                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="expDeliveryDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                                <mat-datepicker #expDeliveryDatepicker></mat-datepicker>
+                                
+                            </div>
+
+                            <div class="ps-1 w-100">
+
+                                <ng-select class="form-control border-2" formControlName="expDeliveryTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryTimeSlot.touched) && f.expDeliveryTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.expDeliveryDate?.timeSlots)">
+                                
+                                    <ng-option *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots" [value]="slotDet._id">
+                                        
+                                        {{ slotDet.label }}
+                                    
+                                    </ng-option>
+
+                                </ng-select>
+
+                            </div>                                            
+
+                        </div>                                        
 
                     </div>                    
-
-                </mat-panel-title>
-
-            </mat-expansion-panel-header>
-
-            <div class="rounded-2 p-4">
-
-
-                <ng-container *ngIf="_.isEmpty(f.itemList.controls); else basketInfo">
+    
+                </div>
         
-                    <p class="text-secondary"></p>
-                
-                </ng-container>
-
-                <ng-template #basketInfo>
-
-
-
-                </ng-template>
-
-            </div>
-    
-        </mat-expansion-panel>
+            </mat-expansion-panel>            
         
-        <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 3 }" [expanded]="step === 3" hideToggle disabled>
-    
-            <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 3 }" style="height: 60px !important;">
+        </mat-accordion>        
 
-                <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 3 ? 'text-primary-emphasis' : 'text-secondary'"> 
-                    
-                    <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis" [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">4</div> PAYMENT OPTIONS
-                
-                </mat-panel-title>
+    </div>
 
-            </mat-expansion-panel-header>
+    <div class="col-xxl-5 col-xl-4 col-lg-3">
 
-            <div class="rounded-2 p-4">
-
-            </div>
-    
-        </mat-expansion-panel>            
-    
-    </mat-accordion>
+    </div>
 
 </div>
 
-<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()" (onSubmit)="asidebarSubmit()">
+<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" [ngClass]="{ 'z-index-1060': canvasConfig['canvasName'] == 'addBasket'}" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()" (onSubmit)="asidebarSubmit()" >
   
     <ng-container *ngIf="canvasConfig['canvasName'] == 'addCustomer'">
     
@@ -445,7 +631,7 @@
     
             </div>
     
-            <div class="col-md-4 ps-2 ps-md-1">
+            <div class="col-md-4 ps-2 ps-md-1">            
     
                 <div class="form-group">
     
@@ -464,6 +650,257 @@
                 </div>
     
             </div>
+    
+            <ng-container [formGroup]="cusf.addressDetails">
+    
+                <div class="form-group mb-4">
+                
+                    <label for="street">NO & STREET/ROAD *</label>
+    
+                    <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.street.touched) && adf.street?.errors }">
+    
+                </div>
+    
+                <div class="col-md-6 pe-2 pe-md-1">
+    
+                    <div class="form-group mb-4">
+    
+                        <label for="building">APARTMENT, BUILDING, FLAT</label>
+    
+                        <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
+    
+                    </div>
+    
+                </div>
+    
+                <div class="col-md-6 ps-2 ps-md-1">            
+    
+                    <div class="form-group mb-4">
+    
+                        <label for="block">BLOCK</label>
+    
+                        <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
+    
+                    </div>
+    
+                </div>
+
+                <div class="col-md-6 pe-2 pe-md-1">            
+    
+                    <div class="form-group mb-4">
+    
+                        <label for="others">Others</label>
+    
+                        <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
+    
+                    </div>
+    
+                </div>                
+    
+                <div class="col-md-6 ps-2 ps-md-1">
+    
+                    <div class="form-group">
+    
+                        <label for="countryId">Country</label>
+    
+                        <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.countryId?.touched) && adf.countryId?.errors }">
+    
+                            <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
+                                
+                                {{ countryDet.name | uppercase }}
+                        
+                            </ng-option>
+    
+                        </ng-select>
+    
+                        <div *ngIf="(formSubmitted.customerForm || adf.countryId?.touched) && adf.countryId?.errors" class="invalid-feedback">
+    
+                            <div *ngIf="adf.countryId.errors.required">Country is required</div>
+    
+                        </div>
+    
+                    </div>
+    
+                </div>
+    
+                <div class="col-md-6 pe-2 pe-md-1">
+    
+                    <div class="form-group">
+    
+                        <label for="stateId">State</label>
+    
+                        <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.stateId.touched) && adf.stateId?.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+    
+                            <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.name | uppercase }}</ng-option>
+    
+                        </ng-select>
+    
+                        <div *ngIf="(formSubmitted.customerForm || adf.stateId.touched) && adf.stateId.errors" class="invalid-feedback">
+    
+                            <div *ngIf="adf.stateId.errors.required">State is required</div>
+    
+                        </div>
+    
+                    </div>
+    
+                </div>
+    
+                <div class="col-md-6 ps-2 ps-md-1">
+    
+                    <div class="form-group">
+    
+                        <label for="cityId">City</label>
+    
+                        <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.cityId.touched) && adf.cityId?.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+    
+                            <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.name | uppercase }}</ng-option>
+    
+                        </ng-select>
+    
+                        <div *ngIf="(formSubmitted.customerForm || adf.cityId.touched) && adf.cityId.errors" class="invalid-feedback">
+    
+                            <div *ngIf="adf.cityId.errors.required">City is required</div>
+    
+                        </div>
+    
+                    </div>                                
+    
+                </div>   
+    
+                <div class="col-md-6 pe-2 pe-md-1">
+    
+                    <div class="form-group">
+    
+                        <label for="areaId">Area</label>
+    
+                        <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.areaId?.touched) && adf.areaId?.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+    
+                            <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.name | uppercase }}</ng-option>
+    
+                        </ng-select>                                        
+    
+    
+                        <div *ngIf="(formSubmitted.customerForm || adf.areaId?.touched) && adf.areaId.errors" class="invalid-feedback">
+    
+                            <div *ngIf="adf.areaId.errors.required">Area is required</div>
+    
+                        </div>
+    
+                    </div>                                
+    
+                </div> 
+                
+                <div class="col-sm-6 ps-2 ps-md-1">
+    
+                    <div class="form-group">
+    
+                        <label for="zipcode">PINCODE *</label>
+        
+                        <input type="text" class="form-control form-control-lg" id="zipcode" formControlName="zipcode"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.zipcode.touched) && adf.zipcode?.errors }">
+    
+                        <div *ngIf="(formSubmitted.customerForm || adf.zipcode?.touched) && adf.zipcode?.errors" class="invalid-feedback">
+    
+                            <div *ngIf="adf.zipcode.errors.required">Pincode is required</div>
+    
+                        </div>
+        
+                    </div>
+    
+                </div>
+    
+            </ng-container>     
+    
+        </div>    
+
+    </ng-container>
+
+    <ng-container *ngIf="canvasConfig['canvasName'] == 'addBasket'">
+
+        <h6 class="text-secondary">PRODUCT INFO</h6>
+
+        <div class="d-flex pt-2 pb-4 align-items-center">
+
+            <div class="product-image" style="background : url({{bf.productImageURL.value}});width: 150px;height: 150px;"></div>
+
+            <h5 class="ms-2 mb-0 fw-600">{{ bf.productName.value | titlecase }}</h5>
+
+        </div>
+
+        <div class="form-group d-flex align-items-center justify-content-between"  *ngFor="let priceDet of bf.priceList.value; let index = index">
+
+            <div class="d-flex align-items-center py-2">
+
+                <div class="product-image me-3" style="background : url({{priceDet.imgURL}});width: 40px;height: 40px;"></div> 
+
+                <div>
+
+                    <h6 class="align-self-center mb-0 fw-600" style="min-width: 150px;">{{priceDet.chargeName | titlecase }}</h6>
+
+                    <p class="text-primary mb-0 fw-500 small">{{ priceDet.amount +' '+ service.currencyDetails.currencyCode }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="d-flex align-items-center" *ngIf="bf.priceList.at(index) as priceForm">
+
+                <div class="input-group">
+
+                    <button class="btn border-0 shadow-none bx bx-minus fw-600 fs-4 text-primary" (click)="changeValue({ 'fieldName': 'qty', index, 'data': -1 })"></button>
+
+                    <input class="form-control form-control-lg text-center border-0 bg-primary-subtle mx-2 text-primary fw-bold" style="width: 55px;" [value]="priceForm.value.qty">
+
+                    <button class="btn border-0 shadow-none bx bx-plus fw-600 fs-4 text-primary" (click)="changeValue({ 'fieldName': 'qty', index, 'data': 1 })"></button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr class="mt-5">
+
+        <div class="d-flex justify-content-between pt-3 px-3">
+
+            <h6 class="fw-500">Total</h6>
+
+            <h5 class="text-primary fw-bold">{{ bf.netAmt.value +' '+ service.currencyDetails.currencyCode }}</h5>
+
+        </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="canvasConfig['canvasName'] == 'addDiscount'">
+    
+        <div class="d-flex" [formGroup]="orderForm">
+
+            <div class="d-flex align-items-center me-2">
+
+                <a class="px-3 d-flex align-items-center h-100 border" [ngClass]="f.discType.value == 'percentage' ? 'border-primary-subtle bg-secondary-subtle' : 'border-end-0 text-secondary'" (click)="f.discType.setValue('percentage')">
+                    
+                    <i class="bi bi-percent"></i>
+                
+                </a>
+
+                <a class="px-3 d-flex align-items-center h-100 border" [ngClass]="f.discType.value == 'flat' ? 'border-primary-subtle bg-secondary-subtle' : 'border-start-0 text-secondary'" (click)="f.discType.setValue('flat')">
+
+                    {{ service.currencyDetails.currencyCode }}
+
+                </a>
+
+            </div>
+
+            <ng-container *ngIf="f.discType.value == 'flat'">
+            
+                <input type="text" class="form-control form-control-lg rounded-0" formControlName="discAmt" placeholder="Enter amount" decimalNumbersOnly (change)="calculateOrderFormValue()">
+
+            </ng-container>
+
+            <ng-container *ngIf="f.discType.value == 'percentage'">
+            
+                <input type="text" class="form-control form-control-lg rounded-0" formControlName="discPercentage" placeholder="Enter percentage" decimalNumbersOnly [decimalPoints]="2" (change)="calculateOrderFormValue()">
+
+            </ng-container>
 
         </div>
 
