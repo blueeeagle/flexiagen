@@ -117,7 +117,7 @@
     
                             <ng-container *ngIf="f.isExistingCustomer.value">
                                 
-                                <button class="btn btn-primary btn-sm rounded px-5" (click)="step = 1">CONTINUE ORDER</button>
+                                <button class="btn btn-primary btn-sm rounded px-5" (click)="goNext({ 'nextStep': 1 })">CONTINUE ORDER</button>
     
                             </ng-container>
     
@@ -235,7 +235,7 @@
                                     
                             </a>
     
-                            <button class="btn btn-primary btn-sm rounded px-5" *ngIf="f.selectedAddr.value == i" (click)="step = 2">DELIVERY HERE</button>
+                            <button class="btn btn-primary btn-sm rounded px-5" *ngIf="f.selectedAddr.value == i" (click)="goNext({ 'nextStep': 2 })">DELIVERY HERE</button>
     
                         </div>
                     
@@ -379,7 +379,7 @@
                                 
                         <button 
                             class="btn btn-primary btn-sm rounded px-5" 
-                            (click)="step = 3">
+                            (click)="goNext({ 'nextStep': 3 })">
                             SET PICKUP & DELIVERY TIME
                         </button>
     
@@ -1347,9 +1347,11 @@
 
             <div class="d-flex flex-wrap">
 
-                <a class="card product-card py-2 border-2 m-2" height="220px" *ngFor="let productDet of masterList['agentProducts']" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })">
+                <a class="card product-card py-2 border-2 m-2" height="220px" *ngFor="let productDet of masterList['agentProducts']" (click)="openAsidebar({ 'canvasName': 'addBasket', 'data': productDet })" [ngClass]="{ 'border-primary': _.includes(selectedItems,productDet?.productId?._id) }">
 
                     <div class="card-body">
+
+                        {{ productDet?.productId | json }}, {{ selectedItems | json }}
 
                         <i class="bx bx-plus rounded"></i>
 

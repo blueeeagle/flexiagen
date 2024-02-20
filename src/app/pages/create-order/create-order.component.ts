@@ -57,6 +57,7 @@ export class CreateOrderComponent {
   _: any = _;
   step = 0;
   userSubscribe: any;
+  selectedItems: any = [];
   selectedCustomerDet: any;
   agentProductsCount: any = 0;
   moment: any = moment;
@@ -727,6 +728,10 @@ export class CreateOrderComponent {
 
     });
 
+    this.selectedItems = _.map(this.itf.value,"productId");
+
+    console.log(this.selectedItems,this.itf.value);
+
     this.f.paymentPending.setValue(this.f.netAmt.value);
 
   }
@@ -934,6 +939,12 @@ export class CreateOrderComponent {
       this.canvas?.close();
 
     }
+
+  }
+
+  goNext({ nextStep = 1 }: { nextStep: number }) {
+
+    this.step = nextStep;
 
   }
 
