@@ -70,7 +70,7 @@ export class CreateOrderComponent {
     if(!_.isEmpty(this.service.companyDetails)) {
 
       this.loadForm();
-      this.loadCustomerForm();
+      this.loadCustomerForm({});
       this.loadBasketForm({});
       this.getBasicDetails();
 
@@ -81,7 +81,7 @@ export class CreateOrderComponent {
         if (!_.isEmpty(value)) {
   
           this.loadForm();
-          this.loadCustomerForm();
+          this.loadCustomerForm({});
           this.loadBasketForm({});
           this.getBasicDetails();
         }
@@ -95,7 +95,7 @@ export class CreateOrderComponent {
   ngOnInit(): void {
 
     this.loadForm();
-    this.loadCustomerForm();
+    this.loadCustomerForm({});
     this.loadBasketForm({});    
 
   }
@@ -377,7 +377,7 @@ export class CreateOrderComponent {
 
   }
 
-  loadCustomerForm() {
+  loadCustomerForm({ data = {} }: { data?: any }) {
 
     this.customerForm = this.service.fb.group({
 
@@ -387,15 +387,23 @@ export class CreateOrderComponent {
 
       'lastName': [ null, Validators.required ],  
 
-      'email': [ null, Validators.email ],
+      'email': [ data.email || null, Validators.email ],
 
       'dialCode': [ null, [Validators.required]],
 
-      'mobile': [ null, [Validators.required]],
+      'mobile': [ data.mobile || null, [Validators.required]],
 
       'gender': [ 'male' ],
 
       'customerType': 'POS',
+
+      "verifiedDetails" : {
+
+        "email" : false,
+
+        "mobile" : false
+
+      },
 
       'companies': [
       
@@ -500,7 +508,7 @@ export class CreateOrderComponent {
       'block': [ null ],
 
       'others': [ null ],
-
+   
       'areaId': [ null, Validators.required ],
 
       'cityId': [ null, Validators.required ],
@@ -611,6 +619,8 @@ export class CreateOrderComponent {
           this.orderForm.patchValue({ "customerDetails": null, "customerId": null, "isExistingCustomer": false });
 
           this.formSubmitted.customerSearched = true;
+
+          this.loadCustomerForm({ "data": payload });
           
           return this.service.showToastr({ "data": { "message": `No customer found with this ${ _.first(_.keys(payload)) == 'email' ? 'Email Id' : 'Mobile No'  } `, "type": "error" } });
 
@@ -642,13 +652,23 @@ export class CreateOrderComponent {
 
   }
 
-  addNewCustomer() {
-
-  }
-
   sendCustomerVerification({ newCustomer = false }: { newCustomer?: boolean}) {
 
     if(newCustomer) {
+
+      this.service.postService({ "url": "/master/customer/verification", "params": { type: "email" }, "payload": _.pick(this.customerForm.value,"email") }).subscribe((res: any) => {
+
+        if(res.status == 'ok') {
+
+          this.service.showToastr({ "data": { "message": "Verification email sent successfully", "type": "success" } });
+
+          this.customerVerificationModal.open();
+
+          this.startTimer();
+
+        }
+
+      });
 
     } else {
 
@@ -885,8 +905,6 @@ export class CreateOrderComponent {
 
       this.formSubmitted['customerForm'] = false;
       
-      this.loadCustomerForm();
-
     } else if(canvasName == 'addDiscount') {
 
       this.canvasConfig['canvasTitle'] = 'Apply Discount';
@@ -929,29 +947,7 @@ export class CreateOrderComponent {
 
       if(this.customerForm.invalid) return;
   
-      let payload = _.cloneDeep(this.customerForm.value);
-  
-      payload['addresses'] = [payload['addressDetails']];
-  
-      delete payload['addressDetails'];
-  
-      this.service.postService({ "url": "/master/customer", "payload": payload }).subscribe((res: any) => {
-  
-        if(res.status == "ok") {
-
-          this.orderForm.patchValue({ "customerDetails": res.data, "customerId": res.data._id, "isExistingCustomer": true, "isCustomerVerified": true });
-  
-          this.canvas?.close();
-  
-          this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
-  
-        }
-  
-      }, (err: any) => {
-  
-        this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
-  
-      });
+      this.sendCustomerVerification({ "newCustomer": true });
 
     } else if(this.canvasConfig['canvasName'] == 'addBasket') {
 
@@ -980,6 +976,40 @@ export class CreateOrderComponent {
       this.canvas?.close();
 
     }
+
+  }
+
+  saveCustomer() {
+
+    let payload = _.cloneDeep(this.customerForm.value);
+  
+    payload['addresses'] = [payload['addressDetails']];
+
+    delete payload['addressDetails'];
+
+    this.service.postService({ "url": "/master/customer", "payload": payload }).subscribe((res: any) => {
+
+      if(res.status == "ok") {
+
+        this.orderForm.patchValue({ "customerDetails": res.data, "customerId": res.data._id, "isExistingCustomer": true, "isCustomerVerified": true });
+
+        this.selectedCustomerDet = res.data;
+
+        this.canvas?.close();
+
+        this.loadCustomerForm({});
+
+        this.formSubmitted.customerSearched = false;
+
+        this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
+
+      }
+
+    }, (err: any) => {
+
+      this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+
+    });
 
   }
 
@@ -1123,7 +1153,7 @@ export class CreateOrderComponent {
     
             this.loadForm();
     
-            this.loadCustomerForm();
+            this.loadCustomerForm({});
     
             this.loadBasketForm({});
     

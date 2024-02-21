@@ -22,11 +22,7 @@ export class PagesComponent {
 
       this.spinner.show();
       
-      setTimeout(()=>{ 
-
-        this.service.updateUserDetails(); 
-      
-      },200) 
+      setTimeout(()=>{ this.service.updateUserDetails(); },200) 
 
       this.listenToLoading();
     

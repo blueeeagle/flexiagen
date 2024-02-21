@@ -61,7 +61,7 @@
         
                             <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
         
-                            <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? addNewCustomer() : searchCustomer()">
+                            <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? openAsidebar({ 'canvasName': 'addCustomer' }) : searchCustomer()">
                     
                                 <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
         
@@ -990,7 +990,9 @@
 
     <div class="text-center" *ngIf="!f.isExistingCustomer.value && _.isEmpty(selectedCustomerDet) ? 'true' : 'false' as newCustomer">
 
-        <p class="small text-light">To {{ newCustomer == 'true' ? 'Create' : 'Add' }} customer details, Enter the OTP sent to the customer email</p>
+        <p class="small text-light">
+            To {{ newCustomer == 'true' ? 'create new customer details in ' : 'add existing customer details to ' }} your company's customer list, we need to verify confimation from the customer's side.
+        </p>
 
         <div class="d-flex justify-content-center pt-3">
 
