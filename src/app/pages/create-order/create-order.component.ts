@@ -712,6 +712,36 @@ export class CreateOrderComponent {
 
     if(!this.f.isExistingCustomer.value && _.isEmpty(this.f.customerDetails.value)) {
 
+      let payload = _.cloneDeep(this.customerForm.value);
+  
+      payload['addresses'] = [payload['addressDetails']];
+  
+      delete payload['addressDetails'];
+  
+      this.service.postService({ "url": "/master/customer", "params": { "type": "email", "verificationCode": this.otp.join('') }, "payload": payload }).subscribe((res: any) => {
+  
+        if(res.status == "ok") {
+  
+          this.orderForm.patchValue({ "customerDetails": res.data, "customerId": res.data._id, "isExistingCustomer": true, "isCustomerVerified": true });
+  
+          this.selectedCustomerDet = res.data;
+  
+          this.canvas?.close();
+  
+          this.loadCustomerForm({});
+  
+          this.formSubmitted.customerSearched = false;
+  
+          this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
+  
+        }
+  
+      }, (err: any) => {
+  
+        this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+  
+      });
+  
 
     } else {
 
@@ -976,40 +1006,6 @@ export class CreateOrderComponent {
       this.canvas?.close();
 
     }
-
-  }
-
-  saveCustomer() {
-
-    let payload = _.cloneDeep(this.customerForm.value);
-  
-    payload['addresses'] = [payload['addressDetails']];
-
-    delete payload['addressDetails'];
-
-    this.service.postService({ "url": "/master/customer", "payload": payload }).subscribe((res: any) => {
-
-      if(res.status == "ok") {
-
-        this.orderForm.patchValue({ "customerDetails": res.data, "customerId": res.data._id, "isExistingCustomer": true, "isCustomerVerified": true });
-
-        this.selectedCustomerDet = res.data;
-
-        this.canvas?.close();
-
-        this.loadCustomerForm({});
-
-        this.formSubmitted.customerSearched = false;
-
-        this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
-
-      }
-
-    }, (err: any) => {
-
-      this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
-
-    });
 
   }
 
