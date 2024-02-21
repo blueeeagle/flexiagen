@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormArray, Validators } from '@angular/forms';
 import { ModalComponent, OffcanvasComponent } from '@shared/components';
+import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
@@ -62,7 +63,7 @@ export class CreateOrderComponent {
   agentProductsCount: any = 0;
   moment: any = moment;
 
-  constructor(public service: CommonService) { 
+  constructor(public service: CommonService, private confirmationDialog: ConfirmationDialogService) { 
 
     this.loadFilterForm();
 
@@ -125,7 +126,7 @@ export class CreateOrderComponent {
 
       this.filterForm.patchValue({ 'categoryId': _.map(this.masterList['categoryList'], '_id') });
 
-      this.getMyProducts({});
+      this.getMyProducts();
 
     });
 
@@ -153,7 +154,7 @@ export class CreateOrderComponent {
 
     }
 
-    let payload = { 'day': moment(this.f[fieldName].value).format('dddd'), 'date': moment(this.f[fieldName].value).format('YYYY-MM-DD') };
+    let payload = { 'day': moment(this.f[fieldName].value).format('dddd'), 'date': moment(this.f[fieldName].value).format('YYYY-MM-DD'), 'is_active': true };
 
     this.service.postService({ 'url': '/setup/timeslot/list', 'payload': _.pickBy({ 'companyId': this.service.companyDetails._id, ...payload }) }).subscribe((res:any)=>{
 
@@ -175,9 +176,9 @@ export class CreateOrderComponent {
 
   }  
 
-  getMyProducts({ searchValue = "" }: { searchValue?: string }) {
+  getMyProducts() {
 
-    let params = { searchValue };
+    let params = { 'searchValue': this.filterForm.value.searchValue };
 
     this.service.postService({ "url": "/setup/agentProducts", params, "payload": _.pick(this.filterForm.value,"categoryId") }).subscribe((res: any) => {
 
@@ -280,6 +281,8 @@ export class CreateOrderComponent {
 
       'isExistingCustomer': this.mode == 'Update',
 
+      'companyId': [ this.service?.companyDetails?._id, Validators.required],
+
       "orderDate": [ moment().format('YYYY-MM-DD') ],
 
       "currencyId": [ this.service.currencyDetails._id ],
@@ -317,6 +320,8 @@ export class CreateOrderComponent {
       'qty': [0, Validators.required],
 
       'netAmt': [0, Validators.required],
+
+      'deliveryCharges': [0],
 
       'discAmt': [null, Validators.required],
 
@@ -613,9 +618,11 @@ export class CreateOrderComponent {
 
           this.selectedCustomerDet = _.first(res.data);
 
-          this.selectedCustomerDet['addresses'] = _.map(this.selectedCustomerDet.addresses,(e)=>({ ...e, "selected": e.isDefault }));
+          this.selectedCustomerDet['profileImg'] = _.isEmpty(this.selectedCustomerDet?.profileImg) ? './assets/images/customer-profile.svg' : this.service.getFullImagePath({ 'imgUrl': this.selectedCustomerDet?.profileImg });
 
-          this.selectedCustomerDet['addresses'] = _.map(new Array(5).fill(0),(e,i)=>this.selectedCustomerDet.addresses[i] || { ... _.first(this.selectedCustomerDet.addresses) as any, "selected": false });
+          this.orderForm.get('selectedAddr').setValue(0);
+
+          // this.selectedCustomerDet['addresses'] = _.map(new Array(5).fill(0),(e,i)=>this.selectedCustomerDet.addresses[i] || { ... _.first(this.selectedCustomerDet.addresses) as any, "selected": false });
 
           this.orderForm.patchValue({ 
             
@@ -730,13 +737,31 @@ export class CreateOrderComponent {
 
     this.selectedItems = _.map(this.itf.value,"productId");
 
-    console.log(this.selectedItems,this.itf.value);
-
     this.f.paymentPending.setValue(this.f.netAmt.value);
 
   }
 
-  changeValue({ fieldName, index = 0, data }: { fieldName: string, index?: number, data?: any }) {
+  removeBasketItem({ productIndex = 0, priceIndex = 0 }: { productIndex: number, priceIndex: number }) {
+
+    this.itf.at(productIndex).get('priceList').at(priceIndex).patchValue({ 'qty': 0, 'netAmt': 0 });
+
+    this.itf.at(productIndex).patchValue({ 
+
+      'qty': _.sumBy(this.itf.at(productIndex).value.priceList,(e: any)=>parseFloat(e.qty)),
+      
+      'netAmt': _.sumBy(this.itf.at(productIndex).value.priceList,(e: any)=>parseFloat(e.netAmt)).toCustomFixed()
+    
+    });
+
+    if(_.every(this.itf.at(productIndex).value.priceList,(e: any)=>e.qty == 0)) this.itf.removeAt(productIndex);
+
+    this.calculateOrderFormValue();
+
+    if(this.itf.length == 0) this.goNext({ "nextStep": 2 });
+
+  }
+
+  changeValue({ fieldName, index = 0, indexTwo = 0, data }: { fieldName: string, index?: number, indexTwo?: number, data?: any }) {
 
     if(fieldName == 'qty') {
 
@@ -744,7 +769,9 @@ export class CreateOrderComponent {
 
       let qty = priceForm.value.qty + data;
 
-      qty = qty < 0 ? 0 : qty;
+      if(qty < 0) return this.service.showToastr({ "data": { "message": "Quantity should be greater than or equal to 0", "type": "info" } })
+
+      else if(qty > 50) return this.service.showToastr({ "data": { "message": "Quantity should be less than or equal to 50", "type": "info" } })
 
       this.bf.priceList.at(index).patchValue({ 
         
@@ -807,6 +834,20 @@ export class CreateOrderComponent {
       }
 
       this.orderForm.patchValue({ 'paymentPending': (parseFloat(this.f.netAmt.value) - parseFloat(this.f.paymentReceived.value || 0)).toCustomFixed() });
+
+    } else if(fieldName == 'productQty') {
+
+      this.itf.at(index).get('priceList').at(indexTwo).patchValue({ 'qty': parseFloat(this.itf.at(index).get('priceList').at(indexTwo).value.qty) });
+
+      this.itf.at(index).get('priceList').at(indexTwo).patchValue({ 'netAmt': (parseFloat(this.itf.at(index).get('priceList').at(indexTwo).value.qty) * parseFloat(this.itf.at(index).get('priceList').at(indexTwo).value.amount)).toCustomFixed() });
+
+      this.itf.at(index).patchValue({ 
+
+        'netAmt': _.sumBy(this.itf.at(index).value.priceList,(e: any)=>parseFloat(e.netAmt)).toCustomFixed()
+
+      });
+
+      this.calculateOrderFormValue();
 
     }
 
@@ -944,9 +985,63 @@ export class CreateOrderComponent {
 
   goNext({ nextStep = 1 }: { nextStep: number }) {
 
+    if(_.isEmpty(this.f.customerDetails.value)) {
+
+      this.step = 0;
+      
+      return this.service.showToastr({ "data": { "message": "Please select customer", "type": "info" } });
+
+    } else if(this.f.selectedAddr.value == -1) {
+
+      this.step = 1;
+
+      return this.service.showToastr({ "data": { "message": "Please select address", "type": "info" } });
+
+    } else if(this.itf.value.length == 0) {
+
+      this.step = 2;
+
+      return this.service.showToastr({ "data": { "message": "Please add items to basket", "type": "info" } });
+
+    }
+
     this.step = nextStep;
 
   }
+
+  submit() {
+
+    this.formSubmitted.orderForm = true;
+
+    const formValue = this.orderForm.value;
+
+    if(_.isEmpty(this.selectedCustomerDet)) {
+
+      this.step = 0;
+      
+      return this.service.showToastr({ "data": { "message": "Please select customer", "type": "info" } });
+
+    } else if(formValue.qty <= 0) {
+
+      this.step = 2;
+      
+      return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
+
+    } else if(_.isEmpty(formValue.expDeliveryTimeSlot) || (formValue.isPickupAvailable && _.isEmpty(formValue.pickupTimeSlot))) {
+
+      this.step = 3;
+
+      if(_.isEmpty(formValue.expDeliveryTimeSlot)) return this.service.showToastr({ "data": { "message": "Please select expected delivery time slot", "type": "info" } });
+
+      if(formValue.isPickupAvailable && _.isEmpty(formValue.pickupTimeSlot)) return this.service.showToastr({ "data": { "message": "Please select pickup time slot", "type": "info" } });
+
+    }
+
+    this.f.paymentReceived.setValue((0).toCustomFixed());
+
+    this.orderPreviewModal?.open();
+
+  }  
 
   createOrder() {
 
@@ -956,55 +1051,94 @@ export class CreateOrderComponent {
 
     if(this.orderForm.invalid) return;
 
-    let payload: any = _.omit(_.cloneDeep(this.orderForm.value),["searchCustomer"]);
-
-    payload['itemList'] = _.flatten(_.map(payload.itemList,(itemDet)=>{
-
-      return _.map(itemDet.priceList,(priceDet)=>({ "productId": itemDet.productId, ..._.omit(priceDet,["imgURL","chargeName"]) }))
+    this.confirmationDialog.confirm({ 
       
-    }))
+      type: "info", message: 'Are you sure, you want to create order?',
+    
+    }).then((confirmed) => {
 
-    payload['itemList'] = _.filter(payload.itemList,(itemDet)=>itemDet.qty > 0);
+      if (confirmed) {
 
-    if(!payload.paymentOnDelivery) payload['paymentList'] = [{
+        let payload: any = _.omit(_.cloneDeep(this.orderForm.value),["searchCustomer","isExistingCustomer"]);
 
-      "isAdvance": true,
+        payload['itemList'] = _.flatten(_.map(payload.itemList,(itemDet)=>{
+    
+          return _.map(itemDet.priceList,(priceDet)=>({ "productId": itemDet.productId, ..._.omit(priceDet,["imgURL","chargeName"]) }))
+          
+        }))
+    
+        payload['itemList'] = _.filter(payload.itemList,(itemDet)=>itemDet.qty > 0);
+    
+        if(!payload.paymentOnDelivery) payload['paymentList'] = [{
+    
+          "isAdvance": true,
+    
+          "paymentMode": payload.paymentMode,
+    
+          "paymentDate": moment().format('YYYY-MM-DD'),
+    
+          "transactionStatus": "Success",
+    
+          "amount": payload.paymentReceived
+    
+        }];
+    
+        payload = _.omit(payload,["paymentMode","paymentOnDelivery"]);
+    
+        payload['paymentStatus'] = parseFloat(payload.paymentReceived) == 0 ? 'Unpaid' : parseFloat(payload.paymentReceived) >= parseFloat(payload.netAmt) ? 'Paid' : 'Partly Paid';
+    
+        payload['addressDetails'] = _.omit(payload.customerDetails.addresses[payload.selectedAddr],['isDefault']);
 
-      "paymentMode": payload.paymentMode,
+        payload['addressDetails'] = {
 
-      "paymentDate": moment().format('YYYY-MM-DD'),
+          ...payload['addressDetails'],
 
-      "transactionStatus": "Success",
+          'areaId': payload['addressDetails']['areaId']._id,
 
-      "amount": payload.paymentReceived
+          'cityId': payload['addressDetails']['cityId']._id,
 
-    }];
+          'stateId': payload['addressDetails']['stateId']._id,
 
-    payload = _.omit(payload,["paymentMode","paymentOnDelivery"]);
+          'countryId': payload['addressDetails']['countryId']._id
 
-    payload['paymentStatus'] = parseFloat(payload.paymentReceived) == 0 ? 'Unpaid' : parseFloat(payload.paymentReceived) >= parseFloat(payload.netAmt) ? 'Paid' : 'Partly Paid';
+        };
 
-    this.service.postService({ "url": "/agent/order", "payload": payload }).subscribe((res: any) => {
+        payload["orderMode"] = "POS";
 
-      if(res.status == "ok") {
+        payload['expDeliveryTimeSlotDet'] = _.pick(payload.expDeliveryTimeSlotDet,["startTime","endTime","day","label","session"]);
+    
+        payload['pickupTimeSlotDet'] = _.pick(payload.pickupTimeSlotDet,["startTime","endTime","day","label","session"]);
+    
+        payload = _.omit(payload,["searchCustomer","customerDetails","selectedAddr"]);
+    
+        this.service.postService({ "url": "/agent/order", "payload": payload }).subscribe((res: any) => {
+    
+          if(res.status == "ok") {
+    
+            this.orderPreviewModal?.close();
+    
+            this.service.showToastr({ "data": { "message": "Order Created Successfully", "type": "success" } });
 
-        this.orderPreviewModal?.close();
-
-        this.service.showToastr({ "data": { "message": "Order Created Successfully", "type": "success" } });
-
-        this.loadForm();
-
-        this.loadCustomerForm();
-
-        this.loadBasketForm({});
+            this.formSubmitted = { "orderForm": false, "customerForm": false, "customerSearched": false };
+    
+            this.loadForm();
+    
+            this.loadCustomerForm();
+    
+            this.loadBasketForm({});
+    
+          }
+    
+        }, (err: any) => {
+    
+          this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+    
+        });    
 
       }
 
-    }, (err: any) => {
-
-      this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
-
     });
+
 
   }
 

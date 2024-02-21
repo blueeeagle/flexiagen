@@ -26,13 +26,26 @@
 
 }
 
+.order-preview {
 
-.order-preview .create-order-section {
+    .create-order-section {
 
-    margin-top: 0rem !important;
+        width: -webkit-fill-available;
+        position: absolute;
+        right: 0px;
+        max-width: 600px;
+    
+        .card-body {
+            height: calc(100vh - 128px);
+            overflow: auto;
+        }
 
-    .card-body {
-        height: calc(100vh - 128px);
+        .card-footer {
+            box-shadow: 1px 0px 8px 1px #cdcccc;
+            display: flex;
+            justify-content: center;
+        }        
+    
     }
 
 }
@@ -43,7 +56,7 @@
         border: 2px solid #1e4894;
 
         .card-body {
-            .bx-plus {
+            .bx-plus, .bi-pencil-square {
                 display: block;
                 position: absolute;
                 right: 1rem;
@@ -58,6 +71,10 @@
             color: #1e4894;
             border-color: #1e4894;
             border: 2px solid;
+        }
+        .bi-pencil-square {
+            display: none;
+            color: #1e4894;
         }
     }
 }

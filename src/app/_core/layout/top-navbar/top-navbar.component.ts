@@ -23,7 +23,7 @@ export class TopNavbarComponent {
 
   @Output() menuEvent: EventEmitter<Boolean> = new EventEmitter();
 
-  constructor(private service: CommonService,private confirmationDialog: ConfirmationDialogService) { }
+  constructor(private service: CommonService, private confirmationDialog: ConfirmationDialogService) { }
 
   logImgErrorHandling() { this.logoUrl = './assets/images/logo.png'; }
 

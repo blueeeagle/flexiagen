@@ -26,9 +26,9 @@
       
       <div class="button-group text-center d-flex">
         
-        <button *ngIf="showCancelBtn" type="button" class="btn btn-light me-2" (click)="close()"> {{ closeBtnTxt | titlecase }}  </button>
+        <button *ngIf="showCancelBtn" type="button" class="btn btn-outline-primary btn-sm px-5 me-2 text-primary" style="background-color: #F3F5F9;" (click)="close()"> {{ closeBtnTxt | titlecase }}  </button>
   
-        <button *ngIf="showSaveBtn" type="button" class="btn btn-success me-2"  (click)="submit()" [disabled]="isDisable"> {{ saveBtnTxt | titlecase }} </button>
+        <button *ngIf="showSaveBtn" type="button" class="btn btn-primary btn-sm px-5"  (click)="submit()" [disabled]="isDisable"> {{ saveBtnTxt | titlecase }} </button>
 
         <button *ngIf="isPrint" type="button" class="btn btn-sm btn-primary" (click)="print()">
 
