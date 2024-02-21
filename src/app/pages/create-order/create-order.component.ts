@@ -273,7 +273,7 @@ export class CreateOrderComponent {
 
     this.orderForm = this.service.fb.group({
 
-      'searchCustomer': ['gowthamkannan2g@gmail.com'],
+      'searchCustomer': [''],
 
       'customerDetails': this.editData?.customerId || null,
 
