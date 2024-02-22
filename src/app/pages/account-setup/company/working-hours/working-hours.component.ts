@@ -305,7 +305,7 @@ export class WorkingHoursComponent {
 
         this.isLoading = false;
 
-        this.service.showToastr({ 'data': { 'message': err?.error?.message || 'Something went wrong', 'type': 'error' } });
+        this.service.showToastr({ 'data': { 'message': err?.error?.error || err?.error?.message || 'Something went wrong', 'type': 'error' } });
 
       }
 

@@ -654,6 +654,8 @@ export class CreateOrderComponent {
 
   sendCustomerVerification({ newCustomer = false }: { newCustomer?: boolean}) {
 
+    this.otp = ["", "", "", "", "", ""];
+
     if(newCustomer) {
 
       this.service.postService({ "url": "/master/customer/verification", "params": { type: "email" }, "payload": _.pick(this.customerForm.value,"email") }).subscribe((res: any) => {
@@ -738,10 +740,9 @@ export class CreateOrderComponent {
   
       }, (err: any) => {
   
-        this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+        this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
   
       });
-  
 
     } else {
 
@@ -757,6 +758,10 @@ export class CreateOrderComponent {
 
         }
         
+      }, (err: any) => {
+
+        this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
+  
       });
 
     }
@@ -1157,7 +1162,7 @@ export class CreateOrderComponent {
     
         }, (err: any) => {
     
-          this.service.showToastr({ "data": { "message": err?.error?.message || "Something went wrong", "type": "error" } });
+          this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
     
         });    
 
