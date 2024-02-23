@@ -243,7 +243,7 @@
                         
                         </a>
         
-                        <!-- <div class="d-flex p-3">
+                        <div class="d-flex p-3">
         
                             <a class="text-primary cursor-pointer">
         
@@ -253,7 +253,7 @@
                             
                             </a>
         
-                        </div> -->
+                        </div>
                         
                     </div>
             
@@ -398,142 +398,350 @@
                 </mat-expansion-panel>
                 
                 <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 3 }" [expanded]="step === 3" hideToggle disabled>
-            
-                    <mat-expansion-panel-header class="px-1 rounded-0 px-3" [ngClass]="{ 'bg-primary-subtle': step === 3 }" style="height: 60px !important;">
+
+                    <mat-expansion-panel-header 
+                        class="px-1 rounded-0 px-3" 
+                        [ngClass]="{ 'bg-primary-subtle': step === 3 }" 
+                        [style]="{ 'height': (!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value) && step != 3 ? '100' : '60') + 'px !important' }">
         
-                        <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 3 ? 'text-primary-emphasis' : 'text-secondary'"> 
+                        <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 3 ? 'text-primary-emphasis' : 'text-secondary'">
                             
-                            <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis" [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">4</div> PICKUP & DELIVERY TIME
-                        
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+        
+                                <div class="d-block">
+        
+                                    <div class="d-flex align-items-center">
+            
+                                        <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">4</div> 
+                                    
+                                        PICKUP & DELIVERY TIME
+                
+                                        <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value) && step != 3"></i>
+            
+                                    </div>
+        
+                                    <ng-container *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value) && step != 3">
+        
+                                        <div class="d-flex">
+            
+                                            <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 3 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+            
+                                            <p class="fw-600 mb-0 text-black">
+
+                                                <span class="text-light small fw-400">Exp. delivery on </span>
+                                                
+                                                {{ f.expDeliveryDate.value | date: 'EEE  ddMMM  yyyy' }} {{ f.expDeliveryTimeSlotDet.value?.label }} 
+                                            
+                                            </p>
+
+                                        </div>
+                                    
+                                    </ng-container>
+        
+                                </div>
+        
+                                <div class="d-block">
+        
+                                    <button 
+                                        class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
+                                        *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value) && step != 3" 
+                                        (click)="step = 3"> CHANGE
+                                    </button>
+        
+                                </div>                        
+        
+                            </div>                    
+        
                         </mat-panel-title>
         
-                    </mat-expansion-panel-header>
+                    </mat-expansion-panel-header>                    
         
-                    <div class="rounded-2 py-3 px-2" [formGroup]="orderForm">
+                    <div class="rounded-2 py-3 px-4" [formGroup]="orderForm" style="max-width: 600px;">
     
-                        <div class="pt-3 px-4" style="max-width: 600px;">
-            
-                            <div class="d-flex align-items-center justify-content-between">
-    
-                                <h6 for="orderType" class="d-flex align-items-center fw-600 mb-0">
-                                    
-                                    <img src="./assets/images/pickup-clock.svg" class="me-2" style="width: 36px;">
-                                    
-                                    Urgent/Normal
+                        <div class="d-flex align-items-center justify-content-between">
+
+                            <h6 for="orderType" class="d-flex align-items-center fw-600 mb-0">
                                 
-                                </h6>
-    
-                                <div>
-    
-                                    <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="changeValue({ fieldName: 'orderType' })">
-    
-                                    <label for="orderType" style="width: 110px">
-                                        
-                                        <span class="on">Normal</span>
-                                        
-                                        <span class="off">Urgent</span>
+                                <img src="./assets/images/pickup-clock.svg" class="me-2" style="width: 36px;">
+                                
+                                Urgent/Normal
+                            
+                            </h6>
+
+                            <div>
+
+                                <input type="checkbox" id="orderType" class="toggle" formControlName="orderType" [checked]="f.orderType.value == 'normal'" (change)="changeValue({ fieldName: 'orderType' })">
+
+                                <label for="orderType" style="width: 110px">
                                     
-                                    </label>
-    
-                                </div>
-    
-                            </div>
-    
-                            <div class="d-flex align-items-center my-3">
-    
-                                <label for="pickupDate" class="text-secondary fw-600 me-2">Pickup Time</label>
-    
-                                <input type="checkbox" id="pickupAvailable" class="toggle toggle-sm" formControlName="pickupAvailable" [checked]="f.pickupAvailable.value">
-    
-                                <label for="pickupAvailable">
+                                    <span class="on">Normal</span>
                                     
-                                    <span class="on">Yes</span>
-                                    
-                                    <span class="off">No</span>
+                                    <span class="off">Urgent</span>
                                 
                                 </label>
-    
+
                             </div>
-    
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-    
-                                <div class="pe-1 w-100 position-relative">
-    
-                                    <input class="form-control form-control-lg border-2" type="text" id="pickupDate" formControlName="pickupDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupDate.touched) && f.pickupDate.errors }" (dateChange)="f.pickupDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'pickupDate' })" [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="pickupDatepicker" readonly>
-    
-                                    <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="pickupDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
-    
-                                    <mat-datepicker #pickupDatepicker></mat-datepicker>
-                                    
-                                </div>
-    
-                                <div class="ps-1 w-100">
-    
-                                    <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)">
-                                    
-                                        <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [value]="slotDet._id">
-                                            
-                                            {{ slotDet.label }}
-                                        
-                                        </ng-option>
-    
-                                    </ng-select>
-    
-                                </div>
-    
-                            </div>
-    
-                            <div class="d-flex align-items-center my-3">
-    
-                                <label for="expDeliveryDate" class="text-secondary fw-600 me-2">Expected Delivery Time</label>
-    
-                                <input type="checkbox" id="deliveryAvailable" class="toggle toggle-sm" formControlName="deliveryAvailable" [checked]="f.deliveryAvailable.value">
-    
-                                <label for="deliveryAvailable">
-                                    
-                                    <span class="on">Yes</span>
-                                    
-                                    <span class="off">No</span>
+
+                        </div>
+
+                        <div class="d-flex align-items-center my-3">
+
+                            <label for="pickupDate" class="text-secondary fw-600 me-2">Pickup Time</label>
+
+                            <input type="checkbox" id="isHomePickup" class="toggle toggle-sm" formControlName="isHomePickup" [checked]="f.isHomePickup.value">
+
+                            <label for="isHomePickup">
                                 
-                                </label>
-    
-                            </div>                                        
-    
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-    
-                                <div class="pe-1 w-100 position-relative">
-    
-                                    <input class="form-control form-control-lg border-2" type="text" id="expDeliveryDate" formControlName="expDeliveryDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryDate.touched) && f.expDeliveryDate.errors }" (dateChange)="f.expDeliveryDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'expDeliveryDate' })"  [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="expDeliveryDatepicker" readonly>
-    
-                                    <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="expDeliveryDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
-    
-                                    <mat-datepicker #expDeliveryDatepicker></mat-datepicker>
-                                    
-                                </div>
-    
-                                <div class="ps-1 w-100">
-    
-                                    <ng-select class="form-control border-2" formControlName="expDeliveryTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryTimeSlot.touched) && f.expDeliveryTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.expDeliveryDate?.timeSlots)">
-                                    
-                                        <ng-option *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots" [value]="slotDet._id">
-                                            
-                                            {{ slotDet.label }}
+                                <span class="on">Yes</span>
+                                
+                                <span class="off">No</span>
+                            
+                            </label>
+
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+
+                            <div class="pe-1 w-100 position-relative">
+
+                                <input class="form-control form-control-lg border-2" type="text" id="pickupDate" formControlName="pickupDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupDate.touched) && f.pickupDate.errors }" (dateChange)="f.pickupDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'pickupDate' })" [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="pickupDatepicker" readonly>
+
+                                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="pickupDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                                <mat-datepicker #pickupDatepicker></mat-datepicker>
+                                
+                            </div>
+
+                            <div class="ps-1 w-100">
+
+                                <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)">
+                                
+                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [value]="slotDet._id">
                                         
-                                        </ng-option>
-    
-                                    </ng-select>
-    
-                                </div>                                            
-    
-                            </div>                                        
-    
-                        </div>                    
+                                        {{ slotDet.label }}
+                                    
+                                    </ng-option>
+
+                                </ng-select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex align-items-center my-3">
+
+                            <label for="expDeliveryDate" class="text-secondary fw-600 me-2">Expected Delivery Time</label>
+
+                            <input type="checkbox" id="isHomeDelivery" class="toggle toggle-sm" formControlName="isHomeDelivery" [checked]="f.isHomeDelivery.value">
+
+                            <label for="isHomeDelivery">
+                                
+                                <span class="on">Yes</span>
+                                
+                                <span class="off">No</span>
+                            
+                            </label>
+
+                        </div>                                        
+
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+
+                            <div class="pe-1 w-100 position-relative">
+
+                                <input class="form-control form-control-lg border-2" type="text" id="expDeliveryDate" formControlName="expDeliveryDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryDate.touched) && f.expDeliveryDate.errors }" (dateChange)="f.expDeliveryDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'expDeliveryDate' })"  [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="expDeliveryDatepicker" readonly>
+
+                                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="expDeliveryDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+
+                                <mat-datepicker #expDeliveryDatepicker></mat-datepicker>
+                                
+                            </div>
+
+                            <div class="ps-1 w-100">
+
+                                <ng-select class="form-control border-2" formControlName="expDeliveryTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryTimeSlot.touched) && f.expDeliveryTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.expDeliveryDate?.timeSlots)">
+                                
+                                    <ng-option *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots" [value]="slotDet._id">
+                                        
+                                        {{ slotDet.label }}
+                                    
+                                    </ng-option>
+
+                                </ng-select>
+
+                            </div>                                            
+
+                        </div>       
+
+                        <ng-container *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value)">
+
+                            <button class="btn btn-primary btn-sm rounded px-5 mt-3" (click)="goNext({ 'nextStep': 4 })">PROCEED</button>
+                        
+                        </ng-container>
         
                     </div>
             
-                </mat-expansion-panel>            
+                </mat-expansion-panel>
+                
+                <mat-expansion-panel class="mat-elevation-z1 border" [ngClass]="{ 'mb-3': step != 4 }" [expanded]="step === 4" hideToggle disabled>
+
+                    <mat-expansion-panel-header 
+                        class="px-1 rounded-0 px-3" 
+                        [ngClass]="{ 'bg-primary-subtle': step === 4 }" 
+                        [style]="{ 'height': ((f.paymentOnDelivery.value || parseFloat(f.paymentReceived.value || '0') > 0) && step != 4 ? '100' : '60') + 'px !important' }">
+        
+                        <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 4 ? 'text-primary-emphasis' : 'text-secondary'">
+                            
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+        
+                                <div class="d-block">
+        
+                                    <div class="d-flex align-items-center">
             
-            </mat-accordion>        
+                                        <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis"  [ngClass]="step === 4 ? 'bg-white' : 'bg-secondary-subtle'">4</div> 
+                                    
+                                        PAYMENT DETAILS
+                
+                                        <i class="bi bi-check-lg fs-4 ms-2 ng-star-inserted text-primary" *ngIf="(f.paymentOnDelivery.value || parseFloat(f.paymentReceived.value || '0') > 0) && step != 4"></i>
+            
+                                    </div>
+        
+                                    <ng-container *ngIf="(f.paymentOnDelivery.value || parseFloat(f.paymentReceived.value || '0') > 0) && step != 4">
+        
+                                        <div class="d-flex">
+            
+                                            <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 4 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
+            
+                                            <p class="fw-600 mb-0 text-black">
+
+                                                {{ f.paymentOnDelivery.value ? 'Pay On Delivery' : '' }}
+
+                                                {{ parseFloat(f.paymentReceived.value) > 0 ? (parseFloat(f.paymentReceived.value) + ' ' + service.currencyDetails.currencyCode) : '' }}
+
+                                            </p>
+            
+                                        </div>
+                                    
+                                    </ng-container>
+        
+                                </div>
+        
+                                <div class="d-block">
+        
+                                    <button 
+                                        class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
+                                        *ngIf="(f.paymentOnDelivery.value || parseFloat(f.paymentReceived.value) > 0) && step != 4" 
+                                        (click)="step = 4"> CHANGE
+                                    </button>
+        
+                                </div>
+        
+                            </div>                    
+        
+                        </mat-panel-title>
+        
+                    </mat-expansion-panel-header>                      
+
+                    <div class="rounded-2 py-3 px-4" [formGroup]="orderForm" style="max-width: 600px;">
+    
+                        <mat-radio-group class="d-flex justify-content-around align-items-center pb-3" formControlName="paymentOnDelivery">
+
+                            <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': !f.paymentOnDelivery?.value }" (click)="f.paymentOnDelivery.setValue(false)"> 
+                                    
+                                <mat-radio-button [value]="false">Pay Now</mat-radio-button>
+                            
+                            </button>                            
+                            
+                            <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': f.paymentOnDelivery?.value }" (click)="f.paymentOnDelivery.setValue(true)"> 
+                                    
+                                <mat-radio-button [value]="true">Pay on Delivery</mat-radio-button>
+                            
+                            </button>
+
+                        </mat-radio-group>
+
+                        <hr>
+
+                        <ng-container *ngIf="!f.paymentOnDelivery.value">
+
+                            <mat-radio-group formControlName="paymentMode">
+
+                                <div class="d-flex justify-content-around align-items-centerpt-3">
+
+                                    <button class="btn fs-6 opt-btn text-start w-50 me-2 position-relative" [ngClass]="{ 'active': f.paymentMode.value == 'Benifit' }" (click)="f.paymentMode.setValue('Benifit')"> 
+                                            
+                                        <mat-radio-button value="Benifit">Benifit</mat-radio-button>
+
+                                        <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
+                                    
+                                    </button>                            
+                                    
+                                    <button class="btn fs-6 opt-btn text-start w-50 ms-2 position-relative" [ngClass]="{ 'active': f.paymentMode.value == 'Credit Card' }" (click)="f.paymentMode.setValue('Credit Card')"> 
+                                            
+                                        <mat-radio-button value="Credit Card">Credit Card</mat-radio-button>
+
+                                        <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
+                                    
+                                    </button>
+
+                                </div>
+
+                                <div class="d-flex justify-content-around align-items-center mt-4">
+
+                                    <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': f.paymentMode.value == 'Cash' }" (click)="f.paymentMode.setValue('Cash')"> 
+                                            
+                                        <mat-radio-button value="Cash">Cash</mat-radio-button>
+                                    
+                                    </button>                            
+                                    
+                                    <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': f.paymentMode.value == 'UPI/Others' }" (click)="f.paymentMode.setValue('UPI/Others')"> 
+                                            
+                                        <mat-radio-button value="UPI/Others">UPI/Others</mat-radio-button>
+                                    
+                                    </button>
+
+                                </div>                                
+
+                            </mat-radio-group>                                    
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <h6 class="text-secondary fw-500 mb-0">Amount Received</h6>
+
+                                <div class="d-flex align-items-center justify-content-end">
+
+                                    <h6 class="mb-0 fw-600 text-primary">{{ service.currencyDetails.currencyCode }}</h6>
+
+                                    <input type="text" class="form-control form-control-lg border-0 bg-secondary-subtle w-50 rounded-0 ms-3" formControlName="paymentReceived" decimalNumbersOnly (change)="changeValue({ fieldName: 'paymentReceived' })">
+
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+
+                                <h6 class="text-secondary fw-500 mb-0">Balance Paid</h6>
+
+                                <div class="d-flex align-items-center justify-content-end">
+
+                                    <h6 class="mb-0 fw-600 fw-600 text-primary">{{ service.currencyDetails.currencyCode }}</h6>
+
+                                    <input type="text" class="form-control form-control-lg border-0 bg-secondary-subtle w-50 rounded-0 ms-3" formControlName="paymentPending" readonly>
+
+                                </div>
+
+                            </div>
+
+                        </ng-container>
+
+                        <button class="btn btn-primary btn-sm rounded px-5 mt-3" [disabled]="(!f.paymentOnDelivery.value && f.paymentReceived.errors)" (click)="submit({})">SUBMIT</button>
+
+                    </div>
+
+                </mat-expansion-panel>                        
+            
+            </mat-accordion>
     
         </div>
     
@@ -595,7 +803,7 @@
 
                     </div>
 
-                    <button class="btn btn-lg btn-primary fw-light fs-6 w-100 mb-2" (click)="submit()">
+                    <button class="btn btn-lg btn-primary fw-light fs-6 w-100 mb-2" (click)="submit({ 'create': true })">
         
                         <i class="bi bi-file-earmark-plus"></i>
                         
@@ -728,168 +936,17 @@
                 </div>
     
             </div>
-    
-            <ng-container [formGroup]="cusf.addressDetails">
-    
-                <div class="form-group mb-4">
-                
-                    <label for="street">NO & STREET/ROAD *</label>
-    
-                    <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.street.touched) && adf.street?.errors }">
-    
-                </div>
-    
-                <div class="col-md-6 pe-2 pe-md-1">
-    
-                    <div class="form-group mb-4">
-    
-                        <label for="building">APARTMENT, BUILDING, FLAT</label>
-    
-                        <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
-    
-                    </div>
-    
-                </div>
-    
-                <div class="col-md-6 ps-2 ps-md-1">            
-    
-                    <div class="form-group mb-4">
-    
-                        <label for="block">BLOCK</label>
-    
-                        <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
-    
-                    </div>
-    
-                </div>
 
-                <div class="col-md-6 pe-2 pe-md-1">            
+            <ng-container *ngTemplateOutlet="addressForm"></ng-container>
     
-                    <div class="form-group mb-4">
-    
-                        <label for="others">Others</label>
-    
-                        <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
-    
-                    </div>
-    
-                </div>                
-    
-                <div class="col-md-6 ps-2 ps-md-1">
-    
-                    <div class="form-group">
-    
-                        <label for="countryId">Country</label>
-    
-                        <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.countryId?.touched) && adf.countryId?.errors }">
-    
-                            <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
-                                
-                                {{ countryDet.name | uppercase }}
-                        
-                            </ng-option>
-    
-                        </ng-select>
-    
-                        <div *ngIf="(formSubmitted.customerForm || adf.countryId?.touched) && adf.countryId?.errors" class="invalid-feedback">
-    
-                            <div *ngIf="adf.countryId.errors.required">Country is required</div>
-    
-                        </div>
-    
-                    </div>
-    
-                </div>
-    
-                <div class="col-md-6 pe-2 pe-md-1">
-    
-                    <div class="form-group">
-    
-                        <label for="stateId">State</label>
-    
-                        <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.stateId.touched) && adf.stateId?.errors }" [readonly]="_.size(masterList['stateList']) == 0">
-    
-                            <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.name | uppercase }}</ng-option>
-    
-                        </ng-select>
-    
-                        <div *ngIf="(formSubmitted.customerForm || adf.stateId.touched) && adf.stateId.errors" class="invalid-feedback">
-    
-                            <div *ngIf="adf.stateId.errors.required">State is required</div>
-    
-                        </div>
-    
-                    </div>
-    
-                </div>
-    
-                <div class="col-md-6 ps-2 ps-md-1">
-    
-                    <div class="form-group">
-    
-                        <label for="cityId">City</label>
-    
-                        <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.cityId.touched) && adf.cityId?.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
-    
-                            <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.name | uppercase }}</ng-option>
-    
-                        </ng-select>
-    
-                        <div *ngIf="(formSubmitted.customerForm || adf.cityId.touched) && adf.cityId.errors" class="invalid-feedback">
-    
-                            <div *ngIf="adf.cityId.errors.required">City is required</div>
-    
-                        </div>
-    
-                    </div>                                
-    
-                </div>   
-    
-                <div class="col-md-6 pe-2 pe-md-1">
-    
-                    <div class="form-group">
-    
-                        <label for="areaId">Area</label>
-    
-                        <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.areaId?.touched) && adf.areaId?.errors }" [readonly]="_.size(masterList['areaList']) == 0">
-    
-                            <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.name | uppercase }}</ng-option>
-    
-                        </ng-select>                                        
-    
-    
-                        <div *ngIf="(formSubmitted.customerForm || adf.areaId?.touched) && adf.areaId.errors" class="invalid-feedback">
-    
-                            <div *ngIf="adf.areaId.errors.required">Area is required</div>
-    
-                        </div>
-    
-                    </div>                                
-    
-                </div> 
-                
-                <div class="col-sm-6 ps-2 ps-md-1">
-    
-                    <div class="form-group">
-    
-                        <label for="zipcode">PINCODE *</label>
-        
-                        <input type="text" class="form-control form-control-lg" id="zipcode" formControlName="zipcode"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.zipcode.touched) && adf.zipcode?.errors }">
-    
-                        <div *ngIf="(formSubmitted.customerForm || adf.zipcode?.touched) && adf.zipcode?.errors" class="invalid-feedback">
-    
-                            <div *ngIf="adf.zipcode.errors.required">Pincode is required</div>
-    
-                        </div>
-        
-                    </div>
-    
-                </div>
-    
-            </ng-container>     
-    
-        </div>    
+        </div>
 
+    </ng-container>
+
+    <ng-container *ngIf="canvasConfig['canvasName'] == 'addAddress'">
+
+        <ng-container *ngTemplateOutlet="addressForm"></ng-container>
+    
     </ng-container>
 
     <ng-container *ngIf="canvasConfig['canvasName'] == 'addBasket'">
@@ -984,6 +1041,169 @@
 
     </ng-container>
 
+    <ng-template #addressForm>
+
+        <ng-container [formGroup]="cusf.addressDetails">
+    
+            <div class="form-group mb-4">
+            
+                <label for="street">NO & STREET/ROAD *</label>
+
+                <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.street.touched) && adf.street?.errors }">
+
+            </div>
+
+            <div class="col-md-6 pe-2 pe-md-1">
+
+                <div class="form-group mb-4">
+
+                    <label for="building">APARTMENT, BUILDING, FLAT</label>
+
+                    <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 ps-2 ps-md-1">            
+
+                <div class="form-group mb-4">
+
+                    <label for="block">BLOCK</label>
+
+                    <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 pe-2 pe-md-1">            
+
+                <div class="form-group mb-4">
+
+                    <label for="others">Others</label>
+
+                    <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
+
+                </div>
+
+            </div>                
+
+            <div class="col-md-6 ps-2 ps-md-1">
+
+                <div class="form-group">
+
+                    <label for="countryId">Country</label>
+
+                    <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.countryId?.touched) && adf.countryId?.errors }">
+
+                        <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
+                            
+                            {{ countryDet.name | uppercase }}
+                    
+                        </ng-option>
+
+                    </ng-select>
+
+                    <div *ngIf="(formSubmitted.customerForm || adf.countryId?.touched) && adf.countryId?.errors" class="invalid-feedback">
+
+                        <div *ngIf="adf.countryId.errors.required">Country is required</div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 pe-2 pe-md-1">
+
+                <div class="form-group">
+
+                    <label for="stateId">State</label>
+
+                    <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.stateId.touched) && adf.stateId?.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+
+                        <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.name | uppercase }}</ng-option>
+
+                    </ng-select>
+
+                    <div *ngIf="(formSubmitted.customerForm || adf.stateId.touched) && adf.stateId.errors" class="invalid-feedback">
+
+                        <div *ngIf="adf.stateId.errors.required">State is required</div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 ps-2 ps-md-1">
+
+                <div class="form-group">
+
+                    <label for="cityId">City</label>
+
+                    <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.cityId.touched) && adf.cityId?.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+
+                        <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.name | uppercase }}</ng-option>
+
+                    </ng-select>
+
+                    <div *ngIf="(formSubmitted.customerForm || adf.cityId.touched) && adf.cityId.errors" class="invalid-feedback">
+
+                        <div *ngIf="adf.cityId.errors.required">City is required</div>
+
+                    </div>
+
+                </div>                                
+
+            </div>   
+
+            <div class="col-md-6 pe-2 pe-md-1">
+
+                <div class="form-group">
+
+                    <label for="areaId">Area</label>
+
+                    <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.areaId?.touched) && adf.areaId?.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+
+                        <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.name | uppercase }}</ng-option>
+
+                    </ng-select>                                        
+
+
+                    <div *ngIf="(formSubmitted.customerForm || adf.areaId?.touched) && adf.areaId.errors" class="invalid-feedback">
+
+                        <div *ngIf="adf.areaId.errors.required">Area is required</div>
+
+                    </div>
+
+                </div>                                
+
+            </div> 
+            
+            <div class="col-sm-6 ps-2 ps-md-1">
+
+                <div class="form-group">
+
+                    <label for="zipcode">PINCODE *</label>
+    
+                    <input type="text" class="form-control form-control-lg" id="zipcode" formControlName="zipcode"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted.customerForm || adf.zipcode.touched) && adf.zipcode?.errors }">
+
+                    <div *ngIf="(formSubmitted.customerForm || adf.zipcode?.touched) && adf.zipcode?.errors" class="invalid-feedback">
+
+                        <div *ngIf="adf.zipcode.errors.required">Pincode is required</div>
+
+                    </div>
+    
+                </div>
+
+            </div>
+
+        </ng-container>     
+
+    </ng-template>
+
 </asidebar>
 
 <modal #customerVerificationModal title="Customer Verification OTP" modalBodyClass="p-4" size="md" [showCancelBtn]="false" [showSaveBtn]="false" [showCloseIcon]="false">
@@ -1048,353 +1268,6 @@
 
     </div>
 
-
-</modal>
-
-<modal #orderPreviewModal title="Order Details" modalBodyClass="p-0" [isFullModal]="true" [showCancelBtn]="false" [showSaveBtn]="false">
-
-    <div class="d-flex order-preview">
-
-        <div class="card w-50 mt-5 ms-5 border-0 mat-elevation-z3" style="border-radius: 18px 18px 0 0">
-
-            <div class="card-header bg-secondary rounded-top-pill"></div>
-
-            <div class="card-body">
-
-                <h6 class="text-secondary">AGENT DETAILS</h6>
-
-                <div class="d-flex align-items-center py-2">
-
-                    <img src="./assets/images/default-company-logo.svg">
-
-                    <div class="ms-3">
-
-                        <h5 class="mb-0 fw-600">{{ service.companyDetails.companyName }}</h5>
-
-                        <p class="mb-0 fw-500 text-light small" *ngIf="service.companyDetails.addressDetails as addressDet">
-                            
-                            {{ addressDet.areaId.name }}, {{ addressDet.cityId.name }}, {{ addressDet.stateId.name }}
-                        
-                        </p> 
-
-                    </div>
-
-                </div>
-
-                <h6 class="text-secondary mt-3">CUSTOMER DETAILS</h6>
-
-                <div class="d-flex align-items-start py-3">
-        
-                    <div class="customer-image product-image mt-3" style="background: url({{selectedCustomerDet?.customerImageURL}}); width: 35px; height: 35px;"></div>
-
-                    <div class="ms-3">
-
-                        <h5 class="fw-600">{{selectedCustomerDet?.firstName + ' ' + selectedCustomerDet?.lastName}}</h5>
-
-                        <p class="fw-500 text-light" *ngIf="selectedCustomerDet?.addressInfo as addressDet">
-    
-                            {{ addressDet?.street }}, 
-                            {{ !_.isEmpty(addressDet?.block) ? addressDet?.block + ',' : ''}} 
-                            {{ !_.isEmpty(addressDet?.building) ? addressDet?.building + ',' : '' }}
-                            {{ addressDet?.areaId?.name }}, <br>
-                            {{ addressDet?.cityId?.name }}, 
-                            {{ addressDet?.countryId?.name }} - 
-                            {{ addressDet?.zipcode }}
-    
-                        </p>
-        
-                    </div>
-
-                </div>
-
-                <h6 class="text-secondary mt-3">ORDER STATUS</h6>
-
-                <h6 class="fw-500 p-3 text-secondary bg-light w-75">{{ f.orderStatus.value }}</h6>
-
-                <h6 class="text-secondary mt-3">READY AT</h6>
-
-                <h6 class="fw-600">{{ f.expDeliveryDate.value | date: 'EEE  ddMMM  yyyy' }}</h6>
-
-                <h6 class="fw-500 small text-light">{{ f.expDeliveryTimeSlotDet.value?.label }}</h6>
-
-                <div class="d-flex align-items-center">
-
-                    <div class="me-5">
-
-                        <h6 class="text-secondary mt-3">CREATED BY</h6>
-    
-                        <h6>{{ service.userDetails.name | uppercase }}</h6>
-
-                    </div>
-
-                    <div>
-
-                        <h6 class="text-secondary mt-3">CREATED ON</h6>
-    
-                        <h6>{{ f.orderDate.value | date: 'EEE dd,yyyy' }}</h6>
-
-                    </div>
-
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="create-order-section border-2 border-start">
-
-            <div class="card-body" [formGroup]="orderForm">
-    
-                <mat-accordion multi>
-    
-                    <!-- <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
-    
-                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white" >
-    
-                            <div class="mb-0 text-primary fw-500 small">Item Summary ({{ f.qty.value }})</div>
-    
-                        </mat-expansion-panel-header>
-    
-                        <div class="pt-3 px-4">
-                            
-                            <div style="min-height: 175px;">
-
-                                <ng-container  *ngFor="let productDet of this.itf.value; let index = index">
-
-                                    <ng-container *ngFor="let priceDet of productDet.priceList">
-
-                                        <div class="form-group d-flex align-items-center justify-content-between" *ngIf="priceDet.qty > 0">
-
-                                            <div class="d-flex py-2">
-
-                                                <div class="product-img-card border border-2 rounded p-2 me-3">
-
-                                                    <div class="product-image" style="background : url({{productDet.productImageURL}});width: 75px;height: 75px;"></div> 
-
-                                                </div>
-                            
-                                                <div>
-                                
-                                                    <h6 class="align-self-center mb-0 fw-600" style="min-width: 150px;">{{productDet.productName | titlecase }}</h6>
-
-                                                    <p class="text-secondary fw-500 mb-3 small">{{ priceDet.chargeName | titlecase }}</p>
-                                                    
-                                                    <div class="d-flex align-items-center">
-
-                                                        <p class="text-secondary mb-0 fw-500 small">{{ priceDet.amount +' '+ service.currencyDetails.currencyCode }}</p>
-
-                                                    </div>
-                                
-                                                </div>
-                                
-                                            </div>
-
-                                            <div class="d-flex align-items-center">
-
-                                                <i class="fw-500 bx bx-x fs-6 text-secondary"></i>
-
-                                                <p class="fw-600 mb-0">{{priceDet.qty}}</p>
-
-                                            </div>
-
-                                            <h6 class="mb-0 fw-600">{{ priceDet.netAmt + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                                        </div>
-
-                                    </ng-container>
-
-                                </ng-container>
-
-                            </div>
-    
-                        </div>
-    
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true">
-
-                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
-
-                            <div class="mb-0 text-primary fw-500 small">Check Out</div>
-
-                        </mat-expansion-panel-header>
-
-                        <div class="mt-3" style="min-height: 175px;">
-
-                            <div class="d-flex justify-content-between align-items-center px-4">
-
-                                <h6 class="text-secondary fw-500 mb-0">Subtotal</h6>
-
-                                <h6 class="mb-0 fw-600">{{ f.grossAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center mt-3 px-4">
-
-                                <p class="text-primary fw-500 mb-0 d-flex align-items-center bg-primary-subtle px-2 py-1 rounded-pill">
-
-                                    <img src="./assets/images/discount.svg" class="me-2" alt="">
-                                    
-                                    Discount
-                                
-                                </p>
-
-                                <h6 class="mb-0 fw-600">{{ f.discAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                            </div>                                        
-
-                            <hr>
-
-                            <div class="d-flex justify-content-between align-items-center px-4">
-
-                                <h6 class="text-secondary fw-500 mb-0">Total</h6>
-
-                                <h6 class="mb-0 fw-600">{{ f.netAmt.value + ' ' + service.currencyDetails.currencyCode }}</h6>
-
-                            </div>                                            
-
-                        </div>
-
-                    </mat-expansion-panel> -->
-
-                    <mat-expansion-panel class="mat-elevation-z0 rounded-0 my-0" [expanded]="true" disabled hideToggle>
-
-                        <mat-expansion-panel-header class="card-section-header bg-primary-subtle px-3 py-2 border-bottom border-2 border-white">
-
-                            <div class="mb-0 text-primary fw-500 small">Payment Method</div>
-
-                        </mat-expansion-panel-header>
-
-                        <div class="my-3" style="min-height: 175px;">
-
-                            <div class="px-4">
-
-                                <mat-radio-group class="d-flex justify-content-around align-items-center pb-3" formControlName="paymentOnDelivery">
-    
-                                    <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': !f.paymentOnDelivery?.value }" (click)="f.paymentOnDelivery.setValue(false)"> 
-                                            
-                                        <mat-radio-button [value]="false">Pay Now</mat-radio-button>
-                                    
-                                    </button>                            
-                                    
-                                    <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': f.paymentOnDelivery?.value }" (click)="f.paymentOnDelivery.setValue(true)"> 
-                                            
-                                        <mat-radio-button [value]="true">Pay on Delivery</mat-radio-button>
-                                    
-                                    </button>
-    
-                                </mat-radio-group>
-    
-                                <hr>
-
-                            </div>
-
-                            <ng-container *ngIf="!f.paymentOnDelivery.value">
-
-                                <div class="px-4">
-
-                                    <mat-radio-group formControlName="paymentMode">
-    
-                                        <div class="d-flex justify-content-around align-items-centerpt-3">
-        
-                                            <button class="btn fs-6 opt-btn text-start w-50 me-2 position-relative" [ngClass]="{ 'active': f.paymentMode.value == 'Benifit' }" (click)="f.paymentMode.setValue('Benifit')"> 
-                                                    
-                                                <mat-radio-button value="Benifit">Benifit</mat-radio-button>
-        
-                                                <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
-                                            
-                                            </button>                            
-                                            
-                                            <button class="btn fs-6 opt-btn text-start w-50 ms-2 position-relative" [ngClass]="{ 'active': f.paymentMode.value == 'Credit Card' }" (click)="f.paymentMode.setValue('Credit Card')"> 
-                                                    
-                                                <mat-radio-button value="Credit Card">Credit Card</mat-radio-button>
-        
-                                                <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
-                                            
-                                            </button>
-        
-                                        </div>
-        
-                                        <div class="d-flex justify-content-around align-items-center mt-4">
-        
-                                            <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': f.paymentMode.value == 'Cash' }" (click)="f.paymentMode.setValue('Cash')"> 
-                                                    
-                                                <mat-radio-button value="Cash">Cash</mat-radio-button>
-                                            
-                                            </button>                            
-                                            
-                                            <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': f.paymentMode.value == 'UPI/Others' }" (click)="f.paymentMode.setValue('UPI/Others')"> 
-                                                    
-                                                <mat-radio-button value="UPI/Others">UPI/Others</mat-radio-button>
-                                            
-                                            </button>
-        
-                                        </div>                                
-        
-                                    </mat-radio-group>                                    
-
-                                </div>                                
-
-                                <hr>
-
-                                <div class="d-flex justify-content-between align-items-center px-4">
-
-                                    <h6 class="text-secondary fw-500 mb-0">Amount Received</h6>
-
-                                    <div class="d-flex align-items-center justify-content-end">
-
-                                        <h6 class="mb-0 fw-600 text-primary">{{ service.currencyDetails.currencyCode }}</h6>
-
-                                        <input type="text" class="form-control form-control-lg border-0 bg-secondary-subtle w-50 rounded-0 ms-3" formControlName="paymentReceived" decimalNumbersOnly (change)="changeValue({ fieldName: 'paymentReceived' })">
-
-                                    </div>
-
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center px-4 mt-3">
-
-                                    <h6 class="text-secondary fw-500 mb-0">Balance Paid</h6>
-
-                                    <div class="d-flex align-items-center justify-content-end">
-
-                                        <h6 class="mb-0 fw-600 fw-600 text-primary">{{ service.currencyDetails.currencyCode }}</h6>
-
-                                        <input type="text" class="form-control form-control-lg border-0 bg-secondary-subtle w-50 rounded-0 ms-3" formControlName="paymentPending" readonly>
-
-                                    </div>
-
-                                </div>
-
-                            </ng-container>
-
-                        </div>
-
-                    </mat-expansion-panel>                    
-                    
-                </mat-accordion>                            
-    
-            </div>
-    
-            <div class="card-footer border-top border-2 px-3 py-2 pt-3">               
-    
-                <button class="btn btn-primary mx-2 w-50 btn fw-light fs-6" (click)="createOrder()">
-    
-                    PayNow
-                
-                </button>
-
-                <button class="btn btn-outline-primary mx-2 w-50 btn-lg fw-light fs-6" (click)="orderPreviewModal.close()">
-    
-                    Discard
-                
-                </button>                 
-    
-            </div>
-    
-        </div>
-    
-    </div>
 
 </modal>
 

@@ -26,7 +26,6 @@ export class CreateOrderComponent {
   mode: string = 'Create';
   editData: any;
   customerForm: any;
-  addressForm: any;
   filterForm: any;
   basketForm: any;
   selectedItemDet: any = {};
@@ -293,13 +292,13 @@ export class CreateOrderComponent {
 
       'orderMode': ['POS'],
 
-      'deliveryAvailable': [false],
+      'isHomePickup': [false],
 
-      'pickupAvailable': [false],
+      'isHomeDelivery': [false],
 
-      'pickupDate': [null],
+      'pickupDate': [null, [Validators.required]],
 
-      'pickupTimeSlot': [null],
+      'pickupTimeSlot': [null, [Validators.required]],
 
       'pickupTimeSlotDet': [null],
 
@@ -341,20 +340,6 @@ export class CreateOrderComponent {
 
     });
 
-    this.orderForm.get("pickupAvailable").valueChanges.subscribe((value: any) => {
-
-      this.orderForm.patchValue({ 'pickupDate': null, 'pickupTimeSlot': null, 'pickupTimeSlotDet': null });
-
-      if(value) {
-
-        this.f.pickupDate.setValue(moment().format('YYYY-MM-DD'));
-        
-      }
-
-      this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['pickupDate', 'pickupTimeSlot'], 'validators': value ? [Validators.required] : [] });
-
-    });
-
     this.orderForm.get('paymentOnDelivery').valueChanges.subscribe((value: any) => {
 
       this.orderForm.patchValue({ 'paymentMode': !value ? 'Cash' : null, 'paymentReceived': 0, 'paymentPending': this.f.netAmt.value });
@@ -381,27 +366,27 @@ export class CreateOrderComponent {
 
     this.customerForm = this.service.fb.group({
 
-      'companyId': [ this.service?.companyDetails?._id, Validators.required],
+      'companyId': [ data.companyId || this.service?.companyDetails?._id, Validators.required],
 
-      'firstName': [ null, Validators.required ],
+      'firstName': [ data.firstName || null, Validators.required ],
 
-      'lastName': [ null, Validators.required ],  
+      'lastName': [ data.lastName || null, Validators.required ],  
 
       'email': [ data.email || null, Validators.email ],
 
-      'dialCode': [ null, [Validators.required]],
+      'dialCode': [ data.dialCode || null, [Validators.required]],
 
       'mobile': [ data.mobile || null, [Validators.required]],
 
-      'gender': [ 'male' ],
+      'gender': [ data.gender || 'male' ],
 
-      'customerType': 'POS',
+      'customerType': data.customerType || 'POS',
 
       "verifiedDetails" : {
 
-        "email" : false,
+        "email": data.verifiedDetails?.email || false,
 
-        "mobile" : false
+        "mobile": data.verifiedDetails?.mobile || false
 
       },
 
@@ -497,36 +482,6 @@ export class CreateOrderComponent {
 
   }
 
-  loadAddressForm({ getAddressForm = false }: { getAddressForm?: boolean }) {
-
-    this.addressForm = this.service.fb.group({
-
-      'street': [ null, Validators.required ],
-
-      'building': [ null ],
-
-      'block': [ null ],
-
-      'others': [ null ],
-   
-      'areaId': [ null, Validators.required ],
-
-      'cityId': [ null, Validators.required ],
-
-      'stateId': [ null, Validators.required ],
-
-      'countryId': [ null, Validators.required ],
-
-      'zipcode': [ null, Validators.required ],
-
-      'isDefault': false
-
-    });
-
-    if(getAddressForm) return this.addressForm;
-
-  }
-
   loadBasketForm({ productDet = {} }: {productDet?: any}) {
 
     this.basketForm = this.service.fb.group({
@@ -590,8 +545,6 @@ export class CreateOrderComponent {
   get cusf() { return this.customerForm.controls; }
 
   get adf() { return this.cusf.addressDetails.controls; }
-
-  get af() { return this.addressForm.controls; }
 
   searchCustomer() {
     
@@ -1022,17 +975,23 @@ export class CreateOrderComponent {
       
       return this.service.showToastr({ "data": { "message": "Please select customer", "type": "info" } });
 
-    } else if(this.f.selectedAddr.value == -1) {
+    } else if(this.f.selectedAddr.value == -1 && nextStep != 1) {
 
       this.step = 1;
 
       return this.service.showToastr({ "data": { "message": "Please select address", "type": "info" } });
 
-    } else if(this.itf.value.length == 0) {
+    } else if(this.itf.value.length == 0 && nextStep != 2) {
 
       this.step = 2;
 
       return this.service.showToastr({ "data": { "message": "Please add items to basket", "type": "info" } });
+
+    } else if((_.isEmpty(this.f.expDeliveryTimeSlotDet.value) || _.isEmpty(this.f.pickupTimeSlotDet.value)) && nextStep != 3) {
+
+      this.step = 3;
+
+      return this.service.showToastr({ "data": { "message": "Please select expected delivery and pickup time slot", "type": "info" } });
 
     }
 
@@ -1040,7 +999,13 @@ export class CreateOrderComponent {
 
   }
 
-  submit() {
+  parseFloat(value: string): any {
+
+    return parseFloat(value);
+
+  }
+
+  submit({ create = false }: { create?: boolean }) {
 
     this.formSubmitted.orderForm = true;
 
@@ -1058,7 +1023,7 @@ export class CreateOrderComponent {
       
       return this.service.showToastr({ "data": { "message": "Please select atleast one item", "type": "info" } });
 
-    } else if(_.isEmpty(formValue.expDeliveryTimeSlot) || (formValue.isPickupAvailable && _.isEmpty(formValue.pickupTimeSlot))) {
+    } else if(_.isEmpty(this.f.expDeliveryTimeSlotDet.value) || _.isEmpty(this.f.pickupTimeSlotDet.value)) {
 
       this.step = 3;
 
@@ -1066,20 +1031,22 @@ export class CreateOrderComponent {
 
       if(formValue.isPickupAvailable && _.isEmpty(formValue.pickupTimeSlot)) return this.service.showToastr({ "data": { "message": "Please select pickup time slot", "type": "info" } });
 
+    } else if(parseFloat(formValue.paymentReceived) == 0 && !formValue.paymentOnDelivery) {
+
+      this.step = 4;
+
+      return this.service.showToastr({ "data": { "message": "Please enter received payment amount", "type": "info" } });
+
     }
 
-    this.f.paymentReceived.setValue((0).toCustomFixed());
+    this.step = -1;
 
-    this.orderPreviewModal?.open();
+    if(create) this.createOrder();
 
   }  
 
   createOrder() {
-
-    if(parseFloat(this.f.paymentReceived.value) == 0 && !this.f.paymentOnDelivery.value) 
     
-      return this.service.showToastr({ "data": { "message": "Please enter received payment amount", "type": "info" } });
-
     if(this.orderForm.invalid) return;
 
     this.confirmationDialog.confirm({ 
@@ -1151,6 +1118,10 @@ export class CreateOrderComponent {
             this.service.showToastr({ "data": { "message": "Order Created Successfully", "type": "success" } });
 
             this.formSubmitted = { "orderForm": false, "customerForm": false, "customerSearched": false };
+
+            this.selectedCustomerDet = {};
+
+            this.step = 0;
     
             this.loadForm();
     
