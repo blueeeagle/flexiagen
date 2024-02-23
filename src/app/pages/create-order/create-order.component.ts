@@ -398,25 +398,25 @@ export class CreateOrderComponent {
 
       'addressDetails': this.service.fb.group({
 
-        'street': [ null, Validators.required ],
+        'street': [ data.addressDetails?.street || null, Validators.required ],
 
-        'building': [ null ],
+        'building': [ data.addressDetails?.building || null ],
 
-        'block': [ null ],
+        'block': [ data.addressDetails?.block || null ],
 
-        'others': [ null ],
+        'others': [ data.addressDetails?.others || null ],
 
-        'areaId': [ null, Validators.required ],
+        'areaId': [ data.addressDetails?.areaId || null, Validators.required ],
 
-        'cityId': [ null, Validators.required ],
+        'cityId': [ data.addressDetails?.cityId || null, Validators.required ],
 
-        'stateId': [ null, Validators.required ],
+        'stateId': [ data.addressDetails?.stateId || null, Validators.required ],
 
-        'countryId': [ null, Validators.required ],
+        'countryId': [ data.addressDetails?.countryId || null, Validators.required ],
 
-        'zipcode': [ null, Validators.required ],
+        'zipcode': [ data.addressDetails?.zipcode || null, Validators.required ],
 
-        'isDefault': true
+        'isDefault': [ data.addressDetails?.isDefault || false ]
 
       })
       
@@ -611,11 +611,13 @@ export class CreateOrderComponent {
 
     if(newCustomer) {
 
-      this.service.postService({ "url": "/master/customer/verification", "params": { type: "email" }, "payload": _.pick(this.customerForm.value,"email") }).subscribe((res: any) => {
+      this.service.postService({ "url": "/master/sendCustomerVerification", "params": { type: "email" }, "payload": _.pick(this.customerForm.value,"email") }).subscribe((res: any) => {
 
         if(res.status == 'ok') {
 
           this.service.showToastr({ "data": { "message": "Verification email sent successfully", "type": "success" } });
+
+          this.canvas?.close();
 
           this.customerVerificationModal.open();
 
@@ -632,6 +634,8 @@ export class CreateOrderComponent {
         if(res.status=='ok') {
 
           this.service.showToastr({ "data": { "message": "Verification email sent successfully", "type": "success" } });
+
+          this.canvas?.close();
 
           this.customerVerificationModal.open();
 
@@ -681,9 +685,11 @@ export class CreateOrderComponent {
   
           this.selectedCustomerDet = res.data;
   
-          this.canvas?.close();
-  
           this.loadCustomerForm({});
+
+          this.customerVerificationModal.close();
+
+          this.customerForm.get('verifiedDetails').patchValue({ "email": true });
   
           this.formSubmitted.customerSearched = false;
   
@@ -692,7 +698,11 @@ export class CreateOrderComponent {
         }
   
       }, (err: any) => {
-  
+
+        this.loadCustomerForm({ "data": this.customerForm.value });
+
+        this.openAsidebar({ "canvasName": "addCustomer" });        
+
         this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
   
       });
@@ -706,12 +716,16 @@ export class CreateOrderComponent {
           this.service.showToastr({ "data": { "message": "Customer verified successfully", "type": "success" } });
 
           this.customerVerificationModal.close();
-
+        
           this.orderForm.patchValue({ "isExistingCustomer": true });
 
         }
         
-      }, (err: any) => {
+      }, (err: any) => {  
+
+        this.loadCustomerForm({ "data": this.customerForm.value });
+
+        this.openAsidebar({ "canvasName": "addCustomer" });        
 
         this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
   
