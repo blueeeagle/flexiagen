@@ -681,7 +681,7 @@ export class CreateOrderComponent {
   
       delete payload['addressDetails'];
 
-      payload['comapnies'] = [ { 'companyId': this.service.companyDetails._id, 'customerType': 'POS' } ];
+      payload['companies'] = [ { 'companyId': this.service.companyDetails._id, 'customerType': 'POS' } ];
   
       this.service.postService({ "url": "/master/customer", "params": { "type": "email", "verificationCode": this.otp.join('') }, "payload": payload }).subscribe((res: any) => {
   
