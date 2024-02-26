@@ -8,7 +8,7 @@ export const APP_CONFIG = {
 	secretKey: "",
 
 	// APP_DOMAIN: 'http://agentapi.flexiclean.me/api/v1',
-    AGENT_IMG_URL: 'http://agentapi.flexiclean.me/',
+    // AGENT_IMG_URL: 'http://agentapi.flexiclean.me/',
 	ADMIN_IMG_URL: 'http://adminapi.flexiclean.me/',
 	CUSTOMER_IMG_URL: 'http://cusapi.flexiclean.me/',
   
@@ -16,7 +16,7 @@ export const APP_CONFIG = {
 
 	// APP_DOMAIN: 'http://192.168.1.7:9000/api/v1',
     APP_DOMAIN: 'http://localhost:9000/api/v1',   
-    // AGENT_IMG_URL: 'http://localhost:9000/',
+    AGENT_IMG_URL: 'http://localhost:9000/',
 	// ADMIN_IMG_URL: 'http://localhost:9500/',
 	// CUSTOMER_IMG_URL: 'http://localhost:9001/'
 

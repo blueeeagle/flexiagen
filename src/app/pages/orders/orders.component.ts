@@ -14,6 +14,7 @@ export class OrdersComponent {
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
   openCanvas : boolean = false;
+  filterForm: any = {};
   orderList: any = [];
   totalCount: number = 0;
   tableColumns = ['ORDER NO', 'ORDER DATE', 'CUSTOMER NAME', 'MOBILE', 'MAIL','NOOFITEMS' ,'BOOKEDVIA','ORDER STATUS','PAYMENT STATUS','ACTION'];
@@ -26,7 +27,24 @@ export class OrdersComponent {
     this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/orders"] });
 
     this.getOrderList();
+
+    this.loadForm();
     
+  }
+
+  loadForm() {
+
+    this.filterForm = this.service.fb.group({
+
+      "orderType": [""],
+      "fromDate": [""],
+      "toDate": [""],
+      "orderMode": [""],
+      "orderStatus": [""],
+      "paymentStatus": [""]
+
+    });
+
   }
 
   getOrderList() {
@@ -37,7 +55,7 @@ export class OrdersComponent {
 
         this.orderList = res.data;
 
-        this.totalCount = res.data.totalCount;
+        this.totalCount = res.totalCount;
 
       }
       

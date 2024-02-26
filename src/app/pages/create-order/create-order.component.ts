@@ -187,7 +187,7 @@ export class CreateOrderComponent {
 
         this.masterList['agentProducts'] = _.map(this.masterList['agentProducts'], (e: any) => {
   
-          e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL });
+          e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL'  });
           
           return e;
   
@@ -286,7 +286,7 @@ export class CreateOrderComponent {
 
       "currencyId": [ this.service.currencyDetails._id ],
 
-      'orderStatus': ['Order Placed'],
+      'orderStatus': ['Booked'],
 
       'orderType': ['normal'],
 
@@ -366,8 +366,6 @@ export class CreateOrderComponent {
 
     this.customerForm = this.service.fb.group({
 
-      'companyId': [ data.companyId || this.service?.companyDetails?._id, Validators.required],
-
       'firstName': [ data.firstName || null, Validators.required ],
 
       'lastName': [ data.lastName || null, Validators.required ],  
@@ -390,13 +388,9 @@ export class CreateOrderComponent {
 
       },
 
-      'companies': [
-      
-        { 'companyId': this.service?.companyDetails?._id, 'customerType': 'POS' }
-        
-      ],
-
       'addressDetails': this.service.fb.group({
+
+        '_id': [ data.addressDetails?._id || null ],
 
         'street': [ data.addressDetails?.street || null, Validators.required ],
 
@@ -406,13 +400,13 @@ export class CreateOrderComponent {
 
         'others': [ data.addressDetails?.others || null ],
 
-        'areaId': [ data.addressDetails?.areaId || null, Validators.required ],
+        'areaId': [ data.addressDetails?.areaId?._id || data.addressDetails?.areaId || null, Validators.required ],
 
-        'cityId': [ data.addressDetails?.cityId || null, Validators.required ],
+        'cityId': [ data.addressDetails?.cityId?._id || data.addressDetails?.cityId || null, Validators.required ],
 
-        'stateId': [ data.addressDetails?.stateId || null, Validators.required ],
+        'stateId': [ data.addressDetails?.stateId?._id || data.addressDetails?.stateId || null, Validators.required ],
 
-        'countryId': [ data.addressDetails?.countryId || null, Validators.required ],
+        'countryId': [ data.addressDetails?.countryId?._id || data.addressDetails?.countryId || null, Validators.required ],
 
         'zipcode': [ data.addressDetails?.zipcode || null, Validators.required ],
 
@@ -421,6 +415,16 @@ export class CreateOrderComponent {
       })
       
     });
+
+    if(data.addressDetails?._id) {
+
+      this.getStates();
+
+      this.getCities({ 'fieldName': data.addressDetails?.stateId ? 'stateId' : 'countryId' });
+
+      this.getAreas();
+
+    }
 
     // Listen to Country changes and update State, City, Area and zipcode
 
@@ -522,7 +526,7 @@ export class CreateOrderComponent {
 
         'chargeName': [chargeDet?.chargeId?.chargeName, Validators.required],
 
-        'imgURL': [this.service.getFullImagePath({ 'imgUrl': chargeDet?.chargeId?.imgURL }), Validators.required],
+        'imgURL': [this.service.getFullImagePath({ 'imgUrl': chargeDet?.chargeId?.imgURL, 'baseUrlFrom': 'ADMIN_IMG_URL' }), Validators.required],
 
         'amount': [ (chargeDet?.amount || 0).toCustomFixed(), Validators.required],
 
@@ -673,9 +677,11 @@ export class CreateOrderComponent {
 
       let payload = _.cloneDeep(this.customerForm.value);
   
-      payload['addresses'] = [payload['addressDetails']];
+      payload['addresses'] = [ { ..._.omit(payload['addressDetails'],'_id'), "isDefault": true } ];
   
       delete payload['addressDetails'];
+
+      payload['comapnies'] = [ { 'companyId': this.service.companyDetails._id, 'customerType': 'POS' } ];
   
       this.service.postService({ "url": "/master/customer", "params": { "type": "email", "verificationCode": this.otp.join('') }, "payload": payload }).subscribe((res: any) => {
   
@@ -699,9 +705,9 @@ export class CreateOrderComponent {
   
       }, (err: any) => {
 
-        this.loadCustomerForm({ "data": this.customerForm.value });
+        // this.loadCustomerForm({ "data": this.customerForm.value });
 
-        this.openAsidebar({ "canvasName": "addCustomer" });        
+        // this.openAsidebar({ "canvasName": "addCustomer" });
 
         this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
   
@@ -875,7 +881,21 @@ export class CreateOrderComponent {
 
   }  
 
-  openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addBasket' | 'addDiscount', data?: any }) {
+  closeVerificationModal(newCustomer: string) {
+
+    if(eval(newCustomer)) {
+
+      this.loadCustomerForm({ 'data': this.customerForm.value });
+
+      this.openAsidebar({ 'canvasName': 'addCustomer' });
+
+    } 
+
+    this.customerVerificationModal.close();
+
+  }
+
+  openAsidebar({ canvasName = 'addCustomer', data = {} }:  { canvasName: 'addCustomer' | 'addAddress' | 'editAddress' | 'addBasket' | 'addDiscount', data?: any }) {
 
     this.canvasConfig['canvasName'] = canvasName;
 
@@ -915,6 +935,39 @@ export class CreateOrderComponent {
 
       this.canvasConfig['showCancelBtn'] = false;
     
+    } else if(canvasName == 'addAddress') {
+
+        let data = this.f.customerDetails.value;
+
+        data['addressDetails'] = { 'isDefault': false };
+
+        this.loadCustomerForm({ "data": data });
+        
+        this.canvasConfig['canvasTitle'] = 'Add Address';
+  
+        this.canvasConfig['applyBtnTxt'] = 'Add Address';
+  
+        this.canvasConfig['cancelBtnTxt'] = 'Clear';
+  
+        this.canvasConfig['showCancelBtn'] = true;
+  
+      
+    } else if(canvasName == 'editAddress') {
+
+      let customerData = this.f.customerDetails.value;
+
+      customerData['addressDetails'] = data;
+
+      this.loadCustomerForm({ "data": customerData });
+
+      this.canvasConfig['canvasTitle'] = 'Edit Address';
+
+      this.canvasConfig['applyBtnTxt'] = 'Update Address';
+
+      this.canvasConfig['cancelBtnTxt'] = 'Clear';
+
+      this.canvasConfig['showCancelBtn'] = true;
+
     }
 
   }
@@ -976,6 +1029,50 @@ export class CreateOrderComponent {
     } else if(this.canvasConfig['canvasName'] == 'addDiscount') {
 
       this.canvas?.close();
+
+    } else if(this.canvasConfig['canvasName'] == 'addAddress') {
+
+      if(this.customerForm.invalid) return;
+
+      let payload = _.omit(this.customerForm.value['addressDetails'],'_id')
+
+      this.service.postService({ "url": `/master/customer/address/${this.f.customerId.value}`, "payload": { ...payload, "customerId": this.f.customerId.value } }).subscribe((res: any) => {
+
+        if(res.status == "ok") {
+
+          this.service.showToastr({ "data": { "message": "Address added successfully", "type": "success" } });
+
+          this.canvas?.close();
+
+          this.selectedCustomerDet = res.data;
+
+          this.orderForm.patchValue({ "customerDetails": res.data, "selectedAddr": _.size(res.data.addresses)-1 });
+
+        }
+
+      });
+
+    } else if(this.canvasConfig['canvasName'] == 'editAddress') {
+
+      if(this.customerForm.invalid) return;
+
+      let payload = this.customerForm.value['addressDetails'];
+
+      this.service.patchService({ "url": `/master/customer/address/${this.f.customerId.value}/${payload._id}`, "payload": payload }).subscribe((res: any) => {
+
+        if(res.status == "ok") {
+
+          this.service.showToastr({ "data": { "message": "Address updated successfully", "type": "success" } });
+
+          this.canvas?.close();
+
+          this.selectedCustomerDet = res.data;
+
+          this.orderForm.patchValue({ "customerDetails": res.data, "selectedAddr": _.findIndex(res.data.addresses, { '_id': payload._id }) });
+
+        }
+
+      });
 
     }
 

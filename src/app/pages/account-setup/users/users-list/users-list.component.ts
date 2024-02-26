@@ -104,6 +104,8 @@ export class UsersListComponent {
       
       'role': [this.editData?.role?._id || null, [Validators.required]],
 
+      'userType': [ this.editData?.userType == 'driver' || false ],
+
       'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
 
       'profileImg': [this.editData?.profileImg ? this.service.getFullImagePath({ 'imgUrl': this.editData.profileImg }) : '' ],
@@ -197,6 +199,8 @@ export class UsersListComponent {
     const payload = _.omit(this.userForm.getRawValue(),'profileImg');
 
     payload["companyId"] = this.service.companyDetails._id;
+
+    payload['userType'] = payload['userType'] ? 'driver' : 'agentUser';
 
     const formData = new FormData();
 
