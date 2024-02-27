@@ -10,4 +10,13 @@
     text-wrap: nowrap;
     
     height: fit-content;
-  }                          
+}                          
+
+::ng-deep .list-options {
+  .mat-mdc-menu-content {
+    padding: 0 !important;
+  }
+  .mat-mdc-menu-item-text {
+    font-size: 13px !important;
+  }
+}
