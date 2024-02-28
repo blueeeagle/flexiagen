@@ -36,6 +36,9 @@ export class CommonService {
 
   updateUserDetails() {
 
+    console.log('enter');
+    
+
     this.getUserDetails.subscribe((res: any) => {
     
       if(res.status=='ok') {

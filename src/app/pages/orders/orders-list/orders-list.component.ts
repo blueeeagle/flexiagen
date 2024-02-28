@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { OffcanvasComponent } from '@shared/components';
+import { ModalComponent, OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 
@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 export class OrdersListComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
+  @ViewChild('OrderDetailsModal') OrderDetailsModal!: ModalComponent;
 
   openCanvas : boolean = false;
   filterForm: any = {};
@@ -22,6 +23,8 @@ export class OrdersListComponent {
   pageSize: number = 10;
   pageIndex: number = 0;
   filterValues: any = null;
+  companyDetails : any = {} ;
+  orderDetails : any = {};
 
   constructor(public service: CommonService, ){}
 
@@ -61,6 +64,20 @@ export class OrdersListComponent {
     this.pageSize = 10;
 
     this.getOrderList({});
+
+  }
+
+  openModal(data: any) {
+
+    this.companyDetails = this.service.userDetails;
+
+    console.log(this.companyDetails);
+    
+    this.orderDetails = data;
+
+    console.log(this.orderDetails);
+
+    this.OrderDetailsModal.open();
 
   }
 

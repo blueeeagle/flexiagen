@@ -158,7 +158,7 @@
                 
                             <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> Action </th>
             
-                            <td mat-cell *matCellDef="let locationDet">
+                            <td mat-cell *matCellDef="let locationDet ;let orderDet" >
             
                                 <a class="text-primary d-flex align-items-center justify-content-center" [matMenuTriggerFor]="menu"> 
         
@@ -168,9 +168,9 @@
 
                                 <mat-menu #menu="matMenu" class="list-options mt-1">
 
-                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;"> <i class="bi bi-eye me-1"></i> View Order </a>
+                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;" (click)="openModal(orderDet)"> <i class="bi bi-eye me-1"></i> View Order </a>
                         
-                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;"> <i class="bi bi-pencil me-1"></i> Update Status </a>
+                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;" > <i class="bi bi-pencil me-1"></i> Update Status </a>
 
                                     <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;"> <i class="bi bi-credit-card-2-back me-1"></i> Update Payment </a>
                         
@@ -297,3 +297,137 @@
     </div>
 
 </asidebar>
+
+<modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showCloseIcon]="false" [showSaveBtn]="false" saveBtnTxt="PROCEED" >
+
+    <div class="row">
+
+        <div class="col-xxl-9 col-xl-8 col-lg-7">
+
+            <div class="card border-0 mat-elevation-z2 m-3" >
+
+                <div class="card-header">
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="agentDetails">
+
+                        <h5 class="text-secondary">AGENT DETAILS</h5>
+    
+                        <div class="d-flex">
+    
+                            <div>
+    
+                                <img src="/assets/images/user-profile.png" style="width: 54px;" class="img-fluid" alt="User Profile">
+    
+                            </div>
+    
+                            <div>
+    
+                                <h5 class="mx-4">{{ this.companyDetails?.name }}</h5>
+    
+                                <div class="d-lg-flex d-sm-block justify-content-between">
+                                    
+                                    <p class="mx-4 text-secondary">Ganapathy , Coimbatore</p>
+    
+                                    <p class="mx-4 text-secondary"><i class="bi bi-telephone"></i>{{ this.companyDetails?.dialCode + '  ' + this.companyDetails?.mobile }}</p>
+    
+                                    <p class="mx-4 text-secondary"><i class="bi bi-envelope"></i> {{ this.companyDetails?.email }}</p>
+    
+                                </div>
+    
+                            </div>
+    
+                        </div>
+
+                    </div>
+
+                    <div class="customerDetails mt-3">
+
+                        <h5 class="text-secondary">CUSTOMER DETAILS</h5>
+
+                        <div class="d-flex">
+
+                            <div>
+        
+                                <img src="/assets/images/user-profile.png" style="width: 54px;" class="img-fluid " alt="User Profile">
+    
+                            </div>
+    
+                            <div>
+    
+                                <h5 class="mx-4">{{ this.orderDetails?.customerId?.firstName }}</h5>
+    
+                                <div class="d-lg-flex d-sm-block justify-content-between">
+                                    
+                                    <p class="mx-4 text-secondary">{{ this.orderDetails?.addressDetails?.street + ',' + this.orderDetails?.addressDetails?.areaId?.name + ' , ' +  this.orderDetails?.addressDetails?.cityId?.name +  ' - ' +  this.orderDetails?.addressDetails?.areaId?.zipcode  }}</p>
+    
+                                </div>
+    
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="itemDetails mt-3">
+
+                        <h5 class="text-secondary">ITEM DETAILS</h5>
+
+                        <div *ngFor="let item of orderDetails?.itemList" class="mt-3 d-flex">
+
+                            <img [src]="service.getFullImagePath({ 'imgUrl': item?.productId?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' })" style="width: 70px;
+                            height: 71px;
+                            border: 1px solid #dcdfe7;
+                            padding: 4px;border-radius: 5px;" class="img-fluid my-2" alt="User Profile">
+
+                            <div>
+
+                                <small class="mx-4 text-dark">{{ item?.productId?.productId?.productName }}</small>
+
+                                <div>
+                                    
+                                    <small class="mx-4 text-secondary my-0">{{ item?.chargeId?.chargeName }}</small>
+
+                                    <div class="d-flex justify-content-between">
+
+                                        <small class="mx-4 mt-2"><i class="bi bi-cart text-primary"></i> &nbsp;&nbsp;  {{ item?.qty + ' * ' + item?.amount + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
+
+                                        <p class="fw-bold mx-5">{{ item?.netAmt + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
+
+                                    </div>
+    
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeDetails mt-3">
+
+                            <h5 class="text-secondary">PICKUP ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-dark">{{ orderDetails?.pickupDate | date :'EE d MMM  y' }} </span></h5>
+
+                            <h5 class="text-secondary">DELIVERY ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-dark">{{ orderDetails?.expDeliveryDate | date :'EE d MMM  y' }}</span></h5>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-xxl-3 col-xl-4 col-lg-5">
+
+
+
+        </div>
+
+    </div>
+
+</modal>
