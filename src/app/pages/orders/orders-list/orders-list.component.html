@@ -130,7 +130,13 @@
 
                             <td  mat-cell *matCellDef="let orderDet" class="text-center">
 
-                            <span class="badge rounded-pill px-2">  {{ orderDet?.orderStatus || '--Nil--'  }} <i class="bi bi-arrow-repeat"></i></span>
+                                <a class="badge rounded-pill px-2"  (click)="service.otherData.orderDetails = orderDet" routerLink="/pages/orders/track-status/{{orderDet._id}}"> 
+                                    
+                                    {{ orderDet?.orderStatus || '--Nil--'  }} 
+                                    
+                                    <i class="bi bi-arrow-repeat"></i>
+                                
+                                </a>
 
                             </td>
                             

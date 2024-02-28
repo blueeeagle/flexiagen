@@ -1,13 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { OrdersComponent } from './orders.component';
 
 const routes: Routes = [
   {
-    path : "",
-    component : OrdersComponent
+    path: 'list',
+    loadChildren: () => import('./orders-list/orders-list.module').then(m => m.OrdersListModule)
+  },
+  {
+    path: 'track-status/:orderId',
+    loadChildren: () => import('./track-status/track-status.module').then(m => m.TrackStatusModule)
+  },
+  {
+    path: '',
+    redirectTo: 'list',
+    pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: 'list',
+    pathMatch: 'full'
   }
-
 ];
 
 @NgModule({

@@ -23,6 +23,10 @@ export class CommonService {
   public userDetails: any = {};
   public companyDetails: any = {};
   public currencyDetails: any = JSON.parse(this.session({ "method": "get", "key": "CurrencyDetails" })) || {};
+  public otherData: any = {
+    'orderDetails': {},
+    'secondaryPageTitle': ''
+  };
 
   public userDetailsObs = new Subject();
 

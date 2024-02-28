@@ -12,12 +12,6 @@
                 
                     <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
                     
-                    <!-- <button class="btn btn-md btn-primary bi bi-plus-lg" (click)="openAsideBar()"> 
-                
-                        <span class="ms-3" >Add New</span>
-                    
-                    </button> -->
-                    
                 </div>
     
             </div>
@@ -141,15 +135,7 @@
             
                                 <td mat-cell *matCellDef="let customerDet" class="text-center">
                                 
-                                    <!-- <div class="form-check form-switch ps-0 w-100 justify-content-end flex-row-reverse d-flex">
-                                    
-                                        <label class="form-check-label text-dark ms-2" for="active"> {{ (customerDet.is_active) ? 'Active' : 'In-Active' }} </label>
-                                    
-                                        <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" [(ngModel)]="customerDet['is_active']" [ngModelOptions]="{standalone: true}">
-                                    
-                                    </div> -->
-
-                                    <span class="badge rounded-pill px-2">  {{ "In Procress" }}</span>
+                                    <div class="w-fit-content mx-auto text-success bg-success-subtle px-2 py-1 small rounded-pill fw-normal">  {{ "In Procress" }}</div>
             
                                 </td>
             

@@ -10,7 +10,7 @@
     --bs-border-width: 1px;
     --bs-form-invalid-color: #d72828;
     --bs-form-invalid-border-color: #d72828;
-    --bs-success: #4aba53;
+    --bs-success: #4BBB55;
     --bs-success-rgb: 74, 186, 83;
 }
 
@@ -277,6 +277,10 @@ a {
     --bs-btn-disabled-color: #fff;
     --bs-btn-disabled-bg: #1E4894;
     --bs-btn-disabled-border-color: #1E4894;
+}
+
+.bg-success-subtle {
+    background-color: #4bbb5530 !important;
 }
 
 .spinner-border {

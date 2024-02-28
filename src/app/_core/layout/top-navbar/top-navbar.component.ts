@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
 import { CommonService } from '@shared/services/common/common.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'top-navbar',
@@ -12,6 +13,7 @@ export class TopNavbarComponent {
   isMenuOpen: Boolean = true;
   logoUrl: any;
   _pageTitle: any = "Dashboard";
+  _: any = _;
 
   @Input() set menuStatus(value: Boolean) { this.isMenuOpen = value }
 
@@ -23,7 +25,7 @@ export class TopNavbarComponent {
 
   @Output() menuEvent: EventEmitter<Boolean> = new EventEmitter();
 
-  constructor(private service: CommonService, private confirmationDialog: ConfirmationDialogService) { }
+  constructor(public service: CommonService, private confirmationDialog: ConfirmationDialogService) { }
 
   logImgErrorHandling() { this.logoUrl = './assets/images/logo.png'; }
 

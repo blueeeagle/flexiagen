@@ -16,7 +16,17 @@
 
     </div>   
         
-    <div class="page-title fs-5 fw-600 text-dark">{{ _pageTitle | titlecase }}</div>
+    <div class="page-title fs-5 fw-600 text-dark">
+
+        <a *ngIf="!_.isEmpty(service.otherData?.secondaryPageTitle)" class="text-dark">
+        
+            <i class="fa fa-arrow-left me-1" (click)="service.goBack()"></i>
+
+        </a>
+        
+        {{ service.otherData?.secondaryPageTitle || _pageTitle | titlecase }}
+    
+    </div>
 
     <div class="user-profile d-flex justify-content-center align-items-center">
 

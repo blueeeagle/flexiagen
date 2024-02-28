@@ -4,11 +4,11 @@ import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-orders',
-  templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.scss']
+  selector: 'app-orders-list',
+  templateUrl: './orders-list.component.html',
+  styleUrls: ['./orders-list.component.scss']
 })
-export class OrdersComponent {
+export class OrdersListComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
