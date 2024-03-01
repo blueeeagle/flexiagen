@@ -69,13 +69,9 @@ export class OrdersListComponent {
 
   openModal(data: any) {
 
-    this.companyDetails = this.service.userDetails;
+    this.companyDetails = this.service.companyDetails;
 
-    console.log(this.companyDetails);
-    
     this.orderDetails = data;
-
-    console.log(this.orderDetails);
 
     this.OrderDetailsModal.open();
 

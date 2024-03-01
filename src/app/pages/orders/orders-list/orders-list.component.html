@@ -298,15 +298,15 @@
 
 </asidebar>
 
-<modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showCloseIcon]="false" [showSaveBtn]="false" saveBtnTxt="PROCEED" >
+<modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showSaveBtn]="false" [showCancelBtn]="false">
 
     <div class="row">
 
         <div class="col-xxl-9 col-xl-8 col-lg-7">
 
-            <div class="card border-0 mat-elevation-z2 m-3" >
+            <div class="card rounded-top-5 border-0 mat-elevation-z2 m-3" >
 
-                <div class="card-header">
+                <div class="card-header rounded-top-5" style="background: #00B79D;">
 
                 </div>
 
@@ -314,27 +314,29 @@
 
                     <div class="agentDetails">
 
-                        <h5 class="text-secondary">AGENT DETAILS</h5>
+                        <h5 class="text-secondary" style="font-size: 1.15rem;">AGENT DETAILS</h5>
     
                         <div class="d-flex">
     
                             <div>
+
+                                {{ service.getFullImagePath({ 'imgUrl': companyDetails?.companyLogo }) }}
     
-                                <img src="/assets/images/user-profile.png" style="width: 54px;" class="img-fluid" alt="User Profile">
+                                <img [src]="service.getFullImagePath({ 'imgUrl': companyDetails?.companyLogo })" onerror="src='/assets/images/company-logo.png'" style="width: 54px;" class="img-fluid" alt="User Profile">
     
                             </div>
     
                             <div>
     
-                                <h5 class="mx-4">{{ this.companyDetails?.name }}</h5>
+                                <h5 class="mx-4">{{ companyDetails?.name }}</h5>
     
                                 <div class="d-lg-flex d-sm-block justify-content-between">
                                     
                                     <p class="mx-4 text-secondary">Ganapathy , Coimbatore</p>
     
-                                    <p class="mx-4 text-secondary"><i class="bi bi-telephone"></i>{{ this.companyDetails?.dialCode + '  ' + this.companyDetails?.mobile }}</p>
+                                    <p class="mx-4 text-secondary"><i class="bi bi-telephone"></i>{{ companyDetails?.dialCode + '  ' + companyDetails?.mobile }}</p>
     
-                                    <p class="mx-4 text-secondary"><i class="bi bi-envelope"></i> {{ this.companyDetails?.email }}</p>
+                                    <p class="mx-4 text-secondary"><i class="bi bi-envelope"></i> {{ companyDetails?.email }}</p>
     
                                 </div>
     
@@ -346,23 +348,23 @@
 
                     <div class="customerDetails mt-3">
 
-                        <h5 class="text-secondary">CUSTOMER DETAILS</h5>
+                        <h5 class="text-secondary" style="font-size: 1.15rem;">CUSTOMER DETAILS</h5>
 
                         <div class="d-flex">
 
                             <div>
         
-                                <img src="/assets/images/user-profile.png" style="width: 54px;" class="img-fluid " alt="User Profile">
+                                <img src="/assets/images/user-profile.png" onerror="src='/assets/images/user-profile.png'" style="width: 54px;" class="img-fluid " alt="User Profile">
     
                             </div>
     
                             <div>
     
-                                <h5 class="mx-4">{{ this.orderDetails?.customerId?.firstName }}</h5>
+                                <h5 class="mx-4">{{ orderDetails?.customerId?.firstName }}</h5>
     
                                 <div class="d-lg-flex d-sm-block justify-content-between">
                                     
-                                    <p class="mx-4 text-secondary">{{ this.orderDetails?.addressDetails?.street + ',' + this.orderDetails?.addressDetails?.areaId?.name + ' , ' +  this.orderDetails?.addressDetails?.cityId?.name +  ' - ' +  this.orderDetails?.addressDetails?.areaId?.zipcode  }}</p>
+                                    <p class="mx-4 text-secondary">{{ orderDetails?.addressDetails?.street + ',' + orderDetails?.addressDetails?.areaId?.name + ' , ' +  orderDetails?.addressDetails?.cityId?.name +  ' - ' +  orderDetails?.addressDetails?.areaId?.zipcode  }}</p>
     
                                 </div>
     
