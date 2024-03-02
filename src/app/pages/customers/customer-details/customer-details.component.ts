@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
+import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ModalComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from "moment";
@@ -13,42 +13,111 @@ import * as moment from "moment";
 })
 export class CustomerDetailsComponent {
 
+  @ViewChild('OrderDetailsModal') OrderDetailsModal!: ModalComponent;
+
   userSubscribe: any;
   customerList!: Array<any>;
-  customerDet: any = {};
-  tableColumns = ['DATE', 'ORDER ID', 'NOS', 'TYPE','METHOD','AMOUNT', 'CHARGES','TOTAL','DISCOUNT', 'FINAL', 'PAYMENT STATUS', 'ORDER STATUS', 'INVOICE'];
+  customerDetails: any = {};
+  tableColumns = ['ORDER NO', 'ORDER DATE', 'CUSTOMER NAME', 'MOBILE', 'NO OF ITEMS','BOOKED VIA','GROSS AMT','DISC AMT','NET AMT','PAYMENT RECEIVED','PAYMENT STATUS','ORDER STATUS','ACTION'];
   _: any = _;
   totalCount: number = 0;
+  orderList: any = [];
   moment: any = moment;
+  orderDetails: any = {};
+  lastOrderDet: any = {};
 
-  constructor(private route: ActivatedRoute,public service: CommonService,private confirmationDialog: ConfirmationDialogService){
+  constructor(private router: Router, public service: CommonService) { 
 
-    // this.route.params.subscribe((params) => { 
+    this.service.otherData.secondaryPageTitle = "Customer Details";
 
-    //   this.getCustomerList(params['customerId']);
+    if(_.isEmpty(this.service.otherData?.customerDetails)) {
 
-    // });
+      let customerId: any = this.router.url.split('/').pop();
+
+      var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$")
+
+      if(checkForHexRegExp.test(customerId)) { 
+
+        this.getCustomerSummaryDetails(customerId);
+
+      } else this.router.navigate(['/customers']);
+
+    } else {
+
+      let customerId = this.service.otherData.customerDetails?._id;
+
+      this.customerDetails = this.service.otherData.customerDetails;
+
+      this.getCustomerSummaryDetails(customerId);
+
+      this.service.setApiLoaders({ "isLoading": true, "url": ["/agent/orders","/customer/orders/summary/"+customerId] });
+
+
+    }
+
+    this.customerDetails = this.service.otherData.customerDetails;
 
   }
 
-  // getCustomerList(customerId: string) {
+  getCustomerSummaryDetails(customerId: any) {
 
-  //   this.customerDet = {}
+    this.service.getService({ 'url': "/customer/orders/summary/"+customerId }).subscribe((res: any) => {
 
-  //   this.service.postService({ "url": `/master/customers/${customerId}` }).subscribe((res: any) => {
+      if(res.status == "ok") {
+
+        this.service.otherData.customerDetails = res.data.customerDetail;
+
+        this.customerDetails = this.service.otherData.customerDetails;
+
+        this.lastOrderDet = res.data.lastOrderDet;
+
+        this.getOrderDetails();
+
+      } else this.router.navigate(['/customers']);
+
+    },(err: any) => {
+
+      this.service.showToastr({ "data": { "type": "error", "message": err.message || "Can't get customer details" } });
+
+      this.router.navigate(['/customers']);
+
+    });
+
+  }
+
+  getOrderDetails() {
+
+    this.service.postService({ 'url': "/agent/orders", "payload": { "customerId": this.service.otherData.customerDetails?._id } }).subscribe((res: any) => {
+
+      if(res.status == "ok") {
+
+        this.orderList = res.data;
+
+        this.totalCount = res.totalCount;
+
+      }
+
+    },(err: any) => { 
+
+      this.service.showToastr({ "data": { "type": "error", "message": err.message || "Can't get order details" } });
       
-  //     if (res.status == "ok") {
+    });
 
-  //       this.customerDet = res.data;
+  }
 
-  //     }
-      
-  //   },(error: any) => {
-      
-  //     this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
+  openModal(orderDet: any) {
 
-  //   })
+    this.orderDetails = orderDet;
 
-  // }
+    this.OrderDetailsModal.open();
+
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.service.otherData.orderDetails = {};
+    this.service.otherData.secondaryPageTitle = '';
+  }
 
 }

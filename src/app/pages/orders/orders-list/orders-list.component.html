@@ -572,21 +572,21 @@
     
                             <div class="d-flex align-items-center justify-content-center" style="height: 80px; width: 100px;">
 
-                                <img [src]="service.getFullImagePath({ 'imgUrl': companyDetails?.companyLogo })" onerror="src='/assets/images/company-logo.png'" style="height: 80px    ;" class="img-fluid" alt="User Profile">
+                                <img [src]="service.getFullImagePath({ 'imgUrl': service.companyDetails?.companyLogo })" onerror="src='/assets/images/company-logo.png'" style="height: 80px    ;" class="img-fluid" alt="User Profile">
     
                             </div>
     
                             <div class="ms-2">
     
-                                <h5 class="fw-600">{{ companyDetails?.companyName }}</h5>
+                                <h5 class="fw-600">{{ service.companyDetails?.companyName }}</h5>
     
                                 <div class="d-lg-flex d-sm-block justify-content-between flex-wrap">
                                     
                                     <p class="mb-0 text-secondary me-4">Ganapathy , Coimbatore</p>
     
-                                    <p class="mb-0 text-secondary me-4"><i class="bi bi-telephone me-2"></i>{{ companyDetails?.agentId?.dialCode + '  ' + companyDetails?.agentId?.mobile }}</p>
+                                    <p class="mb-0 text-secondary me-4"><i class="bi bi-telephone me-2"></i>{{ service.companyDetails?.agentId?.dialCode + '  ' + service.companyDetails?.agentId?.mobile }}</p>
     
-                                    <p class="mb-0 text-secondary"><i class="bi bi-envelope me-2"></i> {{ companyDetails?.agentId?.email }}</p>
+                                    <p class="mb-0 text-secondary"><i class="bi bi-envelope me-2"></i> {{ service.companyDetails?.agentId?.email }}</p>
     
                                 </div>
     
@@ -646,11 +646,11 @@
 
                                             <i class="bx bx-cart-alt fs-5 fw-500 me-2 text-primary"></i>
 
-                                            <small>{{ item?.qty + ' * ' + item?.amount + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
+                                            <small>{{ item?.qty + ' * ' + (item?.amount | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
                                             
                                         </p>
 
-                                        <p class="mb-0 fw-bold">{{ item?.netAmt + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
+                                        <p class="mb-0 fw-bold">{{ (item?.netAmt | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
 
                                     </div>
     
@@ -674,7 +674,7 @@
                                 
                                 <span class="text-dark fw-600">{{ orderDetails?.pickupDate | date :'EE d MMM  y' }} </span>
 
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ orderDetails.pickupTimeSlotDet?.label }} 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ orderDetails?.pickupTimeSlotDet?.label }} 
                             
                             </h6>
     
@@ -684,7 +684,7 @@
                                 
                                 <span class="text-dark fw-600">{{ orderDetails?.expDeliveryDate | date :'EE d MMM  y' }} </span>
 
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ orderDetails.expDeliveryTimeSlotDet?.label }}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ orderDetails?.expDeliveryTimeSlotDet?.label }}
                             
                             </h6>
 
@@ -714,7 +714,7 @@
 
                         <p>Price <span>({{ orderDetails.qty }} Item) </span> </p>
 
-                        <p class="fw-600 mb-0">{{ orderDetails.grossAmt + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.grossAmt | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 
@@ -734,7 +734,7 @@
                         
                         </p>
 
-                        <p class="fw-600 mb-0">{{ (orderDetails.discAmt || 0) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ ((orderDetails.discAmt || 0)  | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 
@@ -742,7 +742,7 @@
 
                         <p>Delivery Charges</p>
 
-                        <p class="fw-600 mb-0">{{ orderDetails.deliveryCharges + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.deliveryCharges  | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 
@@ -752,7 +752,7 @@
 
                         <p>Net Amount</p>
 
-                        <p class="fw-600 mb-0">{{ orderDetails.netAmt + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.netAmt | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 

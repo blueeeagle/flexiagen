@@ -27,7 +27,6 @@ export class OrdersListComponent {
   pageSize: number = 10;
   pageIndex: number = 0;
   filterValues: any = null;
-  companyDetails : any = {} ;
   orderDetails : any = {};
   canvasConfig: any = {
     "canvasName": "filter",
@@ -168,8 +167,6 @@ export class OrdersListComponent {
   }
 
   openModal(data: any) {
-
-    this.companyDetails = this.service.companyDetails;
 
     this.orderDetails = data;
 

@@ -381,7 +381,7 @@
     
                                                 </select>
     
-                                                <p class="ms-2 mb-0 small fw-600">{{ priceDet.amount }}</p>
+                                                <p class="ms-2 mb-0 small fw-600">{{ priceDet.amount | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints }}</p>
     
                                                 <p class="ms-2 mb-0 small fw-600">{{ service.currencyDetails.currencyCode }}</p>
                                                 
@@ -399,7 +399,7 @@
                                         
                                         </a>
         
-                                        <h6 class="fw-600 mb-0">{{ priceDet.netAmt + ' ' + service.currencyDetails.currencyCode }}</h6>
+                                        <h6 class="fw-600 mb-0">{{ (priceDet.netAmt | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</h6>
     
                                     </div>
         
@@ -653,7 +653,7 @@
 
                                                 {{ f.paymentOnDelivery.value ? 'Pay On Delivery' : '' }}
 
-                                                {{ parseFloat(f.paymentReceived.value) > 0 ? (parseFloat(f.paymentReceived.value) + ' ' + service.currencyDetails.currencyCode) : '' }}
+                                                {{ parseFloat(f.paymentReceived.value) > 0 ? (parseFloat(f.paymentReceived.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode) : '' }}
 
                                             </p>
             
@@ -799,7 +799,7 @@
 
                         <p>Price <span *ngIf="f.qty.value > 0">({{ f.qty.value }} Item) </span> </p>
 
-                        <p class="fw-600 mb-0">{{ f.grossAmt.value + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.grossAmt.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
@@ -819,7 +819,7 @@
                         
                         </p>
 
-                        <p class="fw-600 mb-0">{{ (f.discAmt.value || 0) + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.discAmt.value || 0 | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
@@ -827,7 +827,7 @@
 
                         <p>Delivery Charges</p>
 
-                        <p class="fw-600 mb-0">{{ f.deliveryCharges.value + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.deliveryCharges.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
@@ -837,7 +837,7 @@
 
                         <p>Net Amount</p>
 
-                        <p class="fw-600 mb-0">{{ f.netAmt.value + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.netAmt.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
