@@ -35,6 +35,10 @@ export class CreateOrderComponent {
     "orderForm": false,
     "customerSearched": false
   };
+  btnLoader: any = {
+    "sendVerification": false,
+    "createCustomer": false
+  };
   canvasConfig: any = {
     "canvasName": "addCustomer",
     "canvasTitle": "Add Customer",
@@ -613,6 +617,8 @@ export class CreateOrderComponent {
 
     this.otp = ["", "", "", "", "", ""];
 
+    this.btnLoader.sendVerification = true;
+
     if(newCustomer) {
 
       this.service.postService({ "url": "/master/sendCustomerVerification", "params": { type: "email" }, "payload": _.pick(this.customerForm.value,"email") }).subscribe((res: any) => {
@@ -629,6 +635,12 @@ export class CreateOrderComponent {
 
         }
 
+        this.btnLoader.sendVerification = false;
+
+      },(err: any)=>{
+
+        this.btnLoader.sendVerification = false;
+
       });
 
     } else {
@@ -643,11 +655,15 @@ export class CreateOrderComponent {
 
           this.customerVerificationModal.open();
 
+          this.btnLoader.sendVerification = false;
+
           this.startTimer();
 
         }
 
       }, (err: any) => {
+
+        this.btnLoader.sendVerification = false;
 
         this.service.showToastr({ "data": { "message": err.error.message || "We are unable to send verification email at this moment", "type": "error" } });
 
@@ -1080,11 +1096,13 @@ export class CreateOrderComponent {
 
   goNext({ nextStep = 1 }: { nextStep: number }) {
 
-    if(_.isEmpty(this.f.customerDetails.value)) {
+    if(_.isEmpty(this.f.customerDetails.value) || this.f.isExistingCustomer.value == false) {
 
       this.step = 0;
+
+      let message = _.isEmpty(this.f.customerDetails.value) ? "Please select customer" : "Please verify the customer";
       
-      return this.service.showToastr({ "data": { "message": "Please select customer", "type": "info" } });
+      return this.service.showToastr({ "data": { "message": message, "type": "info" } });
 
     } else if(this.f.selectedAddr.value == -1 && nextStep != 1) {
 
@@ -1194,7 +1212,7 @@ export class CreateOrderComponent {
     
         payload = _.omit(payload,["paymentMode","paymentOnDelivery"]);
     
-        payload['paymentStatus'] = parseFloat(payload.paymentReceived) == 0 ? 'Unpaid' : parseFloat(payload.paymentReceived) >= parseFloat(payload.netAmt) ? 'Paid' : 'Partly Paid';
+        payload['paymentStatus'] = parseFloat(payload.paymentReceived) == 0 ? 'Pending' : parseFloat(payload.paymentReceived) >= parseFloat(payload.netAmt) ? 'Received' : 'Partially Received';
     
         payload['addressDetails'] = _.omit(payload.customerDetails.addresses[payload.selectedAddr],['isDefault']);
 

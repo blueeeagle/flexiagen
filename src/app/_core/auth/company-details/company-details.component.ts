@@ -332,45 +332,47 @@ export class CompanyDetailsComponent {
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
 
-    // return;
+    this.createCompany(companyPayload);
+
+    // // return;
     
-    const payload = {
+    // const payload = {
 
-      "amount": 100,
+    //   "amount": 100,
       
-      "currency": "BHD",
+    //   "currency": "BHD",
       
-      "customerInfo": {
+    //   "customerInfo": {
         
-        "firstName": companyPayload?.ownerName,
+    //     "firstName": companyPayload?.ownerName,
         
-        "email": "akajithkumar9700@gmail.com",
+    //     "email": "akajithkumar9700@gmail.com",
         
-      }
+    //   }
 
-    };
+    // };
 
-    this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
+    // this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
       
-      if (res.status == "ok") {
+    //   if (res.status == "ok") {
 
-        this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
+    //     this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
 
-        this.service.session({ "method": "set", "key": "formVal", "value": JSON.stringify(this.companyForm.value) });
+    //     this.service.session({ "method": "set", "key": "formVal", "value": JSON.stringify(this.companyForm.value) });
 
-        window.location.href = res.data.url;
+    //     window.location.href = res.data.url;
           
-        this.isLoading = false;
+    //     this.isLoading = false;
         
-      }
+    //   }
 
-    },
-      (error: any) => {
+    // },
+    //   (error: any) => {
 
-        this.isLoading = false;
+    //     this.isLoading = false;
       
-        this.service.showToastr({ data: { message: error.error.message, type: "error" } });
-    });
+    //     this.service.showToastr({ data: { message: error.error.message, type: "error" } });
+    // });
 
   }
 

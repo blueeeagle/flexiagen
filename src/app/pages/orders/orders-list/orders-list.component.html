@@ -18,7 +18,7 @@
 
             <div class="col-sm-4 col-md-7 col-lg-8 col-xl-8 text-end mb-2 align-self-center">
 
-                <button class="btn btn-md btn-outline-primary bi bi-sliders" (click)="openAsideBar()"> 
+                <button class="btn btn-md btn-outline-primary bi bi-sliders" (click)="openAsideBar({ 'canvasName': 'filter' })"> 
             
                     <span class="ms-3">Filter</span>
                 
@@ -40,7 +40,7 @@
 
                 <table class="table table-bordered bg-white" mat-table [dataSource]="orderList">
 
-                    <ng-container matColumnDef="ORDER NO" >
+                    <ng-container matColumnDef="ORDER NO" sticky>
 
                         <th mat-header-cell *matHeaderCellDef> Order No</th>
 
@@ -88,19 +88,7 @@
                             
                         </ng-container>
 
-                        <ng-container matColumnDef="MAIL">
-
-                            <th mat-header-cell *matHeaderCellDef> Email ID</th>
-
-                            <td mat-cell *matCellDef="let orderDet">
-
-                                {{ orderDet?.customerId?.email  }}
-
-                            </td>
-                            
-                        </ng-container>
-
-                        <ng-container matColumnDef="NOOFITEMS">
+                        <ng-container matColumnDef="NO OF ITEMS">
 
                             <th mat-header-cell *matHeaderCellDef>No of Items</th>
 
@@ -112,7 +100,7 @@
                             
                         </ng-container>
 
-                        <ng-container matColumnDef="BOOKEDVIA">
+                        <ng-container matColumnDef="BOOKED VIA">
 
                             <th mat-header-cell *matHeaderCellDef> Booked Via </th>
 
@@ -124,17 +112,63 @@
                             
                         </ng-container>
 
+                        <ng-container matColumnDef="GROSS AMT">
+
+                            <th mat-header-cell *matHeaderCellDef> Gross Amt </th>
+
+                            <td mat-cell *matCellDef="let orderDet" class="text-end">
+
+                                {{ orderDet?.grossAmt || 0 | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+
+                            </td>
+                            
+                        </ng-container>
+
+                        <ng-container matColumnDef="DISC AMT">
+
+                            <th mat-header-cell *matHeaderCellDef> Discount Amt </th>
+
+                            <td mat-cell *matCellDef="let orderDet" class="text-end">
+
+                                {{ orderDet?.discAmt || 0  | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+
+                            </td>
+                            
+                        </ng-container>
+
+                        <ng-container matColumnDef="NET AMT">
+
+                            <th mat-header-cell *matHeaderCellDef> Net Amt </th>
+
+                            <td mat-cell *matCellDef="let orderDet" class="text-end">
+
+                                {{ orderDet?.netAmt || 0  | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+
+                            </td>
+                            
+                        </ng-container>
+
+                        <ng-container matColumnDef="PAYMENT RECEIVED">
+
+                            <th mat-header-cell *matHeaderCellDef> Payment Rec. </th>
+
+                            <td mat-cell *matCellDef="let orderDet" class="text-end">
+
+                                {{ orderDet?.paymentReceived || 0  | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+
+                            </td>
+                            
+                        </ng-container>
+
                         <ng-container matColumnDef="ORDER STATUS">
 
                             <th mat-header-cell *matHeaderCellDef> Order Status</th>
 
                             <td  mat-cell *matCellDef="let orderDet" class="text-center">
 
-                                <a class="badge rounded-pill px-2"  (click)="service.otherData.orderDetails = orderDet" routerLink="/pages/orders/track-status/{{orderDet._id}}"> 
+                                <a class="bg-primary-subtle fw-normal mx-auto px-2 py-1 rounded-pill small w-fit-content text-decoration-underline" (click)="service.otherData.orderDetails = orderDet" routerLink="/pages/orders/track-status/{{orderDet._id}}"> 
                                     
                                     {{ orderDet?.orderStatus || '--Nil--'  }} 
-                                    
-                                    <i class="bi bi-arrow-repeat"></i>
                                 
                                 </a>
 
@@ -148,7 +182,7 @@
 
                             <td mat-cell *matCellDef="let orderDet" class="text-center">
 
-                            {{ orderDet?.paymentStatus || '--Nil--'  }} <i class=" text-primary bi bi-arrow-repeat"></i>
+                            {{ orderDet?.paymentStatus || '--Nil--'  }} 
 
                             </td>
                             
@@ -170,9 +204,9 @@
 
                                     <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;" (click)="openModal(orderDet)"> <i class="bi bi-eye me-1"></i> View Order </a>
                         
-                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;" > <i class="bi bi-pencil me-1"></i> Update Status </a>
+                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;" (click)="openAsideBar({ 'canvasName': 'updateStatus', 'data': orderDet })"> <i class="bi bi-pencil me-1"></i> Update Status </a>
 
-                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;"> <i class="bi bi-credit-card-2-back me-1"></i> Update Payment </a>
+                                    <a mat-menu-item class="small px-2 text-dark border-bottom" style="min-height: 32px;" (click)="openAsideBar({ 'canvasName': 'updatePayment', 'data': orderDet })"> <i class="bi bi-credit-card-2-back me-1"></i> Update Payment </a>
                         
                                 </mat-menu>
             
@@ -210,9 +244,75 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="Filters" position="end" [showCancelBtn]="true" applyBtnTxt="APPLY" (onClose)="openCanvas = false" (onCancel)="canvas.close();loadForm()" (onSubmit)="filterData()">
+<asidebar  #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" [ngClass]="{ 'z-index-1060': canvasConfig['canvasName'] == 'addBasket'}" (onClose)="openCanvas = false" (onCancel)="canvas.close()" (onSubmit)="asidebarSubmit()" >
 
-    <div class="row" [formGroup]="filterForm">
+    <div class="row mb-3" *ngIf="canvasConfig['canvasName'] != 'filter'">
+
+        <div class="col-md-12">
+
+            <div class="d-flex align-items-center">
+
+                <div class="d-flex align-items-center justify-content-center" style="height: 80px; width: 100px;">
+
+                    <img src="/assets/images/user-profile.png" onerror="src='/assets/images/user-profile.png'" style="width: 54px;" class="img-fluid " alt="User Profile">
+
+                </div>
+
+                <div class="ms-2">
+
+                    <h6 class="fw-600">{{ orderDetails?.customerId?.firstName }}</h6>
+
+                    <div class="d-lg-flex d-sm-block justify-content-between small flex-wrap">
+                        
+                        <p class="text-secondary"> {{ orderDetails?.addressDetails?.street + ', ' + orderDetails?.addressDetails?.areaId?.name + ', ' }} </p>
+
+                        <p class="text-secondary mb-0">{{ orderDetails?.addressDetails?.cityId?.name +  ' - ' +  orderDetails?.addressDetails?.areaId?.zipcode }}</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="d-flex align-items-center justify-content-between">
+
+                <p class="text-secondary fw-600">Order No</p>
+
+                <p class="text-dark fw-600">{{ orderDetails?.orderNo }}</p>
+
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between">
+
+                <p class="text-secondary fw-600">Order Status</p>
+
+                <p class="bg-primary fw-600 ms-3 px-3 py-1 rounded-pill text-white">{{ orderDetails.orderStatus }}</p>
+
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between">
+
+                <p class="text-secondary fw-600">Payment Remaining</p>
+
+                <p class="fw-600 px-3 py-1 rounded-pill">
+                    
+                    {{ (orderDetails.paymentPending | dynamicPipe:'number': '1.'+orderDetails.currencyId.decimalPoints+'-'+orderDetails.currencyId.decimalPoints) }}
+
+                    {{ orderDetails.currencyId.currencyCode }}
+                
+                </p>
+
+            </div>
+
+            <hr>
+
+        </div>                
+
+    </div>
+
+    <div class="row" *ngIf="canvasConfig['canvasName'] == 'filter'" [formGroup]="filterForm">
 
         <div class="col-md-12">
 
@@ -296,6 +396,158 @@
     
     </div>
 
+    <div class="row" *ngIf="canvasConfig['canvasName'] == 'updateStatus'" [formGroup]="statusForm">
+
+        <div class="col-md-12">
+
+            <div class="form-group">
+
+                <label for="status">Order Status</label>
+
+                <ng-select formControlName="status" [clearable]="false" placeholder="Select Status" class="form-control" [searchable]="false" [readonly]="true">
+
+                    <ng-option *ngFor="let statusDet of orderDetails.statusHistory" [disabled]="!_.isEmpty(statusDet.updated_at)" [value]="statusDet.status">
+                        
+                        {{ statusDet.status }}
+                    
+                    </ng-option>
+
+                </ng-select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="remarks">Comments</label>
+
+                <textarea formControlName="remarks" class="form-control" rows="3" placeholder="Enter Remarks"></textarea>
+
+            </div>
+
+            <div class="form-group" *ngIf="_.includes(['Out for Delivery','Pick Up'],statusForm.get('status').value)">
+
+                <label for="driverId">Assign Driver</label>
+
+                <ng-select formControlName="driverId" [clearable]="false" placeholder="Select Driver" class="form-control" [searchable]="false" [ngClass]="{ 'is-invalid': (formSubmitted.statusForm || sf.driverId.touched) && sf.driverId.errors }">
+
+                    <ng-option *ngFor="let userDet of deliveryAgentList" [value]="userDet._id">
+                        
+                        {{ userDet?.name }}
+                    
+                    </ng-option>
+
+                </ng-select>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row" *ngIf="canvasConfig['canvasName'] == 'updatePayment'" [formGroup]="paymentForm">
+
+        <div class="col-12">
+
+            <mat-radio-group formControlName="paymentMode">
+
+                <div class="d-flex justify-content-around align-items-centerpt-3">
+
+                    <button class="btn fs-6 opt-btn text-start w-50 me-2 position-relative" [ngClass]="{ 'active': pf.paymentMode.value == 'Benifit' }" (click)="pf.paymentMode.setValue('Benifit')"> 
+                            
+                        <mat-radio-button value="Benifit">Benifit</mat-radio-button>
+
+                        <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
+                    
+                    </button>                            
+                    
+                    <button class="btn fs-6 opt-btn text-start w-50 ms-2 position-relative" [ngClass]="{ 'active': pf.paymentMode.value == 'Credit Card' }" (click)="pf.paymentMode.setValue('Credit Card')"> 
+                            
+                        <mat-radio-button value="Credit Card">Credit Card</mat-radio-button>
+
+                        <img src="./assets/images/card-payment-types.svg" class="position-absolute end-0 me-2 mt-2">
+                    
+                    </button>
+
+                </div>
+
+                <div class="d-flex justify-content-around align-items-center mt-4">
+
+                    <button class="btn fs-6 opt-btn text-start w-50 me-2" [ngClass]="{ 'active': pf.paymentMode.value == 'Cash' }" (click)="pf.paymentMode.setValue('Cash')"> 
+                            
+                        <mat-radio-button value="Cash">Cash</mat-radio-button>
+                    
+                    </button>                            
+                    
+                    <button class="btn fs-6 opt-btn text-start w-50 ms-2" [ngClass]="{ 'active': pf.paymentMode.value == 'UPI/Others' }" (click)="pf.paymentMode.setValue('UPI/Others')"> 
+                            
+                        <mat-radio-button value="UPI/Others">UPI/Others</mat-radio-button>
+                    
+                    </button>
+
+                </div>                                
+
+            </mat-radio-group>                                    
+
+            <hr>
+
+        </div>
+
+        <div class="col-12 form-group">
+
+            <label for="amount">Amount</label>
+
+            <div class="d-flex align-items-center justify-content-end position-relative">
+
+                <p class="fw-500 mb-0 me-3 position-absolute end-0 text-secondary">{{ orderDetails.currencyId.currencyCode }}</p>
+
+                <input type="text" class="form-control form-control-lg border-2" formControlName="amount" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount' })" [ngClass]="{ 'is-invalid': (formSubmitted.paymentForm || pf.amount.touched) && pf.amount.errors }" [decimalPoints]="orderDetails.currencyId.decimalPoints">
+
+            </div>
+
+        </div>           
+
+        <div class="col-12 form-group">
+
+            <label for="paymentDate">Payment Date</label>
+
+            <div class="pe-1 w-100 position-relative">
+
+                <input class="form-control form-control-lg border-2" type="text" id="paymentDate" formControlName="paymentDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.paymentForm || pf.paymentDate.touched) && pf.paymentDate.errors }" (dateChange)="pf.paymentDate.setValue(moment($event.value).format('YYYY-MM-DD'));" [matDatepicker]="paymentDatepicker" readonly>
+    
+                <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="paymentDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
+    
+                <mat-datepicker #paymentDatepicker></mat-datepicker>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="remarks">Comments</label>
+
+            <textarea formControlName="remarks" class="form-control border-2" rows="3" placeholder="Enter Remarks"></textarea>
+
+        </div>
+        
+        <div class="form-group">
+
+            <label for="collected_by">Collected User</label>
+
+            <ng-select formControlName="collected_by" [clearable]="false" placeholder="Select User" class="form-control border-2" [searchable]="false" [ngClass]="{ 'is-invalid': (formSubmitted.paymentForm || pf.collected_by.touched) && pf.collected_by.errors }" >
+
+                <ng-option *ngFor="let userDet of usersList" [value]="userDet._id">
+                    
+                    {{ userDet?.name }}
+                
+                </ng-option>
+
+            </ng-select>
+
+        </div>        
+
+    </div>
+
 </asidebar>
 
 <modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showSaveBtn]="false" [showCancelBtn]="false">
@@ -314,7 +566,7 @@
 
                     <div>
 
-                        <h5 class="text-secondary mb-2 ms-2" style="font-size: 1.15rem;">AGENT DETAILS</h5>
+                        <h5 class="text-secondary mb-2 ms-2" style="font-size: 1.08rem;">AGENT DETAILS</h5>
     
                         <div class="d-flex align-items-center">
     
@@ -346,7 +598,7 @@
 
                     <div class="mt-4">
 
-                        <h5 class="text-secondary mb-2 ms-2" style="font-size: 1.15rem;">CUSTOMER DETAILS</h5>
+                        <h5 class="text-secondary mb-2 ms-2" style="font-size: 1.08rem;">CUSTOMER DETAILS</h5>
 
                         <div class="d-flex align-items-center">
 
@@ -374,28 +626,31 @@
 
                     <div class="mt-4">
 
-                        <h5 class="text-secondary mb-2 ms-2" style="font-size: 1.15rem;">ITEM SUMMARY</h5>
+                        <h5 class="text-secondary mb-2" style="font-size: 1.08rem;">ITEM SUMMARY</h5>
 
-                        <div *ngFor="let item of orderDetails?.itemList" class="mt-3 d-flex">
+                        <div *ngFor="let item of orderDetails?.itemList" class="mt-3 d-flex" style="max-width: 380px;">
 
-                            <img [src]="service.getFullImagePath({ 'imgUrl': item?.productId?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' })" style="width: 70px;
-                            height: 71px;
-                            border: 1px solid #dcdfe7;
-                            padding: 4px;border-radius: 5px;" class="img-fluid my-2" alt="User Profile">
+                            <img [src]="service.getFullImagePath({ 'imgUrl': item?.productId?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' })" style="width: 80px;height: 80px;" class="img-fluid border border-2 p-2 rounded" alt="User Profile">
 
-                            <div>
+                            <div class="ms-3 w-100">
 
-                                <small class="mx-4 text-dark">{{ item?.productId?.productId?.productName }}</small>
+                                <h6 class="text-dark mb-1 fw-600">{{ item?.productId?.productId?.productName }}</h6>
 
                                 <div>
                                     
-                                    <small class="mx-4 text-secondary my-0">{{ item?.chargeId?.chargeName }}</small>
+                                    <p class="text-secondary small mb-1">{{ item?.chargeId?.chargeName }}</p>
 
                                     <div class="d-flex justify-content-between">
 
-                                        <small class="mx-4 mt-2"><i class="bi bi-cart text-primary"></i> &nbsp;&nbsp;  {{ item?.qty + ' * ' + item?.amount + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
+                                        <p class="mb-0 fw-600 d-flex align-items-end">
 
-                                        <p class="fw-bold mx-5">{{ item?.netAmt + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
+                                            <i class="bx bx-cart-alt fs-5 fw-500 me-2 text-primary"></i>
+
+                                            <small>{{ item?.qty + ' * ' + item?.amount + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
+                                            
+                                        </p>
+
+                                        <p class="mb-0 fw-bold">{{ item?.netAmt + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
 
                                     </div>
     
@@ -407,12 +662,33 @@
 
                     </div>
 
-                    <div class="timeDetails mt-3">
+                    <div class="mt-4">
 
-                            <h5 class="text-secondary">PICKUP ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-dark">{{ orderDetails?.pickupDate | date :'EE d MMM  y' }} </span></h5>
+                        <h5 class="text-secondary mb-2" style="font-size: 1.08rem;">ITEM SUMMARY</h5>
 
-                            <h5 class="text-secondary">DELIVERY ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-dark">{{ orderDetails?.expDeliveryDate | date :'EE d MMM  y' }}</span></h5>
+                        <div class="mt-3">
 
+                            <h6 class="text-secondary mb-3">
+                                
+                                PICKUP ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                
+                                <span class="text-dark fw-600">{{ orderDetails?.pickupDate | date :'EE d MMM  y' }} </span>
+
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ orderDetails.pickupTimeSlotDet?.label }} 
+                            
+                            </h6>
+    
+                            <h6 class="text-secondary">
+                                
+                                DELIVERY ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                
+                                <span class="text-dark fw-600">{{ orderDetails?.expDeliveryDate | date :'EE d MMM  y' }} </span>
+
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ orderDetails.expDeliveryTimeSlotDet?.label }}
+                            
+                            </h6>
+
+                        </div>
 
                     </div>
 
@@ -424,7 +700,65 @@
 
         <div class="col-xxl-3 col-xl-4 col-lg-5">
 
+            <div class="card border-0 mat-elevation-z2 m-3">
 
+                <div class="card-header bg-white text-secondary py-3 border-bottom">
+
+                    <h6 class="fw-600 mb-0">Order Summary</h6>
+
+                </div>
+
+                <div class="card-body py-2 px-4">
+
+                    <div class="d-flex justify-content-between mb-1 mt-2">
+
+                        <p>Price <span>({{ orderDetails.qty }} Item) </span> </p>
+
+                        <p class="fw-600 mb-0">{{ orderDetails.grossAmt + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-1 align-items-center">
+
+                        <p class="d-flex align-items-center">
+                            
+                            Discount
+
+                            <a class="text-primary fw-500 mb-0 d-flex align-items-center bg-primary-subtle px-2 py-1 ms-2 rounded-pill">
+                            
+                                Discount
+    
+                                <img src="./assets/images/discount.svg" class="ms-2" alt="">
+                            
+                            </a>  
+                        
+                        </p>
+
+                        <p class="fw-600 mb-0">{{ (orderDetails.discAmt || 0) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <p>Delivery Charges</p>
+
+                        <p class="fw-600 mb-0">{{ orderDetails.deliveryCharges + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+
+                    </div>
+
+                    <hr class="mt-0">
+
+                    <div class="d-flex justify-content-between">
+
+                        <p>Net Amount</p>
+
+                        <p class="fw-600 mb-0">{{ orderDetails.netAmt + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+
+                    </div>
+
+                </div>                
+
+            </div>
 
         </div>
 

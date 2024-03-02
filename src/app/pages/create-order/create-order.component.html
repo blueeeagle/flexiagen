@@ -106,8 +106,18 @@
                             <div class="d-flex align-items-center">
         
                                 <ng-container  *ngIf="!f.isExistingCustomer.value;">
-        
-                                    <button class="btn btn-primary btn-sm rounded px-3" (click)="sendCustomerVerification({})">VERIFY CUSTOMER</button>
+    
+                                    <button class="btn btn-primary btn-sm rounded px-3" [disabled]="btnLoader.sendVerification" (click)="sendCustomerVerification({})">
+
+                                        <ng-container *ngIf="!btnLoader.sendVerification">VERIFY CUSTOMER</ng-container>
+                
+                                        <div class="spinner-border text-white-50" *ngIf="btnLoader.sendVerification" role="status">
+                
+                                            <span class="visually-hidden">Loading...</span>
+                
+                                        </div>
+                
+                                    </button>
         
                                     <p class="ms-2 mb-0 small text-light" style="font-size: 12px;">
                                         

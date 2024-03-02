@@ -199,16 +199,16 @@ export class CreateRolesComponent {
   }
 
   getPermissionDetailForm({ permissionDet = {}}: {permissionDet?: any}) : FormGroup  {
-    
+
     let form: any = this.fb.group({
 
       "label": [ permissionDet?.label || '' ],
 
       "url": [ permissionDet?.url || '' ],
 
-      ... _.isEmpty(permissionDet?.icon) ? { "icon": [ permissionDet?.icon || null ] } : {},
+      ...!_.isEmpty(permissionDet?.icon) ? { "icon": [ permissionDet?.icon || null ] } : {},
 
-      ... _.size(permissionDet.subMenu) > 0 ? 
+      ..._.size(permissionDet.subMenu) > 0 ? 
       
         { "subMenu": this.fb.array([]) } : 
         

@@ -135,11 +135,6 @@ export class SidebarComponent implements OnInit {
         "label": "Reports",
         "url": "reports",
         "icon": "bi bi-bar-chart"
-    },
-    {
-        "label": "Settings",
-        "url": "settings",
-        "icon": "bi bi-gear"
     }
   ];
 
