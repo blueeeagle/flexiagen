@@ -4,7 +4,7 @@
 
         <h6 class="modal-title mb-0 fw-600">{{ _title }}</h6>
 
-        <i class='cursor-pointer bx bx-x text-primary border border-primary rounded' (click)="close()"></i>
+        <i class='cursor-pointer bx bx-x text-primary border border-primary rounded' [ngClass]="{ 'opacity-50': _saveBtnLoader }" (click)="_saveBtnLoader ? null : close()"></i>
     
     </div>
 
@@ -16,9 +16,23 @@
 
     <div class="offcanvas-footer d-flex  justify-content-between p-2 border-top">
 
-        <button *ngIf="_showCancelBtn" type="button" class="btn w-100 btn-lg mt-3 mt-lg-0 btn-outline-primary me-2" (click)="onCancel.emit()"> {{ _cancelBtnTxt }}  </button>
+        <button *ngIf="_showCancelBtn" type="button" class="btn w-100 btn-lg mt-3 mt-lg-0 btn-outline-primary me-2" [disabled]="_saveBtnLoader" (click)="onCancel.emit()"> 
+            
+            {{ _cancelBtnTxt }}  
+        
+        </button>
 
-        <button *ngIf="_showApplyBtn" type="button" class="btn w-100 btn-lg mt-3 mt-lg-0 btn-primary ms-2" (click)="onSubmit.emit();"> {{ _applyBtnTxt }} </button>
+        <button type="button" class="btn w-100 btn-lg mt-3 mt-lg-0 btn-primary ms-2"  [disabled]="_saveBtnLoader" (click)="onSubmit.emit();">
+
+            <ng-container *ngIf="!_saveBtnLoader">{{ _applyBtnTxt }} </ng-container>
+
+            <div class="spinner-border text-white-50" *ngIf="_saveBtnLoader" role="status">
+
+                <span class="visually-hidden">Loading...</span>
+
+            </div>
+
+        </button>         
   
     </div>
 

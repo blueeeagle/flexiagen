@@ -11,6 +11,14 @@ const routes: Routes = [
     loadChildren: () => import('./customer-details/customer-details.module').then(m => m.CustomerDetailsModule)
   },
   {
+    path: "manage-address/:customerId",
+    loadChildren: () => import('./manage-address/manage-address.module').then(m => m.ManageAddressModule)
+  },
+  {
+    path: "manage-profile/:customerId",
+    loadChildren: () => import('./manage-profile/manage-profile.module').then(m => m.ManageProfileModule)
+  },
+  {
     path: "",
     redirectTo: "list", 
     pathMatch: "full"

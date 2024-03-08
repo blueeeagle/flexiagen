@@ -170,7 +170,7 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="Add New user" (onClose)="openCanvas = false;" (onCancel)="canvas?.close();" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" backdrop="static" title="{{ mode == 'Create' ? 'Add New' : 'Update Existing' }} user" (onClose)="openCanvas = false;" (onCancel)="canvas?.close();" (onSubmit)="submit()" [saveBtnLoader]="isLoading">
 
     <div [formGroup]="userForm">
 

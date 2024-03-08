@@ -239,6 +239,8 @@ export class LocationComponent {
 
         this.isLoading = false;
 
+        this.service.showToastr({ "data": { "message": err?.message || "Something went wrong!", "type": "error" } });
+
       }
 
     });

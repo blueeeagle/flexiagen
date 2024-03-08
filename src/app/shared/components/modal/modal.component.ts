@@ -13,22 +13,22 @@ export class ModalComponent implements OnInit {
 
   @ViewChild('modal') private modalContent!: TemplateRef<ModalComponent>;
 
-  @Input() className      : string = "";
-  @Input() backdrop       : any = "static";
-  @Input() size           : 'sm' | 'md' | 'lg' | 'xl' = "md";
-  @Input() showCloseIcon  : boolean = true;
+  @Input() className: string = "";
+  @Input() backdrop: any = "static";
+  @Input() size: 'sm' | 'md' | 'lg' | 'xl' = "md";
+  @Input() showCloseIcon : boolean = true;
 
-  @Input() animation      : boolean = true;
-  @Input() centered       : boolean = true;
-  @Input() showSaveBtn    : boolean = true;
-  @Input() showCancelBtn  : boolean = true;
-  @Input() toggleBtn      : boolean = false;
-  @Input() isCustomModal  : boolean = false;
-  @Input() isPrint        : boolean = false;
+  @Input() animation: boolean = true;
+  @Input() centered: boolean = true;
+  @Input() showSaveBtn: boolean = true;
+  @Input() showCancelBtn: boolean = true;
+  @Input() toggleBtn: boolean = false;
+  @Input() isCustomModal: boolean = false;
+  @Input() isPrint: boolean = false;
 
-  @Input() saveBtnTxt     : string = "Save";
-  @Input() closeBtnTxt    : string = "Close";
-  @Input() toggleBtnTxt   : string = "";
+  @Input() saveBtnTxt: string = "Save";
+  @Input() closeBtnTxt: string = "Close";
+  @Input() toggleBtnTxt: string = "";
   @Input() isFullModal: boolean = false;
   @Input() modalBodyClass: string = "";
   

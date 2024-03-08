@@ -5,6 +5,7 @@ import { ConfirmationDialogService } from '@shared/components/confirmation-dialo
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { NgOtpInputComponent } from 'ng-otp-input';
 import { forkJoin, from } from 'rxjs';
 declare var $: any;
 
@@ -19,8 +20,9 @@ export class CreateOrderComponent {
   @ViewChild('customerVerificationModal') customerVerificationModal!: ModalComponent;
   @ViewChild('addProductsModal') addProductsModal!: ModalComponent;
   @ViewChild('orderPreviewModal') orderPreviewModal!: ModalComponent;
+  @ViewChild(NgOtpInputComponent, { static: false}) ngOtpInput!:NgOtpInputComponent;
   
-  otp: string[] = ["", "", "", "", "", ""];
+  verificationCode: any = "";
   timer: number = 60;
   orderForm: any;
   mode: string = 'Create';
@@ -37,14 +39,18 @@ export class CreateOrderComponent {
   };
   btnLoader: any = {
     "sendVerification": false,
-    "createCustomer": false
+    "searchCustomer": false,
+    "verifyOtp": false,
+    "createOrder": false,
   };
   canvasConfig: any = {
     "canvasName": "addCustomer",
     "canvasTitle": "Add Customer",
     "applyBtnTxt": "Save",
     "cancelBtnTxt": "Clear",
-    "showCancelBtn": true
+    "showCancelBtn": true,
+    "backdrop": true,
+    "saveBtnLoader": false
   };
   masterList: any = {
     "dialCodeList": [],
@@ -62,7 +68,7 @@ export class CreateOrderComponent {
   step = 0;
   userSubscribe: any;
   selectedItems: any = [];
-  selectedCustomerDet: any;
+  selectedCustomerDet: any = {};
   agentProductsCount: any = 0;
   moment: any = moment;
 
@@ -428,6 +434,14 @@ export class CreateOrderComponent {
 
       this.getAreas();
 
+      this.cusf.addressDetails.get('isDefault').setValue(data.addressDetails?.isDefault);
+
+      if(data.addressDetails?.isDefault) this.cusf.addressDetails.get('isDefault').disable();
+
+      else this.cusf.addressDetails.get('isDefault').enable();
+
+      this.cusf.addressDetails.get('isDefault').updateValueAndValidity();
+
     }
 
     // Listen to Country changes and update State, City, Area and zipcode
@@ -555,6 +569,8 @@ export class CreateOrderComponent {
   get adf() { return this.cusf.addressDetails.controls; }
 
   searchCustomer() {
+
+    this.orderForm.get('searchCustomer').setValue(this.f.searchCustomer.value.trim());
     
     // if email or phone number is empty
     if(_.isEmpty(this.f.searchCustomer.value)) { 
@@ -569,6 +585,8 @@ export class CreateOrderComponent {
       return this.service.showToastr({ "data": { "message": "Please enter valid phone number", "type": "error" } });
     }
 
+    this.btnLoader.searchCustomer = true;
+
     let payload = this.f.searchCustomer.value.includes('@') ? { "email": this.f.searchCustomer.value } : { "mobile": this.f.searchCustomer.value };
 
     this.service.postService({ "url": "/master/customers", payload }).subscribe((res: any) => {
@@ -582,6 +600,8 @@ export class CreateOrderComponent {
           this.formSubmitted.customerSearched = true;
 
           this.loadCustomerForm({ "data": payload });
+
+          this.btnLoader.searchCustomer = false;
           
           return this.service.showToastr({ "data": { "message": `No customer found with this ${ _.first(_.keys(payload)) == 'email' ? 'Email Id' : 'Mobile No'  } `, "type": "error" } });
 
@@ -592,8 +612,6 @@ export class CreateOrderComponent {
           this.selectedCustomerDet['profileImg'] = _.isEmpty(this.selectedCustomerDet?.profileImg) ? './assets/images/customer-profile.svg' : this.service.getFullImagePath({ 'imgUrl': this.selectedCustomerDet?.profileImg });
 
           this.orderForm.get('selectedAddr').setValue(0);
-
-          // this.selectedCustomerDet['addresses'] = _.map(new Array(5).fill(0),(e,i)=>this.selectedCustomerDet.addresses[i] || { ... _.first(this.selectedCustomerDet.addresses) as any, "selected": false });
 
           this.orderForm.patchValue({ 
             
@@ -607,7 +625,15 @@ export class CreateOrderComponent {
 
         }
 
+        this.btnLoader.searchCustomer = false;
+
       }
+
+    }, (err: any) => {
+
+      this.btnLoader.searchCustomer = false;
+
+      this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
 
     });
 
@@ -615,9 +641,9 @@ export class CreateOrderComponent {
 
   sendCustomerVerification({ newCustomer = false }: { newCustomer?: boolean}) {
 
-    this.otp = ["", "", "", "", "", ""];
+    this.verificationCode = "";
 
-    this.btnLoader.sendVerification = true;
+    this.ngOtpInput.setValue('');
 
     if(newCustomer) {
 
@@ -635,23 +661,23 @@ export class CreateOrderComponent {
 
         }
 
-        this.btnLoader.sendVerification = false;
+        this.canvasConfig['saveBtnLoader'] = false;
 
       },(err: any)=>{
 
-        this.btnLoader.sendVerification = false;
+        this.canvasConfig['saveBtnLoader'] = false;
 
       });
 
     } else {
+
+      this.btnLoader.sendVerification = true;
 
       this.service.postService({ "url": `/addCustomer/sendVerification/${this.f.customerId.value}`, "params": { "type": "email" } }).subscribe((res: any) => {
 
         if(res.status=='ok') {
 
           this.service.showToastr({ "data": { "message": "Verification email sent successfully", "type": "success" } });
-
-          this.canvas?.close();
 
           this.customerVerificationModal.open();
 
@@ -689,6 +715,8 @@ export class CreateOrderComponent {
 
   verifyCustomerOtp() {
 
+    this.btnLoader.verifyOtp = true;
+    
     if(!this.f.isExistingCustomer.value && _.isEmpty(this.f.customerDetails.value)) {
 
       let payload = _.cloneDeep(this.customerForm.value);
@@ -699,7 +727,7 @@ export class CreateOrderComponent {
 
       payload['companies'] = [ { 'companyId': this.service.companyDetails._id, 'customerType': 'POS' } ];
   
-      this.service.postService({ "url": "/master/customer", "params": { "type": "email", "verificationCode": this.otp.join('') }, "payload": payload }).subscribe((res: any) => {
+      this.service.postService({ "url": "/master/customer", "params": { "type": "email", "verificationCode": this.verificationCode }, "payload": payload }).subscribe((res: any) => {
   
         if(res.status == "ok") {
   
@@ -718,6 +746,8 @@ export class CreateOrderComponent {
           this.service.showToastr({ "data": { "message": "Customer Created Successfully", "type": "success" } });
   
         }
+
+        this.btnLoader.verifyOtp = false;
   
       }, (err: any) => {
 
@@ -725,13 +755,19 @@ export class CreateOrderComponent {
 
         // this.openAsidebar({ "canvasName": "addCustomer" });
 
+        this.btnLoader.verifyOtp = false;
+
+        this.verificationCode = "";
+
+        this.ngOtpInput.setValue('');
+
         this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
   
       });
 
     } else {
 
-      this.service.postService({ "url": `/addCustomer/otpVerify/${this.f.customerId.value}`, "params": { "type": "email" }, "payload": { "verificationCode": this.otp.join('') } }).subscribe((res: any) => {
+      this.service.postService({ "url": `/addCustomer/otpVerify/${this.f.customerId.value}`, "params": { "type": "email" }, "payload": { "verificationCode": this.verificationCode } }).subscribe((res: any) => {
 
         if(res.status=='ok') {
 
@@ -742,12 +778,20 @@ export class CreateOrderComponent {
           this.orderForm.patchValue({ "isExistingCustomer": true });
 
         }
+
+        this.btnLoader.verifyOtp = false;
         
       }, (err: any) => {  
 
-        this.loadCustomerForm({ "data": this.customerForm.value });
+        this.btnLoader.verifyOtp = false;
 
-        this.openAsidebar({ "canvasName": "addCustomer" });        
+        this.verificationCode = "";
+
+        this.ngOtpInput.setValue('');
+
+        // this.loadCustomerForm({ "data": this.customerForm.value });
+
+        // this.openAsidebar({ "canvasName": "addCustomer" });
 
         this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
   
@@ -920,6 +964,8 @@ export class CreateOrderComponent {
     this.canvasConfig['cancelBtnTxt'] = 'Clear';
 
     this.canvasConfig['showCancelBtn'] = true;
+
+    this.canvasConfig['backdrop'] = 'static';
     
     this.openCanvas = true;
 
@@ -934,6 +980,8 @@ export class CreateOrderComponent {
       this.canvasConfig['applyBtnTxt'] = `${_.isEmpty(productDet) ? 'Add to Basket' : 'Update in Basket' }`;
 
       this.canvasConfig['cancelBtnTxt'] = `${_.isEmpty(productDet) ? 'Clear' :  'Remove Item' }`;
+
+      this.canvasConfig['backdrop'] = true;
       
       this.loadBasketForm({ productDet });
 
@@ -950,6 +998,8 @@ export class CreateOrderComponent {
       this.canvasConfig['applyBtnTxt'] = 'Apply Discount';
 
       this.canvasConfig['showCancelBtn'] = false;
+
+      this.canvasConfig['backdrop'] = true;
     
     } else if(canvasName == 'addAddress') {
 
@@ -985,7 +1035,6 @@ export class CreateOrderComponent {
       this.canvasConfig['showCancelBtn'] = true;
 
     }
-
   }
 
   asidebarCancel() {
@@ -1017,6 +1066,8 @@ export class CreateOrderComponent {
       this.formSubmitted.customerForm = true;
 
       if(this.customerForm.invalid) return;
+
+      this.canvasConfig['saveBtnLoader'] = true;
   
       this.sendCustomerVerification({ "newCustomer": true });
 
@@ -1050,6 +1101,8 @@ export class CreateOrderComponent {
 
       if(this.customerForm.invalid) return;
 
+      this.canvasConfig['saveBtnLoader'] = true;
+
       let payload = _.omit(this.customerForm.value['addressDetails'],'_id')
 
       this.service.postService({ "url": `/master/customer/address/${this.f.customerId.value}`, "payload": { ...payload, "customerId": this.f.customerId.value } }).subscribe((res: any) => {
@@ -1066,11 +1119,21 @@ export class CreateOrderComponent {
 
         }
 
+        this.canvasConfig['saveBtnLoader'] = false;
+
+      }, (err: any) => {
+
+        this.canvasConfig['saveBtnLoader'] = false;
+
+        this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
+
       });
 
     } else if(this.canvasConfig['canvasName'] == 'editAddress') {
 
       if(this.customerForm.invalid) return;
+
+      this.canvasConfig['saveBtnLoader'] = true;
 
       let payload = this.customerForm.value['addressDetails'];
 
@@ -1087,6 +1150,14 @@ export class CreateOrderComponent {
           this.orderForm.patchValue({ "customerDetails": res.data, "selectedAddr": _.findIndex(res.data.addresses, { '_id': payload._id }) });
 
         }
+
+        this.canvasConfig['saveBtnLoader'] = false;
+
+      }, (err: any) => {
+
+        this.canvasConfig['saveBtnLoader'] = false;
+
+        this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
 
       });
 
@@ -1186,6 +1257,8 @@ export class CreateOrderComponent {
 
       if (confirmed) {
 
+        this.btnLoader.createOrder = true;
+
         let payload: any = _.omit(_.cloneDeep(this.orderForm.value),["searchCustomer","isExistingCustomer"]);
 
         payload['itemList'] = _.flatten(_.map(payload.itemList,(itemDet)=>{
@@ -1259,8 +1332,12 @@ export class CreateOrderComponent {
             this.loadBasketForm({});
     
           }
+
+          this.btnLoader.createOrder = false;
     
         }, (err: any) => {
+
+          this.btnLoader.createOrder = false;
     
           this.service.showToastr({ "data": { "message": err?.error?.error || err?.error?.message || "Something went wrong", "type": "error" } });
     
@@ -1272,39 +1349,6 @@ export class CreateOrderComponent {
 
 
   }
-
-
-  keydown({ event = {}, nextElement = "", prevElement = "" }: { event: any, nextElement?: string, prevElement?: string}) {
-
-  //   if(nextElement == "#otp-submit") {
-
-  //     if(this.otp.length == 6 && _.every(this.otp, (o: any) => o != '')) return this.verifyCustomerOtp();
-
-  //   }
-    
-  //   if(_.includes(['ArrowLeft','ArrowRight'],event.key) && _.isEmpty(nextElement)) return;
-
-  //   if(event.key == 'Tab' && event.shiftKey || event.key == 'Shift') return;
-
-  //   if(event.key == 'Tab' && event.target.value == '') return event.preventDefault();
-
-  //   if(event.key == 'Backspace' || event.key == 'Delete') {
-
-  //     return setTimeout(()=>{
-
-  //       $(`#otp-inp-${prevElement}`).focus();
-
-  //     },100);
-
-  //   }
-
-  //   setTimeout(() => {
-
-  //     $(nextElement).focus();
-
-  //   }, 100);
-
-  }  
 
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.

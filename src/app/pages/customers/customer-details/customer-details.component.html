@@ -1,94 +1,214 @@
 
-<div class="customerDetail-container" >
+<div class="customerDetail-container" *ngIf="_.size(service._loading.loadingMap) == 0">
 
     <div class="container-fluid">
         
         <div class="row">
-
-            <!-- <div class="col-md-4">
-
-                <div class="orders-card">
-
-                    <img src="/assets/images/dashbord/total-orders.png" class="w-fit-content mx-auto">
-
-                    <h5 class="text-light fw-600 mt-3">Total Orders</h5>
-
-                    <h2 class="fw-600">25</h2>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-4">
-
-                <div class="orders-card">
-
-                    <img src="/assets/images/dashbord/total-orders.png" class="w-fit-content mx-auto">
-
-                    <h5 class="text-light fw-600 mt-3">Total Orders</h5>
-
-                    <h2 class="fw-600">25</h2>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-4">
-                
-                <div class="orders-card">
-
-                    <img src="/assets/images/dashbord/total-orders.png" class="w-fit-content mx-auto">
-
-                    <h5 class="text-light fw-600 mt-3">Total Orders</h5>
-
-                    <h2 class="fw-600">25</h2>
-
-                </div>
-
-            </div> -->
-
-            <div class="col-12">
-
-                <div class="card border rounded bg-light">
             
+            <div class="col-md-4">
+
+                <div class="card mat-elevation-z2 mb-3">
+
                     <div class="card-body">
 
                         <div class="d-flex align-items-center">
 
-                            <div class="d-flex align-items-center justify-content-center" style="height: 80px; width: 100px;">
+                            <img src="./assets/images/dashbord/total-picup.png">
+
+                            <div class="ms-5">
+
+                                <h6 class="fw-600 text-light">Total Orders</h6>
+
+                                <h4 class="fw-600">
+    
+                                    <ng-container *ngIf="totalCount > 0">
+    
+                                        {{ totalCount | number: '2.0-0' }}
+    
+                                    </ng-container>
+    
+                                    <ng-container *ngIf="totalCount == 0">
+    
+                                        <span class="text-secondary">No Orders</span>
+    
+                                    </ng-container>
+                                
+                                </h4>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card mat-elevation-z2 mb-3">
+
+                    <div class="card-body">
+
+                        <div class="d-flex align-items-center">
+
+                            <img src="./assets/images/customer-discount.png">
+
+                            <div class="ms-5">
+
+                                <h6 class="fw-600 text-light">Special Discount</h6>
+
+                                <h4 class="fw-600">
+
+                                    <ng-container *ngIf="customerDetails?.discount">
+
+                                        <ng-container *ngIf="customerDetails?.discount?.discountType == 'flat'">
+
+                                            {{ customerDetails?.discount?.value + ' ' + service.currencyDetails?.currencyCode }}
+
+                                        </ng-container>
+
+                                        <ng-container *ngIf="customerDetails?.discount?.discountType == 'discount'">
+
+                                            {{ customerDetails?.discount?.value + '%' }}
+
+                                        </ng-container>
+
+                                    </ng-container>
+
+                                    <ng-container *ngIf="_.isEmpty(customerDetails?.discount)">
+
+                                        <span class="text-secondary">No Discounts</span>
+                                    
+                                    </ng-container>
+
+                                </h4>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card mat-elevation-z2 mb-3">
+
+                    <div class="card-body">
+
+                        <div class="d-flex align-items-center">
+
+                            <img src="./assets/images/dashbord/today-delivery.png">
+
+                            <div class="ms-5">
+    
+                                <h6 class="fw-600 text-light">Last Ordered</h6>
+    
+                                <h4 class="fw-600">
+    
+                                    <ng-container *ngIf="lastOrderDet?.created_at">
+    
+                                        {{ lastOrderDet?.created_at | date: 'dd MMM yyyy' }}
+    
+                                    </ng-container>
+    
+                                    <ng-container *ngIf="_.isEmpty(lastOrderDet?.created_at)">
+    
+                                        <span class="text-secondary">No Orders</span>
+    
+                                    </ng-container>
+                                
+                                </h4>
+    
+                            </div>                               
+
+                        </div>                     
+
+                    </div>
+                    
+                </div>
+
+            </div>
+
+            <div class="col-12">
+
+                <div class="card border-0 rounded rounded-4" style="background: #F3F5F9;">
+            
+                    <div class="card-body p-3">
+
+                        <div class="row">
+
+                            <div class="col-xl-8 col-md-7 mb-md-0 mb-3">
+    
+                                <div class="d-flex align-items-center">
+    
+                                    <div class="d-flex align-items-center justify-content-center" style="height: 80px; width: 100px;">
+                
+                                        <img *ngIf="customerDetails" [src]="service.getFullImagePath({ 'baseUrlFrom': 'CUSTOMER_IMG_URL', 'imgUrl': customerDetails?.customerImageURL })" (error)="service.getCustomerImgUrl({ 'event': $event, 'customerDetail': customerDetails })" style="height: 100%;" class="img-fluid " alt="User Profile"> 
+            
+                                    </div>
+            
+                                    <div class="ms-3">
+            
+                                        <h5 class="fw-600">{{ customerDetails?.firstName }}</h5>
         
-                                <img src="/assets/images/user-profile.png" onerror="src='/assets/images/user-profile.png'" style="height: 100%;" class="img-fluid " alt="User Profile">
+                                        <div class="d-flex align-items-center">
+                                            
+                                            <div class="me-5">
+        
+                                                <p class="text-secondary mb-1">Mobile</p>
+        
+                                                <p class="text-primary mb-0 fw-600">{{ customerDetails?.dialCode + ' ' + customerDetails?.mobile }}</p>
+        
+                                            </div>
+        
+                                            <div>
+                                                
+                                                <p class="text-secondary mb-1">Email</p>
+        
+                                                <p class="text-primary mb-0 fw-600">{{ customerDetails?.email }}</p>
+        
+                                            </div>
+                                                
+                                        </div>
+            
+                                    </div>
+        
+                                </div>                            
     
                             </div>
     
-                            <div class="ms-2">
+                            <div class="col-xl-4 col-md-5 text-end align-self-center">
     
-                                <h5 class="fw-600">{{ customerDetails?.firstName }}</h5>
+                                <div class="d-flex align-items-center justify-content-between">
+    
+                                    <button class="btn btn-primary me-2 px-3 py-2" (click)="viewInfo({ 'purpose': 'manage-address' })">
 
-                                <div class="d-flex align-items-center">
+                                        <i class="bi bi-geo-alt me-2"></i>
+                                        
+                                        Manage Address
                                     
-                                    <div>
-
-                                        <p class="text-secondary mb-1">Mobile</p>
-
-                                        <p class="text-primary mb-0 fw-600">{{ customerDetails?.dialCode + ' ' + customerDetails?.mobile }}</p>
-
-                                    </div>
-
-                                    <div class="ms-4">
-
-                                        <p class="text-secondary mb-1">Email</p>
-
-                                        <p class="text-primary mb-0 fw-600">{{ customerDetails?.email }}</p>
-
-                                    </div>
+                                    </button>
+    
+                                    <button class="bg-primary-subtle btn me-2 px-3 py-2 text-primary" (click)="viewInfo({ 'purpose': 'manage-profile' })">
                                         
-                                        
+                                        <i class="bi bi-pencil-square me-2"></i>
+
+                                        Edit Profile
+                                    
+                                    </button>
+    
                                 </div>
     
                             </div>
 
                         </div>
+
 
                     </div>
                     
@@ -184,7 +304,7 @@
             
                                         <td mat-cell *matCellDef="let orderDet" class="text-end">
             
-                                            {{ orderDet?.grossAmt || 0 | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+                                            {{ orderDet?.grossAmt || 0 | dynamicPipe:'number': '1.'+(orderDet.currencyId.decimalPoints || 2)+'-'+(orderDet.currencyId.decimalPoints || 2) }}
             
                                         </td>
                                         
@@ -196,7 +316,7 @@
             
                                         <td mat-cell *matCellDef="let orderDet" class="text-end">
             
-                                            {{ orderDet?.discAmt || 0  | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+                                            {{ orderDet?.discAmt || 0  | dynamicPipe:'number': '1.'+(orderDet.currencyId.decimalPoints || 2)+'-'+(orderDet.currencyId.decimalPoints || 2) }}
             
                                         </td>
                                         
@@ -208,7 +328,7 @@
             
                                         <td mat-cell *matCellDef="let orderDet" class="text-end">
             
-                                            {{ orderDet?.netAmt || 0  | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+                                            {{ orderDet?.netAmt || 0  | dynamicPipe:'number': '1.'+(orderDet.currencyId.decimalPoints || 2)+'-'+(orderDet.currencyId.decimalPoints || 2) }}
             
                                         </td>
                                         
@@ -220,7 +340,7 @@
             
                                         <td mat-cell *matCellDef="let orderDet" class="text-end">
             
-                                            {{ orderDet?.paymentReceived || 0  | dynamicPipe:'number': '1.'+orderDet.currencyId.decimalPoints+'-'+orderDet.currencyId.decimalPoints }}
+                                            {{ orderDet?.paymentReceived || 0  | dynamicPipe:'number': '1.'+(orderDet.currencyId.decimalPoints || 2)+'-'+(orderDet.currencyId.decimalPoints || 2) }}
             
                                         </td>
                                         
@@ -256,7 +376,7 @@
             
                                     <ng-container matColumnDef="ACTION" stickyEnd>
                             
-                                        <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> Action </th>
+                                        <th mat-header-cell *matHeaderCellDef class="d-flex align-items-center justify-content-center"> Invoice </th>
                         
                                         <td mat-cell *matCellDef="let locationDet ;let orderDet" >
     
@@ -284,7 +404,7 @@
             
                                 <div class="empty-content">
                         
-                                    <h4 class="fw-600">No Records Found</h4>
+                                    <h4 class="fw-600">No Orders Found</h4>
                                 
                                     <div class="emptyIcon" style="background: url(./assets/images/empty-list.png);"></div>
                                     
@@ -306,7 +426,7 @@
 
 </div>
 
-<modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showSaveBtn]="false" [showCancelBtn]="false">
+<modal #OrderDetailsModal title="Invoice Summary" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showSaveBtn]="false" [showCancelBtn]="false">
 
     <div class="row">
 
@@ -338,7 +458,7 @@
     
                                 <div class="d-lg-flex d-sm-block justify-content-between flex-wrap">
                                     
-                                    <p class="mb-0 text-secondary me-4">Ganapathy , Coimbatore</p>
+                                    <p class="mb-0 text-secondary me-4">{{ service.companyDetails?.addressDetails?.areaId?.name + ', ' + service.companyDetails?.addressDetails?.cityId?.name + ' - ' + service.companyDetails?.addressDetails?.areaId?.zipcode }}</p>
     
                                     <p class="mb-0 text-secondary me-4"><i class="bi bi-telephone me-2"></i>{{ service.companyDetails?.agentId?.dialCode + '  ' + service.companyDetails?.agentId?.mobile }}</p>
     
@@ -360,7 +480,7 @@
 
                             <div class="d-flex align-items-center justify-content-center" style="height: 80px; width: 100px;">
         
-                                <img src="/assets/images/user-profile.png" onerror="src='/assets/images/user-profile.png'" style="width: 54px;" class="img-fluid " alt="User Profile">
+                                <img *ngIf="orderDetails?.customerId" [src]="service.getFullImagePath({ 'baseUrlFrom': 'CUSTOMER_IMG_URL', 'imgUrl': orderDetails?.customerId?.customerImageURL })" (error)="service.getCustomerImgUrl({ 'event': $event, 'customerDetail': orderDetails?.customerId })" style="width: 54px;" class="img-fluid " alt="User Profile">
     
                             </div>
     
@@ -402,11 +522,11 @@
 
                                             <i class="bx bx-cart-alt fs-5 fw-500 me-2 text-primary"></i>
 
-                                            <small>{{ item?.qty + ' * ' + (item?.amount | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
+                                            <small>{{ item?.qty + ' * ' + (item?.amount | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' + orderDetails?.currencyId?.currencyCode }}</small>
                                             
                                         </p>
 
-                                        <p class="mb-0 fw-bold">{{ (item?.netAmt | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
+                                        <p class="mb-0 fw-bold">{{ (item?.netAmt | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + '  ' +  orderDetails?.currencyId?.currencyCode  }}</p>
 
                                     </div>
     
@@ -470,7 +590,7 @@
 
                         <p>Price <span>({{ orderDetails.qty }} Item) </span> </p>
 
-                        <p class="fw-600 mb-0">{{ (orderDetails.grossAmt | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.grossAmt | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 
@@ -490,7 +610,7 @@
                         
                         </p>
 
-                        <p class="fw-600 mb-0">{{ (orderDetails.discAmt || 0 | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.discAmt || 0 | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 
@@ -498,7 +618,7 @@
 
                         <p>Delivery Charges</p>
 
-                        <p class="fw-600 mb-0">{{ (orderDetails.deliveryCharges | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.deliveryCharges | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 
@@ -508,7 +628,7 @@
 
                         <p>Net Amount</p>
 
-                        <p class="fw-600 mb-0">{{ (orderDetails.netAmt | dynamicPipe:'number': '1.'+orderDetails.currencyId?.decimalPoints+'-'+orderDetails.currencyId?.decimalPoints) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (orderDetails.netAmt | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
 
                     </div>
 

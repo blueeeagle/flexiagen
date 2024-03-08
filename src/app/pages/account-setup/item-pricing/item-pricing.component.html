@@ -116,7 +116,7 @@
 
 </div>
 
-<asidebar #canvas [openCanvas]="openCanvas" title="{{mode}} Product" position="end" cancelBtnTxt="Close" (onClose)="openCanvas = false" (onCancel)="canvas.close()" (onSubmit)="submit()">
+<asidebar #canvas [openCanvas]="openCanvas" backdrop="static" title="{{mode}} Product" position="end" cancelBtnTxt="Close" (onClose)="openCanvas = false" (onCancel)="canvas.close()" (onSubmit)="submit()" [saveBtnLoader]="isLoading">
 
     <div class="row" [formGroup]="productForm">
 

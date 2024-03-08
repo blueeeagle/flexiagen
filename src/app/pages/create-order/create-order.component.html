@@ -61,11 +61,21 @@
         
                             <input class="form-control form-control-lg border-1 w-100" type="text" placeholder="Search By Mobile or Email" formControlName="searchCustomer" (keyup)="formSubmitted.customerSearched = false;" style="max-width: 360px;">
         
-                            <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" (click)="formSubmitted.customerSearched ? openAsidebar({ 'canvasName': 'addCustomer' }) : searchCustomer()">
-                    
-                                <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
+                            <button class="btn ms-2 d-flex align-items-center justify-content-center text-white" style="width: 45px;height: 45px;background: #288BE6;" [disabled]="btnLoader.searchCustomer" (click)="formSubmitted.customerSearched ? openAsidebar({ 'canvasName': 'addCustomer' }) : searchCustomer()">
+
+                                <ng-container *ngIf="!btnLoader.searchCustomer">
+
+                                    <img src="./assets/images/add-user.svg" *ngIf="formSubmitted.customerSearched">
         
-                                <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched"></i>
+                                    <i class="bx bx-search-alt h3 mb-0 lh-1" *ngIf="!formSubmitted.customerSearched"></i>
+
+                                </ng-container>
+                
+                                <div class="spinner-border text-white-50" style="height: 18px; width: 18px" *ngIf="btnLoader.searchCustomer" role="status">
+        
+                                    <span class="visually-hidden">Loading...</span>
+        
+                                </div>
         
                             </button>
         
@@ -107,11 +117,11 @@
         
                                 <ng-container  *ngIf="!f.isExistingCustomer.value;">
     
-                                    <button class="btn btn-primary btn-sm rounded px-3" [disabled]="btnLoader.sendVerification" (click)="sendCustomerVerification({})">
+                                    <button class="btn btn-primary btn-sm rounded px-3" style="width: 175px;" [disabled]="btnLoader.sendVerification" (click)="sendCustomerVerification({})">
 
                                         <ng-container *ngIf="!btnLoader.sendVerification">VERIFY CUSTOMER</ng-container>
                 
-                                        <div class="spinner-border text-white-50" *ngIf="btnLoader.sendVerification" role="status">
+                                        <div class="spinner-border text-white-50" style="width: 16px; height: 16px" *ngIf="btnLoader.sendVerification" role="status">
                 
                                             <span class="visually-hidden">Loading...</span>
                 
@@ -158,11 +168,11 @@
                         [ngClass]="{ 'bg-primary-subtle': step === 1 }"  
                         [style]="{ 'height': (f.isExistingCustomer.value && f.selectedAddr.value > -1 && step != 1 ? '100' : '60') + 'px !important' }">
         
-                        <mat-panel-title class="fw-600 mat-expansion-panel-header-title" [ngClass]="step === 1 ? 'text-primary-emphasis' : 'text-secondary'"> 
+                        <mat-panel-title class="fw-600 mat-expansion-panel-header-title overflow-hidden" [ngClass]="step === 1 ? 'text-primary-emphasis' : 'text-secondary'"> 
         
                             <div class="d-flex w-100 justify-content-between">
         
-                                <div class="d-block">
+                                <div class="d-block overflow-hidden">
         
                                     <div class="d-flex align-items-center">
             
@@ -180,7 +190,7 @@
         
                                             <div class="lh-1 me-2 px-2 py-1 small text-primary-emphasis opacity-0"  [ngClass]="step === 1 ? 'bg-white' : 'bg-secondary-subtle'">1</div> 
             
-                                            <p class="fw-600 mb-0 text-black">
+                                            <p class="fw-600 mb-0 text-black text-truncate me-4">
                                                 
                                                 {{ addressDetail.street | uppercase }}
         
@@ -260,7 +270,6 @@
     
                                     </div>
             
-            
                                     <button class="btn btn-primary btn-sm rounded px-5" *ngIf="f.selectedAddr.value == i" (click)="step = 2">DELIVERY HERE</button>
             
                                 </div>
@@ -269,7 +278,7 @@
             
                             <div class="d-flex p-3">
             
-                                <a class="text-primary cursor-pointer" (click)="openAsidebar({ 'canvasName': 'addAddress' })">
+                                <a class="text-primary cursor-pointer fw-600" (click)="openAsidebar({ 'canvasName': 'addAddress' })">
             
                                     <i class="fa fa-plus me-2"></i>
                                     
@@ -321,23 +330,32 @@
                                     </ng-container>
         
                                 </div>
+
+                                <div class="d-flex">
+
+                                    <div class="d-block">
         
-                                <div class="d-block">
-        
-                                    <button 
-                                        class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3" 
-                                        (click)="addProductsModal.open()"> ADD ITEMS
-                                    </button>
-        
-                                    <button 
-                                        class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
-                                        *ngIf="!_.isEmpty(f.itemList.controls) && step != 2" 
-                                        (click)="step = 2"> CHANGE
-                                    </button>
-        
-                                </div>                        
-        
-                            </div>                    
+                                        <button 
+                                            class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3" 
+                                            *ngIf="_.isEmpty(f.itemList.controls) || step == 2" 
+                                            (click)="addProductsModal.open()"> ADD ITEMS
+                                        </button>
+    
+                                    </div>
+    
+                                    <div class="d-block">
+            
+                                        <button 
+                                            class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
+                                            *ngIf="!_.isEmpty(f.itemList.controls) && step != 2" 
+                                            (click)="step = 2"> CHANGE
+                                        </button>
+            
+                                    </div>                        
+            
+                                </div>
+
+                            </div>                 
         
                         </mat-panel-title>
         
@@ -381,7 +399,7 @@
     
                                                 </select>
     
-                                                <p class="ms-2 mb-0 small fw-600">{{ priceDet.amount | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints }}</p>
+                                                <p class="ms-2 mb-0 small fw-600">{{ priceDet.amount | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2) }}</p>
     
                                                 <p class="ms-2 mb-0 small fw-600">{{ service.currencyDetails.currencyCode }}</p>
                                                 
@@ -399,7 +417,7 @@
                                         
                                         </a>
         
-                                        <h6 class="fw-600 mb-0">{{ (priceDet.netAmt | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</h6>
+                                        <h6 class="fw-600 mb-0">{{ (priceDet.netAmt | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</h6>
     
                                     </div>
         
@@ -536,7 +554,7 @@
 
                             <div class="pe-1 w-100 position-relative">
 
-                                <input class="form-control form-control-lg border-2" type="text" id="pickupDate" formControlName="pickupDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupDate.touched) && f.pickupDate.errors }" (dateChange)="f.pickupDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'pickupDate' })" [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="pickupDatepicker" readonly>
+                                <input class="form-control form-control-lg border-2" type="text" id="pickupDate" formControlName="pickupDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupDate.touched) && f.pickupDate.errors }" (dateChange)="f.pickupDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'pickupDate' })" [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="pickupDatepicker" readonly [min]="moment()">
 
                                 <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="pickupDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
 
@@ -546,7 +564,7 @@
 
                             <div class="ps-1 w-100">
 
-                                <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)">
+                                <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)" (change)="(f.pickupDate.value == f.expDeliveryDate.value && f.expDeliveryTimeSlotDet.value?.startTime?.hour < f.pickupTimeSlotDet.value?.startTime?.hour) ? orderForm.patchValue({ expDeliveryTimeSlot: '', expDeliveryTimeSlotDet: {} }) : ''">
                                 
                                     <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [value]="slotDet._id">
                                         
@@ -586,7 +604,7 @@
 
                             <div class="pe-1 w-100 position-relative">
 
-                                <input class="form-control form-control-lg border-2" type="text" id="expDeliveryDate" formControlName="expDeliveryDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryDate.touched) && f.expDeliveryDate.errors }" (dateChange)="f.expDeliveryDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'expDeliveryDate' })"  [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="expDeliveryDatepicker" readonly>
+                                <input class="form-control form-control-lg border-2" type="text" id="expDeliveryDate" formControlName="expDeliveryDate" placeholder="Select Date" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryDate.touched) && f.expDeliveryDate.errors }" (dateChange)="f.expDeliveryDate.setValue(moment($event.value).format('YYYY-MM-DD'));getTimeSlots({ 'fieldName': 'expDeliveryDate' })"  [matDatepickerFilter]="checkIsWorkingDay" [matDatepicker]="expDeliveryDatepicker" [min]="f.pickupDate.value ? moment(f.pickupDate.value) : moment()" readonly>
 
                                 <i class="bi bi-calendar position-absolute text-secondary cursor-pointer" (click)="expDeliveryDatepicker.open()" style="right: 0.75rem;top: 1rem;"></i>
 
@@ -597,12 +615,16 @@
                             <div class="ps-1 w-100">
 
                                 <ng-select class="form-control border-2" formControlName="expDeliveryTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.expDeliveryTimeSlot.touched) && f.expDeliveryTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.expDeliveryDate?.timeSlots)">
-                                
-                                    <ng-option *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots" [value]="slotDet._id">
+
+                                    <ng-container *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots">
+
+                                        <ng-option [disabled]="f.pickupDate.value == f.expDeliveryDate.value && slotDet.startTime.hour < f.pickupTimeSlotDet.value?.startTime?.hour" [value]="slotDet._id">
                                         
-                                        {{ slotDet.label }}
-                                    
-                                    </ng-option>
+                                            {{ slotDet.label }}
+                                        
+                                        </ng-option>
+                                        
+                                    </ng-container>
 
                                 </ng-select>
 
@@ -653,7 +675,7 @@
 
                                                 {{ f.paymentOnDelivery.value ? 'Pay On Delivery' : '' }}
 
-                                                {{ parseFloat(f.paymentReceived.value) > 0 ? (parseFloat(f.paymentReceived.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode) : '' }}
+                                                {{ parseFloat(f.paymentReceived.value) > 0 ? (parseFloat(f.paymentReceived.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode) : '' }}
 
                                             </p>
             
@@ -799,7 +821,7 @@
 
                         <p>Price <span *ngIf="f.qty.value > 0">({{ f.qty.value }} Item) </span> </p>
 
-                        <p class="fw-600 mb-0">{{ (f.grossAmt.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.grossAmt.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
@@ -819,7 +841,7 @@
                         
                         </p>
 
-                        <p class="fw-600 mb-0">{{ (f.discAmt.value || 0 | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.discAmt.value || 0 | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
@@ -827,7 +849,7 @@
 
                         <p>Delivery Charges</p>
 
-                        <p class="fw-600 mb-0">{{ (f.deliveryCharges.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.deliveryCharges.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
@@ -837,15 +859,25 @@
 
                         <p>Net Amount</p>
 
-                        <p class="fw-600 mb-0">{{ (f.netAmt.value | dynamicPipe:'number': '1.'+service.currencyDetails?.decimalPoints+'-'+service.currencyDetails?.decimalPoints) + ' ' + service.currencyDetails.currencyCode }}</p>
+                        <p class="fw-600 mb-0">{{ (f.netAmt.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 
-                    <button class="btn btn-lg btn-primary fw-light fs-6 w-100 mb-2" (click)="submit({ 'create': true })">
-        
-                        <i class="bi bi-file-earmark-plus"></i>
+                    <button class="btn btn-lg btn-primary fw-light fs-6 w-100 mb-2" [disabled]="btnLoader.createOrder" (click)="submit({ 'create': true })">
                         
-                        Create New Order
+                        <ng-container *ngIf="!btnLoader.createOrder">
+
+                            <i class="bi bi-file-earmark-plus"></i>
+
+                            Create New Order
+                        
+                        </ng-container>
+                        
+                        <div class="spinner-border text-white-50" style="width: 16px; height: 16px" *ngIf="btnLoader.createOrder" role="status">
+
+                            <span class="visually-hidden">Loading...</span>
+
+                        </div>
                     
                     </button>
 
@@ -859,7 +891,7 @@
 
 </div>
 
-<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" [ngClass]="{ 'z-index-1060': canvasConfig['canvasName'] == 'addBasket'}" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()" (onSubmit)="asidebarSubmit()" >
+<asidebar #canvas [title]="canvasConfig['canvasTitle']" [openCanvas]="openCanvas" [showCancelBtn]="canvasConfig['showCancelBtn']" [cancelBtnTxt]="canvasConfig['cancelBtnTxt']" [applyBtnTxt]="canvasConfig['applyBtnTxt']" [backdrop]="canvasConfig['backdrop']" [ngClass]="{ 'z-index-1060': canvasConfig['canvasName'] == 'addBasket'}" (onClose)="openCanvas = false" (onCancel)="asidebarCancel()" (onSubmit)="asidebarSubmit()" [saveBtnLoader]="canvasConfig['saveBtnLoader']">
   
     <ng-container *ngIf="canvasConfig['canvasName'] == 'addCustomer'">
     
@@ -1272,13 +1304,25 @@
 
             </div>
 
+            <div class="col-sm-6 pe-2 pe-md-1" *ngIf="canvasConfig['canvasName'] == 'editAddress'">
+
+                <div class="form-group">
+
+                    <input type="checkbox" class="form-check-input me-2" id="isDefault" formControlName="isDefault">
+
+                    <label for="isDefault">Default Address</label>
+
+                </div>
+
+            </div>
+
         </ng-container>     
 
     </ng-template>
 
 </asidebar>
 
-<modal #customerVerificationModal title="Customer Verification OTP" modalBodyClass="p-4" size="md" [showCancelBtn]="false" [showSaveBtn]="false" [showCloseIcon]="false">
+<modal #customerVerificationModal title="Customer Verification OTP" modalBodyClass="p-4" size="md" [showCancelBtn]="false" [showSaveBtn]="false" [showCloseIcon]="false" backdrop="static">
 
     <div class="text-center" *ngIf="!f.isExistingCustomer.value && _.isEmpty(selectedCustomerDet) ? 'true' : 'false' as newCustomer">
 
@@ -1288,17 +1332,16 @@
 
         <div class="d-flex justify-content-center pt-3">
 
-            <input type="text" id="otp-inp-1" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[0]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-1' })" autocomplete="off" style="width: 60px;height: 60px;">
-
-            <input type="text" id="otp-inp-2" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[1]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-3', 'prevElement': '#otp-inp-1' })" autocomplete="off" style="width: 60px;height: 60px;">
-
-            <input type="text" id="otp-inp-3" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[2]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-4', 'prevElement': '#otp-inp-2' })" autocomplete="off" style="width: 60px;height: 60px;">
-
-            <input type="text" id="otp-inp-4" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[3]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-5', 'prevElement': '#otp-inp-3' })" autocomplete="off" style="width: 60px;height: 60px;">
-
-            <input type="text" id="otp-inp-5" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[4]" maxlength="1" (keydown)="keydown({ 'event': $event,'nextElement': '#otp-inp-6', 'prevElement': '#otp-inp-4' })" autocomplete="off" style="width: 60px;height: 60px;">
-
-            <input type="text" id="otp-inp-6" class="form-control text-center border-0 bg-primary-subtle rounded-0 mx-2" [(ngModel)]="otp[5]" maxlength="1" (keydown)="keydown({ 'event': $event, 'nextElement': '#otp-submit', 'prevElement': '#otp-inp-5' })" autocomplete="off" style="width: 60px;height: 60px;">
+            <ng-otp-input  
+                #ngOtpInput
+                (onInputChange)="verificationCode = $event"  
+                [config]="{ 
+                    'length': 6, 
+                    'containerClass': 'd-flex justify-content-center',
+                    'inputClass': 'form-control text-center border-0 bg-primary-subtle rounded-0 mx-2 fs-5',
+                    'inputStyles': { 'width': '60px', 'height': '60px' }
+                }">
+            </ng-otp-input>
 
         </div>    
         
@@ -1332,9 +1375,19 @@
 
         <div class="d-flex justify-content-center mt-4">
 
-            <button class="btn btn-primary py-2 px-5 fw-normal me-2" id="otp-submit" [disabled]="_.size(_.join(otp,'')) != 6" (click)="verifyCustomerOtp()">Verify</button>
+            <button class="btn btn-primary py-2 px-5 fw-normal me-2" style="width:145px" id="otp-submit" [disabled]="_.size(verificationCode) != 6 || btnLoader.verifyOtp" (click)="verifyCustomerOtp()">
+
+                <ng-container *ngIf="!btnLoader.verifyOtp"> Verify </ng-container>
+
+                <div class="spinner-border text-white-50" style="height: 16px; width: 16px" *ngIf="btnLoader.verifyOtp" role="status">
+
+                    <span class="visually-hidden">Loading...</span>
+
+                </div>                
             
-            <button class="btn py-2 px-5 btn-outline-primary text-primary fw-normal" style="background-color: #F3F5F9;" (click)="closeVerificationModal(newCustomer)">Cancel</button>
+            </button>
+            
+            <button class="btn py-2 px-5 btn-outline-primary text-primary fw-normal" style="width:145px" style="background-color: #F3F5F9;" (click)="closeVerificationModal(newCustomer)">Cancel</button>
 
         </div>
 

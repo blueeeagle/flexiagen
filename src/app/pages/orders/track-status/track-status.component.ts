@@ -28,7 +28,7 @@ export class TrackStatusComponent {
 
         this.getOrderDetails(orderId);
 
-      } else this.router.navigate(['/orders']);
+      } else this.router.navigate(['/pages/orders']);
 
     } 
 
@@ -42,13 +42,13 @@ export class TrackStatusComponent {
 
         this.service.otherData.orderDetails = res.data;
 
-      } else this.router.navigate(['/orders']);
+      } else this.router.navigate(['/pages/orders']);
 
     },(err: any) => { 
 
       this.service.showToastr({ "data": { "type": "error", "message": err.message || "Can't get order details" } });
       
-      this.router.navigate(['/orders']); 
+      this.router.navigate(['/pages/orders']); 
     
     });
 

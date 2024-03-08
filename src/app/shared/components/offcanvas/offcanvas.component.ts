@@ -13,13 +13,14 @@ export class OffcanvasComponent implements OnInit {
   _showCancelBtn: boolean = true;
   _applyBtnTxt: string = "SAVE";
   _cancelBtnTxt: string = "CLEAR";
-  _backdrop: boolean = true;
+  _backdrop: any = true;
   _keyboard: boolean = true;
   _scroll: boolean = false;
   _position: "start" | "end" | "top" | "bottom"  = "end";
   _title: string = "Filters";
   _openCanvas: boolean= false;
   offcanvas: any;
+  _saveBtnLoader: boolean = false;
 
   @Input() set showApplyBtn(value: boolean) { this._showApplyBtn = value; }
 
@@ -37,9 +38,9 @@ export class OffcanvasComponent implements OnInit {
 
   get cancelBtnTxt(): string { return this._cancelBtnTxt; }
 
-  @Input() set backdrop(value: boolean) { this._backdrop = value; }
+  @Input() set backdrop(value: any) { this._backdrop = value; }
 
-  get backdrop(): boolean { return this._backdrop; }
+  get backdrop(): any { return this._backdrop; }
 
   @Input() set keyboard(value: boolean) { this._keyboard = value; }
 
@@ -57,9 +58,13 @@ export class OffcanvasComponent implements OnInit {
 
   get title(): string { return this._title; }
 
+  @Input() set saveBtnLoader(value: boolean) { this._saveBtnLoader = value; }
+
+  get saveBtnLoader(): boolean { return this._saveBtnLoader; }
+
   @Input() set openCanvas(value: boolean) {
 
-    this.offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvas'), { 'backdrop': this.backdrop, 'scroll': this.scroll, 'keyboard': this.keyboard });
+    this.offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvas'), { 'backdrop': this._backdrop, 'scroll': this.scroll, 'keyboard': this._keyboard });
     
     this._openCanvas = value;
 

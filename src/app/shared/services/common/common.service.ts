@@ -36,9 +36,6 @@ export class CommonService {
 
   updateUserDetails() {
 
-    console.log('enter');
-    
-
     this.getUserDetails.subscribe((res: any) => {
     
       if(res.status=='ok') {
@@ -128,8 +125,12 @@ export class CommonService {
 
   getFullImagePath({ imgUrl = "", baseUrlFrom = 'AGENT_IMG_URL' }: { imgUrl: any, baseUrlFrom?: 'AGENT_IMG_URL' | 'ADMIN_IMG_URL' | 'CUSTOMER_IMG_URL'}): string {
     // Replace backslashes with forward slashes
-    const imagePath = imgUrl.replace(/\\/g, '/');
+    const imagePath = (imgUrl || "").replace(/\\/g, '/');
     return (APP_CONFIG[baseUrlFrom] + imagePath).toString();
+  }
+
+  getCustomerImgUrl({ event = {}, customerDetail = {} }: { event: any,  customerDetail: any}): string {
+    return event.target.src = customerDetail.gender ? './assets/images/'+customerDetail.gender+'-user-profile.png' : './assets/images/male-user-profile.png';
   }
 
   // POST API Method While Pass JSON Data

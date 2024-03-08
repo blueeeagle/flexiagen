@@ -168,8 +168,6 @@ export class CreateRolesComponent {
 
     this.loadForm();
 
-    // console.log(this.permissions);
-
   }
   
   loadForm() {
@@ -258,6 +256,8 @@ export class CreateRolesComponent {
 
     if(this.permissionForm.invalid) return;
 
+    this.isLoading = true;
+
     let payload: any = _.cloneDeep(this.permissionForm.value);
 
     payload['permissions'] = _.map(payload['permissions'],(permissionDet: any)=>{
@@ -336,9 +336,13 @@ export class CreateRolesComponent {
 
         }
 
+        this.isLoading = false;
+
       },
 
       error: (error: any) => {
+
+        this.isLoading = false;
 
         this.service.showToastr({ "data": { "message": error?.message || "Something went wrong!", "type": "error" } });
 

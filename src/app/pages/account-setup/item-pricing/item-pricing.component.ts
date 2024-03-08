@@ -30,6 +30,7 @@ export class ItemPricingComponent {
   editData: any = {};
   selectedCategories: Array<any> = [];
   isAllProductsAdded: boolean = false;
+  isLoading: boolean = false;
 
   searchValue: string = '';
 
@@ -260,6 +261,8 @@ export class ItemPricingComponent {
 
     if(this.productForm.invalid) return;
 
+    this.isLoading = true;
+
     let payload = this.productForm.getRawValue();
 
     payload['priceList'] = _.map(payload.priceList, (e: any)=>{
@@ -314,9 +317,11 @@ export class ItemPricingComponent {
   
         }
 
-      },
+        this.isLoading = false;
 
-      error: (error: any) => {
+      }, error: (error: any) => {
+
+        this.isLoading = false;
 
         this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
 

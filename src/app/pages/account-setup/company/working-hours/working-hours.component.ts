@@ -265,7 +265,7 @@ export class WorkingHoursComponent {
 
     this.submitIndex = index;
 
-    // this.isLoading = true;
+    this.isLoading = true;
 
     payload['availableTimes'] = _.map(payload.availableTimes, (e)=>{
 

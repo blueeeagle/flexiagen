@@ -58,6 +58,14 @@ export class CustomerListComponent {
 
   }
 
+  showCustomerDetails(customerDet: any) {
+
+    this.service.otherData.customerDetails = customerDet;
+
+    this.service.navigate({ "url": `/pages/customers/details/${customerDet._id}` });
+
+  }
+
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.

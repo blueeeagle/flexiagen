@@ -5,7 +5,6 @@ import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from "moment";
 
-
 @Component({
   selector: 'app-customer-details',
   templateUrl: './customer-details.component.html',
@@ -40,7 +39,7 @@ export class CustomerDetailsComponent {
 
         this.getCustomerSummaryDetails(customerId);
 
-      } else this.router.navigate(['/customers']);
+      } else this.router.navigate(['/pages/customers']);
 
     } else {
 
@@ -73,13 +72,13 @@ export class CustomerDetailsComponent {
 
         this.getOrderDetails();
 
-      } else this.router.navigate(['/customers']);
+      } else this.router.navigate(['/pages/customers']);
 
     },(err: any) => {
 
       this.service.showToastr({ "data": { "type": "error", "message": err.message || "Can't get customer details" } });
 
-      this.router.navigate(['/customers']);
+      this.router.navigate(['/pages/customers']);
 
     });
 
@@ -113,10 +112,17 @@ export class CustomerDetailsComponent {
 
   }
 
+  viewInfo({ purpose = 'manage-address' }: { purpose: 'manage-address' | 'manage-profile' }) {
+
+    this.service.navigate({ "url": `/pages/customers/${purpose}/${this.customerDetails._id}` });
+
+
+  }
+
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    this.service.otherData.orderDetails = {};
+    this.service.otherData.customerDetails = {};
     this.service.otherData.secondaryPageTitle = '';
   }
 

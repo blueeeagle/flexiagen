@@ -6,6 +6,8 @@ import { MaterialModule } from './material/material.module';
 
 import { NgSelectModule } from '@ng-select/ng-select';
 
+import { NgOtpInputModule } from  'ng-otp-input';
+
 import { 
   DecimalNumberDirective,
   NumberDirective,
@@ -75,7 +77,8 @@ export const MY_FORMATS = {
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    NgSelectModule
+    NgSelectModule,
+    NgOtpInputModule
   ],
   exports : [
     // Modules
@@ -84,6 +87,7 @@ export const MY_FORMATS = {
     ReactiveFormsModule,
     MaterialModule, 
     NgSelectModule,
+    NgOtpInputModule,
     // Directives
     DecimalNumberDirective,
     NumberDirective,

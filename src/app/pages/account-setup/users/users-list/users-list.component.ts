@@ -29,7 +29,7 @@ export class UsersListComponent {
   roles: Array<any> = [];
   mode: 'Create' | 'Update' = 'Create';
   _: any = _;
-
+  isLoading: boolean = false;
   searchValue: string = '';
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
@@ -137,8 +137,12 @@ export class UsersListComponent {
     this.mode = data ? 'Update' : 'Create';
 
     this.loadForm();
-    
-    this.openCanvas = true;
+
+    setTimeout(() => {
+      
+      this.openCanvas = true;
+
+    }, 100);
 
   }
 
@@ -196,6 +200,8 @@ export class UsersListComponent {
 
     if (this.userForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
 
+    this.isLoading = true;
+
     const payload = _.omit(this.userForm.getRawValue(),'profileImg');
 
     payload["companyId"] = this.service.companyDetails._id;
@@ -223,7 +229,7 @@ export class UsersListComponent {
         if (res.result.status == "ok") {
 
           this.canvas?.close();
-  
+
           this.service.showToastr({ data: { type: "success", message:  `User ${this.mode == 'Create' ? 'Created' : 'Updated'} Success` } });
   
           this.getUsersList();
@@ -232,9 +238,13 @@ export class UsersListComponent {
   
         }
 
+        this.isLoading = false;
+
       },
 
       error: (error: any) => {
+        
+        this.isLoading = false;
 
         this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
 

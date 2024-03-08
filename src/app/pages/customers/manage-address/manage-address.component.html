@@ -1,0 +1,131 @@
+
+<div class="customerDetail-container" *ngIf="_.size(service._loading.loadingMap) == 0">
+
+    <div class="container-fluid">
+        
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="card border-0 rounded rounded-4" style="background: #F3F5F9;">
+            
+                    <div class="card-body p-3">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="d-flex align-items-center justify-content-center" style="height: 80px; width: 100px;">
+        
+                                <img *ngIf="customerDetails" [src]="service.getFullImagePath({ 'baseUrlFrom': 'CUSTOMER_IMG_URL', 'imgUrl': customerDetails?.customerImageURL })" (error)="service.getCustomerImgUrl({ 'event': $event, 'customerDetail': customerDetails })" style="height: 100%;" class="img-fluid " alt="User Profile"> 
+    
+                            </div>
+    
+                            <div class="ms-3">
+    
+                                <h5 class="fw-600">{{ customerDetails?.firstName }}</h5>
+
+                                <div class="d-flex align-items-center">
+                                    
+                                    <div class="me-5">
+
+                                        <p class="text-secondary mb-1">Mobile</p>
+
+                                        <p class="text-primary mb-0 fw-600">{{ customerDetails?.dialCode + ' ' + customerDetails?.mobile }}</p>
+
+                                    </div>
+
+                                    <div>
+                                        
+                                        <p class="text-secondary mb-1">Email</p>
+
+                                        <p class="text-primary mb-0 fw-600">{{ customerDetails?.email }}</p>
+
+                                    </div>
+                                        
+                                </div>
+    
+                            </div>
+
+                        </div>                            
+
+                    </div>
+                    
+                </div>                    
+
+            </div>
+
+            <h5 class="fw-600 text-primary mt-3 mb-0">Addresses</h5>
+
+            <div class="col-12" *ngFor="let addressDet of customerDetails?.addresses">
+
+                <div class="card border rounded mt-3">
+            
+                    <div class="card-body p-3">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div class="fw-500 d-flex">
+
+                                <i class="bi bi-geo-alt text-secondary fs-4 me-2"></i>
+
+                                <div>
+
+                                    <p class="mb-1">
+
+                                        {{ addressDet.street | uppercase }}
+            
+                                        <ng-container *ngIf="addressDet.block || addressDet.building">
+                                        
+                                            {{ (addressDet.block ? (addressDet.block + ' Block, ') : '') + ' ' + (addressDet.building ? (addressDet.building + ' Building') : '') }}
+            
+                                        </ng-container>
+            
+                                    </p>
+            
+                                    <p class="mb-1">{{ addressDet.landmark }}</p>
+            
+                                    <p class="mb-1">{{ addressDet.cityId.name + ', '+ addressDet.stateId.name + ' - ' + addressDet.zipcode }} </p>
+            
+                                    <p class="mb-0">{{ addressDet.countryId.name }}</p>                                
+    
+
+                                </div>
+
+                            </div>
+
+                            <div *ngIf="addressDet.isDefault">
+
+                                <a class="bg-primary-subtle btn me-2 px-3 py-2 text-primary"> Primary </a>                            
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex mt-2">
+
+                            <div class="d-flex align-items-end me-4">
+
+                                <i class="bi bi-telephone text-secondary fs-4 me-2"></i>
+
+                                <p class="mb-1 fw-500">{{ customerDetails.dialCode + ' ' + customerDetails.mobile }}</p>
+                            
+                            </div>                            
+
+                            <div class="d-flex align-items-center">
+
+                                <i class="bi bi-envelope text-secondary fs-4 me-2"></i>
+
+                                <p class="mb-1 fw-500">{{ customerDetails.email }}</p>
+
+                            </div>
+
+                        </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    
+    </div>
+
+</div>
