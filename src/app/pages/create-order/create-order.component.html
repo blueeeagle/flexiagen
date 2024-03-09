@@ -1137,7 +1137,7 @@
 
             <ng-container *ngIf="f.discType.value == 'percentage'">
             
-                <input type="text" class="form-control form-control-lg rounded-0" formControlName="discPercentage" placeholder="Enter percentage" decimalNumbersOnly [decimalPoints]="2" (change)="calculateOrderFormValue()">
+                <input type="text" class="form-control form-control-lg rounded-0" formControlName="discPercentage" placeholder="Enter percentage" decimalNumbersOnly (change)="calculateOrderFormValue()">
 
             </ng-container>
 

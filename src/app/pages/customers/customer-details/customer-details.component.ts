@@ -29,6 +29,22 @@ export class CustomerDetailsComponent {
 
     this.service.otherData.secondaryPageTitle = "Customer Details";
 
+    if(!_.isEmpty(this.service.companyDetails)) this.checkRouteValidation();
+
+    this.userSubscribe = this.service.userDetailsObs.subscribe((res: any) => {
+
+      if(!_.isEmpty(res)) {
+
+        this.checkRouteValidation();
+    
+      } else this.router.navigate(['/auth/login']);
+
+    });    
+
+  }
+
+  checkRouteValidation() {
+
     if(_.isEmpty(this.service.otherData?.customerDetails)) {
 
       let customerId: any = this.router.url.split('/').pop();
@@ -67,6 +83,8 @@ export class CustomerDetailsComponent {
         this.service.otherData.customerDetails = res.data.customerDetail;
 
         this.customerDetails = this.service.otherData.customerDetails;
+
+        this.customerDetails.discount = _.find(this.customerDetails.discounts, { "companyId": this.service.companyDetails?._id });
 
         this.lastOrderDet = res.data.lastOrderDet;
 

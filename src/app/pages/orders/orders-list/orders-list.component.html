@@ -500,7 +500,7 @@
 
                 <p class="fw-500 mb-0 me-3 position-absolute end-0 text-secondary">{{ orderDetails.currencyId.currencyCode }}</p>
 
-                <input type="text" class="form-control form-control-lg border-2" formControlName="amount" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount' })" [ngClass]="{ 'is-invalid': (formSubmitted.paymentForm || pf.amount.touched) && pf.amount.errors }" [decimalPoints]="(orderDetails.currencyId.decimalPoints || 2)">
+                <input type="text" class="form-control form-control-lg border-2" formControlName="amount" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount' })" [ngClass]="{ 'is-invalid': (formSubmitted.paymentForm || pf.amount.touched) && pf.amount.errors }">
 
             </div>
 

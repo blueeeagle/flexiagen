@@ -63,13 +63,13 @@
 
                                     <ng-container *ngIf="customerDetails?.discount">
 
-                                        <ng-container *ngIf="customerDetails?.discount?.discountType == 'flat'">
+                                        <ng-container *ngIf="customerDetails?.discount?.discType == 'flat'">
 
                                             {{ customerDetails?.discount?.value + ' ' + service.currencyDetails?.currencyCode }}
 
                                         </ng-container>
 
-                                        <ng-container *ngIf="customerDetails?.discount?.discountType == 'discount'">
+                                        <ng-container *ngIf="customerDetails?.discount?.discType == 'percentage'">
 
                                             {{ customerDetails?.discount?.value + '%' }}
 
@@ -208,7 +208,6 @@
                             </div>
 
                         </div>
-
 
                     </div>
                     

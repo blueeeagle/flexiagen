@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { FormGroup,  } from '@angular/forms';
+import { CommonService } from '@shared/services/common/common.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-reports',
@@ -8,123 +9,37 @@ import { FormGroup,  } from '@angular/forms';
 })
 export class ReportsComponent {
 
-  reports: FormGroup = new FormGroup({});
+  totalCount: number = 0;
+  tableColumns = ['DATE', 'ORDER NO', 'CUSTOMER NAME', 'MOBILE', 'TYPE','RATING', 'REVIEW'];
+  _: any = _;
+  searchValue: string = "";
+  pageSize: number = 10;
+  pageIndex: number = 0;
+  reviewsList: any = [];
 
-  tableColumns = ['DATE','ORDER ID','CUSTOMER NAME','MOBILE NO','TYPE','METHOD','RATING','RVIEW'];
+  constructor(public service: CommonService) {
 
-  reviewAndRating: Array<any> = [
-    {
-      "date" : "20/20/20",
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/customer/reviews"] });
 
-      "orderId" : "ORDO01",
+    this.getCustomerReviews();
 
-      "customerName" : "Karthik Siva",
+  }
 
-      "mobileNo" : "+6385877456",
+  getCustomerReviews() {
 
-      "type" : "Online",
+    this.service.getService({ url: "/customer/reviews" }).subscribe((res: any) => {
 
-      "method" : "Swipe",
+      if(res.status == 'ok') {
 
-      "rating" : "4.5/5",
+        this.totalCount = res.totalCount;
 
-    },
-    {
-      "date" : "20/20/20",
+        this.reviewsList = res.data;
 
-      "orderId" : "ORDO01",
+      }
 
-      "customerName" : "Karthik Siva",
+    });
 
-      "mobileNo" : "+6385877456",
+  }
 
-      "type" : "Online",
-
-      "method" : "Swipe",
-
-      "rating" : "4.5/5",
-
-    },
-    {
-      "date" : "20/20/20",
-
-      "orderId" : "ORDO01",
-
-      "customerName" : "Karthik Siva",
-
-      "mobileNo" : "+6385877456",
-
-      "type" : "Online",
-
-      "method" : "Swipe",
-
-      "rating" : "4.5/5",
-
-    },
-    {
-      "date" : "20/20/20",
-
-      "orderId" : "ORDO01",
-
-      "customerName" : "Karthik Siva",
-
-      "mobileNo" : "+6385877456",
-
-      "type" : "Online",
-
-      "method" : "Swipe",
-
-      "rating" : "4.5/5",
-
-    },
-    {
-      "date" : "20/20/20",
-
-      "orderId" : "ORDO01",
-
-      "customerName" : "Karthik Siva",
-
-      "mobileNo" : "+6385877456",
-
-      "type" : "Online",
-
-      "method" : "Swipe",
-
-      "rating" : "4.5/5",
-
-    },
-    {
-      "date" : "20/20/20",
-
-      "orderId" : "ORDO01",
-
-      "customerName" : "Karthik Siva",
-
-      "mobileNo" : "+6385877456",
-
-      "type" : "Online",
-
-      "method" : "Swipe",
-
-      "rating" : "4.5/5",
-
-    },
-    {
-      "date" : "20/20/20",
-
-      "orderId" : "ORDO01",
-
-      "customerName" : "Karthik Siva",
-
-      "mobileNo" : "+6385877456",
-
-      "type" : "Online",
-
-      "method" : "Swipe",
-
-      "rating" : "4.5/5",
-
-    },
-  ];
 
 }

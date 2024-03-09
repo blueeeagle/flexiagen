@@ -2,193 +2,143 @@
 
     <div class="container-fluid">
 
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <div class="row mt-2">
 
-            <button class="nav-link active border-bottom border-0" data-bs-toggle="tab" data-bs-target="#stats" role="tab"> STATS </button>
-    
-            <button class="nav-link border-bottom border-0" data-bs-toggle="tab" data-bs-target="#review" role="tab"> REVIEW & RATINGS </button>
-    
-        </div>
-    
-        <form [formGroup]="reports">
-    
-            <div class="row mt-2">
-    
-                <div class="tab-content" id="nav-tabContent">
-    
-                    <div class="tab-pane fade show active" id="stats" role="tabpanel">
+            <div class="col-12">
 
-                        stats
+                <div class="card bg-light">
     
-                    </div>
+                    <div class="card-header fw-600 fs-6"> Ratings </div>
+                    
+                    <div class="card-body">
+                    
+                        <div class="d-flex justify-content-center align-items-center">
     
-                    <div class="tab-pane fade show" id="review" role="tabpanel">
-    
-                        <div class="container">
-
-                            <div class="row justify-content-center align-items-center g-2">
-
-                              <div class="card bg-light">
-
-                                <div class="card-header fw-600 fs-6"> Ratings </div>
+                            <div class="col-10 d-flex">
                                 
-                                <div class="card-body">
+                                <div class="image ms-2" style="background: url(/./assets/images/reports-ratings.png);" ></div>
                                 
-                                    <div class="row justify-content-center align-items-center">
-
-                                        <div class="col-10 d-flex">
-                                            
-                                            <div class="image ms-2" style="background: url(/./assets/images/reports-ratings.png);" ></div>
-                                            
-                                            <h1 class="fw-600 text-primary mt-1 ms-3"> 4.5/5 </h1>
-
-                                        </div>
-
-                                        <div class="col-2">
-                                            
-                                            <h5 style="color: gray;"> 120 REVIEWS </h5>
-
-                                            <p class="fw-600" style="color: black;"> See All Reviews </p>
-
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                </div>
-                                
+                                <h1 class="fw-600 text-primary mt-1 ms-3"> {{ service.companyDetails?.rating }}/5 </h1>
+    
                             </div>
+    
+                            <div class="col-2">
                                 
-                            </div>
-                            
-                            <div class="row justify-content-center align-items-center g-2 mt-4">
-
-                                <div class="card border-0">
-
-                                    <div class="table-responsive">
-
-                                        <table class="table table-bordered bg-white" mat-table [dataSource]="reviewAndRating">
-
-                                            <ng-container matColumnDef="DATE" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Date </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.date }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="ORDER ID" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Order Id </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.orderId }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="CUSTOMER NAME" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Customer Name </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.customerName }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="MOBILE NO" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Mobile No </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.mobileNo }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="TYPE" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Type </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.type }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="METHOD" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Method </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.method }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="RATING" sticky>
-                
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Rating </th>
-                                
-                                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-                                
-                                                {{ reviewDet?.rating }}
-                                
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <ng-container matColumnDef="RVIEW" stickyEnd>
-            
-                                                <th mat-header-cell *matHeaderCellDef class="text-center"> Review </th>
-                            
-                                                <td mat-cell *matCellDef="let reviewDet">
-                                                
-                                                    <a class="text-primary d-flex align-items-center justify-content-center">
-                                                    
-                                                        <i class="bi bi-eye me-2"></i> 
-
-                                                    </a>                        
-                            
-                                                </td>
-                            
-                                            </ng-container>
-
-                                            <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
-            
-                                            <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
-
-                                        </table>
-
-                                    </div>
-
-                                </div>
-                           
+                                <h5 style="color: gray;"> {{ service.companyDetails?.reviewCount  }} REVIEWS </h5>
+    
+                                <!-- <p class="fw-600" style="color: black;"> See All Reviews </p> -->
+    
                             </div>
                             
                         </div>
-    
+                        
                     </div>
-    
+                    
                 </div>
-    
+
             </div>
+
+        </div>
+
+        <div class="table-responsive mt-3">
+
+            <table class="table table-bordered bg-white" mat-table [dataSource]="reviewsList">
+
+                <ng-container matColumnDef="DATE" sticky>
+
+                    <th mat-header-cell *matHeaderCellDef> Date </th>
     
-        </form>
+                    <td mat-cell *matCellDef="let reviewDet">
+    
+                        {{ reviewDet?.orderId?.orderDate | date: 'dd MMM YYYY' }}
+    
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="ORDER NO" sticky>
+
+                    <th mat-header-cell *matHeaderCellDef> Order No </th>
+    
+                    <td mat-cell *matCellDef="let reviewDet">
+    
+                        {{ reviewDet?.orderId?.orderNo }}
+    
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="CUSTOMER NAME" sticky>
+
+                    <th mat-header-cell *matHeaderCellDef> Customer Name </th>
+    
+                    <td mat-cell *matCellDef="let reviewDet">
+    
+                    {{ reviewDet?.customerId?.firstName + ' ' + reviewDet?.customerId?.lastName }}
+    
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="MOBILE" sticky>
+
+                    <th mat-header-cell *matHeaderCellDef> Mobile No </th>
+    
+                    <td mat-cell *matCellDef="let reviewDet">
+    
+                    {{ reviewDet?.customerId?.mobile }}
+    
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="TYPE" sticky>
+
+                    <th mat-header-cell *matHeaderCellDef> Type </th>
+    
+                    <td mat-cell *matCellDef="let reviewDet">
+    
+                    {{ reviewDet?.orderId?.orderMode }}
+    
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="RATING" sticky>
+
+                    <th mat-header-cell *matHeaderCellDef> Rating </th>
+    
+                    <td mat-cell *matCellDef="let reviewDet">
+    
+                    {{ reviewDet?.rating }}
+    
+                    </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="REVIEW" stickyEnd>
+
+                    <th mat-header-cell *matHeaderCellDef> Review </th>
+
+                    <td mat-cell *matCellDef="let reviewDet">
+                    
+                        <a class="text-primary d-flex align-items-center justify-content-center">
+                        
+                            <i class="bi bi-eye me-2"></i> 
+
+                        </a>                        
+
+                    </td>
+
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
+
+                <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+
+            </table>
+
+        </div>
         
     </div>
 
