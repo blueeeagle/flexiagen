@@ -7,18 +7,18 @@
             <div class="page-header">DASHBOARD</div>
 
             <div class="text-end">
-
+<!-- 
                 <button class="btn btn-outline-primary bi bi-sliders"> 
                 
                     <span class="ms-3">Filter</span>
                 
-                </button>
+                </button> -->
 
             </div>
         
         </div>
 
-        <div class="alert">
+        <!-- <div class="alert">
 
             <div class="d-flex">
 
@@ -37,7 +37,7 @@
             </div>
                 
                 
-        </div>
+        </div> -->
 
         <div class="row mt-5">
 
@@ -53,7 +53,7 @@
         
                             <h5 class="text-light fw-600 mt-3">Total Orders</h5>
         
-                            <h2 class="fw-600">25</h2>
+                            <h2 class="fw-600">{{dashboardData.totalOrders || 0}}</h2>
         
                         </div>
         
@@ -67,7 +67,7 @@
         
                             <h5 class="text-light fw-600 mt-3">Completed Orders</h5>
         
-                            <h2 class="fw-600">12</h2>
+                            <h2 class="fw-600">{{dashboardData.completedOrders || 0}}</h2>
         
                         </div>
         
@@ -79,11 +79,11 @@
             
                             <h4 class="fw-600 mb-0 text-dark">New Orders</h4>
             
-                            <a class="text-primary h6 mb-0 lh-base">See All</a>
+                            <a class="text-primary h6 mb-0 lh-base" routerLink="/pages/orders">See All</a>
             
                         </div>
                         
-                        <div class="order-list-card" *ngFor="let orderDet of ordersList">
+                        <div class="order-list-card" *ngFor="let orderDet of dashboardData.newOrders">
             
                             <div class="row">
     
@@ -91,13 +91,13 @@
                                     
                                     <div class="d-flex align-items-center">
     
-                                        <img class="user-img" [src]="orderDet.imgPath">
+                                        <img class="user-img" *ngIf="orderDet.customerId" [src]="service.getFullImagePath({ 'baseUrlFrom': 'CUSTOMER_IMG_URL', 'imgUrl': orderDet.customerId?.customerImageURL })" (error)="service.getCustomerImgUrl({ 'event': $event, 'customerDetail': orderDet.customerId })" style="width:45px">
     
                                         <div class="ms-3">
                                             
-                                            <span class="text-black fw-600 mb-0">{{orderDet.name}} </span> 
+                                            <span class="text-black fw-600 mb-0">{{orderDet.customerId?.firstName}} </span> 
                                             
-                                            <p class="text-light fw-600 small mb-0">{{orderDet.orderNum}}</p>
+                                            <p class="text-light fw-600 small mb-0">{{orderDet.orderNo}}</p>
                                         
                                         </div>
     
@@ -107,17 +107,17 @@
                                     
                                 <div class="col-md-2 px-1 align-self-center text-center fw-600 text-black mt-3 mt-md-0"> 
                                     
-                                    {{orderDet.date}} 
+                                    {{orderDet.orderDate | date : 'dd/MM/yy'}} 
                                 
                                 </div>
                                     
-                                <div class="col-md-2 px-1 align-self-center text-center fw-600 text-black mt-3 mt-md-0"> {{orderDet.online}} </div>
+                                <div class="col-md-2 px-1 align-self-center text-center fw-600 text-black mt-3 mt-md-0"> {{orderDet.orderMode}} </div>
         
                                 <div class="col-md-3 px-1 align-self-center fw-600 text-black mt-3 mt-md-0">
         
                                     <div class="status-card mx-auto text-primary fw-medium"> 
                                         
-                                        <i class="tick bi bi-check-lg border-pill"></i>&nbsp; {{orderDet.Booking}} 
+                                        <i class="tick bi bi-check-lg border-pill"></i>&nbsp; {{orderDet.orderStatus}} 
                                     
                                     </div>
         
@@ -157,7 +157,7 @@
                                         
                                     </div>
     
-                                    <h5 class="fw-700">23</h5>
+                                    <h5 class="fw-700">{{dashboardData.pickupCount || 0}}</h5>
     
                                 </div>
     
@@ -171,7 +171,7 @@
                                         
                                     </div>
     
-                                    <h5 class="fw-700">11</h5>
+                                    <h5 class="fw-700">{{dashboardData.pickupCompletedCount || 0}}</h5>
     
                                 </div>
                                 
@@ -185,7 +185,7 @@
                                         
                                     </div>
     
-                                    <h5 class="fw-700 mb-0">5</h5>
+                                    <h5 class="fw-700 mb-0">{{dashboardData.pickupPendingCount || 0}}</h5>
     
                                 </div>                            
 
@@ -215,7 +215,7 @@
                                         
                                     </div>
     
-                                    <h5 class="fw-700">23</h5>
+                                    <h5 class="fw-700">{{dashboardData.deliveryCount || 0}}</h5>
     
                                 </div>
     
@@ -229,7 +229,7 @@
                                         
                                     </div>
     
-                                    <h5 class="fw-700">11</h5>
+                                    <h5 class="fw-700">{{dashboardData.deliveryCompletedCount || 0}}</h5>
     
                                 </div>
                                 
@@ -243,7 +243,7 @@
                                         
                                     </div>
     
-                                    <h5 class="fw-700 mb-0">5</h5>
+                                    <h5 class="fw-700 mb-0">{{dashboardData.deliveryPendingCount || 0}}</h5>
     
                                 </div>                            
 
@@ -259,13 +259,13 @@
     
                         <div class="card border-0 mat-elevation-z3 p-4">
 
-                            <div class="d-flex flex-wrap flex-md-nowrap align-items-center justify-content-center">
+                            <form class="d-flex flex-wrap flex-md-nowrap align-items-center justify-content-center">
 
-                                <input class="status-code form-control form-control-lg mt-3 py-3" type="text" placeholder="Enter Ordre No">
+                                <input class="status-code form-control form-control-lg mt-3 py-3" type="text" placeholder="Enter Ordre No" maxlength="21" name="orderNo" [(ngModel)]="orderNo">
     
-                                <button class="btn btn-primary btn-lg rounded-3 py-3 ms-3 mt-3">Check</button>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-3 py-3 ms-3 mt-3" (click)="checkOrderStatus()">Check</button>
 
-                            </div>
+                            </form>
 
                             <div class="card-body mt-4" style="background: #F3F5F9;">
 
@@ -283,11 +283,27 @@
 
                                     <div class="col-6">
 
-                                        <a class="text-dark fw-500">
+                                        <!-- <a class="text-dark fw-500">
 
                                             <i class="bi bi-gear text-primary me-2"></i> Change
 
-                                        </a>
+                                        </a> -->
+
+                                    </div>
+
+                                    <div class="col-12 mt-3" *ngIf="!_.isEmpty(orderDetail)">
+
+                                        <label for="orderNo" class="small text-secondary">Order No</label>
+
+                                        <h6 class="fw-600">{{ orderDetail?.orderNo }} </h6>
+
+                                        <label class="orderDate" class="small text-secondary">Order Date</label>
+
+                                        <h6 class="fw-600">{{ orderDetail?.orderDate | date : 'dd/MM/yy' }} </h6>
+
+                                        <label class="orderStatus" class="small text-secondary">Order Status</label>
+
+                                        <h6 class="fw-600">{{ orderDetail?.orderStatus }} </h6>
 
                                     </div>
 

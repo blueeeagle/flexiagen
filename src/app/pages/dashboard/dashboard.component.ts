@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { CommonService } from '@shared/services/common/common.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,47 +9,51 @@ import { Component } from '@angular/core';
 })
 export class DashboardComponent {
 
-  ordersList = [
-    { 
-      "imgPath": "/./assets/images/dashbord/Name.png",
-      "name": "Ahmed Yousif", 
-      "orderNum": "Order Number",
-      "date" : "01/03/23",
-      "online" : "Online",
-      "Booking" : "Booked",
-    },
-    { 
-      "imgPath": "/./assets/images/dashbord/Name.png",
-      "name": "Ammar", 
-      "orderNum": "Order Number",
-      "date" : "12/12/23",
-      "online" : "Online",
-      "Booking" : "Booked",
-    },
-    { 
-      "imgPath": "/./assets/images/dashbord/Name.png",
-      "name": "Muhammad", 
-      "orderNum": "Order Number",
-      "date" : "08/05/23",
-      "online" : "POS",
-      "Booking" : "Booked",
-    },
-    { 
-      "imgPath": "/./assets/images/dashbord/Name.png",
-      "name": "Khalifa", 
-      "orderNum": "Order Number",
-      "date" : "04/02/23",
-      "online" : "POS",
-      "Booking" : "Booked",
-    },
-    { 
-      "imgPath": "/./assets/images/dashbord/Name.png",
-      "name": "Fatima", 
-      "orderNum": "Order Number",
-      "date" : "11/03/23",
-      "online" : "POS",
-      "Booking" : "Booked",
-    }
-  ];
+  dashboardData: any = {};
+  orderDetail: any = {};
+  orderNo: any = '';
+  _: any = _;
+
+  constructor(public service: CommonService) {
+
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/dashboard/agentOrders"] });
+
+    this.getDashboardDate();
+
+  }
+
+  getDashboardDate() {
+
+    this.service.getService({ url: "/dashboard/agentOrders" }).subscribe((res: any) => {
+
+      if(res.status == 'ok') {
+
+        this.dashboardData = res.data;
+
+      }
+
+    });
+
+  }  
+
+  checkOrderStatus() {
+
+    if(_.size(this.orderNo) < 21) return this.service.showToastr({ data: { type: "error", message: "Please enter a valid 21 digit order number " } });
+
+    let params = { "orderNo": this.orderNo };
+
+    this.service.getService({ 'url': '/dashboard/checkOrderStatus', "params": params }).subscribe((res: any) => {
+
+      if(res.status == 'ok') {
+
+        this.orderDetail = res.data;
+
+        this.orderNo = '';
+
+      }
+
+    });
+
+  }
 
 }

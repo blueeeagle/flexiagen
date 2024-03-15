@@ -91,6 +91,8 @@ export class CompanyDetailsComponent {
 
       if(res.status=='ok') {
 
+        this.masterList['charges'] = res.data.charges;
+
         _.reduce({ 'pos': '0', 'online': '0', 'logistics': '0' }, (result: any, v: any, key: any) => {
 
           let chargesDet = _.find(res.data.charges, { 'name': key });
@@ -332,47 +334,48 @@ export class CompanyDetailsComponent {
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
 
-    this.createCompany(companyPayload);
+    if(_.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
 
-    // // return;
-    
-    // const payload = {
+      const payload = {
 
-    //   "amount": 100,
-      
-    //   "currency": "BHD",
-      
-    //   "customerInfo": {
+        "amount": this.appServiceChargeDet.pos || 0,
         
-    //     "firstName": companyPayload?.ownerName,
+        "currency": this.masterList['currencyDet']?.currencyCode || "BHD",
         
-    //     "email": "akajithkumar9700@gmail.com",
-        
-    //   }
-
-    // };
-
-    // this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
-      
-    //   if (res.status == "ok") {
-
-    //     this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
-
-    //     this.service.session({ "method": "set", "key": "formVal", "value": JSON.stringify(this.companyForm.value) });
-
-    //     window.location.href = res.data.url;
+        "customerInfo": {
           
-    //     this.isLoading = false;
+          "firstName": companyPayload?.ownerName,
+          
+          "email": "akajithkumar9700@gmail.com",
+          
+        }
+
+      };
+
+      this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
         
-    //   }
+        if (res.status == "ok") {
 
-    // },
-    //   (error: any) => {
+          this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
 
-    //     this.isLoading = false;
-      
-    //     this.service.showToastr({ data: { message: error.error.message, type: "error" } });
-    // });
+          this.service.session({ "method": "set", "key": "formVal", "value": JSON.stringify(this.companyForm.value) });
+
+          window.location.href = res.data.url;
+            
+          this.isLoading = false;
+          
+        }
+
+      },
+        (error: any) => {
+
+          this.isLoading = false;
+        
+          this.service.showToastr({ data: { message: error.error.message, type: "error" } });
+
+      });      
+
+    } else this.createCompany(companyPayload);
 
   }
 
