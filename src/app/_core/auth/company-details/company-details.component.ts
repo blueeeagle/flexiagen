@@ -49,7 +49,7 @@ export class CompanyDetailsComponent {
               
         const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
 
-        const formVal: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
+        const formVal: any = JSON.parse(this.service.session({ method : "get", key : "formVal"}));
 
         this.companyForm.patchValue(formVal);
                 
