@@ -1367,7 +1367,7 @@
 
                 Didn't get the OTP? &nbsp;
 
-                <a class="text-primary small cursor-pointer text-decoration-underline" [ngClass]="{ 'opacity-50': timer > 0 }" (click)="timer > 0 ? '' : sendCustomerVerification({ 'newCustomer': newCustomer == 'true' })">Resend OTP</a>
+                <a class="text-primary small cursor-pointer text-decoration-underline" [ngClass]="{ 'opacity-50': timer > 0 }" (click)="timer > 0 ? '' : sendCustomerVerification({ 'newCustomer': newCustomer == 'true', 'isResendOTP': true })">Resend OTP</a>
 
             </p>
 

@@ -30,6 +30,8 @@ export class CompanyDetailsComponent {
 
   ngOnInit(): void {
 
+    this.service.userDetails = JSON.parse(this.service.session({ "key": "UserDetails", "method": "get" })) || {};
+
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     
@@ -49,9 +51,9 @@ export class CompanyDetailsComponent {
               
         const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
 
-        const formVal: any = JSON.parse(this.service.session({ method : "get", key : "formVal"}));
+        const formValue: any = JSON.parse(this.service.session({ method : "get", key : "formValue"}));
 
-        this.companyForm.patchValue(formVal);
+        this.companyForm.patchValue(formValue);
                 
         this.service.getService({ "url": `/pg/getPaymentDetail/${params.paymentId}` }).subscribe((res: any) => {
           
@@ -334,7 +336,7 @@ export class CompanyDetailsComponent {
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
 
-    if(_.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
+    if(this.service.userDetails.pos && _.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
 
       const payload = {
 
@@ -346,7 +348,7 @@ export class CompanyDetailsComponent {
           
           "firstName": companyPayload?.ownerName,
           
-          "email": "akajithkumar9700@gmail.com",
+          "email": this.service.userDetails.email,
           
         }
 
@@ -358,7 +360,7 @@ export class CompanyDetailsComponent {
 
           this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
 
-          this.service.session({ "method": "set", "key": "formVal", "value": JSON.stringify(this.companyForm.value) });
+          this.service.session({ "method": "set", "key": "formValue", "value": JSON.stringify(this.companyForm.getRawValue()) });
 
           window.location.href = res.data.url;
             

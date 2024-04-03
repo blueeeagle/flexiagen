@@ -639,7 +639,7 @@ export class CreateOrderComponent {
 
   }
 
-  sendCustomerVerification({ newCustomer = false }: { newCustomer?: boolean}) {
+  sendCustomerVerification({ newCustomer = false, isResendOTP = false }: { newCustomer?: boolean, isResendOTP?: boolean }) {
 
     this.verificationCode = "";
 
@@ -655,7 +655,7 @@ export class CreateOrderComponent {
 
           this.canvas?.close();
 
-          this.customerVerificationModal.open();
+          if(!isResendOTP) this.customerVerificationModal.open();
 
           this.startTimer();
 
@@ -679,7 +679,7 @@ export class CreateOrderComponent {
 
           this.service.showToastr({ "data": { "message": "Verification email sent successfully", "type": "success" } });
 
-          this.customerVerificationModal.open();
+          if(!isResendOTP) this.customerVerificationModal.open();
 
           this.btnLoader.sendVerification = false;
 
