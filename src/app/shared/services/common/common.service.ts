@@ -27,7 +27,6 @@ export class CommonService {
     'orderDetails': {},
     'secondaryPageTitle': ''
   };
-
   public userDetailsObs = new Subject();
 
   constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) {
@@ -280,5 +279,103 @@ export class CommonService {
     }
 
   }
+
+  menuList: any = [
+    {
+        "label": "Dashboard",
+        "url": "dashboard",
+        "icon": "bi bi-bar-chart",
+    },
+    {
+        "label": "Account Setup",
+        "url": "account-setup",
+        "icon": "bi bi-file-earmark-plus",
+        "subMenu" : [
+            {
+                "label": "Company",
+                "url": "account-setup/company",
+                "icon": "bi bi-building",
+                "subMenu" : [
+                    {
+                        "label": "Company Details",
+                        "url": "account-setup/company/company-details"
+                    },
+                    {
+                        "label": "Address Details",
+                        "url": "account-setup/company/address-details"
+                    },
+                    {
+                        "label": "Service Details",
+                        "url": "account-setup/company/service-details"
+                    },            
+                    {
+                        "label": "Account Details",
+                        "url": "account-setup/company/account-details"
+                    },
+                    {
+                        "label": "Working Hours",
+                        "url": "account-setup/company/working-hours"
+                    }   
+                ]
+            },
+            {
+                "label": "Users",
+                "url": "account-setup/users",
+                "icon": "bi bi-person-workspace",
+                "subMenu" : [
+                    {
+                        "label": "All Users",
+                        "url": "account-setup/users/users"
+                    },
+                    {
+                        "label": "Roles & Permissions",
+                        "url": "account-setup/users/roles-and-permissions" 
+                    }
+                ]
+            },
+            {
+                "label": "Locations & Charges",
+                "url": "account-setup/location",
+                "icon": "bi bi-geo-alt"
+            },
+            {
+                "label": "Timeslot",
+                "url": "account-setup/timeslot",
+                "icon": "bi bi-clock-history"
+            },
+            {
+                "label": "Items Pricing",
+                "url": "account-setup/item-pricing",
+                "icon": "bi-coin"
+            }, 
+            {
+                "label": "My Subscription",
+                "url": "account-setup/subscription",
+                "icon": "bx bx-coin"
+            }
+        ]
+    },
+    {
+        "label": "Create Order",
+        "url": "create-order",
+        "icon": "bi bi-cart-plus"
+    },
+    {
+        "label": "Orders",
+        "url": "orders",
+        "icon": "bi bi-calendar2-check"
+    },
+    {
+        "label": "Customers",
+        "url": "customers",
+        "icon": "bi-person-vcard"
+    },
+    {
+        "label": "Reports",
+        "url": "reports",
+        "icon": "bi bi-bar-chart"
+    }
+  ];
+
   
 }

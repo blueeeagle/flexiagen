@@ -82,6 +82,66 @@ export class LoginComponent {
 
           this.service.currencyDetails = this.service.companyDetails.currencyId;
 
+          let permissions: any = {};
+
+          let menuList: Array<any> = [];
+
+          for(let menuDet of res.data.roleDetails?.permissions || this.service.menuList) {
+
+            if(!this.service.companyDetails?.agentId?.pos && menuDet.label == 'Create Order') continue;
+
+            let menu: any = _.pick(menuDet, ['label', 'url', 'icon']);
+
+            menu['subMenu'] = [];
+
+            permissions[menuDet.label] = {
+              
+              'permission': menuDet.permissions || _.isEmpty(res.data.roleDetails) ? [ "view","create","edit", "delete" ] : [],
+
+              'subMenu': {}
+
+            }
+
+            for(let subMenuOneDet of menuDet?.subMenu || []) {
+
+              let subMenuOne: any = _.pick(subMenuOneDet, ['label', 'url', 'icon']);
+
+              subMenuOne['subMenu'] = [];
+
+              permissions[menuDet.label]['subMenu'][subMenuOneDet.label] = {
+                
+                'permission': subMenuOneDet.permissions || _.isEmpty(res.data.roleDetails) ? [ "view","create","edit", "delete" ] : [],
+
+                'subMenu': {}
+              
+              };
+
+              for(let subMenuTwoDet of subMenuOneDet?.subMenu || []) {
+
+                let subMenuTwo: any = _.pick(subMenuTwoDet, ['label', 'url', 'icon']);
+
+                subMenuOne['subMenu'].push(subMenuTwo);
+
+                permissions[menuDet.label]['subMenu'][subMenuOneDet.label]['subMenu'][subMenuTwoDet.label] = {
+                  
+                  'permission': subMenuTwoDet.permissions || _.isEmpty(res.data.roleDetails) ? [ "view","create","edit", "delete" ] : []
+                
+                }
+
+              }
+
+              menu['subMenu'].push(subMenuOne);
+
+            }
+
+            menuList.push(menu);
+
+          }
+
+          this.service.session({ "method": "set", "key": "Permissions", "value": JSON.stringify(permissions) });
+
+          this.service.session({ "method": "set", "key": "MenuList", "value": JSON.stringify(menuList) });
+
           this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(_.omit(this.service.companyDetails,'currencyId')) });
 
           this.service.session({ "method": "set", "key": "CurrencyDetails", "value": JSON.stringify(this.service.currencyDetails) });
