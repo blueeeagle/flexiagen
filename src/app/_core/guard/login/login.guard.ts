@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { CommonService } from '@shared/services/common/common.service';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -14,9 +15,19 @@ export class LoginGuard implements CanActivate {
 
     if(this.service.session({ "method": "get", "key": "AuthToken"})) {
 
-      if(this.service.session({ "method": "get", "key": "CompanyDetails" })) this.service.navigate({ "url": "/pages/dashboard"});
+      let companyDetails = this.service.session({ "method": "get", "key": "CompanyDetails" });
 
-      else this.service.navigate({ "url": "/auth/company-details"});
+      if(!_.isEmpty(companyDetails)) {
+
+        if(_.get(companyDetails, 'status') == "Approved") this.service.navigate({ "url": "/pages/dashboard"});
+
+        else if(_.get(companyDetails, 'status') == "Pending" || _.get(companyDetails, 'status') == "Rejected") this.service.navigate({ "url": "/auth/approval-pending"});
+
+        else if(_.get(companyDetails, 'status') == "Payment Pending") this.service.navigate({ "url": "/auth/payment" });
+
+        else this.service.navigate({ "url": "/pages/dashboard"});
+
+      } else this.service.navigate({ "url": "/auth/company-details"});
     
       return false;
 

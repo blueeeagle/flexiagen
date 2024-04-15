@@ -28,6 +28,10 @@ const routes: Routes = [
     loadChildren: () => import("./approval-pending/approval-pending.module").then(m => m.ApprovalPendingModule)
   },
   {
+    path: "payment",
+    loadChildren: () => import("./payment/payment.module").then(m => m.PaymentModule)
+  },
+  {
     path: "",
     redirectTo: "login",
     pathMatch: "full"

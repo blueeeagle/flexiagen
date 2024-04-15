@@ -39,47 +39,47 @@ export class CompanyDetailsComponent {
 
     this.getCountries();
 
-    this.route.params.subscribe((params: any) => {
+    // this.route.params.subscribe((params: any) => {
       
-       const validationRegex = new RegExp("^[0-9a-fA-F]{24}$");
+    //    const validationRegex = new RegExp("^[0-9a-fA-F]{24}$");
       
-      if (validationRegex.test(params.paymentId)) {
+    //   if (validationRegex.test(params.paymentId)) {
 
-        this.isLoading = true;
+    //     this.isLoading = true;
 
-        this.showPreview = true;
+    //     this.showPreview = true;
               
-        const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
+    //     const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
 
-        const formValue: any = JSON.parse(this.service.session({ method : "get", key : "formValue"}));
+    //     const formValue: any = JSON.parse(this.service.session({ method : "get", key : "formValue"}));
 
-        this.companyForm.patchValue(formValue);
+    //     this.companyForm.patchValue(formValue);
                 
-        this.service.getService({ "url": `/pg/getPaymentDetail/${params.paymentId}` }).subscribe((res: any) => {
+    //     this.service.getService({ "url": `/pg/getPaymentDetail/${params.paymentId}` }).subscribe((res: any) => {
           
-          if (res.status == "ok") {
+    //       if (res.status == "ok") {
                           
-            if (res.data?.status == "CAPTURED") this.createCompany(payload);
+    //         if (res.data?.status == "CAPTURED") this.createCompany(payload);
 
-            else {
+    //         else {
 
-              this.paymentFailedMsg = `The initiated payment was ${res.data?.status}. Please retry/Contact admin`;
+    //           this.paymentFailedMsg = `The initiated payment was ${res.data?.status}. Please retry/Contact admin`;
 
-              this.isLoading = false;
-            }
+    //           this.isLoading = false;
+    //         }
               
-          }
-        },
-          (error: any) => {
+    //       }
+    //     },
+    //       (error: any) => {
           
-            this.service.showToastr({ data: { message: "Payment status fetching failed. Please try again later" } });
+    //         this.service.showToastr({ data: { message: "Payment status fetching failed. Please try again later" } });
 
-            this.paymentFailedMsg = `Please don't worry. If your payment was deducted we'll notify ASAP.`;
-        })
+    //         this.paymentFailedMsg = `Please don't worry. If your payment was deducted we'll notify ASAP.`;
+    //     })
         
-      }      
+    //   }      
         
-    });
+    // });
 
   }
 
@@ -335,49 +335,8 @@ export class CompanyDetailsComponent {
     companyPayload['addressDetails'] = _.omit(companyPayload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
-
-    if(this.service.userDetails.pos && _.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
-
-      const payload = {
-
-        "amount": this.appServiceChargeDet.pos || 0,
-        
-        "currency": this.masterList['currencyDet']?.currencyCode || "BHD",
-        
-        "customerInfo": {
-          
-          "firstName": companyPayload?.ownerName,
-          
-          "email": this.service.userDetails.email,
-          
-        }
-
-      };
-
-      this.service.postService({ url: "/pg/initiatePayment", payload }).subscribe((res: any) => {
-        
-        if (res.status == "ok") {
-
-          this.service.session({ "method": "set", "key": "payload", "value": JSON.stringify(companyPayload) });
-
-          this.service.session({ "method": "set", "key": "formValue", "value": JSON.stringify(this.companyForm.getRawValue()) });
-
-          window.location.href = res.data.url;
-            
-          this.isLoading = false;
-          
-        }
-
-      },
-        (error: any) => {
-
-          this.isLoading = false;
-        
-          this.service.showToastr({ data: { message: error.error.message, type: "error" } });
-
-      });      
-
-    } else this.createCompany(companyPayload);
+    
+    this.createCompany(companyPayload);
 
   }
 
@@ -409,11 +368,13 @@ export class CompanyDetailsComponent {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
-        this.service.session({ method: 'remove', 'key': 'payload' });
+        if(this.service.userDetails.pos && _.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
 
-        this.service.session({ method: 'remove', 'key': 'formVal' });
+          this.service.navigate({ 'url': '/auth/payment' });
 
-        this.service.navigate({ 'url': '/pages/dashboard' });
+        }
+
+        this.service.navigate({ 'url': '/auth/approval-pending' });
 
       } else this.isLoading = false;
 
