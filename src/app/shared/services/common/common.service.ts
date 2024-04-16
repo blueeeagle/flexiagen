@@ -206,7 +206,7 @@ export class CommonService {
     
     toastData['data']['type'] = toastData?.data?.type !== undefined ? toastData?.data?.type : 'info';
 
-    toastData['duration']= toastData?.duration !== undefined ? toastData?.duration : 2500 ;
+    toastData['duration']= toastData?.duration !== undefined ? toastData?.duration : 2500;
 
     toastData['horizontalPosition'] = toastData?.horizontalPosition !== undefined ? toastData?.horizontalPosition : "center";
 

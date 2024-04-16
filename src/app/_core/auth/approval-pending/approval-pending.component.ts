@@ -30,5 +30,12 @@ export class ApprovalPendingComponent {
 
   }
   
+  goBackToHome() {
+
+    this.service.session({ "method": "clear" });
+
+    this.service.navigate({ "url": "/home" });
+
+  }
 
 }

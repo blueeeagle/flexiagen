@@ -368,13 +368,13 @@ export class CompanyDetailsComponent {
 
         this.service.session({ "method": "set", "key": "AuthToken", "value": res.data.token });
 
-        if(this.service.userDetails.pos && _.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
+        // if(this.service.userDetails.pos && _.get(_.find(this.masterList['charges'],{ 'name': 'pos' }),'value') > 0) {
 
-          this.service.navigate({ 'url': '/auth/payment' });
+        //   this.service.navigate({ 'url': '/auth/payment' });
 
-        }
-
-        this.service.navigate({ 'url': '/auth/approval-pending' });
+        // } else 
+        
+          this.service.navigate({ 'url': '/auth/approval-pending' });
 
       } else this.isLoading = false;
 
