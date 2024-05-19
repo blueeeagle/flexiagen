@@ -58,7 +58,7 @@
 
                         <td mat-cell *matCellDef="let orderDet; let index = index">
 
-                            {{ orderDet?.orderNo }}
+                            <span class="px-1" style="font-size: 14px;" [ngClass]="{ 'badge bg-danger': orderDet.orderType != 'normal' }">{{ orderDet?.orderNo }}</span>
 
                         </td>
 
