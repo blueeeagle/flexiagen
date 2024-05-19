@@ -18,7 +18,7 @@ export class ApiService {
   constructor(private http: HttpClient) { }
 
   // POST API Method While Pass JSON Data
-  postService({ url = "", payload = {}, params = {}, options = {} }: { url: string, payload?: any, params?:any, options?: any }): any {
+  postService({ _baseUrl = this.baseUrl, url = "", payload = {}, params = {}, options = {} }: { _baseUrl?: any, url: string, payload?: any, params?:any, options?: any }): any {
 
     if(this.encryptedReq) {
 
@@ -32,7 +32,7 @@ export class ApiService {
 
     if(!_.isEmpty(options.headers)) headers = new HttpHeaders(options.headers);
 
-    return this.http.post(this.baseUrl + url, payload, { "params": params }).pipe(
+    return this.http.post(_baseUrl + url, payload, { "params": params }).pipe(
 
       map((res) => res),
 
@@ -43,7 +43,7 @@ export class ApiService {
   }
   
   // PATCH API Method
-  patchService({ url = "", payload = {}, params = {}, options = {} }: { url: string, payload?: any, params?:any, options?: any }): any {
+  patchService({ _baseUrl = this.baseUrl, url = "", payload = {}, params = {}, options = {} }: { _baseUrl?: any, url: string, payload?: any, params?:any, options?: any }): any {
 
     if(this.encryptedReq) {
 
@@ -57,7 +57,7 @@ export class ApiService {
 
     if(!_.isEmpty(options.headers)) headers = new HttpHeaders(options.headers);    
 
-    return this.http.patch(this.baseUrl + url, payload, { "params" : params }).pipe(
+    return this.http.patch(_baseUrl + url, payload, { "params" : params }).pipe(
 
       map((res) => res),
 
@@ -69,7 +69,7 @@ export class ApiService {
 
   // PUT API Method
 
-  putService({ url = "", payload = {}, params = {}, options = {} }: { url: string, payload?: any, params?:any, options?: any }): any {
+  putService({ _baseUrl = this.baseUrl, url = "", payload = {}, params = {}, options = {} }: { _baseUrl?: any, url: string, payload?: any, params?:any, options?: any }): any {
 
     if(this.encryptedReq) {
 
@@ -83,7 +83,7 @@ export class ApiService {
 
     if(!_.isEmpty(options.headers)) headers = new HttpHeaders(options.headers);    
 
-    return this.http.put(this.baseUrl + url, payload, { "params" : params}).pipe(
+    return this.http.put(_baseUrl + url, payload, { "params" : params}).pipe(
 
       map((res) => res),
 
@@ -95,13 +95,13 @@ export class ApiService {
 
   // GET API Method  
 
-  getService({ url = "", params = {}, options = {} }: { url: string, params?: any, options?: any }): any {
+  getService({ _baseUrl = this.baseUrl, url = "", params = {}, options = {} }: { _baseUrl?: any, url: string, params?: any, options?: any }): any {
 
     if(this.encryptedReq)
 
       url = this.encryptData(url);
 
-      return this.http.get(this.baseUrl + url, {"params": params}).pipe(
+      return this.http.get(_baseUrl + url, {"params": params}).pipe(
 
         map((res) => res),
 
@@ -112,11 +112,11 @@ export class ApiService {
 
   // DELETE API Method
 
-  deleteService({ url = "", params = {}, options = {} }: { url: string, params?: any, options?: any }): any {
+  deleteService({ _baseUrl = this.baseUrl, url = "", params = {}, options = {} }: { _baseUrl?: any, url: string, params?: any, options?: any }): any {
 
     if(this.encryptedReq) url = this.encryptData(url);    
 
-    return this.http.delete(this.baseUrl + url, { "params" : params}).pipe(
+    return this.http.delete(_baseUrl + url, { "params" : params}).pipe(
 
       map((res) => res),
 
@@ -128,11 +128,11 @@ export class ApiService {
 
   // POST Method While Pass Form Data
 
-  postFile({ url = "", formData = {}, params = {}, options = {} }: { url: string, formData: any, params?: any, options?: any }): any {
+  postFile({ _baseUrl = this.baseUrl, url = "", formData = {}, params = {}, options = {} }: { _baseUrl?: any, url: string, formData: any, params?: any, options?: any }): any {
 
     if(this.encryptedReq) url = this.encryptData(url);
 
-      return this.http.post(this.baseUrl + url, formData, { "params": params }).pipe(
+      return this.http.post(_baseUrl + url, formData, { "params": params }).pipe(
 
         map((res) => res),
 
@@ -144,11 +144,11 @@ export class ApiService {
 
   // GET Method While Getting File
 
-  getFile({ url = "" }: { url: string }): Observable<Blob> {
+  getFile({ _baseUrl = this.baseUrl, url = "" }: { _baseUrl?: any, url: string }): Observable<Blob> {
 
     if(this.encryptedReq) url = this.encryptData(url);    
 
-    return this.http.get(this.baseUrl + url, { responseType: "blob" }).pipe(
+    return this.http.get(_baseUrl + url, { responseType: "blob" }).pipe(
 
       map((res) => res),
 

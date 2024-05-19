@@ -31,7 +31,9 @@ export class LocationComponent {
   searchValue: string = '';
 
   loaderUrlList: any = ['/setup/agentLocations','/master/locations/'+JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }))?.addressDetails?.cityId?._id];
-  locationsCount: number = 0;
+  totalCount: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 10;
 
   constructor(public service: CommonService) { 
 
@@ -57,13 +59,25 @@ export class LocationComponent {
 
   }
 
+  pageChanged(event: any) {
+
+    this.pageIndex = event.pageIndex;
+
+    this.pageSize = event.pageSize;
+
+    this.getAgentLocations();
+
+  }
+
   getAgentLocations() {
 
-    this.service.getService({ "url": `/setup/agentLocations`, params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
+    let queryParams = { "searchValue": this.searchValue, "pageIndex": this.pageIndex, "pageSize": this.pageSize };
+
+    this.service.getService({ "url": `/setup/agentLocations`, "params": queryParams }).subscribe((res: any) => {
 
       this.locationList = res.status=='ok' ? res.data : [];
 
-      this.locationsCount = _.size(this.locationList);
+      this.totalCount = res.totalCount || 0;
 
     },(error: any)=>{
 

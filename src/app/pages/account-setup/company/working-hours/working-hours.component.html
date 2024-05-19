@@ -81,21 +81,20 @@
                                                     <i class="bx bx-plus fs-5"></i>
             
                                                 </a>
-    
-                                                <button class="btn btn-sm btn-primary px-2 py-1" [disabled]="submitIndex == wdIndx && isLoading" (click)="submit(wdIndx)">
-            
-                                                    <ng-container *ngIf="!(submitIndex == wdIndx && isLoading)"><i class="bx bx-save fs-5"></i></ng-container>
-        
-                                                    <div class="spinner-border text-white-50" *ngIf="submitIndex == wdIndx && isLoading" role="status">
-                            
-                                                        <span class="visually-hidden">Loading...</span>
-                            
-                                                    </div>                                                    
-            
-                                                </button>                                            
                                             
                                             </ng-container>
         
+                                            <button *ngIf="last" class="btn btn-sm btn-primary px-2 py-1" [disabled]="submitIndex == wdIndx && isLoading" (click)="submit(wdIndx)">
+            
+                                                <ng-container *ngIf="!(submitIndex == wdIndx && isLoading)"><i class="bx bx-save fs-5"></i></ng-container>
+    
+                                                <div class="spinner-border text-white-50" *ngIf="submitIndex == wdIndx && isLoading" role="status">
+                        
+                                                    <span class="visually-hidden">Loading...</span>
+                        
+                                                </div>                                                    
+        
+                                            </button>
         
                                         </div>
         

@@ -134,9 +134,9 @@ export class CommonService {
 
   // POST API Method While Pass JSON Data
   
-  postService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {
+  postService({ baseUrl = "APP_DOMAIN", url = "", payload = {}, params = {}, options = {} } : { baseUrl?: 'APP_DOMAIN' | 'ADMIN_DOMAIN' | 'CUSTOMER_DOMAIN', url: string, payload?: any, params?: any, options?: any }): any {
 
-    if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
+    if(options.loaderState) this._loading.setLoading({ loading: true, url: APP_CONFIG[baseUrl] + url });
 
     return this.apiservice.postService({ url, payload, params, options });
     
@@ -144,7 +144,7 @@ export class CommonService {
 
   // PATCH API Method
 
-  patchService({ url = "", payload = {}, params = {}, options = {} } : {url: string, payload?: any, params?: any, options?: any }): any {
+  patchService({ url = "", payload = {}, params = {}, options = {} } : { baseUrl?: 'APP_DOMAIN' | 'ADMIN_DOMAIN' | 'CUSTOMER_DOMAIN', url: string, payload?: any, params?: any, options?: any }): any {
 
     if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 
@@ -154,7 +154,7 @@ export class CommonService {
 
   // PUT API Method
 
-  putService({ url = "", payload = {}, params = {}, options = {} }: { url: string, payload?: any, params?: any, options?: any }): any {
+  putService({ url = "", payload = {}, params = {}, options = {} }: { baseUrl?: 'APP_DOMAIN' | 'ADMIN_DOMAIN' | 'CUSTOMER_DOMAIN', url: string, payload?: any, params?: any, options?: any }): any {
 
     if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });    
 
@@ -164,7 +164,7 @@ export class CommonService {
 
   // GET API Method  
 
-  getService({ url = "", params = {}, options = {} } : { url: string, params?: any, options?: any }): any {
+  getService({ url = "", params = {}, options = {} } : { baseUrl?: 'APP_DOMAIN' | 'ADMIN_DOMAIN' | 'CUSTOMER_DOMAIN', url: string, params?: any, options?: any }): any {
 
     if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 
@@ -182,7 +182,7 @@ export class CommonService {
 
   // POST Method While Pass Form Data
 
-  postFile({ url = "", formData = {}, params = {}, options = {} }: { url: string, formData: any, params?: any, options?: any }): any {
+  postFile({ url = "", formData = {}, params = {}, options = {} }: { baseUrl?: 'APP_DOMAIN' | 'ADMIN_DOMAIN' | 'CUSTOMER_DOMAIN', url: string, formData: any, params?: any, options?: any }): any {
 
     if(options.loaderState) this._loading.setLoading({ loading: true, url: this.apiservice.baseUrl + url });
 

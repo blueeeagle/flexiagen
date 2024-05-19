@@ -88,6 +88,8 @@ export class ServiceDetailsComponent {
 
     });
 
+    if(!this.f.online.value) this.f.logistics.disable();
+
     this.serviceDetailsFrom.get('online')?.valueChanges.subscribe((value: any) => {
 
       if(value) this.serviceDetailsFrom.get('logistics')?.enable();
