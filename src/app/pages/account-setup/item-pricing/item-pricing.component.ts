@@ -14,6 +14,7 @@ import { forkJoin } from 'rxjs';
 export class ItemPricingComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
+  asidebarType: "ItemPricing" | "ItemDetails" = "ItemPricing";
   agentProducts!: Array<any>;
   otherProducts!: Array<any>;
   agenProductsCount: number = 0;
@@ -22,13 +23,16 @@ export class ItemPricingComponent {
   productCategories: any[] = [];
   userSubscribe: any;
   openCanvas: boolean = false;
+  productImageURL: any = '';
   _: any = _;
   productForm: any;
+  itemForm: any;
   mode: 'Create' | 'Update' = 'Create';
   chargeTypes: Array<any> = [ { name: 'Normal', value: 'normal', selected: true }, { name: 'Urgent', value: 'urgent', selected: false } ];
   selectedChargeType: 'normal' | 'urgent' = 'normal';
   editData: any = {};
   selectedCategories: Array<any> = [];
+  serviceList: Array<any> = [];
   isAllProductsAdded: boolean = false;
   isLoading: boolean = false;
 
@@ -39,6 +43,8 @@ export class ItemPricingComponent {
     this.service.setApiLoaders({ 'isLoading': true, 'url': ['/master/productCharges','/master/categories','/setup/agentProducts','/master/products'] });
 
     this.loadForm();
+
+    this.loadItemForm();
 
     if(!_.isEmpty(this.service.companyDetails)) this.getCharges();
 
@@ -60,6 +66,8 @@ export class ItemPricingComponent {
 
     forkJoin({
 
+      'serviceList': this.service.getService({ "url": "/setup/services" }), 
+
       "productCharges": this.service.getService({ "url": "/master/productCharges" }),
 
       "productCategories": this.service.postService({ "url": "/master/categories" }),
@@ -67,6 +75,12 @@ export class ItemPricingComponent {
     }).subscribe({
 
       next: (res: any) => {
+
+        if(res.serviceList.status == "ok") {
+
+          this.serviceList = res.serviceList.data || [];
+
+        }
 
         if(res.productCategories.status == "ok") {
 
@@ -166,6 +180,30 @@ export class ItemPricingComponent {
 
   }   
 
+  loadItemForm() {
+
+    let serviceDet = _.find(this.serviceList, { 'serviceName': "Laundry" });
+
+    this.itemForm = this.service.fb.group({
+
+      'companyId': [ this.service.companyDetails?._id, Validators.required ],
+
+      'serviceId': [ this.editData.serviceId?._id || serviceDet?._id, Validators.required ],
+
+      'categoryId': [ this.editData.categoryId?._id || null, Validators.required ],
+
+      'productName': [ this.editData.productName || null, Validators.required ],
+
+      'shortDesc': [ this.editData.shortDesc || null ],
+
+      'productImageURL': [ this.mode == 'Update' ? this.service.getFullImagePath({ 'imgUrl': this.editData.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' }) : null, Validators.required ],
+
+    });
+
+    this.productImageURL = null;
+
+  }
+
   loadForm() { 
 
     this.productForm = this.service.fb.group({
@@ -178,7 +216,6 @@ export class ItemPricingComponent {
 
     });
 
-
     _.map(this.editData?.priceList || this.productCharges,(chargeDet:any, index: number)=>{
 
       this.cf.push(this.getChargeForm({ chargeDet }));
@@ -188,6 +225,8 @@ export class ItemPricingComponent {
     });
 
   }
+
+  get itf(): any { return this.itemForm.controls; }
 
   get f(): any { return this.productForm.controls; }
 
@@ -215,19 +254,29 @@ export class ItemPricingComponent {
 
   }
 
-  openAsidebar(data: any) {
+  openAsidebar({ data = {}, type = "ItemPricing" }: { data?: any, type?: "ItemPricing" | "ItemDetails" }) {
 
     this.editData = data || {};
 
+    this.asidebarType = type;
+
     this.selectedChargeType = 'normal';
 
-    this.mode = _.isEmpty(data.companyId) ? 'Create' : 'Update';
+    this.mode = _.isUndefined(this.editData.companyId) ? 'Create' : 'Update';
 
-    if(this.mode == 'Create') this.editData['productId'] = data;
+    if(this.asidebarType == "ItemPricing") {
+
+      if(this.mode == 'Create') this.editData['productId'] = data;
+  
+      this.loadForm();
+
+    } else {
+
+      this.loadItemForm();
+
+    }
 
     this.openCanvas = true;
-
-    this.loadForm();
 
   }
 
@@ -328,6 +377,18 @@ export class ItemPricingComponent {
       }
 
     });
+
+  }
+
+  submitItemDetails() {
+
+    if(this.itemForm.invalid) return;
+
+    this.isLoading = true;
+
+    let payload = this.itemForm.getRawValue();
+
+    const formData = new FormData();
 
   }
 

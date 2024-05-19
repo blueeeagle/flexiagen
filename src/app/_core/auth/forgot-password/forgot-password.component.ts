@@ -117,6 +117,8 @@ export class ForgotPasswordComponent {
       this.isLoading = false;
 
     },(err: any) => { 
+
+      this.service.showToastr({ "data": { "message": err.error.message, "type": "error" } });
       
       this.isLoading = false;
 

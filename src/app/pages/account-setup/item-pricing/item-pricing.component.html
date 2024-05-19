@@ -36,6 +36,16 @@
     
             </div>
 
+            <div class="col-sm-6 col-md-4 col-xl-3 mb-2 text-center align-content-center">
+
+                <button class="btn btn-md btn-primary w-75" (click)="openAsidebar({ type: 'ItemDetails' })">
+                    
+                    <i class="bi bi-plus-lg"></i> Create Product
+
+                </button>
+
+            </div>            
+
         </div>
     
         <div class="row mt-3">
@@ -50,7 +60,7 @@
 
                         <div class="d-flex justify-content-center">
 
-                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
+                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar({ 'data': productDet })">
                                 
                                 {{productDet?.productId?.productName}}
 
@@ -72,7 +82,7 @@
 
                         <div class="d-flex justify-content-center">
 
-                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar(productDet)">
+                            <a class="h5 mb-0 mt-3 text-center text-secondary" (click)="openAsidebar({ 'data': productDet })">
                                 
                                 {{productDet?.productName}}
 
@@ -118,102 +128,166 @@
 
 <asidebar #canvas [openCanvas]="openCanvas" backdrop="static" title="{{mode}} Product" position="end" cancelBtnTxt="Close" (onClose)="openCanvas = false" (onCancel)="canvas.close()" (onSubmit)="submit()" [saveBtnLoader]="isLoading">
 
-    <div class="row" [formGroup]="productForm">
+    <ng-container *ngIf="asidebarType == 'ItemPricing'">
 
-        <h6 class="text-secondary">Product Info</h6>
+        <div class="row" [formGroup]="productForm">
 
-        <div class="d-flex align-items-center">
+            <h6 class="text-secondary">Product Info</h6>
 
-            <div class="product-image" style="background : url({{editData?.productId?.productImageURL}});width: 120px;height: 120px;"></div> 
+            <div class="d-flex align-items-center">
 
-            <div class="ms-2">
+                <div class="product-image" style="background : url({{editData?.productId?.productImageURL}});width: 120px;height: 120px;"></div> 
 
-                <h5 class="mb-1 fw-500">{{editData?.productId?.productName}}</h5>
+                <div class="ms-2">
 
-                <p class="text-secondary">{{editData?.productId?.categoryId?.categoryName | titlecase }}</p>
+                    <h5 class="mb-1 fw-500">{{editData?.productId?.productName}}</h5>
+
+                    <p class="text-secondary">{{editData?.productId?.categoryId?.categoryName | titlecase }}</p>
+
+                </div>
+
+            </div>        
+
+            <hr class="my-3 border-secondary-subtle border-3">
+
+            <h6 class="text-secondary">Charge Type</h6>
+            
+            <div class="col-sm-6">
+
+                <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': selectedChargeType == 'normal' }" (click)="selectedChargeType = 'normal'"> 
+                    
+                    Normal 
+                
+                </button>
+                
+            </div>
+
+            <div class="col-sm-6 mt-3 mt-sm-0">
+
+                <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': selectedChargeType == 'urgent' }" (click)="selectedChargeType = 'urgent'"> 
+                    
+                    Urgent 
+                
+                </button>
 
             </div>
 
-        </div>        
+            <h6 class="text-secondary mt-3">Price Info</h6>
 
-        <hr class="my-3 border-secondary-subtle border-3">
+            <div formArrayName="priceList">
 
-        <h6 class="text-secondary">Charge Type</h6>
-        
-        <div class="col-sm-6">
+                <ng-container  *ngFor="let chargeForm of cf.controls; let index = index">
 
-            <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': selectedChargeType == 'normal' }" (click)="selectedChargeType = 'normal'"> 
-                
-                Normal 
+                    <ng-container *ngIf="chargeForm.value.chargeType == selectedChargeType">
+
+                        <div class="form-group d-flex align-items-center justify-content-between" [formGroup]="chargeForm" *ngIf="chargeForm.controls as cf">
+
+                            <div class="d-flex align-items-center">
+
+                                <div class="product-image me-2" style="background : url({{cf.imgURL.value}});width: 35px;height: 35px;"></div> 
             
-            </button>
+                                <h6 class="align-self-center mb-0" style="min-width: 150px;">{{cf.chargeName.value | titlecase }}</h6>
+
+                                <div>
+
+                                    <div class="d-flex position-relative">
             
-        </div>
-
-        <div class="col-sm-6 mt-3 mt-sm-0">
-
-            <button class="btn w-100 btn-lg fs-5 opt-btn" [ngClass]="{ 'active': selectedChargeType == 'urgent' }" (click)="selectedChargeType = 'urgent'"> 
-                
-                Urgent 
-            
-            </button>
-
-        </div>
-
-        <h6 class="text-secondary mt-3">Price Info</h6>
-
-        <div formArrayName="priceList">
-
-            <ng-container  *ngFor="let chargeForm of cf.controls; let index = index">
-
-                <ng-container *ngIf="chargeForm.value.chargeType == selectedChargeType">
-
-                    <div class="form-group d-flex align-items-center justify-content-between" [formGroup]="chargeForm" *ngIf="chargeForm.controls as cf">
-
-                        <div class="d-flex align-items-center">
-
-                            <div class="product-image me-2" style="background : url({{cf.imgURL.value}});width: 35px;height: 35px;"></div> 
+                                        <input type="text" class="form-control form-control-lg" style="width: 150px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
         
-                            <h6 class="align-self-center mb-0" style="min-width: 150px;">{{cf.chargeName.value | titlecase }}</h6>
-
-                            <div>
-
-                                <div class="d-flex position-relative">
-        
-                                    <input type="text" class="form-control form-control-lg" style="width: 150px;" formControlName="amount" placeholder="amount" decimalNumbersOnly [ngClass]="{ 'is-invalid': cf.amount.invalid && cf.amount.touched }" decimalNumbersOnly (change)="changeValue({ fieldName: 'amount', index })">
-    
-                                    <span class="d-flex align-items-center fw-500 me-2 position-absolute end-0" style="top: 0;bottom: 0;">
+                                        <span class="d-flex align-items-center fw-500 me-2 position-absolute end-0" style="top: 0;bottom: 0;">
+                                            
+                                            {{ service.currencyDetails.currencyCode }}
                                         
-                                        {{ service.currencyDetails.currencyCode }}
-                                    
-                                    </span>
+                                        </span>
+                
+                                    </div>
             
-                                </div>
-        
-                                <div class="invalid-feedback d-block" *ngIf="cf.amount.invalid && cf.amount.touched">
+                                    <div class="invalid-feedback d-block" *ngIf="cf.amount.invalid && cf.amount.touched">
+                                            
+                                        <div *ngIf="cf.amount.errors?.required">Amount is required</div>
                                         
-                                    <div *ngIf="cf.amount.errors?.required">Amount is required</div>
-                                    
-                                </div>
-    
-                            </div>                            
+                                    </div>
+        
+                                </div>                            
 
+                            </div>
+                    
+                            <div class="form-check form-switch ps-0">
+                                            
+                                <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" formControlName="is_active" (change)="changeValue({ 'fieldName': 'is_active', index })">
+                            
+                            </div>
+            
                         </div>
-                
-                        <div class="form-check form-switch ps-0">
-                                        
-                            <input class="form-check-input ms-0" type="checkbox" role="switch" id="active" formControlName="is_active" (change)="changeValue({ 'fieldName': 'is_active', index })">
-                        
-                        </div>
-        
-                    </div>
 
+                    </ng-container>
+                    
                 </ng-container>
                 
-            </ng-container>
-            
+            </div>
+
         </div>
 
-    </div>
-    
+    </ng-container>
+
+    <ng-container *ngIf="asidebarType == 'ItemDetails'">
+
+        <div class="row" [formGroup]="itemForm">
+
+            <div class="col-12">
+
+                <div class="form-group">
+
+                    <label for="productCategory" class="form-label">Product Category</label>
+
+                    <ng-select formControlName="categoryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': itf.categoryId.touched && itf.categoryId.errors }" [readonly]="_.size(productCategories) == 0">
+
+                        <ng-option *ngFor="let item of productCategories" [value]="item._id">{{ item?.categoryName | uppercase }}</ng-option>
+
+                    </ng-select>
+                    
+                    <div class="invalid-feedback d-block" *ngIf="itf.categoryId.errors && itf.categoryId.touched">
+                        
+                        <div *ngIf="itf.categoryId.errors?.required">Category is required</div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-12">
+
+                <div class="form-group">
+
+                    <label for="productName" class="form-label">Product Name</label>
+
+                    <input type="text" class="form-control form-control-lg" id="productName" formControlName="productName" placeholder="Product Name" [ngClass]="{ 'is-invalid': itf.productName.invalid && itf.productName.touched }">
+
+                    <div class="invalid-feedback d-block" *ngIf="itf.productName.invalid && itf.productName.touched">
+                        
+                        <div *ngIf="itf.productName.errors?.required">Product Name is required</div>
+                        
+                    </div>
+
+                </div>
+
+            </div>
+            
+            <div class="col-12">
+
+                <div class="form-group">
+
+                    <label for="shortDesc" class="form-label">Short Desc</label>
+
+                    <input type="text" class="form-control form-control-lg" id="shortDesc" formControlName="shortDesc" placeholder="Short Description">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </ng-container>
+
 </asidebar>
