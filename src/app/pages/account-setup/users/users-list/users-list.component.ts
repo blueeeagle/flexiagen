@@ -31,6 +31,9 @@ export class UsersListComponent {
   _: any = _;
   isLoading: boolean = false;
   searchValue: string = '';
+  totalCount: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 10;
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
   
@@ -191,6 +194,16 @@ export class UsersListComponent {
       // }
 
     }
+
+  }
+
+  pageChanged(event: any) {
+
+    this.pageIndex = event.pageIndex;
+
+    this.pageSize = event.pageSize;
+
+    
 
   }
   
