@@ -21,7 +21,7 @@ export class OrdersListComponent {
   paymentForm: any = {};
   orderList: any = [];
   totalCount: number = 0;
-  tableColumns = ['ORDER NO', 'ORDER DATE', 'CUSTOMER NAME', 'MOBILE', 'NO OF ITEMS','BOOKED VIA','GROSS AMT','DISC AMT','NET AMT','PAYMENT RECEIVED','PAYMENT STATUS','ORDER STATUS','ACTION'];
+  tableColumns = ['SL NO','ORDER NO', 'ORDER DATE', 'CUSTOMER NAME', 'MOBILE', 'NO OF ITEMS','BOOKED VIA','GROSS AMT','DISC AMT','NET AMT','PAYMENT RECEIVED','PAYMENT STATUS','ORDER STATUS','ACTION'];
   _: any = _;
   searchValue: string = "";
   pageSize: number = 10;
@@ -171,6 +171,16 @@ export class OrdersListComponent {
     this.orderDetails = data;
 
     this.OrderDetailsModal.open();
+
+  }
+
+  pageChanged(event: any) {
+
+    this.pageIndex = event.pageIndex;
+
+    this.pageSize = event.pageSize;
+
+    this.getOrderList({ isPageChange: true});
 
   }
 

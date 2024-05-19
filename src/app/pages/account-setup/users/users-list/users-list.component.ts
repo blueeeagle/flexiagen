@@ -53,12 +53,17 @@ export class UsersListComponent {
   }
 
   getUsersList() {
+
+    let params = { "pageIndex": this.pageIndex, "pageSize": this.pageSize, "searchValue": this.searchValue };
     
-    this.service.postService({ url: "/setup/users", params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
+    this.service.postService({ url: "/setup/users", params }).subscribe((res: any) => {
       
       if (res.status == "ok") {
           
-        this.usersList = res.data;
+        this.usersList = res.status=='ok' ? res.data : [];
+
+        this.totalCount = res.totalCount || 0;
+
 
       }
       
@@ -203,7 +208,7 @@ export class UsersListComponent {
 
     this.pageSize = event.pageSize;
 
-    
+    this.getUsersList();
 
   }
   
