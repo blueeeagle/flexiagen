@@ -31,6 +31,9 @@ export class UsersListComponent {
   _: any = _;
   isLoading: boolean = false;
   searchValue: string = '';
+  totalCount: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 10;
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
   
@@ -50,12 +53,17 @@ export class UsersListComponent {
   }
 
   getUsersList() {
+
+    let params = { "pageIndex": this.pageIndex, "pageSize": this.pageSize, "searchValue": this.searchValue };
     
-    this.service.postService({ url: "/setup/users", params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
+    this.service.postService({ url: "/setup/users", params }).subscribe((res: any) => {
       
       if (res.status == "ok") {
           
-        this.usersList = res.data;
+        this.usersList = res.status=='ok' ? res.data : [];
+
+        this.totalCount = res.totalCount || 0;
+
 
       }
       
@@ -191,6 +199,16 @@ export class UsersListComponent {
       // }
 
     }
+
+  }
+
+  pageChanged(event: any) {
+
+    this.pageIndex = event.pageIndex;
+
+    this.pageSize = event.pageSize;
+
+    this.getUsersList();
 
   }
   

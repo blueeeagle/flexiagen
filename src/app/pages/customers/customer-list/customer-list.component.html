@@ -171,4 +171,15 @@
 
     </ng-template>
 
+    <div class="d-flex justify-content-end" *ngIf="totalCount > 10">
+
+        <pagination
+            [totalcount]="totalCount"
+            [pageSize]="pageSize"
+            (page)="pageChanged($event)"
+        ></pagination>
+
+    </div>
+
+
 </div>

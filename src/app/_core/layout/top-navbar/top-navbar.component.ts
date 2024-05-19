@@ -13,6 +13,7 @@ export class TopNavbarComponent {
   isMenuOpen: Boolean = true;
   logoUrl: any;
   _pageTitle: any = "Dashboard";
+  profileImg: any = '';
   _: any = _;
 
   @Input() set menuStatus(value: Boolean) { this.isMenuOpen = value }
@@ -25,7 +26,17 @@ export class TopNavbarComponent {
 
   @Output() menuEvent: EventEmitter<Boolean> = new EventEmitter();
 
-  constructor(public service: CommonService, private confirmationDialog: ConfirmationDialogService) { }
+  constructor(public service: CommonService, private confirmationDialog: ConfirmationDialogService) { 
+
+    this.service.userDetailsObs.subscribe((value)=>{
+
+      if(!_.isEmpty(value)) this.profileImg = this.service.getFullImagePath({ 'imgUrl': this.service.userDetails.profileImg})
+      
+    });
+
+    
+
+  }
 
   logImgErrorHandling() { this.logoUrl = './assets/images/logo.png'; }
 
