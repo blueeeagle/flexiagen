@@ -41,7 +41,7 @@ export class OrdersListComponent {
   };
   deliveryAgentList: any = [];
   usersList: any;
-  moment: any = moment;
+  moment: any = moment
 
   constructor(public service: CommonService, ){}
 
