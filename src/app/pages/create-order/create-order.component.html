@@ -488,7 +488,7 @@
         
                                     <button 
                                         class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
-                                        *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value) && step != 3" 
+                                        *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && ((f.isHomeDelivery.value && !_.isEmpty(f.pickupTimeSlotDet.value)) || !f.isHomeDelivery.value)&& step != 3" 
                                         (click)="step = 3"> CHANGE
                                     </button>
         
@@ -550,7 +550,7 @@
 
                         </div>
 
-                        <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center justify-content-between mb-2" *ngIf="f.isHomePickup.value">
 
                             <div class="pe-1 w-100 position-relative">
 
@@ -565,13 +565,13 @@
                             <div class="ps-1 w-100">
 
                                 <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)" (change)="(f.pickupDate.value == f.expDeliveryDate.value && f.expDeliveryTimeSlotDet.value?.startTime?.hour < f.pickupTimeSlotDet.value?.startTime?.hour) ? orderForm.patchValue({ expDeliveryTimeSlot: '', expDeliveryTimeSlotDet: {} }) : ''">
-                                
-                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [value]="slotDet._id">
+
+                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [disabled]="moment().hour() > slotDet.startTime.hour" [value]="slotDet._id">
                                         
                                         {{ slotDet.label }}
                                     
                                     </ng-option>
-
+                                
                                 </ng-select>
 
                             </div>
@@ -632,7 +632,7 @@
 
                         </div>       
 
-                        <ng-container *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && !_.isEmpty(f.pickupTimeSlotDet.value)">
+                        <ng-container *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && ((f.isHomeDelivery.value && !_.isEmpty(f.pickupTimeSlotDet.value)) || !f.isHomeDelivery.value)">
 
                             <button class="btn btn-primary btn-sm rounded px-5 mt-3" (click)="goNext({ 'nextStep': 4 })">PROCEED</button>
                         
@@ -862,6 +862,22 @@
                         <p class="fw-600 mb-0">{{ (f.netAmt.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <p>Advance Amount</p>
+
+                        <p class="fw-600 mb-0">{{ (f.paymentReceived.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
+
+                    </div>                    
+
+                    <div class="d-flex justify-content-between">
+
+                        <p>Remaining Amount</p>
+
+                        <p class="fw-600 mb-0">{{ ((f.netAmt.value - f.paymentReceived.value) | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
+
+                    </div>                    
 
                     <button class="btn btn-lg btn-primary fw-light fs-6 w-100 mb-2" [disabled]="btnLoader.createOrder" (click)="submit({ 'create': true })">
                         
@@ -1392,7 +1408,6 @@
         </div>
 
     </div>
-
 
 </modal>
 

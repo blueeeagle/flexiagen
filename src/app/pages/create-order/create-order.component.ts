@@ -119,7 +119,7 @@ export class CreateOrderComponent {
 
       "categories": this.service.postService({ "url": "/master/categories" }),
 
-      "workingHours": this.service.postService({ "url": "/setup/workingHrs/list", "payload": { "is_active": true } })
+      "workingHours": this.service.postService({ "url": "/setup/workingHrs/list" })
 
     }).subscribe((res: any) => {
 
@@ -369,6 +369,12 @@ export class CreateOrderComponent {
       this.orderForm.patchValue({ 'expDeliveryTimeSlotDet': _.omit(_.find(this.masterList['expDeliveryDate']?.timeSlots, { '_id': value }),['is_active','_id']) || {} });
 
     });    
+
+    this.orderForm.get('isHomePickup').valueChanges.subscribe((value: any)=>{
+
+        if(!value) this.orderForm.patchValue({ 'pickupDate': null, 'pickupTimeSlot': null, 'pickupTimeSlotDet': null });
+
+    });
 
   }
 
@@ -1187,7 +1193,7 @@ export class CreateOrderComponent {
 
       return this.service.showToastr({ "data": { "message": "Please add items to basket", "type": "info" } });
 
-    } else if((_.isEmpty(this.f.expDeliveryTimeSlotDet.value) || _.isEmpty(this.f.pickupTimeSlotDet.value)) && nextStep != 3) {
+    } else if((_.isEmpty(this.f.expDeliveryTimeSlotDet.value) || (_.isEmpty(this.f.pickupTimeSlotDet.value) && this.f.isHomePickup.value)) && nextStep != 3) {
 
       this.step = 3;
 

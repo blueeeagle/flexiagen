@@ -84,7 +84,7 @@ export class TimeslotComponent {
 
   getWorkingHours() {
     
-    this.service.postService({ 'url': '/setup/workingHrs/list' }).subscribe((res: any) => {
+    this.service.postService({ 'url': '/setup/workingHrs/list', "payload": { 'is_active': true } }).subscribe((res: any) => {
 
         if(res.status=='ok') {
 
