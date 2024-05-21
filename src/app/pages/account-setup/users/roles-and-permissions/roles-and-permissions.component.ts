@@ -16,6 +16,10 @@ export class RolesAndPermissionsComponent {
 
   searchValue: string = '';
   rolesCount: number = 0;
+  totalCount: number = 0;
+  pageSize: number = 10;
+  pageIndex: number = 0;
+
 
   constructor(public service: CommonService) { 
 
@@ -23,11 +27,25 @@ export class RolesAndPermissionsComponent {
 
   }
 
+  pageChanged(event: any) {
+
+    this.pageIndex = event.pageIndex;
+
+    this.pageSize = event.pageSize;
+
+    this.getRoles();
+
+  }
+
   getRoles() {
 
-    this.service.getService({ url: "/setup/roles", params: { "searchValue": this.searchValue }, "options": { loaderState: true } }).subscribe((res: any) => {
+    let params = { "pageIndex": this.pageIndex, "pageSize": this.pageSize, "searchValue": this.searchValue };
+
+    this.service.getService({ url: "/setup/roles", params, "options": { loaderState: true } }).subscribe((res: any) => {
 
       this.roleList = res.status=='ok' ? res.data : [];
+
+      this.totalCount = res.totalCount || 0 
 
       this.rolesCount = _.size(this.roleList);
 

@@ -16,7 +16,10 @@ export class CustomerListComponent {
   tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'MOBILE','REGISTERED ON','REGISTERED VIA', 'STATUS', 'ACTION'];
   _: any = _;
   totalCount: number = 0;
+  pageSize: number = 10;
+  pageIndex: number = 0;
   moment: any = moment;
+  searchValue: string = "";
 
   constructor(public service: CommonService,private confirmationDialog: ConfirmationDialogService){}
 
@@ -36,11 +39,24 @@ export class CustomerListComponent {
 
   }
 
+  pageChanged(event: any) {
+
+    this.pageIndex = event.pageIndex;
+
+    this.pageSize = event.pageSize;
+
+    this.getCustomerList();
+
+  }
+
+
   getCustomerList() {
 
     let payload = { "companyId": this.service.companyDetails._id }
 
-    this.service.postService({ "url": "/master/customers", "payload": payload }).subscribe((res: any) => {
+    let params = { "pageIndex": this.pageIndex, "pageSize": this.pageSize, "searchValue": this.searchValue };
+
+    this.service.postService({ "url": "/master/customers", "payload": payload, "params": params }).subscribe((res: any) => {
       
       if (res.status == "ok") {
 
