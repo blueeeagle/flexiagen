@@ -11,6 +11,10 @@ const routes: Routes = [
     loadChildren: () => import('./track-status/track-status.module').then(m => m.TrackStatusModule)
   },
   {
+    path: 'track-payment/:orderId',
+    loadChildren: () => import('./track-payments/track-payments.module').then(m => m.TrackPaymentsModule)
+  },
+  {
     path: '',
     redirectTo: 'list',
     pathMatch: 'full'

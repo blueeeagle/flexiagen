@@ -200,7 +200,13 @@ export class OrdersListComponent {
       
       if (res.status == "ok") {
 
-        this.orderList = res.data;
+        this.orderList = _.map(res.data,(item: any) => {
+
+          item['paymentReceived'] = _.sumBy(item.paymentList, 'amount');
+
+          return item;
+
+        });
 
         this.totalCount = res.totalCount;
 

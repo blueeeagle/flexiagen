@@ -1,0 +1,129 @@
+<div class="track-status-container" *ngIf="_.size(service._loading.loadingMap) == 0">
+    
+    <div class="container-fluid" *ngIf="service.otherData.orderDetails as orderDetails">
+
+        <div class="card border-0" style="background: #F3F5F9;">
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-xxl-3 col-lg-4 col-sm-6 mb-2">
+                        
+                        <label class="small text-secondary" for="orderNo">Order No</label>
+
+                        <h6 class="text-primary fw-600"> {{ orderDetails?.orderNo }} </h6>
+                        
+                    </div>
+                    
+                    <div class="col-xxl-2 col-lg-4 col-sm-66 mb-2">
+                        
+                        <label class="small text-secondary" for="orderDate">Order Date</label>
+                        
+                        <h6 class="text-primary fw-600"> {{ orderDetails?.orderDate | date: 'dd.MM.YYYY' }} </h6>
+
+                    </div>
+
+                    <div class="col-xxl-2 col-lg-4 col-sm-6 mb-2">
+                        
+                        <label class="small text-secondary" for="method">Method</label>
+
+                        <h6 class="text-primary fw-600"> {{ orderDetails?.orderMode }} </h6>
+                    
+                    </div>
+
+                    <div class="col-xxl-2 col-lg-4 col-sm-6 mb-2">
+                        
+                        <label class="small text-secondary" for="orderStatus">Order Status</label>
+
+                        <h6 class="text-primary fw-600"> {{ orderDetails?.orderStatus }} </h6>
+                    
+                    </div>
+
+                    <div class="col-xxl-2 col-lg-4 col-sm-6 mb-2">
+                        
+                        <label class="small text-secondary" for="paymentStatus">Payment Status</label>
+
+                        <h6 class="text-primary fw-600"> {{ orderDetails?.paymentStatus }} </h6>
+                    
+                    </div>
+
+                    <div class="col-xxl-2 col-lg-4 col-sm-6 mb-2">
+                        
+                        <label class="small text-secondary" for="orderStatus">Net Amount</label>
+
+                        <h6 class="text-primary fw-600"> {{ (orderDetails?.netAmt || 0 | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }} </h6>
+                    
+                    </div>
+
+                    <div class="col-xxl-2 col-lg-4 col-sm-6 mb-2">
+                        
+                        <label class="small text-secondary" for="paymentStatus">Payment Received</label>
+
+                        <h6 class="text-primary fw-600"> {{ ((_.sumBy(orderDetails?.paymentList,'amount') || 0) | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }} </h6>
+                    
+                    </div>                    
+
+                </div>
+
+            </div>
+            
+        </div>
+
+        <div class="card border-2 mt-4">
+
+            <div class="card-body pt-3 pb-1" [ngClass]="{ 'border-bottom border-2': !last }" *ngFor="let paymentDet of orderDetails.paymentList; let last = last">
+
+                <div class="row">
+
+                    <div class="col-lg-3 col-md-6 mb-2">
+
+                        <div class="d-flex align-items-center">
+
+                            <h6 class="mb-0 px-3 py-1 rounded-pill fw-normal"> 
+                                
+                                {{ paymentDet?.paymentDate | date: 'dd.MM.YYYY' }} 
+                            
+                            </h6>
+
+                        </div>
+                        
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-2">
+                        
+                        <h6 class="mb-0"> {{ paymentDet?.paymentMode }} </h6>
+    
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-2">
+
+                        <div class="d-flex align-items-center">
+                        
+                            <i class="bi bi-check-circle fs-5 me-2" [ngClass]="paymentDet?.transactionStatus == 'Success' ? 'text-success' : 'text-secondary'"></i>
+
+                            <h6 class="mb-0 px-3 py-1 rounded-pill fw-normal" [ngClass]="paymentDet?.transactionStatus == 'Success' ? 'text-success bg-success-subtle' : 'bg-secondary-subtle text-secondary'"> 
+                                
+                                {{ paymentDet?.transactionStatus }} 
+                            
+                            </h6>
+
+                        </div>
+    
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 mb-2">
+                        
+                        <h6 class="mb-0"> {{ (paymentDet?.amount || 0 | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }} </h6>
+    
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

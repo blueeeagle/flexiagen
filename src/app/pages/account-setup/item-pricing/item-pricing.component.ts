@@ -196,7 +196,7 @@ export class ItemPricingComponent {
 
       'shortDesc': [ this.editData.shortDesc || null ],
 
-      'productImageURL': [ this.mode == 'Update' ? this.service.getFullImagePath({ 'imgUrl': this.editData.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' }) : null, Validators.required ],
+      'productImageURL': [ this.mode == 'Update' ? this.service.getFullImagePath({ 'imgUrl': this.editData.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' }) : null ],
 
     });
 
@@ -284,23 +284,45 @@ export class ItemPricingComponent {
 
     if(fieldName == 'is_active') {
 
+      let anotherIndex = _.findIndex(this.cf.value, { 'chargeId': this.cf.at(index).value.chargeId, 'chargeType': this.cf.at(index).value.chargeType == 'normal' ? 'urgent' : 'normal' });
+
       if(!this.cf.at(index).value.is_active) {
 
         this.cf.at(index).get('amount').setValue(null);
 
+        this.cf.at(anotherIndex).get('amount').setValue(null);
+
         this.cf.at(index).get('amount').setValidators([]);
 
+        this.cf.at(anotherIndex).get('amount').setValidators([]);
+
         this.cf.at(index).get('amount').disable();
+
+        this.cf.at(anotherIndex).get('amount').disable();
 
       } else {
 
         this.cf.at(index).get('amount').enable();
 
+        this.cf.at(anotherIndex).get('amount').enable();
+
         this.cf.at(index).get('amount').setValidators([Validators.required]);
+
+        this.cf.at(anotherIndex).get('amount').setValidators([Validators.required]);
+
+        let existingValue = _.find(this.editData.priceList,{ 'chargeId': { '_id': this.cf.at(index).value.chargeId }, 'chargeType': this.cf.at(index).value.chargeType }) || {};
+
+        let anotherValue = _.find(this.editData.priceList,{ 'chargeId': { '_id': this.cf.at(anotherIndex).value.chargeId }, 'chargeType': this.cf.at(anotherIndex).value.chargeType }) || {};
+
+        this.cf.at(index).get('amount').setValue((existingValue.amount || 0).toCustomFixed());
+
+        this.cf.at(anotherIndex).get('amount').setValue((anotherValue.amount || 0).toCustomFixed());
 
       }
 
       this.cf.at(index).get('amount').updateValueAndValidity();
+
+      this.cf.at(anotherIndex).get('amount').updateValueAndValidity();
 
     } 
 
@@ -308,22 +330,149 @@ export class ItemPricingComponent {
 
   submit() {
 
-    if(this.productForm.invalid) return;
+    if(this.asidebarType == "ItemPricing") {
+
+      if(this.productForm.invalid) return;
+  
+      this.isLoading = true;
+  
+      let payload = this.productForm.getRawValue();
+  
+      payload['priceList'] = _.map(payload.priceList, (e: any)=>{
+  
+        e['amount'] = parseFloat(e['amount'] || 0);
+  
+        return _.omit(e, ['chargeName', 'imgURL', ...e._id == null ? ['_id'] : [] ]);
+  
+      });
+  
+      forkJoin({
+  
+        "result": this.mode == 'Create' ? 
+        
+            this.service.postService({ url: "/setup/agentProduct", payload })
+          
+              : this.service.patchService({ url: `/setup/agentProduct/${this.editData?._id}`, payload })
+        
+      }).subscribe({
+        
+        next: (res: any) => {
+  
+          if (res.result.status == "ok") {
+  
+            this.canvas?.close();
+  
+            this.service.showToastr({ data: { type: "success", message:  `Product ${this.mode == 'Create' ? 'Added' : 'Updated'} Success` } });
+  
+            if(this.mode == 'Create') {
+  
+              let data: any = _.first(res.result.data);
+  
+              data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+  
+              this.agentProducts.push(data);
+  
+              this.otherProducts.splice(_.findIndex(this.otherProducts, { "_id": data.productId._id }), 1);
+  
+              this.agenProductsCount++;
+  
+              this.otherProductsCount--;
+  
+            } else {
+  
+              let data = res.result.data;
+  
+              data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+              
+              this.agentProducts.splice(_.findIndex(this.agentProducts, { _id: this.editData._id }), 1, res.result.data);
+  
+            }
+    
+          }
+  
+          this.isLoading = false;
+  
+        }, error: (error: any) => {
+  
+          this.isLoading = false;
+  
+          this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
+  
+        }
+  
+      });
+
+    } else this.submitItemDetails(); 
+
+
+  }
+
+  uploadFile(event:any) {
+
+    const file = event.target?.files[0]; // Here we use only the first file (single file)
+
+    if(file) {
+
+      const reader = new FileReader();
+
+      // validate file type & size
+
+      const validFileExtensions = ['image/jpeg','image/jpg','image/png'];
+
+      if(!validFileExtensions.includes(file.type)) return this.service.showToastr({ data: { type: "error", message: "Invalid file type" } });
+
+      if(file.size > 1048576) return this.service.showToastr({ data: { type: "error", message: "File size should not exceed 1MB" } });
+
+      // check dimensions of image
+
+      // const img = new Image();
+
+      // img.src = window.URL.createObjectURL(file);
+
+      // img.onload = () => {
+
+      //   if(img.width != 150 || img.height != 150) return this.service.showToastr({ data: { type: "error", message: "Image should be 150px X 150px" } });
+
+      //   else {
+
+          // File Preview
+      
+          reader.onload = () => {
+
+            this.itemForm.patchValue({ "productImageURL": reader.result as string });
+
+            this.productImageURL = file;
+
+          }
+
+          reader.readAsDataURL(file);
+
+      //   }
+
+      // }
+
+    }
+
+  }
+
+  submitItemDetails() {
+
+    if(this.itemForm.invalid) return;
+
+    if(this.itemForm.value.productImageURL == null) return this.service.showToastr({ data: { type: "error", message: "Please upload product image" } });
 
     this.isLoading = true;
 
-    let payload = this.productForm.getRawValue();
+    let payload = this.itemForm.getRawValue();
 
-    payload['priceList'] = _.map(payload.priceList, (e: any)=>{
+    const formData = new FormData();
 
-      e['amount'] = parseFloat(e['amount'] || 0);
+    formData.append("data", JSON.stringify(payload));
 
-      return _.omit(e, ['chargeName', 'imgURL', ...e._id == null ? ['_id'] : [] ]);
-
-    });
+    if(this.productImageURL) formData.append("productImageURL", this.productImageURL);
 
     forkJoin({
-
+  
       "result": this.mode == 'Create' ? 
       
           this.service.postService({ url: "/setup/agentProduct", payload })
@@ -377,18 +526,6 @@ export class ItemPricingComponent {
       }
 
     });
-
-  }
-
-  submitItemDetails() {
-
-    if(this.itemForm.invalid) return;
-
-    this.isLoading = true;
-
-    let payload = this.itemForm.getRawValue();
-
-    const formData = new FormData();
 
   }
 

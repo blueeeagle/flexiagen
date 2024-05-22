@@ -122,15 +122,25 @@ export class ServiceDetailsComponent {
 
         this.isLoading = false;
 
-        this.service.userDetails = { ..._.omit(res.data,'companyId'), "companyId": res.data.companyId._id };
+        if(this.service.userDetails?.pos != payload.pos) {
 
-        this.service.companyDetails = _.get(res.data,'companyId');
+          this.service.showToastr({ "data": { "message": "Sorry, Changes need to be updated. Please login again", "type": "error" } });
 
-        this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
+          this.service.logout();
 
-        this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
+        } else {
 
-        this.service.userDetailsObs.next(res.data);
+          this.service.userDetails = { ..._.omit(res.data,'companyId'), "companyId": res.data.companyId._id };
+
+          this.service.companyDetails = _.get(res.data,'companyId');
+  
+          this.service.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(this.service.companyDetails) });
+  
+          this.service.session({ "method": "set", "key": "UserDetails", "value": JSON.stringify(this.service.userDetails) });
+  
+          this.service.userDetailsObs.next(res.data);
+
+        }
 
       }
     

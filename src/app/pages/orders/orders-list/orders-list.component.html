@@ -188,13 +188,17 @@
                             
                         </ng-container>
 
-                        <ng-container matColumnDef="PAYMENT STATUS">
+                        <ng-container matColumnDef="PAYMENT STATUS" stickyEnd>
 
                             <th mat-header-cell *matHeaderCellDef> Payment Status</th>
 
                             <td mat-cell *matCellDef="let orderDet" class="text-center">
 
-                            {{ orderDet?.paymentStatus || '--Nil--'  }} 
+                            <a class="bg-primary-subtle fw-normal mx-auto px-2 py-1 rounded-pill small w-fit-content text-decoration-underline" (click)="service.otherData.orderDetails = orderDet" routerLink="/pages/orders/track-payment/{{orderDet._id}}"> 
+                                    
+                                {{ orderDet?.paymentStatus || '--Nil--'  }} 
+                            
+                            </a>
 
                             </td>
                             
