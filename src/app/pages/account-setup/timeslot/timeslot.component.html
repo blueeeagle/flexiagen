@@ -70,7 +70,7 @@
 
                         </div>
 
-                        <div class="position-relative">
+                        <div class="position-relative mt-2">
 
                             <input type="text" class="form-control form-control-lg border-2" [(ngModel)]="selectedDate" placeholder="Select Date" (dateChange)="changeValue({ fieldName: 'selectedDate' })"  [matDatepicker]="datePicker" [matDatepickerFilter]="checkIsWorkingDay" [min]="service.todayDate" [max]="weekOptions[_.size(weekOptions)-1].value.end">
 

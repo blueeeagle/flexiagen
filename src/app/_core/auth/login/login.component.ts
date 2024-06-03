@@ -70,12 +70,6 @@ export class LoginComponent {
 
           this.service.showToastr({ "data": { "message": "Please complete your company details", "type": "info" } });
 
-        } else if(res.data.userDetails.pos && false)  { // Check for payment status
-
-          this.service.navigate({ 'url': '/auth/payment' });
-
-          this.service.showToastr({ "data": { "message": "Please complete your payment", "type": "info" } });
-
         } else {
 
           this.service.companyDetails = res.data.companyDetails;
@@ -146,9 +140,31 @@ export class LoginComponent {
 
           this.service.session({ "method": "set", "key": "CurrencyDetails", "value": JSON.stringify(this.service.currencyDetails) });
 
-          this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
+          if(res.data.companyDetails.status == 'Pending' || res.data.companyDetails.status == 'Payment Pending') { // Check for approval status
+          
+            this.service.navigate({ 'url': '/auth/approval-pending' });
+  
+            this.service.showToastr({ "data": { "message": "Your account is under review", "type": "info" } });
+  
+          } else if(false && res.data.companyDetails == 'Payment Pending')  { // Check for payment status
+  
+            this.service.navigate({ 'url': '/auth/approval-pending' });
+  
+            this.service.showToastr({ "data": { "message": "Your account is under review", "type": "info" } });
+  
+          } else if(res.data.companyDetails.status == 'Approved') { // Check for rejection status
+  
+            this.service.showToastr({ "data": { "message": "Logged in successfully", "type": "success" } });
 
-          this.service.navigate({ 'url': '/pages/dashboard' });
+            this.service.navigate({ 'url': '/pages/dashboard' });
+
+          } else if(res.data.companyDetails.status == 'Rejected') { // Check for rejection status
+
+            this.service.navigate({ 'url': '/auth/approval-pending' });
+
+            this.service.showToastr({ "data": { "message": "Your account has been rejected. Please contact the support team for more information.", "type": "error" } });
+
+          }
 
         }
 

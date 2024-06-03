@@ -306,9 +306,9 @@ export class CreateOrderComponent {
 
       'isHomeDelivery': [false],
 
-      'pickupDate': [null, [Validators.required]],
+      'pickupDate': [null],
 
-      'pickupTimeSlot': [null, [Validators.required]],
+      'pickupTimeSlot': [null],
 
       'pickupTimeSlotDet': [null],
 
@@ -372,7 +372,17 @@ export class CreateOrderComponent {
 
     this.orderForm.get('isHomePickup').valueChanges.subscribe((value: any)=>{
 
-        if(!value) this.orderForm.patchValue({ 'pickupDate': null, 'pickupTimeSlot': null, 'pickupTimeSlotDet': null });
+        if(!value) {
+          
+          this.orderForm.patchValue({ 'pickupDate': null, 'pickupTimeSlot': null, 'pickupTimeSlotDet': null });
+
+          this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['pickupDate','pickupTimeSlot'], 'validators': [] });
+
+        } else {
+
+          this.service.updateValidators({ 'formGroup': this.orderForm, 'formControls': ['pickupDate','pickupTimeSlot'], 'validators': [Validators.required] });
+
+        }
 
     });
 

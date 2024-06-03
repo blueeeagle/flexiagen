@@ -24,7 +24,7 @@
                 
                 </button>   
 
-                <a class="btn btn-primary btn-md bi bi-file-earmark-plus ms-2" routerLink="/pages/create-order">
+                <a *ngIf="service.companyDetails?.agentId?.pos" class="btn btn-primary btn-md bi bi-file-earmark-plus ms-2" routerLink="/pages/create-order">
 
                     <span class="ms-3" >Create New Order</span>
 
@@ -783,6 +783,22 @@
                         <p>Net Amount</p>
 
                         <p class="fw-600 mb-0">{{ (orderDetails.netAmt | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' +  orderDetails?.currencyId?.currencyCode }}</p>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <p>Payment Received</p>
+
+                        <p class="fw-600 mb-0">{{ (orderDetails.paymentReceived | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
+
+                    </div>                    
+
+                    <div class="d-flex justify-content-between">
+
+                        <p>Remaining Amount</p>
+
+                        <p class="fw-600 mb-0">{{ ((orderDetails.netAmt - orderDetails.paymentReceived) | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
                     </div>
 

@@ -488,7 +488,7 @@
         
                                     <button 
                                         class="btn text-primary border border-2 border-secondary-subtle btn-sm rounded px-3 ms-2" 
-                                        *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && ((f.isHomeDelivery.value && !_.isEmpty(f.pickupTimeSlotDet.value)) || !f.isHomeDelivery.value)&& step != 3" 
+                                        *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && ((f.isHomePickup.value && !_.isEmpty(f.pickupTimeSlotDet.value)) || !f.isHomePickup.value) && step != 3" 
                                         (click)="step = 3"> CHANGE
                                     </button>
         
@@ -869,7 +869,7 @@
 
                         <p class="fw-600 mb-0">{{ (f.paymentReceived.value | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
-                    </div>                    
+                    </div>
 
                     <div class="d-flex justify-content-between">
 
@@ -877,7 +877,7 @@
 
                         <p class="fw-600 mb-0">{{ ((f.netAmt.value - f.paymentReceived.value) | dynamicPipe:'number': '1.'+(service.currencyDetails?.decimalPoints || 2)+'-'+(service.currencyDetails?.decimalPoints || 2)) + ' ' + service.currencyDetails.currencyCode }}</p>
 
-                    </div>                    
+                    </div>
 
                     <button class="btn btn-lg btn-primary fw-light fs-6 w-100 mb-2" [disabled]="btnLoader.createOrder" (click)="submit({ 'create': true })">
                         

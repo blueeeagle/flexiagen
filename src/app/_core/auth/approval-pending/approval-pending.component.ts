@@ -16,17 +16,21 @@ export class ApprovalPendingComponent {
 
     this.companyDetails = JSON.parse(this.service.session({ "method": "get", "key": "CompanyDetails" }));
 
-    if(this.companyDetails == 'Approved') this.service.navigate({ "url": "/pages/dashboard" });
+    if(this.companyDetails?.status == 'Approved') this.service.navigate({ "url": "/pages/dashboard" });
 
-    else if(this.companyDetails == 'Payment Pending') this.service.navigate({ "url": "/auth/payment" });
+    else if(false && this.companyDetails?.status == 'Payment Pending') this.service.navigate({ "url": "/auth/payment" });
 
-    this.message = this.companyDetails?.status == 'Pending' ? 
-    
-      'We are reviewing your details. You will be notified once your account is approved.' : 
+    this.message = (this.companyDetails?.status == 'Rejected') ?  
       
-      'Your account has been rejected. Please contact the support team for more information.';
+      'Your account has been rejected. Please contact the support team for more information.' : 
+      
+      'We are reviewing your details. You will be notified once your account is approved.';
 
-    this.title = this.companyDetails?.status == 'Pending' ? 'Your details are under review' : 'Sorry, Your account has been not approved.';
+    this.title = this.companyDetails?.status == 'Rejected' ? 
+
+      'Sorry, Your account has been not approved.' :
+    
+      'Your details are under review';
 
   }
   

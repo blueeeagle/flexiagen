@@ -106,21 +106,17 @@ export class OrdersListComponent {
 
     this.statusForm.get('status')?.setValue(_.find(this.orderDetails.statusHistory,(e)=>_.isUndefined(e.updated_at))?.status || "");
 
-    this.statusForm.get('status')?.valueChanges.subscribe((value: any) => {
+    if(this.statusForm.get('status')?.value == 'Out for Delivery' || this.statusForm.get('status')?.value == 'Pick Up') {
 
-      if(value == 'Out for Delivery' || value == 'Pick Up') {
+      this.statusForm.get('driverId')?.setValidators([Validators.required]);
 
-        this.statusForm.get('driverId')?.setValidators([Validators.required]);
+    } else {
 
-      } else {
+      this.statusForm.get('driverId')?.clearValidators();
 
-        this.statusForm.get('driverId')?.clearValidators();
+    }
 
-      }
-
-      this.statusForm.get('driverId')?.updateValueAndValidity();
-
-    });
+    this.statusForm.get('driverId')?.updateValueAndValidity();
 
   }
 

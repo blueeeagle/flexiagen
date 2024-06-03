@@ -11,9 +11,7 @@ export class PaymentComponent {
   isLoading: boolean = false;
   appServiceChargeDet: any = {};
 
-  constructor(public service: CommonService) { 
-
-    console.log('PaymentComponent');
+  constructor(public service: CommonService) {  
 
   }
 
