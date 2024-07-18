@@ -505,7 +505,7 @@
 
                         <div *ngFor="let item of orderDetails?.itemList" class="mt-3 d-flex" style="max-width: 380px;">
 
-                            <img [src]="service.getFullImagePath({ 'imgUrl': item?.productId?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' })" style="width: 80px;height: 80px;" class="img-fluid border border-2 p-2 rounded" alt="User Profile">
+                            <img [src]="_.isEmpty(item?.productId?.productId?.productImageURL) ? './assets/images/default-dress.png' : service.getFullImagePath({ 'imgUrl': item?.productId?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' })" style="width: 80px;height: 80px;" class="img-fluid border border-2 p-2 rounded" alt="User Profile">
 
                             <div class="ms-3 w-100">
 
