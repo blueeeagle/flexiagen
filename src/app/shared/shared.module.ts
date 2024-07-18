@@ -37,6 +37,8 @@ import { ConfirmationDialogService } from './components/confirmation-dialog/conf
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { RouterModule } from '@angular/router';
+import { CardNumberFormatterDirective } from './directives/cardFormatter.directive';
+import { ExpirationDateFormatterDirective } from './directives/cardExpiry.directive';
 
 export const MY_FORMATS = {
   parse: {
@@ -58,6 +60,8 @@ export const MY_FORMATS = {
     HoverClassDirective,
     TextareaAutoresizeDirective,
     NoNumericOnlyDirective,
+    CardNumberFormatterDirective,
+    ExpirationDateFormatterDirective,
     // Pipes
     EnumeratePipe,
     DynamicPipe,
@@ -94,6 +98,8 @@ export const MY_FORMATS = {
     HoverClassDirective,
     TextareaAutoresizeDirective,
     NoNumericOnlyDirective,
+    CardNumberFormatterDirective,
+    ExpirationDateFormatterDirective,
     // Pipes
     EnumeratePipe,
     DynamicPipe,

@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 @Component({
   selector: 'app-company-details',
   templateUrl: './company-details.component.html',
@@ -12,6 +13,7 @@ export class CompanyDetailsComponent {
 
   companyForm!: FormGroup;
   formSubmitted: boolean = false;
+  paymentFormSubmitted: boolean = false;
   isLoading: boolean = false;
   masterList: any = {
     countryList: [],
@@ -20,66 +22,55 @@ export class CompanyDetailsComponent {
     cityList: [],
     areaList: []
   };
-  showPreview: boolean = false;
+  showPreview: boolean = true;
   appServiceChargeDet: any = { 'pos': '0', 'online': '0', 'logistics': '0' };
   _: any = _;
   paymentFailedMsg: String = "";
+  paymentInit: boolean = false;
+
   constructor(public service: CommonService, private route: ActivatedRoute) { 
 
   }
 
   ngOnInit(): void {
 
-    this.service.userDetails = JSON.parse(this.service.session({ "key": "UserDetails", "method": "get" })) || {};
+    this.service.userDetails = JSON.parse(this.service.session({ "key": "UserDetails", "method": "get" })) || {};    
 
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
+    this.route.queryParams.subscribe(params => {
+      
+      console.log({ params });
+
+      const paymentInitValue = JSON.parse(this.service.session({ method: 'get', key: 'paymentValue' }));
+
+      const companyPayload = JSON.parse(this.service.session({ method: "get", key: "companyPayload" }));
+
+      if (!_.isEmpty(paymentInitValue) && !_.isEmpty(companyPayload)) {
+        
+        this.service.getService({ url: `/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.countryId}`, params }).subscribe((res: any) => {
+          
+          if (res.status == "ok") {
+              
+            this.createCompany(companyPayload);
+          }
+  
+        },
+          (error: any) => {
+
+            this.paymentFailedMsg = "Sorry, We are unable to getting the payment details. You can check with your subscription detail page after completion"
+          
+            this.service.showToastr({ data: { message: "Sorry, We are unable to getting the payment details.", type: "warn" } });
+        });
+
+      }
+
+
+      
+        
+    });
     
     this.loadForm();
 
     this.getCountries();
-
-    // this.route.params.subscribe((params: any) => {
-      
-    //    const validationRegex = new RegExp("^[0-9a-fA-F]{24}$");
-      
-    //   if (validationRegex.test(params.paymentId)) {
-
-    //     this.isLoading = true;
-
-    //     this.showPreview = true;
-              
-    //     const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
-
-    //     const formValue: any = JSON.parse(this.service.session({ method : "get", key : "formValue"}));
-
-    //     this.companyForm.patchValue(formValue);
-                
-    //     this.service.getService({ "url": `/pg/getPaymentDetail/${params.paymentId}` }).subscribe((res: any) => {
-          
-    //       if (res.status == "ok") {
-                          
-    //         if (res.data?.status == "CAPTURED") this.createCompany(payload);
-
-    //         else {
-
-    //           this.paymentFailedMsg = `The initiated payment was ${res.data?.status}. Please retry/Contact admin`;
-
-    //           this.isLoading = false;
-    //         }
-              
-    //       }
-    //     },
-    //       (error: any) => {
-          
-    //         this.service.showToastr({ data: { message: "Payment status fetching failed. Please try again later" } });
-
-    //         this.paymentFailedMsg = `Please don't worry. If your payment was deducted we'll notify ASAP.`;
-    //     })
-        
-    //   }      
-        
-    // });
 
   }
 
@@ -106,6 +97,9 @@ export class CompanyDetailsComponent {
           return result;
 
         }, this.appServiceChargeDet);
+
+        console.log("charge", this.appServiceChargeDet);
+        
 
       }
 
@@ -220,6 +214,20 @@ export class CompanyDetailsComponent {
 
         'zipcode': ['', [Validators.required]],
 
+      }),
+
+      "cardDetails": this.service.fb.group({
+        
+        "card_number": [null, Validators.required],
+
+        "exp_month": [null, Validators.compose([Validators.required])],
+
+        "exp_year": [null, Validators.compose([Validators.required])],
+        
+        "scode": [null, Validators.compose([Validators.required, Validators.minLength(3)])],
+        
+        "name" : [null, Validators.required]
+        
       })
 
     });
@@ -314,6 +322,11 @@ export class CompanyDetailsComponent {
 
     });
 
+    this.cf.exp_month.valueChanges.subscribe((value: any) => {
+
+      if(value) this.cf.exp_month.setValue(moment(parseInt(value), 'M').format('MM'), { emitEvent: false });
+    });
+
   }
 
   // convenience getter for easy access to form fields
@@ -322,11 +335,14 @@ export class CompanyDetailsComponent {
 
   get af(): any { return this.f.addressDetails.controls }
 
+  get cf(): any { return this.f.cardDetails.controls }
+
+
   // Register Company Details
 
-  submit(): any {
+  constructCompanyPayload(): any {
 
-    if(this.companyForm.invalid) return this.formSubmitted = true;
+    // if(this.companyForm.invalid) return this.formSubmitted = true;
 
     this.isLoading = true
 
@@ -335,10 +351,93 @@ export class CompanyDetailsComponent {
     companyPayload['addressDetails'] = _.omit(companyPayload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
+
+    this.service.session({ method: "set", key: "companyPayload", value: JSON.stringify(companyPayload) });
     
-    this.createCompany(companyPayload);
+    // this.createCompany(companyPayload);
 
   }
+
+  getFullYear(year : any) {
+  
+      // Concatenate to form the full year
+    let fullYear = (Math.floor(moment().year() / 100) * 100 + parseInt(year));
+    
+    return fullYear
+  }
+
+  initPayment() {
+
+    this.paymentFormSubmitted = true;
+    
+    if (this.cf.invalid) this.service.showToastr({ data: { message: "Fill required values", type: "warn" } });
+
+    const paymentValue = this.companyForm.value.cardDetails;
+
+    const payload = {
+
+      "cardDetails": {
+        "card_number": (paymentValue.card_number) ? parseInt(paymentValue.card_number.replace(/\s+/g, '')) : "",
+        "exp_month": parseInt(paymentValue.exp_month),
+        "exp_year": this.getFullYear(paymentValue.exp_year),
+        "scode": parseInt(paymentValue.scode),
+        "name": paymentValue.name
+      },
+
+      "amount": parseInt(this.appServiceChargeDet?.pos.split('.')[0]),
+      
+      "countryCode": this.af.countryId.value
+
+    };
+
+    const paymentCheckObj = {
+
+      "agentId": this.service.userDetails._id,
+
+      "countryId" : this.af.countryId.value
+    }
+
+    console.log({ payload });
+
+    console.log({ paymentCheckObj });
+
+    // return;
+
+    this.service.postService({ url: `/pg/initiatePayment`, payload }).subscribe((res: any) => {
+
+      if (res.status == "ok") {
+        
+        const paymentRes = res.data;
+  
+        if (paymentRes.transaction?.url) {
+
+          this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
+
+          this.constructCompanyPayload();
+  
+            window.location.href = paymentRes.transaction?.url;
+        }
+
+        else {
+
+          console.log(res);
+          
+          this.service.showToastr({ data: { message: "Payment initiated failed. Contact admin", type: "warn" } });
+
+        }
+        
+      }
+      
+    },
+      (error: any) => {
+
+        console.log(error);
+        
+        return this.service.showToastr({ data: { message: "Payment initiated failed. Contact admin", type: "warn" } });
+    });
+
+  }
+
 
   createCompany(payload : any) {
     
@@ -348,7 +447,13 @@ export class CompanyDetailsComponent {
 
         this.isLoading = false;
 
+        this.paymentInit = false;
+
         this.paymentFailedMsg = "";
+
+        this.service.session({ method: "remove", key: "paymentValue" });
+
+        this.service.session({ method: "remove", key: "companyPayload" });
 
         this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 

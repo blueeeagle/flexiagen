@@ -30,349 +30,457 @@
                         
                     </div>
 
-                    <ng-container *ngIf="!showPreview">
+                    <ng-container *ngIf="paymentInit; else companyDet">
 
-                        <h2 class="fw-700">Company Details</h2>
-
-                        <h5 class="text-light">Enter Company Details </h5>                        
-
-                        <form class="py-4" [formGroup]="companyForm">
-
-                            <div class="form-group">
-    
-                                <label for="companyName" class="fw-600">Company Name</label>
-    
-                                <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.companyName.touched) && f.companyName.errors }">
-    
-                                <div *ngIf="(formSubmitted || f.companyName.touched) && f.companyName.errors" class="invalid-feedback">
-    
-                                    <div *ngIf="f.companyName.errors.required">Company Name is required</div>
-    
-                                </div>
-    
-                            </div>                        
-    
-                            <div class="form-group">
-    
-                                <label for="ownerName" class="fw-600">Owner Name</label>
-    
-                                <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': (formSubmitted || f.ownerName.touched) && f.ownerName.errors }" noNumbers>
-    
-                                <div *ngIf="(formSubmitted || f.ownerName.touched) && f.ownerName.errors" class="invalid-feedback">
-    
-                                    <div *ngIf="f.ownerName.errors.required">Owner Name is required</div>
-    
-                                </div>
-    
-                            </div>   
-
-                            <ng-container [formGroup]="f.addressDetails">                                      
-
-                                <div class="form-group">
-                
-                                    <label for="street">NO & STREET/ROAD *</label>
+                        <div class="my-4 mat-elevation-z3 rounded-4">
                         
-                                    <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || af.street.touched) && af.street?.errors }">
-
-                                    <div *ngIf="(formSubmitted || af.street.touched) && af.street.errors" class="invalid-feedback">
-        
-                                        <div *ngIf="af.street.errors.required">No & Street is required</div>
-        
-                                    </div>                                    
+                            <div class="px-4 py-3 border-bottom">
                         
-                                </div>                          
+                                <h5 class="fw-600 text-primary">Add your subscription</h5>
+
+                                <p class="text-muted">Your card details are collected for activating your subscription payment.</p>
+
+                        
+                            </div>
+
+                            <div class="px-4 py-3 border-bottom">
+
+                                <div class="mt-2" [formGroup]="companyForm">
                                 
-                                <div class="row">    
-                                    
-                                    <div class="col-md-6 pe-2 pe-md-1">
-                        
+                                    <form role="form" formGroupName="cardDetails">
+                                
                                         <div class="form-group">
-                            
-                                            <label for="building">APARTMENT, BUILDING, FLAT</label>
-                            
-                                            <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
-                            
+                                            <label for="username" class="text-primary">Full name (on the card)</label>
+                                            <input type="text" name="username" placeholder="Jason Doe" required class="form-control" formControlName="name" [ngClass]="{ 'is-invalid' : (paymentFormSubmitted && cf.name.invalid) }">
                                         </div>
-                            
-                                    </div>
-                            
-                                    <div class="col-md-6 ps-2 ps-md-1">            
-                            
+                                
                                         <div class="form-group">
-                            
-                                            <label for="block">BLOCK</label>
-                            
-                                            <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
-                            
+                                
+                                            <label for="cardNumber" class="text-primary">Card number</label>
+                                
+                                            <div class="input-group">
+                                                <input type="text" name="cardNumber" placeholder="Your card number" class="form-control" formControlName="card_number" cardNumberFormatter [ngClass]="{ 'is-invalid' : (paymentFormSubmitted && cf.card_number.invalid) }">
+                                                <span class="input-group-text text-muted fs-3">
+                                                    <i class='bx bxl-visa mx-1'></i>
+                                                    <i class='bx bxl-mastercard mx-1'></i>
+                                                </span>
+                                            </div>
+                                
                                         </div>
-                            
-                                    </div>
-                            
-                                    <div class="col-md-6 pe-2 pe-md-1">            
-                            
-                                        <div class="form-group">
-                            
-                                            <label for="others">Others</label>
-                            
-                                            <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
-                            
+                                
+                                        <div class="row">
+                                
+                                            <div class="col-sm-8">
+                                
+                                                <div class="form-group">
+                                
+                                                    <label><span class="hidden-xs text-primary">Expiration</span></label>
+                                
+                                                    <div class="input-group">
+                                
+                                                        <input type="number" placeholder="MM" name="" class="form-control"  [min]="1"
+                                                            [max]="12"formControlName="exp_month" [ngClass]="{ 'is-invalid' : (paymentFormSubmitted && cf.exp_month.invalid) }">
+                                
+                                                        <input type="text" placeholder="YY" name="" class="form-control"
+                                                            [maxLength]="2" formControlName="exp_year" [ngClass]="{ 'is-invalid' : (paymentFormSubmitted && cf.exp_year.invalid) }">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                
+                                            <div class="col-sm-4">
+                                
+                                                <div class="form-group mb-4">
+                                
+                                                    <label title="Three-digits code on the back of your card" class="text-primary">CVV
+                                                        <i class="fa fa-question-circle"></i>
+                                                    </label>
+                                                    <input type="password" required class="form-control" formControlName="scode" [maxLength]="4" [ngClass]="{ 'is-invalid' : (paymentFormSubmitted && cf.scode.invalid) }">
+                                                </div>
+                                            </div>
+                                
                                         </div>
-                            
-                                    </div>                                           
-        
-                                    <div class="col-md-6 ps-2 ps-md-1">
-        
-                                        <div class="form-group">
-        
-                                            <label for="countryId" class="fw-600">Country</label>
+                                
+                                        <div class="d-flex flex-wrap justify-content-between">
+                                
+                                            <a class="btn btn-outline-primary btn-lg w-auto mt-2" (click)="paymentInit = false"> Back </a>
+                                
+                                            <button class="btn btn-primary btn-lg w-auto" [disabled]="!isLoading" (click)="initPayment()">
+                                
+                                                <ng-container *ngIf="isLoading">
 
-                                            <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.countryId.touched) && af.countryId.errors }">
-
-                                                <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
+                                                    <i class='bx bxs-check-shield mx-1 fs-4 align-middle'></i>
                                                     
-                                                    {{ countryDet.name | uppercase }}
-                                            
-                                                </ng-option>
-        
-                                            </ng-select>
-                
-                                            <div *ngIf="(formSubmitted || af.countryId.touched) && af.countryId.errors" class="invalid-feedback">
-                
-                                                <div *ngIf="af.countryId.errors.required">Country is required</div>
-                
-                                            </div>
-                
-                                        </div>
-        
-                                    </div>
-
-                                    <div class="col-md-6 pe-2 pe-md-1">
-        
-                                        <div class="form-group">
-        
-                                            <label for="stateId" class="fw-600">State</label>
-
-                                            <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.stateId.touched) && af.stateId.errors }" [readonly]="_.size(masterList['stateList']) == 0">
-
-                                                <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.name | uppercase }}</ng-option>
-        
-                                            </ng-select>
-                
-                                            <div *ngIf="(formSubmitted || af.stateId.touched) && af.stateId.errors" class="invalid-feedback">
-                
-                                                <div *ngIf="af.stateId.errors.required">State is required</div>
-                
-                                            </div>
-                
-                                        </div>
-        
-                                    </div>
-                                    
-                                    <div class="col-md-6 ps-2 ps-md-1">
-        
-                                        <div class="form-group">
-        
-                                            <label for="cityId" class="fw-600">City</label>
-
-                                            <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.cityId.touched) && af.cityId.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
-
-                                                <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.name | uppercase }}</ng-option>
-        
-                                            </ng-select>
-                
-                                            <div *ngIf="(formSubmitted || af.cityId.touched) && af.cityId.errors" class="invalid-feedback">
-                
-                                                <div *ngIf="af.cityId.errors.required">City is required</div>
-                
-                                            </div>
-                
-                                        </div>                                
-        
-                                    </div>                                
-        
-                                    <div class="col-md-6 pe-2 pe-md-1">
-        
-                                        <div class="form-group">
-        
-                                            <label for="areaId" class="fw-600">Area</label>
-
-                                            <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.areaId.touched) && af.areaId.errors }" [readonly]="_.size(masterList['areaList']) == 0">
-
-                                                <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.name | uppercase }}</ng-option>
-        
-                                            </ng-select>                                        
-                
-                
-                                            <div *ngIf="(formSubmitted || af.areaId.touched) && af.areaId.errors" class="invalid-feedback">
-                
-                                                <div *ngIf="af.areaId.errors.required">Area is required</div>
-                
-                                            </div>
-                
-                                        </div>                                
-        
-                                    </div>                                
-        
-                                </div>        
+                                                    Pay
+                                                
+                                                </ng-container>
                                 
+                                                <div class="spinner-border text-white-50" *ngIf="!isLoading" role="status">
+                                
+                                                    <span class="visually-hidden">Loading...</span>
+                                
+                                                </div>
+                                
+                                            </button>
+                                
+                                        </div>
+                                
+                                    </form>
+                                
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </ng-container>
+                    
+                    <ng-template #companyDet>
+                        
+                        <ng-container *ngIf="!showPreview">
+        
+                            <h2 class="fw-700">Company Details</h2>
+        
+                            <h5 class="text-light">Enter Company Details </h5>                        
+        
+                            <form class="py-4" [formGroup]="companyForm">
+        
                                 <div class="form-group">
         
-                                    <label for="zipcode" class="fw-600">Zip Code</label>
+                                    <label for="companyName" class="fw-600">Company Name</label>
         
-                                    <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || af.zipcode.touched) && af.zipcode.errors }">
+                                    <input type="text" class="form-control" id="companyName" formControlName="companyName" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || f.companyName.touched) && f.companyName.errors }">
         
-                                    <div *ngIf="(formSubmitted || af.zipcode.touched) && af.zipcode.errors" class="invalid-feedback">
+                                    <div *ngIf="(formSubmitted || f.companyName.touched) && f.companyName.errors" class="invalid-feedback">
         
-                                        <div *ngIf="af.zipcode.errors.required">Zipcode is required</div>
+                                        <div *ngIf="f.companyName.errors.required">Company Name is required</div>
+        
+                                    </div>
+        
+                                </div>                        
+        
+                                <div class="form-group">
+        
+                                    <label for="ownerName" class="fw-600">Owner Name</label>
+        
+                                    <input type="text" class="form-control" id="ownerName" formControlName="ownerName" placeholder="First & last name" [ngClass]="{ 'is-invalid': (formSubmitted || f.ownerName.touched) && f.ownerName.errors }" noNumbers>
+        
+                                    <div *ngIf="(formSubmitted || f.ownerName.touched) && f.ownerName.errors" class="invalid-feedback">
+        
+                                        <div *ngIf="f.ownerName.errors.required">Owner Name is required</div>
+        
+                                    </div>
+        
+                                </div>   
+        
+                                <ng-container [formGroup]="f.addressDetails">                                      
+        
+                                    <div class="form-group">
+                    
+                                        <label for="street">NO & STREET/ROAD *</label>
+                            
+                                        <input type="text" class="form-control form-control-lg" id="street" formControlName="street"  autocomplete="off" name="hidden" [ngClass]="{ 'is-invalid': (formSubmitted || af.street.touched) && af.street?.errors }">
+        
+                                        <div *ngIf="(formSubmitted || af.street.touched) && af.street.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="af.street.errors.required">No & Street is required</div>
+            
+                                        </div>                                    
+                            
+                                    </div>                          
+                                    
+                                    <div class="row">    
+                                        
+                                        <div class="col-md-6 pe-2 pe-md-1">
+                            
+                                            <div class="form-group">
+                                
+                                                <label for="building">APARTMENT, BUILDING, FLAT</label>
+                                
+                                                <input type="text" class="form-control form-control-lg" id="building" formControlName="building"  autocomplete="off">
+                                
+                                            </div>
+                                
+                                        </div>
+                                
+                                        <div class="col-md-6 ps-2 ps-md-1">            
+                                
+                                            <div class="form-group">
+                                
+                                                <label for="block">BLOCK</label>
+                                
+                                                <input type="text" class="form-control form-control-lg" id="block" formControlName="block"  autocomplete="off">
+                                
+                                            </div>
+                                
+                                        </div>
+                                
+                                        <div class="col-md-6 pe-2 pe-md-1">            
+                                
+                                            <div class="form-group">
+                                
+                                                <label for="others">Others</label>
+                                
+                                                <input type="text" class="form-control form-control-lg" id="others" formControlName="others" autocomplete="off">
+                                
+                                            </div>
+                                
+                                        </div>                                           
+            
+                                        <div class="col-md-6 ps-2 ps-md-1">
+            
+                                            <div class="form-group">
+            
+                                                <label for="countryId" class="fw-600">Country</label>
+        
+                                                <ng-select formControlName="countryId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.countryId.touched) && af.countryId.errors }">
+        
+                                                    <ng-option *ngFor="let countryDet of masterList['countryList']" [value]="countryDet._id">
+                                                        
+                                                        {{ countryDet.name | uppercase }}
+                                                
+                                                    </ng-option>
+            
+                                                </ng-select>
+                    
+                                                <div *ngIf="(formSubmitted || af.countryId.touched) && af.countryId.errors" class="invalid-feedback">
+                    
+                                                    <div *ngIf="af.countryId.errors.required">Country is required</div>
+                    
+                                                </div>
+                    
+                                            </div>
+            
+                                        </div>
+        
+                                        <div class="col-md-6 pe-2 pe-md-1">
+            
+                                            <div class="form-group">
+            
+                                                <label for="stateId" class="fw-600">State</label>
+        
+                                                <ng-select formControlName="stateId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.stateId.touched) && af.stateId.errors }" [readonly]="_.size(masterList['stateList']) == 0">
+        
+                                                    <ng-option *ngFor="let stateDet of masterList['stateList']" [value]="stateDet._id">{{ stateDet.name | uppercase }}</ng-option>
+            
+                                                </ng-select>
+                    
+                                                <div *ngIf="(formSubmitted || af.stateId.touched) && af.stateId.errors" class="invalid-feedback">
+                    
+                                                    <div *ngIf="af.stateId.errors.required">State is required</div>
+                    
+                                                </div>
+                    
+                                            </div>
+            
+                                        </div>
+                                        
+                                        <div class="col-md-6 ps-2 ps-md-1">
+            
+                                            <div class="form-group">
+            
+                                                <label for="cityId" class="fw-600">City</label>
+        
+                                                <ng-select formControlName="cityId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.cityId.touched) && af.cityId.errors }"  [readonly]="_.size(masterList['cityList']) == 0">
+        
+                                                    <ng-option *ngFor="let cityDet of masterList['cityList']" [value]="cityDet._id">{{ cityDet.name | uppercase }}</ng-option>
+            
+                                                </ng-select>
+                    
+                                                <div *ngIf="(formSubmitted || af.cityId.touched) && af.cityId.errors" class="invalid-feedback">
+                    
+                                                    <div *ngIf="af.cityId.errors.required">City is required</div>
+                    
+                                                </div>
+                    
+                                            </div>                                
+            
+                                        </div>                                
+            
+                                        <div class="col-md-6 pe-2 pe-md-1">
+            
+                                            <div class="form-group">
+            
+                                                <label for="areaId" class="fw-600">Area</label>
+        
+                                                <ng-select formControlName="areaId" [clearable]="false" placeholder="Select" class="form-control" [ngClass]="{ 'is-invalid': (formSubmitted || af.areaId.touched) && af.areaId.errors }" [readonly]="_.size(masterList['areaList']) == 0">
+        
+                                                    <ng-option *ngFor="let areaDet of masterList['areaList']" [value]="areaDet._id">{{ areaDet.name | uppercase }}</ng-option>
+            
+                                                </ng-select>                                        
+                    
+                    
+                                                <div *ngIf="(formSubmitted || af.areaId.touched) && af.areaId.errors" class="invalid-feedback">
+                    
+                                                    <div *ngIf="af.areaId.errors.required">Area is required</div>
+                    
+                                                </div>
+                    
+                                            </div>                                
+            
+                                        </div>                                
+            
+                                    </div>        
+                                    
+                                    <div class="form-group">
+            
+                                        <label for="zipcode" class="fw-600">Zip Code</label>
+            
+                                        <input type="text" class="form-control" id="zipcode" formControlName="zipcode" placeholder="Enter" [ngClass]="{ 'is-invalid': (formSubmitted || af.zipcode.touched) && af.zipcode.errors }">
+            
+                                        <div *ngIf="(formSubmitted || af.zipcode.touched) && af.zipcode.errors" class="invalid-feedback">
+            
+                                            <div *ngIf="af.zipcode.errors.required">Zipcode is required</div>
+            
+                                        </div>
+            
+                                    </div>                            
+        
+                                </ng-container>
+                                
+                                <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && companyForm.invalid" (click)="showCompanyDetails($event)">Preview Details</button>
+        
+                            </form>
+        
+                        </ng-container>
+        
+                        <ng-container *ngIf="showPreview">
+        
+                            <div class="my-4 mat-elevation-z3 rounded-4">
+        
+                                <div class="px-4 py-3 border-bottom">
+        
+                                    <h5 class="fw-600 text-primary">Company Information</h5> 
+        
+                                    <div class="d-flex mt-2" *ngIf="f.addressDetails.value as formValue">
+        
+                                        <i class="bx bx-map fs-4 mt-1 me-2"></i>
+        
+                                        <p class="mb-0">
+        
+                                            {{ formValue.street }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
+                                            
+                                            {{ formValue.stateName }}, {{ formValue.countryName }} - {{ formValue.zipcode }}
+        
+                                        </p>                                    
+                                        
+                                    </div>
+        
+                                </div>
+        
+                                <div class="px-4 py-3 border-bottom">
+        
+                                    <h5 class="fw-600 text-primary">Contact Details</h5> 
+        
+                                    <div class="row">
+        
+                                        <div class="col-xl-5 pe-2 pe-xl-1 mt-2">
+        
+                                            <div class="d-flex align-items-center">
+        
+                                                <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">{{ service.userDetails.mobile }}</p>
+        
+                                            </div>
+        
+                                        </div>
+        
+                                        <div class="col-xl-7 ps-2 ps-xl-1 mt-2">
+        
+                                            <div class="d-flex align-items-center">
+        
+                                                <i class="bx bx-envelope fs-4 me-2 "></i> <p class="mb-0 text-truncate"> {{ service.userDetails.email }}</p>                                            
+        
+                                            </div>
+        
+                                        </div>
+        
+                                    </div>
+        
+                                </div>
+                                
+                                <div class="px-4 py-3 border-bottom">
+        
+                                    <h5 class="fw-600 text-primary">Services opted for</h5> 
+        
+                                    <div class="d-flex align-items-center mt-2">
+        
+                                        <p class="mb-0">Online</p>
+        
+                                        <i class="bi bi-check-circle-fill text-success ms-2"></i>
+        
+                                        <div class="bg-light border border-1 ms-2 p-1" *ngIf="!_.isEmpty(appServiceChargeDet)">
+                                            
+                                        {{ appServiceChargeDet.online }} Charge
+                                        
+                                        </div>
+        
+                                    </div>
+        
+                                    <div class="d-flex align-items-center mt-2">
+        
+                                        <p class="mb-0">Logistics</p>
+        
+                                        <i class="bi bi-check-circle-fill text-success ms-2"></i>
+        
+                                        <div class="bg-light border border-1 ms-2 p-1"  *ngIf="!_.isEmpty(appServiceChargeDet)">
+                                            
+                                            {{ appServiceChargeDet.logistics }} Charge
+                                        
+                                        </div>
+        
+                                    </div>
+        
+                                </div>
+                                
+                                <div class="px-4 py-3 pb-4" *ngIf="service.userDetails.pos">
+        
+                                    <h5 class="fw-600 text-primary">POS Subscription Amount</h5> 
+        
+                                    <div class="d-flex align-items-center flex-wrap">
+        
+                                        <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet.pos }}</h4>
+        
+                                        <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
+        
+                                    </div>
+        
+                                    <div class="d-flex">
+        
+                                        <div class="position-relative d-flex justify-content-center ms-0 ms-lg-3">
+        
+                                            <img src="assets/images/subscription-rectangle.png" alt="">
+        
+                                            <p class="small mb-0 position-absolute" style="top: 20px"> Subscrption Fee to use the app </p>                                        
+        
+                                        </div>  
         
                                     </div>
         
                                 </div>                            
-
-                            </ng-container>
-                            
-                            <button class="btn btn-primary btn-lg w-100 mt-4" [disabled]="formSubmitted && companyForm.invalid" (click)="showCompanyDetails($event)">Preview Details</button>
-    
-                        </form>
-
-                    </ng-container>
-
-                    <ng-container *ngIf="showPreview">
-
-                        <div class="my-4 mat-elevation-z3 rounded-4">
-
-                            <div class="px-4 py-3 border-bottom">
-
-                                <h5 class="fw-600 text-primary">Company Information</h5> 
-
-                                <div class="d-flex mt-2" *ngIf="f.addressDetails.value as formValue">
-
-                                    <i class="bx bx-map fs-4 mt-1 me-2"></i>
-
-                                    <p class="mb-0">
-
-                                        {{ formValue.street }}, {{ formValue.areaName }}, {{ formValue.cityName }}, 
-                                        
-                                        {{ formValue.stateName }}, {{ formValue.countryName }} - {{ formValue.zipcode }}
-
-                                    </p>                                    
-                                    
-                                </div>
-
+        
                             </div>
-
-                            <div class="px-4 py-3 border-bottom">
-
-                                <h5 class="fw-600 text-primary">Contact Details</h5> 
-
-                                <div class="row">
-
-                                    <div class="col-xl-5 pe-2 pe-xl-1 mt-2">
-
-                                        <div class="d-flex align-items-center">
-
-                                            <i class="bx bx-phone fs-4 me-2"></i> <p class="mb-0">{{ service.userDetails.mobile }}</p>
-
-                                        </div>
-
+        
+                            <div class="d-flex flex-wrap justify-content-between">
+        
+                                <a class="btn btn-outline-primary btn-lg w-auto mt-2" (click)="showPreview = false"> Back </a>
+        
+                                <button class="btn btn-primary btn-lg w-auto" [disabled]="isLoading" (click)="paymentInit = true">
+        
+                                    <ng-container *ngIf="!isLoading">CONTINUE</ng-container>
+        
+                                    <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
+        
+                                        <span class="visually-hidden">Loading...</span>
+        
                                     </div>
-
-                                    <div class="col-xl-7 ps-2 ps-xl-1 mt-2">
-
-                                        <div class="d-flex align-items-center">
-
-                                            <i class="bx bx-envelope fs-4 me-2 "></i> <p class="mb-0 text-truncate"> {{ service.userDetails.email }}</p>                                            
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
+        
+                                </button>                            
+        
                             </div>
-                            
-                            <div class="px-4 py-3 border-bottom">
+        
+                        </ng-container>
 
-                                <h5 class="fw-600 text-primary">Services opted for</h5> 
-
-                                <div class="d-flex align-items-center mt-2">
-
-                                    <p class="mb-0">Online</p>
-
-                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
-
-                                    <div class="bg-light border border-1 ms-2 p-1" *ngIf="!_.isEmpty(appServiceChargeDet)">
-                                        
-                                    {{ appServiceChargeDet.online }} Charge
-                                    
-                                    </div>
-
-                                </div>
-
-                                <div class="d-flex align-items-center mt-2">
-
-                                    <p class="mb-0">Logistics</p>
-
-                                    <i class="bi bi-check-circle-fill text-success ms-2"></i>
-
-                                    <div class="bg-light border border-1 ms-2 p-1"  *ngIf="!_.isEmpty(appServiceChargeDet)">
-                                        
-                                        {{ appServiceChargeDet.logistics }} Charge
-                                    
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            
-                            <div class="px-4 py-3 pb-4" *ngIf="service.userDetails.pos">
-
-                                <h5 class="fw-600 text-primary">POS Subscription Amount</h5> 
-
-                                <div class="d-flex align-items-center flex-wrap">
-
-                                    <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet.pos }}</h4>
-
-                                    <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
-
-                                </div>
-
-                                <div class="d-flex">
-
-                                    <div class="position-relative d-flex justify-content-center ms-0 ms-lg-3">
-
-                                        <img src="assets/images/subscription-rectangle.png" alt="">
-
-                                        <p class="small mb-0 position-absolute" style="top: 20px"> Subscrption Fee to use the app </p>                                        
-
-                                    </div>  
-
-                                </div>
-
-                            </div>                            
-
-                        </div>
-
-                        <div class="d-flex flex-wrap justify-content-between">
-
-                            <a class="btn btn-outline-primary btn-lg w-auto mt-2" (click)="showPreview = false"> Back </a>
-
-                            <button class="btn btn-primary btn-lg w-auto" [disabled]="isLoading" (click)="submit()">
-
-                                <ng-container *ngIf="!isLoading">CONTINUE</ng-container>
-    
-                                <div class="spinner-border text-white-50" *ngIf="isLoading" role="status">
-    
-                                    <span class="visually-hidden">Loading...</span>
-    
-                                </div>
-    
-                            </button>                            
-
-                        </div>
-
-                    </ng-container>
-
+                    </ng-template>
+                        
                 </div>
 
             </div>                
