@@ -200,9 +200,9 @@
         
                                                 </ng-container>
         
-                                                {{ addressDetail.cityId.name + ', '+ addressDetail.stateId.name + ' - ' + addressDetail.zipcode }} 
+                                                {{ addressDetail.cityId?.name + (_.isEmpty(addressDetail.stateId?.name) ? '' : (', '+ addressDetail.stateId?.name)) + ' - ' + addressDetail?.zipcode }} 
         
-                                                {{ addressDetail.countryId.name }}
+                                                {{ addressDetail.countryId?.name }}
                                             
                                             </p>
         
@@ -256,9 +256,9 @@
                     
                                             <p class="mb-1">{{ addressDet.landmark }}</p>
                     
-                                            <p class="mb-1">{{ addressDet.cityId.name + ', '+ addressDet.stateId.name + ' - ' + addressDet.zipcode }} </p>
+                                            <p class="mb-1">{{ addressDet.cityId?.name + (_.isEmpty(addressDet.stateId?.name) ? '' : (', '+ addressDet.stateId?.name)) + ' - ' + addressDet.zipcode }} </p>
                     
-                                            <p>{{ addressDet.countryId.name }}</p>
+                                            <p>{{ addressDet.countryId?.name }}</p>
                                                 
                                         </a>
     
@@ -566,7 +566,7 @@
 
                                 <ng-select class="form-control border-2" formControlName="pickupTimeSlot" [ngClass]="{ 'is-invalid': (formSubmitted.orderForm || f.pickupTimeSlot.touched) && f.pickupTimeSlot.errors }" appendTo="body" [clearable]="false" [searchable]="false" placeholder="Select Time Slot" [readonly]="_.isEmpty(masterList?.pickupDate?.timeSlots)" (change)="(f.pickupDate.value == f.expDeliveryDate.value && f.expDeliveryTimeSlotDet.value?.startTime?.hour < f.pickupTimeSlotDet.value?.startTime?.hour) ? orderForm.patchValue({ expDeliveryTimeSlot: '', expDeliveryTimeSlotDet: {} }) : ''">
 
-                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [disabled]="moment().hour() > slotDet.startTime.hour" [value]="slotDet._id">
+                                    <ng-option *ngFor="let slotDet of masterList?.pickupDate?.timeSlots" [disabled]="moment(f.pickupDate.value).format('DD-MM-YYYY') == moment().format('DD-MM-YYYY') && moment().hour() >= slotDet.startTime.hour" [value]="slotDet._id">
                                         
                                         {{ slotDet.label }}
                                     
@@ -618,7 +618,7 @@
 
                                     <ng-container *ngFor="let slotDet of masterList?.expDeliveryDate?.timeSlots">
 
-                                        <ng-option [disabled]="f.pickupDate.value == f.expDeliveryDate.value && slotDet.startTime.hour < f.pickupTimeSlotDet.value?.startTime?.hour" [value]="slotDet._id">
+                                        <ng-option [disabled]="(moment(f.expDeliveryDate.value).format('DD-MM-YYYY') == moment().format('DD-MM-YYYY') && moment().hour() >= slotDet.startTime.hour) || (f.pickupDate.value == f.expDeliveryDate.value && slotDet.startTime.hour < f.pickupTimeSlotDet.value?.startTime?.hour)" [value]="slotDet._id">
                                         
                                             {{ slotDet.label }}
                                         
@@ -632,7 +632,7 @@
 
                         </div>       
 
-                        <ng-container *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && ((f.isHomeDelivery.value && !_.isEmpty(f.pickupTimeSlotDet.value)) || !f.isHomeDelivery.value)">
+                        <ng-container *ngIf="!_.isEmpty(f.expDeliveryTimeSlotDet.value) && ((f.isHomePickup.value && !_.isEmpty(f.pickupTimeSlotDet.value)) || !f.isHomePickup.value)">
 
                             <button class="btn btn-primary btn-sm rounded px-5 mt-3" (click)="goNext({ 'nextStep': 4 })">PROCEED</button>
                         
