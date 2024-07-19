@@ -12,9 +12,11 @@ import * as moment from 'moment';
 export class CompanyDetailsComponent {
 
   companyForm!: FormGroup;
+  paymentForm!: FormGroup;
   formSubmitted: boolean = false;
   paymentFormSubmitted: boolean = false;
   isLoading: boolean = false;
+  isPaymentLoading: boolean = false;
   masterList: any = {
     countryList: [],
     countryDet: {},
@@ -22,11 +24,12 @@ export class CompanyDetailsComponent {
     cityList: [],
     areaList: []
   };
-  showPreview: boolean = true;
+  showPreview: boolean = false;
   appServiceChargeDet: any = { 'pos': '0', 'online': '0', 'logistics': '0' };
   _: any = _;
   paymentFailedMsg: String = "";
   paymentInit: boolean = false;
+  paymentInProgress: boolean = false;
 
   constructor(public service: CommonService, private route: ActivatedRoute) { 
 
@@ -34,7 +37,11 @@ export class CompanyDetailsComponent {
 
   ngOnInit(): void {
 
-    this.service.userDetails = JSON.parse(this.service.session({ "key": "UserDetails", "method": "get" })) || {};    
+    this.service.userDetails = JSON.parse(this.service.session({ "key": "UserDetails", "method": "get" })) || {};
+    
+     this.loadForm();
+
+    this.getCountries();
 
     this.route.queryParams.subscribe(params => {
       
@@ -45,6 +52,10 @@ export class CompanyDetailsComponent {
       const companyPayload = JSON.parse(this.service.session({ method: "get", key: "companyPayload" }));
 
       if (!_.isEmpty(paymentInitValue) && !_.isEmpty(companyPayload)) {
+
+        this.service.setApiLoaders({ "isLoading": true, "url": [`/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.countryId}`] });
+
+        this.paymentInProgress = true;
         
         this.service.getService({ url: `/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.countryId}`, params }).subscribe((res: any) => {
           
@@ -55,22 +66,17 @@ export class CompanyDetailsComponent {
   
         },
           (error: any) => {
-
-            this.paymentFailedMsg = "Sorry, We are unable to getting the payment details. You can check with your subscription detail page after completion"
           
             this.service.showToastr({ data: { message: "Sorry, We are unable to getting the payment details.", type: "warn" } });
+
+            // this.createCompany(companyPayload);
         });
 
       }
 
-
-      
-        
     });
     
-    this.loadForm();
-
-    this.getCountries();
+   
 
   }
 
@@ -178,6 +184,8 @@ export class CompanyDetailsComponent {
 
     this.formSubmitted = false;
 
+    this.paymentFormSubmitted = false;
+
     this.companyForm = this.service.fb.group({
 
       'companyName': ['', [Validators.required]],
@@ -216,20 +224,19 @@ export class CompanyDetailsComponent {
 
       }),
 
-      "cardDetails": this.service.fb.group({
-        
-        "card_number": [null, Validators.required],
+    });
 
-        "exp_month": [null, Validators.compose([Validators.required])],
+    this.paymentForm = this.service.fb.group({
 
-        "exp_year": [null, Validators.compose([Validators.required])],
-        
-        "scode": [null, Validators.compose([Validators.required, Validators.minLength(3)])],
-        
-        "name" : [null, Validators.required]
-        
-      })
+      "card_number": [null, Validators.required],
 
+      "exp_month": [null, Validators.compose([Validators.required])],
+
+      "exp_year": [null, Validators.compose([Validators.required])],
+        
+      "scode": [null, Validators.compose([Validators.required, Validators.minLength(3)])],
+        
+      "name": [null, Validators.required]
     });
 
     // Listen to Country changes and update State, City, Area and Zipcode
@@ -335,7 +342,12 @@ export class CompanyDetailsComponent {
 
   get af(): any { return this.f.addressDetails.controls }
 
-  get cf(): any { return this.f.cardDetails.controls }
+  get cf(): any {
+
+    console.log(this.paymentForm.controls)
+    
+    return this.paymentForm.controls;
+  }
 
 
   // Register Company Details
@@ -343,8 +355,6 @@ export class CompanyDetailsComponent {
   constructCompanyPayload(): any {
 
     // if(this.companyForm.invalid) return this.formSubmitted = true;
-
-    this.isLoading = true
 
     let companyPayload: any = this.companyForm.value;
 
@@ -354,8 +364,6 @@ export class CompanyDetailsComponent {
 
     this.service.session({ method: "set", key: "companyPayload", value: JSON.stringify(companyPayload) });
     
-    // this.createCompany(companyPayload);
-
   }
 
   getFullYear(year : any) {
@@ -372,7 +380,7 @@ export class CompanyDetailsComponent {
     
     if (this.cf.invalid) this.service.showToastr({ data: { message: "Fill required values", type: "warn" } });
 
-    const paymentValue = this.companyForm.value.cardDetails;
+    const paymentValue = this.paymentForm.value;
 
     const payload = {
 
@@ -403,6 +411,9 @@ export class CompanyDetailsComponent {
 
     // return;
 
+    this.isPaymentLoading = true;
+    this.paymentFailedMsg = "";
+
     this.service.postService({ url: `/pg/initiatePayment`, payload }).subscribe((res: any) => {
 
       if (res.status == "ok") {
@@ -411,19 +422,15 @@ export class CompanyDetailsComponent {
   
         if (paymentRes.transaction?.url) {
 
+          console.log(paymentRes.transaction?.url);
+          
           this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
 
           this.constructCompanyPayload();
+
+          this.isPaymentLoading = false;
   
-            window.location.href = paymentRes.transaction?.url;
-        }
-
-        else {
-
-          console.log(res);
-          
-          this.service.showToastr({ data: { message: "Payment initiated failed. Contact admin", type: "warn" } });
-
+          window.location.href = paymentRes.transaction?.url;
         }
         
       }
@@ -433,7 +440,9 @@ export class CompanyDetailsComponent {
 
         console.log(error);
         
-        return this.service.showToastr({ data: { message: "Payment initiated failed. Contact admin", type: "warn" } });
+        this.paymentFailedMsg = "Sorry, your given payment details are invalid. Please check your provided details.";
+
+        this.isPaymentLoading = false;
     });
 
   }
