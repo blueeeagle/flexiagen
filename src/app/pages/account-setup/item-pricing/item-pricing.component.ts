@@ -139,8 +139,8 @@ export class ItemPricingComponent {
           this.agentProducts = res.agentProducts.data;
 
           this.agentProducts = _.map(this.agentProducts, (e: any) => {
-    
-            e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+
+            e.productId.productImageURL = _.isEmpty(e.productId.productImageURL) ? './assets/images/default-dress.png' :  this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
             
             return e;
     
@@ -158,7 +158,7 @@ export class ItemPricingComponent {
 
           this.otherProducts = _.map(this.otherProducts, (e: any) => {
     
-            e.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+            e.productImageURL = _.isEmpty(e.productImageURL) ? './assets/images/default-dress.png' :  this.service.getFullImagePath({ 'imgUrl': e?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
             
             return e;
     
@@ -288,6 +288,8 @@ export class ItemPricingComponent {
 
       if(!this.cf.at(index).value.is_active) {
 
+        this.cf.at(anotherIndex).get('is_active').setValue(false);
+
         this.cf.at(index).get('amount').setValue(null);
 
         this.cf.at(anotherIndex).get('amount').setValue(null);
@@ -301,6 +303,8 @@ export class ItemPricingComponent {
         this.cf.at(anotherIndex).get('amount').disable();
 
       } else {
+
+        this.cf.at(anotherIndex).get('is_active').setValue(true);
 
         this.cf.at(index).get('amount').enable();
 
@@ -368,7 +372,9 @@ export class ItemPricingComponent {
   
               let data: any = _.first(res.result.data);
   
-              data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+              data['productId']['productImageURL'] = 
+              
+                _.isEmpty(data['productId']['productImageURL']) ? './assets/images/default-dress.png' : this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
   
               this.agentProducts.push(data);
   
@@ -382,7 +388,7 @@ export class ItemPricingComponent {
   
               let data = res.result.data;
   
-              data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+              data['productId']['productImageURL'] = _.isEmpty(data['productId']['productImageURL']) ? './assets/images/default-dress.png' : this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
               
               this.agentProducts.splice(_.findIndex(this.agentProducts, { _id: this.editData._id }), 1, res.result.data);
   
@@ -459,7 +465,7 @@ export class ItemPricingComponent {
 
     if(this.itemForm.invalid) return;
 
-    if(this.itemForm.value.productImageURL == null) return this.service.showToastr({ data: { type: "error", message: "Please upload product image" } });
+    // if(this.itemForm.value.productImageURL == null) return this.service.showToastr({ data: { type: "error", message: "Please upload product image" } });
 
     this.isLoading = true;
 
@@ -469,15 +475,17 @@ export class ItemPricingComponent {
 
     formData.append("data", JSON.stringify(payload));
 
-    if(this.productImageURL) formData.append("productImageURL", this.productImageURL);
+    // if(this.productImageURL) formData.append("productImageURL", this.productImageURL);
+
+    console.log('payload', payload);
 
     forkJoin({
   
       "result": this.mode == 'Create' ? 
       
-          this.service.postService({ url: "/setup/agentProduct", payload })
+          this.service.postService({ url: "/setup/product", payload })
         
-            : this.service.patchService({ url: `/setup/agentProduct/${this.editData?._id}`, payload })
+            : this.service.patchService({ url: `/setup/product${this.editData?._id}`, payload })
       
     }).subscribe({
       
@@ -493,7 +501,7 @@ export class ItemPricingComponent {
 
             let data: any = _.first(res.result.data);
 
-            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+            data['productId']['productImageURL'] = './assets/images/default-dress.png';
 
             this.agentProducts.push(data);
 
@@ -507,7 +515,7 @@ export class ItemPricingComponent {
 
             let data = res.result.data;
 
-            data['productId']['productImageURL'] = this.service.getFullImagePath({ 'imgUrl': data?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL' });
+            data['productId']['productImageURL'] = './assets/images/default-dress.png';
             
             this.agentProducts.splice(_.findIndex(this.agentProducts, { _id: this.editData._id }), 1, res.result.data);
 

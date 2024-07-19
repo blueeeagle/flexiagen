@@ -197,7 +197,7 @@ export class CreateOrderComponent {
 
         this.masterList['agentProducts'] = _.map(this.masterList['agentProducts'], (e: any) => {
   
-          e.productId.productImageURL = this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL'  });
+          e.productId.productImageURL =  _.isEmpty(e.productId.productImageURL) ? './assets/images/default-dress.png' : this.service.getFullImagePath({ 'imgUrl': e?.productId?.productImageURL, 'baseUrlFrom': 'ADMIN_IMG_URL'  });
           
           return e;
   
