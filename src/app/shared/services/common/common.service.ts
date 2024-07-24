@@ -132,6 +132,31 @@ export class CommonService {
     return event.target.src = customerDetail.gender ? './assets/images/'+customerDetail.gender+'-user-profile.png' : './assets/images/male-user-profile.png';
   }
 
+  getCompanyDetails(): Observable<any> {
+   
+    return new Observable((observer) => {
+
+      this.getService({ url: "/setup/company" }).subscribe((res: any) => {
+        
+        if (res.status === "ok" && !_.isEmpty(res.data)) {
+          this.companyDetails = _.first(res.data);          
+          const filteredDetails = _.omit(this.companyDetails, 'currencyId');
+          this.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(filteredDetails) });
+          
+          observer.next(filteredDetails);
+          observer.complete();
+        } else {
+          observer.error('No data found or status not ok');
+        }
+      }, (error: any) => {
+        
+        observer.error(error);
+
+      });
+
+    });
+  }
+
   // POST API Method While Pass JSON Data
   
   postService({ baseUrl = "APP_DOMAIN", url = "", payload = {}, params = {}, options = {} } : { baseUrl?: 'APP_DOMAIN' | 'ADMIN_DOMAIN' | 'CUSTOMER_DOMAIN', url: string, payload?: any, params?: any, options?: any }): any {

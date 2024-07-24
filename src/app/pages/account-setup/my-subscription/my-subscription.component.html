@@ -36,35 +36,44 @@
     
                             <div class="card-body">
                             
-                                <div class="row justify-content-center align-items-center">
-    
-                                    <div class="col-3">
-                                        
-                                        <h5 class="text-primary fw-600"> <span class="fw-800 me-2"> <i class="bi bi-card-list"></i> </span> {{ service.companyDetails?.subscriptionDetail?.amount }} {{ service.currencyDetails?.currencyCode }} </h5>
-    
-                                        <span class="fw-500" style="color: gray;"> Subscribed On </span>
-    
-                                    </div>
-    
-                                    <div class="col-6">
-                                        
-                                        <h5 class="text-primary fw-600"> <span class="fw-800 me-2"> <i class="bi bi-calendar4-week"></i> </span> 5 days to Expire </h5>
-    
-                                        <span class="fw-500" style="color: gray;"> Auto renewal Enabled </span>
-    
-                                    </div>
-    
-                                    <div class="col-3 text-center">
-                                        
-                                        <button class="btn btn-primary btn-md border-0" (click)="openAsideBar()" style="background: #ff8777;"> 
-            
-                                            <span class="ms-2" >Cancel Subscription</span>
-                                        
-                                        </button>
-    
-                                    </div>
-                                    
+                            <div class="row justify-content-center align-items-center" *ngIf="this.subscriptionDet?.amount; else noSubscription">
+                                <div class="col-3">
+                                    <h5 class="text-primary fw-600">
+                                        <span class="fw-800 me-2"><i class="bi bi-card-list"></i></span>
+                                        {{ this.subscriptionDet?.amount }} {{ service.currencyDetails?.currencyCode }}
+                                    </h5>
+                                    <span class="fw-500" style="color: gray;">Subscribed On</span>
                                 </div>
+                            
+                                <div class="col-6">
+                                    <h5 class="text-primary fw-600">
+                                        <span class="fw-800 me-2"><i class="bi bi-calendar4-week"></i></span>
+                                        {{ this.subscriptionDet?.expiryInDays }} days to Expire
+                                    </h5>
+                                    <span class="fw-500" style="color: gray;">Auto renewal Enabled</span>
+                                </div>
+                            
+                                <div class="col-3 text-center">
+                                    <button class="btn btn-primary btn-md border-0" (click)="openAsideBar()" style="background: #ff8777;">
+                                        <span class="ms-2">Cancel Subscription</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <ng-template #noSubscription>
+                                <div class="row justify-content-center align-items-center">
+                                    <div class="col text-center">
+                                        <h5 class="text-danger fw-600">
+                                            <span class="fw-800 me-2"><i class="bi bi-exclamation-circle"></i></span>
+                                            No subscription found
+                                        </h5>
+                                        <button class="btn btn-primary btn-md border-0" (click)="openAsideBar()">
+                                            <span class="ms-2">Subscribe</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+
                                 
                             </div>
                           
@@ -88,7 +97,7 @@
     
                                         <div class="ms-4">
                                             
-                                            <span class="mb-0 fw-600" style="color: gray; font-size: 15px;">{{cardDet?.first_eight}} ****</span> 
+                                            <span class="mb-0 fw-600" style="color: gray; font-size: 15px;">{{cardDet?.first_six}} **** {{ cardDet?.last_four}}</span> 
                                             
                                         </div>
     
@@ -102,7 +111,7 @@
                                 
                                 </div>
                                     
-                                <div class="col-md-3 px-1 align-self-center text-center fw-600 mt-3 mt-md-0" style="color: #ff8777;"> {{cardDet.primary}} </div>
+                                <div class="col-md-3 px-1 align-self-center text-center fw-600 mt-3 mt-md-0" style="color: #ff8777;"> {{cardDet.primary || ""}} </div>
         
                                 <div class="col-md-3 px-6 align-self-center mt-3 mt-md-0">
         
@@ -126,15 +135,15 @@
     
                         <p class="fw-600" style="color: gray;">Transaction / invoice</p>
         
-                        <table class="table table-bordered bg-white" mat-table [dataSource]="reviewAndRating">
+                        <table class="table table-bordered bg-white" mat-table [dataSource]="transactionList">
                             
                             <ng-container matColumnDef="TRANSACTION ID" sticky>
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> TRANSACTION ID <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span> </th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
+                                <td mat-cell *matCellDef="let trans" class="text-center">
                 
-                                {{ reviewDet?.transactionId }}
+                                {{ trans?.transactionId | uppercase }}
                 
                                 </td>
             
@@ -144,9 +153,9 @@
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> DATE <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span> </th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
+                                <td mat-cell *matCellDef="let trans" class="text-center">
                 
-                                {{ reviewDet?.date }}
+                                {{ trans?.created_at | date : 'dd-MM-yyyy' }}
                 
                                 </td>
             
@@ -156,9 +165,9 @@
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> PLAN <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span></th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
+                                <td mat-cell *matCellDef="let trans" class="text-center">
                 
-                                {{ reviewDet?.plan }}
+                                Monthly
                 
                                 </td>
             
@@ -168,11 +177,9 @@
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> CARD DETAILS <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span></th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
-    
-                                    <span style="color: #76dbcd;"> {{ reviewDet?.renewal }} </span> <br>
-    
-                                    <span> {{ reviewDet?.card }} </span>
+                                <td mat-cell *matCellDef="let trans" class="text-center">
+        
+                                    <span> {{ trans?.payment_agreement?.contract?.id }} </span>
                 
                                </td>
             
@@ -182,9 +189,9 @@
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> AMOUNT <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span></th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
+                                <td mat-cell *matCellDef="let trans" class="text-center">
                 
-                                {{ reviewDet?.amound }}
+                                {{ trans?.amount.toFixed(2) }}
                 
                                 </td>
             
@@ -194,25 +201,25 @@
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> PAYMENT STATUS <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span></th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
+                                <td mat-cell *matCellDef="let trans" class="text-center">
                 
-                                {{ reviewDet?.paymentStatus }}
+                                {{ (trans?.status == 'CAPTURED' || trans?.status == 'AUTHORIZED') ? 'SUCCESS' : trans?.status }}
                 
                                 </td>
             
                             </ng-container>
     
-                            <ng-container matColumnDef="ACTION" sticky>
+                            <!-- <ng-container matColumnDef="ACTION" sticky>
         
                                 <th mat-header-cell *matHeaderCellDef class="text-center"> ACTION <span class="ms-1"><i class="bi bi-arrow-down-up"></i></span></th>
                 
-                                <td mat-cell *matCellDef="let reviewDet" class="text-center">
+                                <td mat-cell *matCellDef="let trans" class="text-center">
                 
-                                {{ reviewDet?.action }} <span class="fs-4 ms-2"><i class="bi bi-box-arrow-in-down"></i></span>
+                                {{ trans?.action }} <span class="fs-4 ms-2"><i class="bi bi-box-arrow-in-down"></i></span>
                 
                                 </td>
             
-                            </ng-container>
+                            </ng-container> -->
         
                             <tr mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></tr>
         

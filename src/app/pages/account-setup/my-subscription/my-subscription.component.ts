@@ -17,44 +17,9 @@ export class MySubscriptionComponent {
 
   reports: FormGroup = new FormGroup({});
 
-  tableColumns = ['TRANSACTION ID','DATE','PLAN','CARD DETAILS','AMOUNT','PAYMENT STATUS','ACTION'];
-
+  tableColumns = ['TRANSACTION ID','DATE','PLAN','CARD DETAILS','AMOUNT','PAYMENT STATUS'];
   cardList : Array<any> = [];
-
-  reviewAndRating: Array<any> = [];
-  
-  // reviewAndRating: Array<any> = [
-  //   {
-  //     "transactionId" : "TXN 002",
-  //     "date" : "20/20/20",
-  //     "plan" : "Free Plan",
-  //     "renewal" : "Auto Renewal",
-  //     "card" : "98736648 ****",
-  //     "amound" : "0.150BHD",
-  //     "paymentStatus" : "Success",
-  //     "action" : "Invoice",
-  //   },
-  //   {
-  //     "transactionId" : "TXN 002",
-  //     "date" : "20/20/20",
-  //     "plan" : "Free Plan",
-  //     "renewal" : "Auto Renewal",
-  //     "card" : "98736648 ****",
-  //     "amound" : "0.150BHD",
-  //     "paymentStatus" : "Success",
-  //     "action" : "Invoice",
-  //   },
-  //   {
-  //     "transactionId" : "TXN 002",
-  //     "date" : "20/20/20",
-  //     "plan" : "Free Plan",
-  //     "renewal" : "Auto Renewal",
-  //     "card" : "98736648 ****",
-  //     "amound" : "0.150BHD",
-  //     "paymentStatus" : "Success",
-  //     "action" : "Invoice",
-  //   },
-  // ];
+  transactionList: Array<any> = [];
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
@@ -71,6 +36,7 @@ export class MySubscriptionComponent {
   roles: Array<any> = [];
   mode: 'Create' | 'Update' = 'Create';
   _: any = _;
+  subscriptionDet: any = { "expiryInDays": 0, "amount": 0.0 };
   expiryInDays: any;
   searchValue: string = '';
 
@@ -82,14 +48,25 @@ export class MySubscriptionComponent {
   ngOnInit() {
 
     this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/users", "/setup/roles", "/address/dialCode"] });
-    
-    const lastSubscriptionDate = moment(this.service.companyDetails?.subscriptionDetail?.lastSubscriptionDate).add('M', 1); // Replace with your actual date
-    const currentDate = moment(); // Current date and time
 
-  // Calculate the difference in days
-  this.expiryInDays= lastSubscriptionDate.diff(currentDate, 'days');
+    this.service.getCompanyDetails().subscribe((val: any) => {
+            
+      const currentDate = moment(); // Current date and time
 
-  console.log(`Days until subscription expires: ${this.expiryInDays}`);
+      const nextSubscriptionDate = (this.service.companyDetails?.subscriptionDetail?.lastSubscriptionDate) ?  moment(this.service.companyDetails?.subscriptionDetail?.lastSubscriptionDate).add(30, 'days') : currentDate; // Replace with your actual date
+  
+      this.subscriptionDet["expiryInDays"] = nextSubscriptionDate.diff(currentDate, 'days');
+
+      this.subscriptionDet["amount"] = this.service.companyDetails?.subscriptionDetail?.amount.toFixed(2);
+  
+      console.log(`Days until subscription expires: ${this.expiryInDays}`);
+
+    },
+      (error: any) => {
+      
+        this.service.showToastr({ data: { message: "Sorry, Subscription details fetching failed", type : "warn"} });
+    });
+
 
     this.loadForm();
 
@@ -126,7 +103,9 @@ export class MySubscriptionComponent {
       
       "dialCodes": this.service.getService({ "url": "/address/dialCode" }),
 
-      "cardList" : this.service.getService({ url : "/payment/cards"})
+      "cardList": this.service.getService({ url: "/payment/cards" }),
+      
+      "transactions" : this.service.getService({ url : "/payment/trans"}),
       
     }).subscribe((res: any) => {
 
@@ -142,15 +121,20 @@ export class MySubscriptionComponent {
           
           card["imgPath"] = "/./assets/images/" + card?.brand?.toLowerCase() + ".png";
 
-          console.log(this.service.companyDetails?.subscriptionDetail?.contractDet?.id, card?.id);
+          // console.log(this.service.companyDetails?.subscriptionDetail?.contractDet?.id, card?.id);
           
-
           if (this.service.companyDetails?.subscriptionDetail?.contractDet?.id == card?.id) card["primary"] = true;
 
           return card;
 
         });
 
+      }
+
+      if (res.transactions.status == "ok") {
+        
+        this.transactionList = res.transactions?.data;
+        
       }
       
     });

@@ -1,6 +1,6 @@
 <div class="create-order-section">
 
-    <div class="row">
+    <div class="row" *ngIf="service.companyDetails.subscriptionDetail?.lastSubscriptionDate; else noAccess">
 
         <div class="col-xxl-9 col-xl-8 col-lg-7">
 
@@ -904,6 +904,25 @@
         </div>
         
     </div>
+
+    <ng-template #noAccess>
+
+        <div class="row text-center align-middle">
+
+            <div class="col-12">
+
+                <h4>
+                    <i class='bx bx-error'></i>
+                    Sorry, No Subscription found
+                </h4>
+                
+            </div>
+    
+
+        </div>
+
+    </ng-template>
+
 
 </div>
 
