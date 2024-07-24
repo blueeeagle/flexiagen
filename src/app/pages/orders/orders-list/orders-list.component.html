@@ -24,7 +24,7 @@
                 
                 </button>   
 
-                <a *ngIf="service.companyDetails?.agentId?.pos" class="btn btn-primary btn-md bi bi-file-earmark-plus ms-2" routerLink="/pages/create-order">
+                <a *ngIf="service.companyDetails?.agentId?.pos && service.companyDetails.subscriptionDetail?.lastSubscriptionDate > moment().startOf('month').toISOString()" class="btn btn-primary btn-md bi bi-file-earmark-plus ms-2" routerLink="/pages/create-order">
 
                     <span class="ms-3" >Create New Order</span>
 

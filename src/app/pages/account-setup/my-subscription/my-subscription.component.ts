@@ -6,6 +6,7 @@ import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-my-subscription',
@@ -18,62 +19,42 @@ export class MySubscriptionComponent {
 
   tableColumns = ['TRANSACTION ID','DATE','PLAN','CARD DETAILS','AMOUNT','PAYMENT STATUS','ACTION'];
 
-  ordersList = [
-    { 
-      "imgPath": "./assets/images/subscription-card.png",
-      "details": "98736648 ****", 
-      "card": "Added On / Debit Card",
-      "primary" : "Primary",
-      "active" : "Active",
-    },
-    { 
-      "imgPath": "/./assets/images/subscription-card.png",
-      "details": "98736648 ****", 
-      "card": "Added On / Debit Card",
-      "primary" : "Primary",
-      "active" : "Active",
-    },
-    { 
-      "imgPath": "/./assets/images/subscription-card.png",
-      "details": "98736648 ****", 
-      "card": "Added On / Debit Card",
-      "primary" : "Primary",
-      "active" : "Active",
-    },
-  ];
+  cardList : Array<any> = [];
 
-  reviewAndRating: Array<any> = [
-    {
-      "transactionId" : "TXN 002",
-      "date" : "20/20/20",
-      "plan" : "Free Plan",
-      "renewal" : "Auto Renewal",
-      "card" : "98736648 ****",
-      "amound" : "0.150BHD",
-      "paymentStatus" : "Success",
-      "action" : "Invoice",
-    },
-    {
-      "transactionId" : "TXN 002",
-      "date" : "20/20/20",
-      "plan" : "Free Plan",
-      "renewal" : "Auto Renewal",
-      "card" : "98736648 ****",
-      "amound" : "0.150BHD",
-      "paymentStatus" : "Success",
-      "action" : "Invoice",
-    },
-    {
-      "transactionId" : "TXN 002",
-      "date" : "20/20/20",
-      "plan" : "Free Plan",
-      "renewal" : "Auto Renewal",
-      "card" : "98736648 ****",
-      "amound" : "0.150BHD",
-      "paymentStatus" : "Success",
-      "action" : "Invoice",
-    },
-  ];
+  reviewAndRating: Array<any> = [];
+  
+  // reviewAndRating: Array<any> = [
+  //   {
+  //     "transactionId" : "TXN 002",
+  //     "date" : "20/20/20",
+  //     "plan" : "Free Plan",
+  //     "renewal" : "Auto Renewal",
+  //     "card" : "98736648 ****",
+  //     "amound" : "0.150BHD",
+  //     "paymentStatus" : "Success",
+  //     "action" : "Invoice",
+  //   },
+  //   {
+  //     "transactionId" : "TXN 002",
+  //     "date" : "20/20/20",
+  //     "plan" : "Free Plan",
+  //     "renewal" : "Auto Renewal",
+  //     "card" : "98736648 ****",
+  //     "amound" : "0.150BHD",
+  //     "paymentStatus" : "Success",
+  //     "action" : "Invoice",
+  //   },
+  //   {
+  //     "transactionId" : "TXN 002",
+  //     "date" : "20/20/20",
+  //     "plan" : "Free Plan",
+  //     "renewal" : "Auto Renewal",
+  //     "card" : "98736648 ****",
+  //     "amound" : "0.150BHD",
+  //     "paymentStatus" : "Success",
+  //     "action" : "Invoice",
+  //   },
+  // ];
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
 
@@ -90,7 +71,7 @@ export class MySubscriptionComponent {
   roles: Array<any> = [];
   mode: 'Create' | 'Update' = 'Create';
   _: any = _;
-
+  expiryInDays: any;
   searchValue: string = '';
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
@@ -100,7 +81,15 @@ export class MySubscriptionComponent {
 
   ngOnInit() {
 
-    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/users","/setup/roles","/address/dialCode"] });
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/users", "/setup/roles", "/address/dialCode"] });
+    
+    const lastSubscriptionDate = moment(this.service.companyDetails?.subscriptionDetail?.lastSubscriptionDate).add('M', 1); // Replace with your actual date
+    const currentDate = moment(); // Current date and time
+
+  // Calculate the difference in days
+  this.expiryInDays= lastSubscriptionDate.diff(currentDate, 'days');
+
+  console.log(`Days until subscription expires: ${this.expiryInDays}`);
 
     this.loadForm();
 
@@ -135,13 +124,34 @@ export class MySubscriptionComponent {
 
       "roles": this.service.getService({ url: "/setup/roles" }),
       
-      "dialCodes": this.service.getService({ "url": "/address/dialCode" }) 
+      "dialCodes": this.service.getService({ "url": "/address/dialCode" }),
+
+      "cardList" : this.service.getService({ url : "/payment/cards"})
       
     }).subscribe((res: any) => {
 
       if(res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
 
-      if(res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
+      if (res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
+      
+      if (res.cardList.status == "ok") {
+        
+        this.cardList = res.cardList.data;
+
+        this.cardList = _.map(this.cardList, (card: any) => {
+          
+          card["imgPath"] = "/./assets/images/" + card?.brand?.toLowerCase() + ".png";
+
+          console.log(this.service.companyDetails?.subscriptionDetail?.contractDet?.id, card?.id);
+          
+
+          if (this.service.companyDetails?.subscriptionDetail?.contractDet?.id == card?.id) card["primary"] = true;
+
+          return card;
+
+        });
+
+      }
       
     });
     

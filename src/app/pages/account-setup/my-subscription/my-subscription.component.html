@@ -40,7 +40,7 @@
     
                                     <div class="col-3">
                                         
-                                        <h5 class="text-primary fw-600"> <span class="fw-800 me-2"> <i class="bi bi-card-list"></i> </span> 3.000 BHD </h5>
+                                        <h5 class="text-primary fw-600"> <span class="fw-800 me-2"> <i class="bi bi-card-list"></i> </span> {{ service.companyDetails?.subscriptionDetail?.amount }} {{ service.currencyDetails?.currencyCode }} </h5>
     
                                         <span class="fw-500" style="color: gray;"> Subscribed On </span>
     
@@ -76,7 +76,7 @@
     
                         <p class="fw-600" style="color: gray;">CARD DETAILS</p>
                         
-                        <div class="subscription-list" *ngFor="let orderDet of ordersList">
+                        <div class="subscription-list" *ngFor="let cardDet of cardList">
             
                             <div class="row">
     
@@ -84,11 +84,11 @@
                                     
                                     <div class="d-flex align-items-center">
     
-                                        <img class="user-img" [src]="orderDet.imgPath">
+                                        <img class="user-img" [src]="cardDet.imgPath">
     
                                         <div class="ms-4">
                                             
-                                            <span class="mb-0 fw-600" style="color: gray; font-size: 15px;">{{orderDet.details}} </span> 
+                                            <span class="mb-0 fw-600" style="color: gray; font-size: 15px;">{{cardDet?.first_eight}} ****</span> 
                                             
                                         </div>
     
@@ -98,15 +98,15 @@
                                     
                                 <div class="col-md-2 px-1 align-self-center fw-600 text-center mt-3 mt-md-0" style="color: gray; font-size: 15px;"> 
                                     
-                                    {{orderDet.card}} 
+                                    {{ cardDet ?.brand }}/{{ cardDet?.funding }}
                                 
                                 </div>
                                     
-                                <div class="col-md-3 px-1 align-self-center text-center fw-600 mt-3 mt-md-0" style="color: #ff8777;"> {{orderDet.primary}} </div>
+                                <div class="col-md-3 px-1 align-self-center text-center fw-600 mt-3 mt-md-0" style="color: #ff8777;"> {{cardDet.primary}} </div>
         
                                 <div class="col-md-3 px-6 align-self-center mt-3 mt-md-0">
         
-                                    <div class="status-card mx-4 px-4 fw-600" style="color: #5ccdba; background-color: #abd3cc77;"> {{orderDet.active}}</div>
+                                    <div class="status-card mx-4 px-4 fw-600" style="color: #5ccdba; background-color: #abd3cc77;"> Active</div>
         
                                 </div>
     

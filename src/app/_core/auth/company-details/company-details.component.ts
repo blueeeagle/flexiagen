@@ -412,6 +412,7 @@ export class CompanyDetailsComponent {
     // return;
 
     this.isPaymentLoading = true;
+
     this.paymentFailedMsg = "";
 
     this.service.postService({ url: `/pg/initiatePayment`, payload }).subscribe((res: any) => {
@@ -427,10 +428,11 @@ export class CompanyDetailsComponent {
           this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
 
           this.constructCompanyPayload();
-
-          this.isPaymentLoading = false;
   
           window.location.href = paymentRes.transaction?.url;
+
+          this.isPaymentLoading = false;
+
         }
         
       }
