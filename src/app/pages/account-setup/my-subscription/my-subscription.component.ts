@@ -21,16 +21,17 @@ export class MySubscriptionComponent {
   cardList : Array<any> = [];
   transactionList: Array<any> = [];
 
-  @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
+  @ViewChild('CardCanvas') CardCanvas: OffcanvasComponent | undefined;
 
   // tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'USERNAME', 'MOBILE', 'ROLE', 'STATUS', 'ACTION'];
   openCanvas: boolean = false;
+  showCard: boolean = false;
   formSubmitted: boolean = false;
   userButton:boolean=true
   modalstatus: boolean = false ;
   dialCodeList: Array<any> = [];
   masterList : any = {};
-  userForm: FormGroup = new FormGroup({});
+  subscriptionForm: FormGroup = new FormGroup({});
   profileImg: any = '';
   usersList!: Array<any>;
   roles: Array<any> = [];
@@ -39,6 +40,9 @@ export class MySubscriptionComponent {
   subscriptionDet: any = { "expiryInDays": 0, "amount": 0.0 };
   expiryInDays: any;
   searchValue: string = '';
+  paymentFormSubmitted: boolean = false;
+  isPaymentLoading: boolean = false;
+  paymentFailedMsg: string = '';
 
   constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
   
@@ -47,7 +51,8 @@ export class MySubscriptionComponent {
 
   ngOnInit() {
 
-    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/users", "/setup/roles", "/address/dialCode"] });
+
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/company"] });
 
     this.service.getCompanyDetails().subscribe((val: any) => {
             
@@ -61,36 +66,17 @@ export class MySubscriptionComponent {
   
       console.log(`Days until subscription expires: ${this.expiryInDays}`);
 
+
+     if(this.subscriptionDet["amount"]) this.getBaseDetails();
+
+
     },
       (error: any) => {
       
         this.service.showToastr({ data: { message: "Sorry, Subscription details fetching failed", type : "warn"} });
     });
-
-
-    this.loadForm();
-
-    this.getBaseDetails();
-
-    this.getUsersList();
 	
-  }
-
-  getUsersList() {
-    
-    this.service.postService({ url: "/setup/users", params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
-      
-      if (res.status == "ok") {
-          
-        this.usersList = res.data;
-
-      }
-      
-    },(error: any) => {
-      
-      this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
-
-    });
+      this.loadForm();
 
   }
 
@@ -99,19 +85,11 @@ export class MySubscriptionComponent {
     
     forkJoin({
 
-      "roles": this.service.getService({ url: "/setup/roles" }),
-      
-      "dialCodes": this.service.getService({ "url": "/address/dialCode" }),
-
       "cardList": this.service.getService({ url: "/payment/cards" }),
       
       "transactions" : this.service.getService({ url : "/payment/trans"}),
       
     }).subscribe((res: any) => {
-
-      if(res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
-
-      if (res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
       
       if (res.cardList.status == "ok") {
         
@@ -145,42 +123,38 @@ export class MySubscriptionComponent {
 
   loadForm() {
 
-    this.userForm = this.service.fb.group({
+    this.subscriptionForm = this.service.fb.group({
 
-      'name': [ this.editData?.name || '', Validators.required ],
-
-      'email': [ this.editData?.email || '', [Validators.required,Validators.email] ],
-
-      'userName': [ this.editData?.userName || '', Validators.required ],
-
-      'dialCode': [this.editData?.dialCode || null, [Validators.required]],
-
-      'mobile': [this.editData?.mobile || '', [Validators.required]],
+      "cardType": ["card", Validators.required],
       
-      'role': [this.editData?.role?._id || null, [Validators.required]],
+      "cardDetails": this.fb.group({
+        
+        "card_number": [null, Validators.required],
 
-      'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
+        "exp_month": [null, Validators.compose([Validators.required])],
 
-      'profileImg': [this.editData?.profileImg ? this.service.getFullImagePath({ 'imgUrl': this.editData.profileImg }) : '' ],
+        "exp_year": [null, Validators.compose([Validators.required])],
+          
+        "scode": [null, Validators.compose([Validators.required, Validators.minLength(3)])],
+        
+        "name": [null, Validators.required]
+      
+      })
 
     });
 
-    if(_.isEmpty(this.editData)) {
+    // this.cf.exp_month.valueChanges.subscribe((value: any) => {
 
-      fetch('https://ipapi.co/json/').then((res: any) => res.json()).then((res: any) => {
-  
-        this.userForm.get('dialCode')?.setValue(res.country_calling_code);
-  
-      });   
-
-    }
+    //   if(value) this.cf.exp_month.setValue(moment(parseInt(value), 'M').format('MM'), { emitEvent: false });
+    // });
 
   }
 
   // convenience getter for easy access to form fields
 
-  get f(): any { return this.userForm.controls; }
+  get f(): any { return this.subscriptionForm.controls; }
 
+  get cf() {  return (this.subscriptionForm.get('cardDetails') as FormGroup).controls as any; }
   openAsideBar(data?: any) {
 
     this.formSubmitted = false;
@@ -195,126 +169,110 @@ export class MySubscriptionComponent {
 
   }
 
-  uploadFile(event:any) {
-
-    const file = event.target?.files[0]; // Here we use only the first file (single file)
-
-    if(file) {
-
-      const reader = new FileReader();
-
-      // validate file type & size
-
-      const validFileExtensions = ['image/jpeg','image/jpg','image/png'];
-
-      if(!validFileExtensions.includes(file.type)) return this.service.showToastr({ data: { type: "error", message: "Invalid file type" } });
-
-      if(file.size > 1048576) return this.service.showToastr({ data: { type: "error", message: "File size should not exceed 1MB" } });
-
-      // check dimensions of image
-
-      // const img = new Image();
-
-      // img.src = window.URL.createObjectURL(file);
-
-      // img.onload = () => {
-
-      //   if(img.width != 150 || img.height != 150) return this.service.showToastr({ data: { type: "error", message: "Image should be 150px X 150px" } });
-
-      //   else {
-
-          // File Preview
-      
-          reader.onload = () => {
-
-            this.userForm.patchValue({ "profileImg": reader.result as string });
-
-            this.profileImg = file;
-
-          }
-
-          reader.readAsDataURL(file);
-
-      //   }
-
-      // }
-
-    }
-
-  }
-  
-  // submit() {
-        
-  //   this.formSubmitted = true;
-
-  //   if (this.userForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
-
-  //   const payload = _.omit(this.userForm.getRawValue(),'profileImg');
-
-  //   payload["companyId"] = this.service.companyDetails._id;
-
-  //   const formData = new FormData();
-
-  //   formData.append("data", JSON.stringify(payload));
-
-  //   if(this.profileImg) formData.append("profileImg", this.profileImg);
-
-  //   forkJoin({
-
-  //     "result": this.mode == 'Create' ? 
-      
-  //         this.service.postService({ url: "/setup/user", payload : formData })
-        
-  //           : this.service.patchService({ url: `/setup/user/${this.editData?._id}`, payload : formData })
-      
-  //   }).subscribe({
-      
-  //     next: (res: any) => {
-
-  //       if (res.result.status == "ok") {
-
-  //         this.canvas?.close();
-  
-  //         this.service.showToastr({ data: { type: "success", message:  `User ${this.mode == 'Create' ? 'Created' : 'Updated'} Success` } });
-  
-  //         this.getUsersList();
-  
-  //         this.loadForm();
-  
-  //       }
-
-  //     },
-
-  //     error: (error: any) => {
-
-  //       this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
-
-  //     }
-
-  //   });
-
-  // }
-
-  updateActiveStatus(data: any) {
-
-    const formData = new FormData();
-
-    const payload = { "is_active": data.is_active };
+  prev_next() {
     
-    formData.append("data", JSON.stringify(payload));
+    this.showCard = !this.showCard;
 
-    this.service.patchService({ "url": `/setup/user/${data?._id}`, "payload": formData }).subscribe((res: any) => {
+    // if(!this.showCard) this.CardCanvas?.close();
+  }
+
+  initiatePayment() {
+
+    this.paymentFormSubmitted = true;
+
+    if (this.cf.invalid) return;
+    
+    this.confirmationDialog.confirm({
+
+      title: "Subscription Confirmation",
+      
+      message: "Do you want to proceed the payment",
+      
+      type: "info",
+      
+    }).then((val: any) => {
+      
+      if (val) {
+          
+        console.log("payment initiated");
+
+        const paymentValue = this.subscriptionForm.value;
+
+        const payload = {
+
+          "cardDetails": {
+            "card_number": (paymentValue.cardDetails?.card_number) ? parseInt(paymentValue.cardDetails?.card_number.replace(/\s+/g, '')) : "",
+            "exp_month": parseInt(paymentValue.cardDetails?.exp_month),
+            "exp_year": this.getFullYear(paymentValue.cardDetails?.exp_year),
+            "scode": parseInt(paymentValue.cardDetails?.scode),
+            "name": paymentValue.cardDetails?.name
+          },
+
+          "amount": 3,
+          
+          "countryCode": this.service.companyDetails?.countryId
+
+        };
+
+        const paymentCheckObj = {
+
+          "agentId": this.service.userDetails._id,
+
+          "countryId" : this.service.companyDetails?.countryId
+        }
+
+    console.log({ payload });
+
+    console.log({ paymentCheckObj });
+
+    // return;
+
+    this.isPaymentLoading = true;
+
+    this.paymentFailedMsg = "";
+
+    this.service.postService({ url: `/pg/initiatePayment`, payload }).subscribe((res: any) => {
+
+      if (res.status == "ok") {
+        
+        const paymentRes = res.data;
   
-      if(res.status=='ok') {
+        if (paymentRes.transaction?.url) {
 
-        this.service.showToastr({ "data": { "message": `User ${ data.is_active ? 'activated' : 'inactivated' } successfully!`, "type": "success" } });
+          console.log(paymentRes.transaction?.url);
+          
+          this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
+  
+          window.location.href = paymentRes.transaction?.url;
 
-        // this.usersList.splice(_.findIndex(this.usersList,{ "_id": res.data._id }), 1, res.data);
+          this.isPaymentLoading = false;
 
+        }
+        
       }
+      
+    },
+      (error: any) => {
 
+        console.log(error);
+        
+        this.paymentFailedMsg = "Sorry, your given payment details are invalid. Please check your provided details.";
+
+        this.isPaymentLoading = false;
     });
 
+
+        }
+    })
+    
+  }
+
+   getFullYear(year : any) {
+  
+      // Concatenate to form the full year
+    let fullYear = (Math.floor(moment().year() / 100) * 100 + parseInt(year));
+    
+    return fullYear
   }
 
 }
