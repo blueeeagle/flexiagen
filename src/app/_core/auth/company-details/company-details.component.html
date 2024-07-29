@@ -443,10 +443,23 @@
                                     <h5 class="fw-600 text-primary">POS Subscription Amount</h5> 
         
                                     <div class="d-flex align-items-center flex-wrap">
+
+                                        <ng-container *ngIf="appServiceChargeDet && appServiceChargeDet?.amount > 0; else countryNotAvail">
+
+                                            <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet.pos }}</h4>
+            
+                                            <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
+
+                                        </ng-container>
+
+                                        <ng-template #countryNotAvail>
+
+                                            <h4 class="mb-0 fw-700 mt-2 me-2">Subscription not available</h4>
+                                            
+                                            <p class="text-light mb-0 mt-2">Your country not eligible to make subscription</p>
+
+                                        </ng-template>
         
-                                        <h4 class="mb-0 fw-700 mt-2 me-2"> {{ appServiceChargeDet.pos }}</h4>
-        
-                                        <p class="text-light mb-0 mt-2">(Auto renew every month )</p>
         
                                     </div>
         

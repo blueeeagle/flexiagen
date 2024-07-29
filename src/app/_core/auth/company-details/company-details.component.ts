@@ -30,6 +30,7 @@ export class CompanyDetailsComponent {
   paymentFailedMsg: String = "";
   paymentInit: boolean = false;
   paymentInProgress: boolean = false;
+  adminSettings: any;
 
   constructor(public service: CommonService, private route: ActivatedRoute) { 
 
@@ -45,19 +46,17 @@ export class CompanyDetailsComponent {
 
     this.route.queryParams.subscribe(params => {
       
-      console.log({ params });
-
       const paymentInitValue = JSON.parse(this.service.session({ method: 'get', key: 'paymentValue' }));
 
       const companyPayload = JSON.parse(this.service.session({ method: "get", key: "companyPayload" }));
 
       if (!_.isEmpty(paymentInitValue) && !_.isEmpty(companyPayload)) {
 
-        this.service.setApiLoaders({ "isLoading": true, "url": [`/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.countryId}`] });
+        this.service.setApiLoaders({ "isLoading": true, "url": [`/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.currencyId}`] });
 
         this.paymentInProgress = true;
         
-        this.service.getService({ url: `/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.countryId}`, params }).subscribe((res: any) => {
+        this.service.getService({ url: `/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.currencyId}`, params }).subscribe((res: any) => {
           
           if (res.status == "ok") {
               
@@ -69,14 +68,28 @@ export class CompanyDetailsComponent {
           
             this.service.showToastr({ data: { message: "Sorry, We are unable to getting the payment details.", type: "warn" } });
 
-            // this.createCompany(companyPayload);
+            this.createCompany(companyPayload);
         });
 
       }
 
     });
-    
-   
+
+        this.service.loadAdminSettings().subscribe((configs: any) => {
+
+      if (_.first(configs)) {
+        
+        this.adminSettings = configs[0];
+
+        console.log(this.adminSettings);
+        
+      }
+      
+    },
+      (err: any) => {
+      
+        this.service.showToastr({ data: { title: "Fetching failed", message: "Configurations getting failed" } });
+    })
 
   }
 
@@ -98,7 +111,9 @@ export class CompanyDetailsComponent {
 
           const { value, type } = chargesDet;
 
-          result[key] = type == 'percentage' ? `${value}%` : `${value.toFixed(this.masterList['currencyDet']?.decimalPoints || 3)} ${this.masterList['currencyDet']?.currencyCode}`;
+          result[key] = `${value.toFixed(this.masterList['currencyDet']?.decimalPoints || 3)} ${this.masterList['currencyDet']?.currencyCode}`;
+
+          if(key == "pos") result["amount"] = value
 
           return result;
 
@@ -342,12 +357,7 @@ export class CompanyDetailsComponent {
 
   get af(): any { return this.f.addressDetails.controls }
 
-  get cf(): any {
-
-    console.log(this.paymentForm.controls)
-    
-    return this.paymentForm.controls;
-  }
+  get cf(): any { return this.paymentForm.controls; }
 
 
   // Register Company Details
@@ -392,9 +402,11 @@ export class CompanyDetailsComponent {
         "name": paymentValue.name
       },
 
-      "amount": parseInt(this.appServiceChargeDet?.pos.split('.')[0]),
+      "amount": parseInt(this.appServiceChargeDet?.amount),
       
-      "countryCode": this.af.countryId.value
+      "countryId": this.companyForm.value.addressDetails?.countryId,
+
+      "currencyId": this.companyForm.value.currencyId,
 
     };
 
@@ -402,12 +414,11 @@ export class CompanyDetailsComponent {
 
       "agentId": this.service.userDetails._id,
 
-      "countryId" : this.af.countryId.value
+      "currencyId" : this.companyForm.value.currencyId
+
     }
 
-    console.log({ payload });
-
-    console.log({ paymentCheckObj });
+    console.log("pay payload", payload)
 
     // return;
 
@@ -428,7 +439,10 @@ export class CompanyDetailsComponent {
           this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
 
           this.constructCompanyPayload();
-  
+
+          console.log(paymentRes.transaction?.url);
+          
+          // return;
           window.location.href = paymentRes.transaction?.url;
 
           this.isPaymentLoading = false;
@@ -508,7 +522,9 @@ export class CompanyDetailsComponent {
 
     event.preventDefault();
 
-    if(this.companyForm.invalid) return this.formSubmitted = true;
+    if (this.companyForm.invalid) return this.formSubmitted = true;
+    
+    if(_.isEmpty(this.adminSettings)) return this.service.showToastr({ data : { message : "Sorry, Subscription details not found"}})
 
     this.showPreview = true;
 

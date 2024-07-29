@@ -29,6 +29,8 @@ export class CommonService {
   };
   public userDetailsObs = new Subject();
 
+  public settingsSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
   constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) {
 
   }
@@ -74,6 +76,30 @@ export class CommonService {
     return this.getService({ "url": "/me", "options": { "loaderState": true } });
 
   }
+
+  // Getting admin configurations
+ loadAdminSettings(): Observable<any> {
+   
+    return new Observable((observer) => {
+
+      this.getService({ url: "/admin/configs" }).subscribe((res: any) => {
+        
+        if (res.status === "ok" && !_.isEmpty(res.data)) {          
+          observer.next(res.data);
+          observer.complete();
+        } else {
+          observer.error('No Settings found');
+        }
+      }, (error: any) => {
+        
+        observer.error(error);
+
+      });
+
+    });
+  }
+
+
 
   getPosition(): Promise<any> {
     return new Promise((resolve, reject) => {
