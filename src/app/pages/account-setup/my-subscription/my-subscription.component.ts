@@ -117,7 +117,9 @@ export class MySubscriptionComponent {
     })
 
 
-      if (this.subscriptionDet["amount"]) this.getBaseDetails();
+      // if (this.subscriptionDet["amount"])
+        
+      this.getBaseDetails();
       
       this.getAppServiceCharges();
 
@@ -269,6 +271,7 @@ export class MySubscriptionComponent {
 
   }
 
+  // Start subscription
   initiatePayment(cardId?: any) {
     
     console.log(cardId);
@@ -368,6 +371,7 @@ export class MySubscriptionComponent {
     
   }
 
+  // Cancel subscription
   cancelSubscription() {
     
     this.confirmationDialog.confirm({
@@ -396,7 +400,35 @@ export class MySubscriptionComponent {
       })
   }
 
-   getFullYear(year : any) {
+  deleteCard(cardDet: any) {
+    
+     this.confirmationDialog.confirm({
+        
+       title: "Delete card",
+       
+       message: `Do you want to delete your card ${cardDet?.first_six}****${cardDet?.last_four} ?`,
+      
+      type: "warn"
+      
+    }).then((val: boolean) => {
+        
+      if (val) {
+            
+        this.service.deleteService({ url: "/payment/card/"+cardDet?.id }).subscribe((res: any) => {
+              
+          if (res.status == "ok") location.reload();
+        },
+          (error: any) => {
+          
+            this.service.showToastr({ "data": { message: "Sorry, Deletion failed. Contact admin", type: "warn" } });
+        });
+
+          }
+      })
+    
+  }
+
+  getFullYear(year : any) {
   
       // Concatenate to form the full year
     let fullYear = (Math.floor(moment().year() / 100) * 100 + parseInt(year));

@@ -103,6 +103,8 @@
                     <div class="row mt-3">
     
                         <p class="fw-600" style="color: gray;">CARD DETAILS</p>
+
+                        <ng-container *ngIf="_.size(cardList) > 0; else noCards"></ng-container>
                         
                         <div class="subscription-list" *ngFor="let cardDet of cardList">
             
@@ -138,7 +140,7 @@
         
                                 </div>
     
-                                <div class="col-md-1 px-1 align-self-center text-center mt-3 mt-md-0"  style="color: gray;" *ngIf="!cardDet.primary">
+                                <div class="col-md-1 px-1 align-self-center text-center mt-3 mt-md-0"  style="color: gray;" *ngIf="!cardDet.primary" (click)="deleteCard(cardDet)">
     
                                     <i class="fs-5 bi bi-trash"></i>
     
@@ -147,6 +149,16 @@
                             </div>
             
                         </div>
+
+                        <ng-template #noCards>
+
+                            <div class="row bg-secondary-subtle p-3 rounded-3 text-light-emphasis">
+
+                                <p class="fw-400 text-primary">No cards found</p>
+
+                            </div>
+
+                        </ng-template>
     
                     </div>
     
@@ -274,7 +286,7 @@
 
 </div>
 
-<asidebar #CardCanvas [openCanvas]="openCanvas" title="Choose Payment Method" [showCancelBtn]="showCard" [cancelBtnTxt]="!showCard ? 'Cancel' : 'Back'" [applyBtnTxt]="!showCard ? 'Next' : 'Proceed to pay'" (onClose)="openCanvas = false;" (onCancel)="prev_next()" (onSubmit)="!showCard ? prev_next() : initiatePayment()" [saveBtnLoader]="isPaymentLoading">
+<asidebar #CardCanvas [openCanvas]="openCanvas" title="Choose Payment Method" backdrop="static" [showCancelBtn]="showCard" [cancelBtnTxt]="!showCard ? 'Cancel' : 'Back'" [applyBtnTxt]="!showCard ? 'Next' : 'Proceed to pay'" (onClose)="openCanvas = false;" (onCancel)="prev_next()" (onSubmit)="!showCard ? prev_next() : initiatePayment()" [saveBtnLoader]="isPaymentLoading">
 
     <ng-container>
 
@@ -295,7 +307,7 @@
             <div [formGroup]="subscriptionForm">
         
                 <!-- Card Type Selection -->
-                <ng-container *ngIf="!showCard; else cardDet">
+                <ng-container *ngIf="false; else cardDet">
         
                     <div class="row justify-content-center align-items-center ">
             
@@ -355,7 +367,7 @@
         
                 <ng-template #cardDet>
         
-                    <form role="form" [formGroup]="subscriptionForm">
+                    <form role="form" [formGroup]="subscriptionForm" class="mt-2">
         
                         <div class="alert alert-warning" *ngIf="paymentFailedMsg">
                         

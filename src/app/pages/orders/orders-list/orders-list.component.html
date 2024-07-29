@@ -8,6 +8,32 @@
 
         </div>
 
+        <div class="row  mt-3" *ngIf="!(service.companyDetails?.agentId?.pos && service.companyDetails.subscriptionDetail?.lastSubscriptionDate> moment().startOf('month').toISOString())">
+
+            <div class="alert alert-warning small">
+
+                <p *ngIf="!service.companyDetails?.agentId?.pos">
+
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    
+                    You haven't enabled the
+                    
+                    <a [routerLink]="['/pages/account-setup/company/service-details']" class="text-primary text-decoration-underline">POS feature</a>.
+                </p>
+
+                <p>
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    
+                    After that, please make a 
+                    
+                    <a [routerLink]="['/pages/account-setup/subscription']" class="text-primary text-decoration-underline">subscription</a> to enable POS order creation.
+                </p>
+
+            </div>
+
+        </div>
+
+
         <div class="row d-flex justify-content-between mt-2">
 
             <div class="col-sm-8 col-md-5 col-lg-4 col-xl-4 mb-2">

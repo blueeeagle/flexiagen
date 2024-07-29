@@ -530,4 +530,15 @@ export class CompanyDetailsComponent {
 
   }
 
+  addCompany() {
+    
+    let companyPayload: any = this.companyForm.value;
+
+    companyPayload['addressDetails'] = _.omit(companyPayload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
+
+    companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
+
+    this.createCompany(companyPayload);
+  }
+
 }
