@@ -576,7 +576,7 @@
 
 </asidebar>
 
-<modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" [showSaveBtn]="false" [showCancelBtn]="false">
+<modal #OrderDetailsModal title="Order Details" modalBodyClass="p-4" size="xl" [isFullModal]="true" saveBtnTxt="Print" (onSubmit)="printInvoice()" [showCancelBtn]="false">
 
     <div class="row">
 
@@ -694,7 +694,7 @@
 
                     <div class="mt-4">
 
-                        <h5 class="text-secondary mb-2" style="font-size: 1.08rem;">ITEM SUMMARY</h5>
+                        <h5 class="text-secondary mb-2" style="font-size: 1.08rem;">ORDER SUMMARY</h5>
 
                         <div class="mt-3">
 
@@ -710,12 +710,22 @@
     
                             <h6 class="text-secondary">
                                 
-                                DELIVERY ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                EXPECTED DELIVERY ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 
                                 <span class="text-dark fw-600">{{ orderDetails?.expDeliveryDate | date :'EE d MMM  y' }} </span>
 
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ orderDetails?.expDeliveryTimeSlotDet?.label }}
                             
+                            </h6>
+
+                            <h6 class="text-secondary mt-3" *ngIf="orderDetails?.deliveryDate">
+                                
+                                DELIVERY ON  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                
+                                <span class="text-dark fw-600">{{ orderDetails?.deliveryDate | date :'EE d MMM  y' }} </span>
+
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  {{ orderDetails?.deliveryDate | date :'hh:mm a' }}
+
                             </h6>
 
                         </div>
@@ -809,5 +819,126 @@
         </div>
 
     </div>
+
+    <div class="container d-none" #printTemplate id="printTemplate" >
+
+        <div style="max-width: 302.36220472px;margin: auto;">
+    
+            <div style="text-align: center;">
+    
+                <img src="./assets/images/logo.png" alt="Company Logo">
+    
+            </div>
+    
+            <h5 style="margin-top: 12px; text-align: center;font-weight: 600;">Order Details</h5>
+    
+            <h6 style="margin-bottom: 12px;font-size: 14px;font-weight: 600;">Order No: {{ orderDetails?.orderNo }}</h6>
+    
+            <p style="margin-bottom: 12px;font-size: 12px;">Date: {{ moment() | date: 'dd MMM yyyy hh:mm a' }}</p>
+    
+            <p style="margin-bottom: 12px;font-size: 12px;">Customer Name: {{ orderDetails?.customerId?.firstName + ' ' + orderDetails?.customerId?.lastName }}</p>
+    
+            <p style="margin-bottom: 12px;font-size: 12px;">Area: {{ orderDetails?.addressDetails?.areaId?.name }}</p>
+    
+            <p style="margin-bottom: 12px;font-size: 12px;">Street: {{ orderDetails?.addressDetails?.street }}</p>
+    
+            <p style="margin-top: 12px;font-size: 12px;">Pickup: {{ 
+    
+                orderDetails.pickupDate ? 
+                
+                    ((orderDetails?.pickupDate | date :'EE dd MMM yyyy') + ' ' + (orderDetails?.pickupTimeSlotDet?.label)) : 
+                
+                        (orderDetails.created_at | date :'EE dd MMM yyyy hh:mm a')
+            
+            }}</p>
+    
+            <p style="margin-bottom: 12px;font-size: 12px;">Delivery: {{ orderDetails?.deliveryDate | date :'EE dd MMM yyyy hh:mm a' }}</p>
+    
+            <hr style="border-style: dashed;border-width: 1.5px;">
+    
+            <div class="d-flex">
+    
+                <div style="width: 50%;">
+    
+                    <h6 style="font-size: 14px;margin-bottom: 0px;">Item</h6>
+    
+                </div>
+    
+                <div style="width: 10%;">
+    
+                    <h6 style="font-size: 14px;margin-bottom: 0px;">Qty</h6>
+    
+                </div>
+    
+                <div style="width: 20%;">
+    
+                    <h6 style="font-size: 14px;margin-bottom: 0px;">Price</h6>
+    
+                </div>
+    
+                <div style="width: 20%;">
+    
+                    <h6 style="font-size: 14px;margin-bottom: 0px;text-align: center;">Total</h6>
+    
+                </div>
+    
+            </div>
+    
+            <hr style="border-style: dashed;border-width: 1.5px;">
+    
+            <div style="margin-bottom: 12px" *ngFor="let chargeDet of chargeWiseItems">
+    
+                <h6 style="font-size: 14px;">{{ chargeDet.chargeName }}</h6>
+    
+                <div class="d-flex" *ngFor="let itemDet of chargeDet.items">
+    
+                    <div style="width: 50%;">
+    
+                        <p style="font-size: 12px;margin-bottom: 0px;">{{ itemDet?.productId?.productId?.productName }}</p>
+    
+                    </div>
+    
+                    <div style="width: 10%;">
+    
+                        <p style="font-size: 12px;margin-bottom: 0px;">{{ itemDet?.qty }}</p>
+    
+                    </div>
+    
+                    <div style="width: 20%;">
+    
+                        <p style="font-size: 12px;margin-bottom: 0px;">{{ (itemDet?.amount | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) }}</p>
+    
+                    </div>
+    
+                    <div style="width: 20%;">
+    
+                        <p style="font-size: 12px;margin-bottom: 0px;text-align: center;">{{ (itemDet?.netAmt | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' + orderDetails?.currencyId?.currencyCode }}</p>
+    
+                    </div>
+    
+                </div>
+                
+            </div>
+    
+            <hr style="border-style: dashed;border-width: 1.5px;">
+    
+            <div class="d-flex justify-content-between">
+    
+                <h6 style="font-size: 14px;margin-bottom: 0px;">Subtotal ({{ orderDetails.qty }} Item)</h6>
+    
+                <h6 style="font-size: 14px;margin-bottom: 0px;">{{ (orderDetails.grossAmt | dynamicPipe:'number': '1.'+(orderDetails.currencyId?.decimalPoints || 2)+'-'+(orderDetails.currencyId?.decimalPoints || 2)) + ' ' + orderDetails?.currencyId?.currencyCode }}</h6>
+    
+            </div>
+    
+            <hr style="border-style: dashed;border-width: 1.5px;">
+    
+            <p style="font-size: 12px;font-weight: 600;text-align: center;margin-bottom: 4px;">Generated on: {{ moment() | date:'dd MMM YYYY hh:mm a' }}</p>
+    
+            <div style="font-size: 12px;font-weight: 600;display: flex;align-items: center;justify-content: center">Powered By <h6 style="font-size: 14px;font-weight: 600;margin-bottom: 0px;margin-left: 4px;">Flexi Clean POS</h6> </div>
+    
+        </div>
+
+    </div>
+
 
 </modal>

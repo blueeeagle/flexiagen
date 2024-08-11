@@ -34,6 +34,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "ng-otp-input": "^1.9.3",
+    "ngx-print": "^1.4.0",
     "ngx-spinner": "^16.0.2",
     "popper.js": "^1.16.1",
     "rxjs": "~7.8.0",

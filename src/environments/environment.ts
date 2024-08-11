@@ -16,10 +16,10 @@ export const APP_CONFIG = {
   
 	// GOOGLE_MAP_API_KEY: '',
 
-    APP_DOMAIN: 'http://localhost:9000/api/v1',   
+    APP_DOMAIN: 'http://localhost:9001/api/v1',   
 	ADMIN_DOMAIN: 'http://localhost:9500/api/v1',
-	CUSTOMER_DOMAIN: 'http://localhost:9001/api/v1',	
-    AGENT_IMG_URL: 'http://localhost:9000/',
+	CUSTOMER_DOMAIN: 'http://localhost:9002/api/v1',	
+    AGENT_IMG_URL: 'http://localhost:9001/',
 
 
 };

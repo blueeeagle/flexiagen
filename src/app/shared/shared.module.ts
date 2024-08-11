@@ -37,6 +37,7 @@ import { ConfirmationDialogService } from './components/confirmation-dialog/conf
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { RouterModule } from '@angular/router';
+import { NgxPrintModule } from 'ngx-print';
 
 export const MY_FORMATS = {
   parse: {
@@ -78,7 +79,8 @@ export const MY_FORMATS = {
     ReactiveFormsModule,
     MaterialModule,
     NgSelectModule,
-    NgOtpInputModule
+    NgOtpInputModule,
+    NgxPrintModule
   ],
   exports : [
     // Modules
@@ -88,6 +90,7 @@ export const MY_FORMATS = {
     MaterialModule, 
     NgSelectModule,
     NgOtpInputModule,
+    NgxPrintModule,
     // Directives
     DecimalNumberDirective,
     NumberDirective,
