@@ -39,6 +39,7 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { RouterModule } from '@angular/router';
 import { CardNumberFormatterDirective } from './directives/cardFormatter.directive';
 import { ExpirationDateFormatterDirective } from './directives/cardExpiry.directive';
+import { NgxPrintModule } from 'ngx-print';
 
 export const MY_FORMATS = {
   parse: {
@@ -82,7 +83,8 @@ export const MY_FORMATS = {
     ReactiveFormsModule,
     MaterialModule,
     NgSelectModule,
-    NgOtpInputModule
+    NgOtpInputModule,
+    NgxPrintModule
   ],
   exports : [
     // Modules
@@ -92,6 +94,7 @@ export const MY_FORMATS = {
     MaterialModule, 
     NgSelectModule,
     NgOtpInputModule,
+    NgxPrintModule,
     // Directives
     DecimalNumberDirective,
     NumberDirective,

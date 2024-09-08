@@ -83,7 +83,7 @@
             
                         </div>
                         
-                        <div class="order-list-card" *ngFor="let orderDet of dashboardData.newOrders">
+                        <!-- <div class="order-list-card" *ngFor="let orderDet of dashboardData.newOrders">
             
                             <div class="row">
     
@@ -125,7 +125,77 @@
         
                             </div>
             
-                        </div>
+                        </div> -->
+
+                        <div class="table-responsive">
+
+                            <table class="table table-borderless">
+
+                                <ng-container *ngFor="let orderDet of dashboardData.newOrders">
+
+                                    <tr style="border: 2px dashed #395EA1;background: #f3f5f9;">
+
+                                        <td>
+
+                                            <div class="order-list-card d-flex align-items-center">
+
+                                                <img class="user-img" *ngIf="orderDet.customerId" [src]="service.getFullImagePath({ 'baseUrlFrom': 'CUSTOMER_IMG_URL', 'imgUrl': orderDet.customerId?.customerImageURL })" (error)="service.getCustomerImgUrl({ 'event': $event, 'customerDetail': orderDet.customerId })" style="width:45px">
+            
+                                                <div class="ms-3">
+                                                    
+                                                    <span class="text-black fw-600 mb-0">{{orderDet.customerId?.firstName}} </span> 
+                                                    
+                                                    <p class="text-light fw-600 small mb-0">{{orderDet.orderNo}}</p>
+                                                
+                                                </div>
+            
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="order-list-card d-flex align-items-center justify-content-center fw-600 text-black"> 
+                                
+                                                {{orderDet.orderDate | date : 'dd/MM/yy'}} 
+                                            
+                                            </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="order-list-card d-flex align-items-center justify-content-center fw-600 text-black"> {{orderDet.orderMode}} </div>
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="order-list-card d-flex align-items-center justify-content-center fw-600 text-black">
+    
+                                                <div class="status-card mx-auto text-primary fw-medium text-nowrap"> 
+                                                    
+                                                    <i class="tick bi bi-check-lg border-pill"></i>&nbsp; {{orderDet.orderStatus}} 
+                                                
+                                                </div>
+                    
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                    <tr>
+
+                                        <td colspan="4" class="border-top-0 py-2"></td>
+
+                                    </tr>
+
+                                </ng-container>
+
+                            </table>
+
+                        </div>                        
 
                     </div>
         

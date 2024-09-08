@@ -1,9 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ModalComponent, OffcanvasComponent } from '@shared/components';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { NgxPrintDirective } from 'ngx-print';
 
 @Component({
   selector: 'app-orders-list',
@@ -14,6 +15,7 @@ export class OrdersListComponent {
 
   @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
   @ViewChild('OrderDetailsModal') OrderDetailsModal!: ModalComponent;
+  @ViewChild("printTemplate") printTemplate!: ElementRef<HTMLElement>;
 
   openCanvas : boolean = false;
   filterForm: any = {};
@@ -41,9 +43,10 @@ export class OrdersListComponent {
   };
   deliveryAgentList: any = [];
   usersList: any;
-  moment: any = moment
+  moment: any = moment;
+  chargeWiseItems: any = [];
 
-  constructor(public service: CommonService, ){}
+  constructor(public service: CommonService){}
 
   ngOnInit() {
 
@@ -165,6 +168,24 @@ export class OrdersListComponent {
   openModal(data: any) {
 
     this.orderDetails = data;
+
+    this.orderDetails = {
+
+      ...this.orderDetails,
+
+      'deliveryDate': _.find(this.orderDetails.statusHistory, { 'status': 'Delivered' })?.updated_at || null,
+
+    };
+
+    this.chargeWiseItems = _.map(_.uniqBy(this.orderDetails.itemList,'chargeId.chargeName'),'chargeId');
+
+    this.chargeWiseItems = _.map(this.chargeWiseItems,(item: any) => {
+
+      item['items'] = _.filter(this.orderDetails.itemList, { 'chargeId': { '_id': item._id } });
+
+      return item;
+
+    });
 
     this.OrderDetailsModal.open();
 
@@ -334,6 +355,28 @@ export class OrdersListComponent {
 
     }
     
+  }
+
+  printInvoice() {
+
+    this.printTemplate.nativeElement.classList.remove('d-none');
+
+    const printDirective = new NgxPrintDirective();
+  
+    printDirective.printTitle = this.orderDetails?.orderNo;
+
+    printDirective.printSectionId = 'printTemplate';
+
+    printDirective.useExistingCss = true;
+  
+    printDirective?.print();
+
+    setTimeout(()=>{
+
+      this.printTemplate.nativeElement.classList.add('d-none');
+
+    },1000)
+
   }
 
 }

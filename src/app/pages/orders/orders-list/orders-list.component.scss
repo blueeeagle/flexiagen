@@ -6,3 +6,9 @@
     font-size: 13px !important;
   }
 }
+@media print {
+  @page {
+    size: A4 !important;
+    margin: 0mm;
+  }
+}
