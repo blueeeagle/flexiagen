@@ -4,8 +4,10 @@ import { OffcanvasComponent } from '@shared/components';
 import { ConfirmationDialogService } from '@shared/components/confirmation-dialog/confirmation.service';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
-import { forkJoin } from 'rxjs';
+import { config, forkJoin } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
+import * as moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-my-subscription',
@@ -16,115 +18,119 @@ export class MySubscriptionComponent {
 
   reports: FormGroup = new FormGroup({});
 
-  tableColumns = ['TRANSACTION ID','DATE','PLAN','CARD DETAILS','AMOUNT','PAYMENT STATUS','ACTION'];
+  tableColumns = ['TRANSACTION ID','DATE','PLAN','CARD DETAILS','AMOUNT','PAYMENT STATUS'];
+  cardList : Array<any> = [];
+  transactionList: Array<any> = [];
 
-  ordersList = [
-    { 
-      "imgPath": "./assets/images/subscription-card.png",
-      "details": "98736648 ****", 
-      "card": "Added On / Debit Card",
-      "primary" : "Primary",
-      "active" : "Active",
-    },
-    { 
-      "imgPath": "/./assets/images/subscription-card.png",
-      "details": "98736648 ****", 
-      "card": "Added On / Debit Card",
-      "primary" : "Primary",
-      "active" : "Active",
-    },
-    { 
-      "imgPath": "/./assets/images/subscription-card.png",
-      "details": "98736648 ****", 
-      "card": "Added On / Debit Card",
-      "primary" : "Primary",
-      "active" : "Active",
-    },
-  ];
-
-  reviewAndRating: Array<any> = [
-    {
-      "transactionId" : "TXN 002",
-      "date" : "20/20/20",
-      "plan" : "Free Plan",
-      "renewal" : "Auto Renewal",
-      "card" : "98736648 ****",
-      "amound" : "0.150BHD",
-      "paymentStatus" : "Success",
-      "action" : "Invoice",
-    },
-    {
-      "transactionId" : "TXN 002",
-      "date" : "20/20/20",
-      "plan" : "Free Plan",
-      "renewal" : "Auto Renewal",
-      "card" : "98736648 ****",
-      "amound" : "0.150BHD",
-      "paymentStatus" : "Success",
-      "action" : "Invoice",
-    },
-    {
-      "transactionId" : "TXN 002",
-      "date" : "20/20/20",
-      "plan" : "Free Plan",
-      "renewal" : "Auto Renewal",
-      "card" : "98736648 ****",
-      "amound" : "0.150BHD",
-      "paymentStatus" : "Success",
-      "action" : "Invoice",
-    },
-  ];
-
-  @ViewChild('canvas') canvas: OffcanvasComponent | undefined;
+  @ViewChild('CardCanvas') CardCanvas: OffcanvasComponent | undefined;
 
   // tableColumns = ['SL#', 'NAME', 'EMAIL ID', 'USERNAME', 'MOBILE', 'ROLE', 'STATUS', 'ACTION'];
   openCanvas: boolean = false;
+  showCard: boolean = false;
   formSubmitted: boolean = false;
   userButton:boolean=true
   modalstatus: boolean = false ;
   dialCodeList: Array<any> = [];
   masterList : any = {};
-  userForm: FormGroup = new FormGroup({});
+  subscriptionForm: FormGroup = new FormGroup({});
   profileImg: any = '';
   usersList!: Array<any>;
   roles: Array<any> = [];
   mode: 'Create' | 'Update' = 'Create';
   _: any = _;
-
+  subscriptionDet: any = { "expiryInDays": 0, "amount": 0.0 };
+  expiryInDays: any;
   searchValue: string = '';
+  paymentFormSubmitted: boolean = false;
+  isPaymentLoading: boolean = false;
+  paymentFailedMsg: string = '';
+  adminSettings: any = {};
+  appServiceChargeDet: any;
+  subscriptionType: string = 'existing';
 
-  constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer){}
+  constructor(public service: CommonService, private fb: FormBuilder,private confirmationDialog: ConfirmationDialogService, private sanitizer: DomSanitizer, private route : ActivatedRoute){}
   
   @Input() editData: any = {};
 
 
   ngOnInit() {
 
-    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/users","/setup/roles","/address/dialCode"] });
-
-    this.loadForm();
-
-    this.getBaseDetails();
-
-    this.getUsersList();
-	
-  }
-
-  getUsersList() {
-    
-    this.service.postService({ url: "/setup/users", params: { "searchValue": this.searchValue } }).subscribe((res: any) => {
+    this.route.queryParams.subscribe(params => {
       
-      if (res.status == "ok") {
+      const paymentInitValue = JSON.parse(this.service.session({ method: 'get', key: 'paymentValue' }));
+
+      if (!_.isEmpty(paymentInitValue)) {
+
+        this.service.setApiLoaders({ "isLoading": true, "url": [`/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.currencyId}`] });
+        
+        this.service.getService({ url: `/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.currencyId}`, params }).subscribe((res: any) => {
           
-        this.usersList = res.data;
+          if (res.status == "ok") {
+              
+            location.reload();
+
+            this.service.session({ method : 'remove', key : 'paymentValue'})
+
+          }
+  
+        },
+          (error: any) => {
+          
+            this.service.showToastr({ data: { message: "Sorry, We are unable to getting the payment details. Contact Admin", type: "warn" } });
+
+            this.service.session({ method : 'remove', key : 'paymentValue'})
+            // this.createCompany(companyPayload);
+        });
 
       }
-      
-    },(error: any) => {
-      
-      this.service.showToastr({ data: { type: "error", message: error?.error?.message || "Data fetching failed" } });
 
     });
+
+    this.service.setApiLoaders({ "isLoading": true, "url": ["/setup/company", "/admin/configs"] });
+
+    this.service.getCompanyDetails().subscribe((val: any) => {
+
+      this.service.companyDetails = val;
+            
+      const currentDate = moment(); // Current date and time
+
+      const nextSubscriptionDate = (this.service.companyDetails?.subscriptionDetail?.lastSubscriptionDate) ?  moment(this.service.companyDetails?.subscriptionDetail?.lastSubscriptionDate).add(30, 'days') : currentDate; // Replace with your actual date
+  
+      this.subscriptionDet["expiryInDays"] = nextSubscriptionDate.diff(currentDate, 'days');
+
+      this.subscriptionDet["amount"] = (this.service.companyDetails?.subscriptionDetail?.amount || 0).toFixed(2);
+  
+      console.log(`Days until subscription expires: ${this.expiryInDays}`);
+
+       this.service.loadAdminSettings().subscribe((configs: any) => {
+
+      if (_.first(configs)) {
+        
+        this.adminSettings = configs[0];
+  
+      }
+      
+    },
+      (err: any) => {
+      
+        this.service.showToastr({ data: { title: "Fetching failed", message: "Configurations getting failed" } });
+    })
+
+
+      // if (this.subscriptionDet["amount"])
+        
+      this.getBaseDetails();
+      
+      this.getAppServiceCharges();
+
+
+    },
+      (error: any) => {
+      
+        this.service.showToastr({ data: { message: "Sorry, Subscription details fetching failed", type : "warn"} });
+    });
+	
+      this.loadForm();
 
   }
 
@@ -133,15 +139,35 @@ export class MySubscriptionComponent {
     
     forkJoin({
 
-      "roles": this.service.getService({ url: "/setup/roles" }),
+      "cardList": this.service.getService({ url: "/payment/cards" }),
       
-      "dialCodes": this.service.getService({ "url": "/address/dialCode" }) 
+      "transactions" : this.service.getService({ url : "/payment/trans"}),
       
     }).subscribe((res: any) => {
+      
+      if (res.cardList.status == "ok") {
+        
+        this.cardList = res.cardList.data;
 
-      if(res.roles.status == "ok") this.masterList["roleList"] = res.roles.data;
+        this.cardList = _.map(this.cardList, (card: any) => {
+          
+          card["imgPath"] = "/./assets/images/" + card?.brand?.toLowerCase() + ".png";
 
-      if(res.dialCodes.status == "ok") this.dialCodeList = res.dialCodes.data;
+          // console.log(this.service.companyDetails?.subscriptionDetail?.contractDet?.id, card?.id);
+          
+          if (this.service.companyDetails?.subscriptionDetail?.contractDet?.id == card?.id) card["primary"] = true;
+
+          return card;
+
+        });
+
+      }
+
+      if (res.transactions.status == "ok") {
+        
+        this.transactionList = res.transactions?.data;
+        
+      }
       
     });
     
@@ -151,43 +177,76 @@ export class MySubscriptionComponent {
 
   loadForm() {
 
-    this.userForm = this.service.fb.group({
+    this.subscriptionForm = this.service.fb.group({
 
-      'name': [ this.editData?.name || '', Validators.required ],
-
-      'email': [ this.editData?.email || '', [Validators.required,Validators.email] ],
-
-      'userName': [ this.editData?.userName || '', Validators.required ],
-
-      'dialCode': [this.editData?.dialCode || null, [Validators.required]],
-
-      'mobile': [this.editData?.mobile || '', [Validators.required]],
+      "cardType": ["card", Validators.required],
       
-      'role': [this.editData?.role?._id || null, [Validators.required]],
+      "cardDetails": this.fb.group({
 
-      'is_active': [ _.isEmpty(this.editData) ? true : (this.editData?.is_active || null), [Validators.required]],
+        "card_id" : null,
+        
+        "card_number": [null, Validators.required],
 
-      'profileImg': [this.editData?.profileImg ? this.service.getFullImagePath({ 'imgUrl': this.editData.profileImg }) : '' ],
+        "exp_month": [null, Validators.compose([Validators.required])],
+
+        "exp_year": [null, Validators.compose([Validators.required])],
+          
+        "scode": [null, Validators.compose([Validators.required, Validators.minLength(3)])],
+        
+        "name": [null, Validators.required]
+      
+      })
 
     });
-
-    if(_.isEmpty(this.editData)) {
-
-      fetch('https://ipapi.co/json/').then((res: any) => res.json()).then((res: any) => {
-  
-        this.userForm.get('dialCode')?.setValue(res.country_calling_code);
-  
-      });   
-
-    }
 
   }
 
   // convenience getter for easy access to form fields
 
-  get f(): any { return this.userForm.controls; }
+  get f(): any { return this.subscriptionForm.controls; }
 
+  get cf() { return (this.subscriptionForm.get('cardDetails') as FormGroup).controls as any; }
+
+  // Get Application Service List
+
+  getAppServiceCharges() {
+
+    this.appServiceChargeDet = { 'pos': '0', 'online': '0', 'logistics': '0' };
+
+    console.log("company", this.service.companyDetails);
+    
+
+    this.service.getService({ "url": `/setup/charges/${this.service.companyDetails?.addressDetails?.countryId?._id}` }).subscribe((res: any) => {
+
+      if(res.status=='ok') {
+
+        this.masterList['charges'] = res.data.charges;
+
+        _.reduce({ 'pos': '0', 'online': '0', 'logistics': '0' }, (result: any, v: any, key: any) => {
+
+          let chargesDet = _.find(res.data.charges, { 'name': key });
+
+          const { value, type } = chargesDet;
+
+          result[key] = `${value.toFixed(this.service.currencyDetails?.decimalPoints || 3)} ${this.service.currencyDetails?.currencyCode}`;
+
+          if(key == "pos") result["amount"] = value
+
+          return result;
+
+        }, this.appServiceChargeDet);
+
+        console.log("charge", this.appServiceChargeDet);
+        
+      }
+
+    });
+
+  }
+  
   openAsideBar(data?: any) {
+
+    if(_.isEmpty(this.adminSettings)) return this.service.showToastr({ "data" : { message : "Sorry, you can't subscribe now. contact admin", type : "warn"}})
 
     this.formSubmitted = false;
     
@@ -201,126 +260,180 @@ export class MySubscriptionComponent {
 
   }
 
-  uploadFile(event:any) {
+  prev_next() {
 
-    const file = event.target?.files[0]; // Here we use only the first file (single file)
-
-    if(file) {
-
-      const reader = new FileReader();
-
-      // validate file type & size
-
-      const validFileExtensions = ['image/jpeg','image/jpg','image/png'];
-
-      if(!validFileExtensions.includes(file.type)) return this.service.showToastr({ data: { type: "error", message: "Invalid file type" } });
-
-      if(file.size > 1048576) return this.service.showToastr({ data: { type: "error", message: "File size should not exceed 1MB" } });
-
-      // check dimensions of image
-
-      // const img = new Image();
-
-      // img.src = window.URL.createObjectURL(file);
-
-      // img.onload = () => {
-
-      //   if(img.width != 150 || img.height != 150) return this.service.showToastr({ data: { type: "error", message: "Image should be 150px X 150px" } });
-
-      //   else {
-
-          // File Preview
+    if (this.subscriptionForm.value.cardDetails.card_id) {
       
-          reader.onload = () => {
-
-            this.userForm.patchValue({ "profileImg": reader.result as string });
-
-            this.profileImg = file;
-
-          }
-
-          reader.readAsDataURL(file);
-
-      //   }
-
-      // }
-
+      this.initiatePayment(this.subscriptionForm.value.cardDetails.card_id);
     }
+    
+    this.showCard = !this.showCard;
 
   }
-  
-  // submit() {
-        
-  //   this.formSubmitted = true;
 
-  //   if (this.userForm.invalid) return this.service.showToastr({ data: { type: "info", message: "Please fill all required fields" } });
-
-  //   const payload = _.omit(this.userForm.getRawValue(),'profileImg');
-
-  //   payload["companyId"] = this.service.companyDetails._id;
-
-  //   const formData = new FormData();
-
-  //   formData.append("data", JSON.stringify(payload));
-
-  //   if(this.profileImg) formData.append("profileImg", this.profileImg);
-
-  //   forkJoin({
-
-  //     "result": this.mode == 'Create' ? 
-      
-  //         this.service.postService({ url: "/setup/user", payload : formData })
-        
-  //           : this.service.patchService({ url: `/setup/user/${this.editData?._id}`, payload : formData })
-      
-  //   }).subscribe({
-      
-  //     next: (res: any) => {
-
-  //       if (res.result.status == "ok") {
-
-  //         this.canvas?.close();
-  
-  //         this.service.showToastr({ data: { type: "success", message:  `User ${this.mode == 'Create' ? 'Created' : 'Updated'} Success` } });
-  
-  //         this.getUsersList();
-  
-  //         this.loadForm();
-  
-  //       }
-
-  //     },
-
-  //     error: (error: any) => {
-
-  //       this.service.showToastr({ data: { type: "error", message: error?.error?.message || `User ${this.mode == 'Create' ? 'Creation' : 'Updation'} failed` } });
-
-  //     }
-
-  //   });
-
-  // }
-
-  updateActiveStatus(data: any) {
-
-    const formData = new FormData();
-
-    const payload = { "is_active": data.is_active };
+  // Start subscription
+  initiatePayment(cardId?: any) {
     
-    formData.append("data", JSON.stringify(payload));
+    console.log(cardId);
+    
 
-    this.service.patchService({ "url": `/setup/user/${data?._id}`, "payload": formData }).subscribe((res: any) => {
+    this.paymentFormSubmitted = true;
+
+    if (this.cf.invalid) return;
+    
+    this.confirmationDialog.confirm({
+
+      title: "Subscription Confirmation",
+      
+      message: "Do you want to proceed the payment",
+      
+      type: "info",
+      
+    }).then((val: any) => {
+      
+      if (val) {
+          
+        console.log("payment initiated");
+
+        const paymentValue = this.subscriptionForm.value;
+
+        const cardDetails = cardId ? { 'card_id': cardId } : {  
+        "card_number": paymentValue.cardDetails?.card_number ? parseInt(paymentValue.cardDetails?.card_number.replace(/\s+/g, '')) : "",
+        "exp_month": parseInt(paymentValue.cardDetails?.exp_month),
+        "exp_year": this.getFullYear(paymentValue.cardDetails?.exp_year),
+        "scode": parseInt(paymentValue.cardDetails?.scode),
+        "name": paymentValue.cardDetails?.name
+      };
+
+        const payload = {
+
+          cardDetails,
+
+          "amount": parseInt(this.adminSettings?.subscriptionFee),
+          
+          "countryId": this.service.companyDetails?.addressDetails?.countryId?._id,
+
+          "currencyId": this.service.currencyDetails?._id,
+
+          "_returnTo" : "/pages/account-setup/subscription"
+
+        };
+
+        const paymentCheckObj = {
+
+          "agentId": this.service.userDetails._id,
+
+          "currencyId" : this.service.currencyDetails?._id
+        }
+
+        console.log({ payload });
+        
+        // return;
+
+    console.log({ paymentCheckObj });
+
+    // return;
+
+    this.isPaymentLoading = true;
+
+    this.paymentFailedMsg = "";
+
+    this.service.postService({ url: `/pg/initiatePayment`, payload }).subscribe((res: any) => {
+
+      if (res.status == "ok") {
+        
+        const paymentRes = res.data;
   
-      if(res.status=='ok') {
+        if (paymentRes.transaction?.url) {
 
-        this.service.showToastr({ "data": { "message": `User ${ data.is_active ? 'activated' : 'inactivated' } successfully!`, "type": "success" } });
+          console.log(paymentRes.transaction?.url);
+          
+          this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
+  
+          window.location.href = paymentRes.transaction?.url;
 
-        // this.usersList.splice(_.findIndex(this.usersList,{ "_id": res.data._id }), 1, res.data);
-
+        }
+        
       }
+      
+    },
+    (error: any) => {
 
-    });
+      console.log(error);
+      
+      this.paymentFailedMsg = "Sorry, your given payment details are invalid. Please check your provided details.";
 
+      this.isPaymentLoading = false;
+  });
+
+  }
+  })
+    
+  }
+
+  // Cancel subscription
+  cancelSubscription() {
+    
+    this.confirmationDialog.confirm({
+        
+      title: "Subscription Cancellation",
+      message: "Do you want to cancel your subscription ?",
+      type: "warn"
+      
+    }).then((val: boolean) => {
+        
+      if (val) {
+            
+        this.service.deleteService({ url: "/payment/cancel" }).subscribe((res: any) => {
+              
+          if (res.status == "ok") {
+              
+            location.reload();
+            }
+        },
+          (error: any) => {
+          
+            this.service.showToastr({ "data": { message: "Sorry, Cancellation failed. Contact admin", type: "warn" } });
+        });
+
+          }
+      })
+  }
+
+  deleteCard(cardDet: any) {
+    
+     this.confirmationDialog.confirm({
+        
+       title: "Delete card",
+       
+       message: `Do you want to delete your card ${cardDet?.first_six}****${cardDet?.last_four} ?`,
+      
+      type: "warn"
+      
+    }).then((val: boolean) => {
+        
+      if (val) {
+            
+        this.service.deleteService({ url: "/payment/card/"+cardDet?.id }).subscribe((res: any) => {
+              
+          if (res.status == "ok") location.reload();
+        },
+          (error: any) => {
+          
+            this.service.showToastr({ "data": { message: "Sorry, Deletion failed. Contact admin", type: "warn" } });
+        });
+
+          }
+      })
+    
+  }
+
+  getFullYear(year : any) {
+  
+      // Concatenate to form the full year
+    let fullYear = (Math.floor(moment().year() / 100) * 100 + parseInt(year));
+    
+    return fullYear
   }
 
 }

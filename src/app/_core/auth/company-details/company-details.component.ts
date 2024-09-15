@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@shared/services/common/common.service';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 @Component({
   selector: 'app-company-details',
   templateUrl: './company-details.component.html',
@@ -11,8 +12,11 @@ import * as _ from 'lodash';
 export class CompanyDetailsComponent {
 
   companyForm!: FormGroup;
+  paymentForm!: FormGroup;
   formSubmitted: boolean = false;
+  paymentFormSubmitted: boolean = false;
   isLoading: boolean = false;
+  isPaymentLoading: boolean = false;
   masterList: any = {
     countryList: [],
     countryDet: {},
@@ -24,6 +28,10 @@ export class CompanyDetailsComponent {
   appServiceChargeDet: any = { 'pos': '0', 'online': '0', 'logistics': '0' };
   _: any = _;
   paymentFailedMsg: String = "";
+  paymentInit: boolean = false;
+  paymentInProgress: boolean = false;
+  adminSettings: any;
+
   constructor(public service: CommonService, private route: ActivatedRoute) { 
 
   }
@@ -31,55 +39,57 @@ export class CompanyDetailsComponent {
   ngOnInit(): void {
 
     this.service.userDetails = JSON.parse(this.service.session({ "key": "UserDetails", "method": "get" })) || {};
-
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
     
-    this.loadForm();
+     this.loadForm();
 
     this.getCountries();
 
-    // this.route.params.subscribe((params: any) => {
+    this.route.queryParams.subscribe(params => {
       
-    //    const validationRegex = new RegExp("^[0-9a-fA-F]{24}$");
+      const paymentInitValue = JSON.parse(this.service.session({ method: 'get', key: 'paymentValue' }));
+
+      const companyPayload = JSON.parse(this.service.session({ method: "get", key: "companyPayload" }));
+
+      if (!_.isEmpty(paymentInitValue) && !_.isEmpty(companyPayload)) {
+
+        this.service.setApiLoaders({ "isLoading": true, "url": [`/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.currencyId}`] });
+
+        this.paymentInProgress = true;
+        
+        this.service.getService({ url: `/payment/success/authorize/${paymentInitValue?.agentId}/${paymentInitValue?.currencyId}`, params }).subscribe((res: any) => {
+          
+          if (res.status == "ok") {
+              
+            this.createCompany(companyPayload);
+          }
+  
+        },
+          (error: any) => {
+          
+            this.service.showToastr({ data: { message: "Sorry, We are unable to getting the payment details.", type: "warn" } });
+
+            this.createCompany(companyPayload);
+        });
+
+      }
+
+    });
+
+        this.service.loadAdminSettings().subscribe((configs: any) => {
+
+      if (_.first(configs)) {
+        
+        this.adminSettings = configs[0];
+
+        console.log(this.adminSettings);
+        
+      }
       
-    //   if (validationRegex.test(params.paymentId)) {
-
-    //     this.isLoading = true;
-
-    //     this.showPreview = true;
-              
-    //     const payload: any = JSON.parse(this.service.session({ method : "get", key : "payload"}));
-
-    //     const formValue: any = JSON.parse(this.service.session({ method : "get", key : "formValue"}));
-
-    //     this.companyForm.patchValue(formValue);
-                
-    //     this.service.getService({ "url": `/pg/getPaymentDetail/${params.paymentId}` }).subscribe((res: any) => {
-          
-    //       if (res.status == "ok") {
-                          
-    //         if (res.data?.status == "CAPTURED") this.createCompany(payload);
-
-    //         else {
-
-    //           this.paymentFailedMsg = `The initiated payment was ${res.data?.status}. Please retry/Contact admin`;
-
-    //           this.isLoading = false;
-    //         }
-              
-    //       }
-    //     },
-    //       (error: any) => {
-          
-    //         this.service.showToastr({ data: { message: "Payment status fetching failed. Please try again later" } });
-
-    //         this.paymentFailedMsg = `Please don't worry. If your payment was deducted we'll notify ASAP.`;
-    //     })
-        
-    //   }      
-        
-    // });
+    },
+      (err: any) => {
+      
+        this.service.showToastr({ data: { title: "Fetching failed", message: "Configurations getting failed" } });
+    })
 
   }
 
@@ -101,11 +111,16 @@ export class CompanyDetailsComponent {
 
           const { value, type } = chargesDet;
 
-          result[key] = type == 'percentage' ? `${value}%` : `${value.toFixed(this.masterList['currencyDet']?.decimalPoints || 3)} ${this.masterList['currencyDet']?.currencyCode}`;
+          result[key] = `${value.toFixed(this.masterList['currencyDet']?.decimalPoints || 3)} ${this.masterList['currencyDet']?.currencyCode}`;
+
+          if(key == "pos") result["amount"] = value
 
           return result;
 
         }, this.appServiceChargeDet);
+
+        console.log("charge", this.appServiceChargeDet);
+        
 
       }
 
@@ -184,6 +199,8 @@ export class CompanyDetailsComponent {
 
     this.formSubmitted = false;
 
+    this.paymentFormSubmitted = false;
+
     this.companyForm = this.service.fb.group({
 
       'companyName': ['', [Validators.required]],
@@ -220,8 +237,21 @@ export class CompanyDetailsComponent {
 
         'zipcode': ['', [Validators.required]],
 
-      })
+      }),
 
+    });
+
+    this.paymentForm = this.service.fb.group({
+
+      "card_number": [null, Validators.required],
+
+      "exp_month": [null, Validators.compose([Validators.required])],
+
+      "exp_year": [null, Validators.compose([Validators.required])],
+        
+      "scode": [null, Validators.compose([Validators.required, Validators.minLength(3)])],
+        
+      "name": [null, Validators.required]
     });
 
     // Listen to Country changes and update State, City, Area and Zipcode
@@ -314,6 +344,11 @@ export class CompanyDetailsComponent {
 
     });
 
+    this.cf.exp_month.valueChanges.subscribe((value: any) => {
+
+      if(value) this.cf.exp_month.setValue(moment(parseInt(value), 'M').format('MM'), { emitEvent: false });
+    });
+
   }
 
   // convenience getter for easy access to form fields
@@ -322,23 +357,112 @@ export class CompanyDetailsComponent {
 
   get af(): any { return this.f.addressDetails.controls }
 
+  get cf(): any { return this.paymentForm.controls; }
+
+
   // Register Company Details
 
-  submit(): any {
+  constructCompanyPayload(): any {
 
-    if(this.companyForm.invalid) return this.formSubmitted = true;
-
-    this.isLoading = true
+    // if(this.companyForm.invalid) return this.formSubmitted = true;
 
     let companyPayload: any = this.companyForm.value;
 
     companyPayload['addressDetails'] = _.omit(companyPayload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
 
     companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
+
+    this.service.session({ method: "set", key: "companyPayload", value: JSON.stringify(companyPayload) });
     
-    this.createCompany(companyPayload);
+  }
+
+  getFullYear(year : any) {
+  
+      // Concatenate to form the full year
+    let fullYear = (Math.floor(moment().year() / 100) * 100 + parseInt(year));
+    
+    return fullYear
+  }
+
+  initPayment() {
+
+    this.paymentFormSubmitted = true;
+    
+    if (this.cf.invalid) this.service.showToastr({ data: { message: "Fill required values", type: "warn" } });
+
+    const paymentValue = this.paymentForm.value;
+
+    const payload = {
+
+      "cardDetails": {
+        "card_number": (paymentValue.card_number) ? parseInt(paymentValue.card_number.replace(/\s+/g, '')) : "",
+        "exp_month": parseInt(paymentValue.exp_month),
+        "exp_year": this.getFullYear(paymentValue.exp_year),
+        "scode": parseInt(paymentValue.scode),
+        "name": paymentValue.name
+      },
+
+      "amount": parseInt(this.appServiceChargeDet?.amount),
+      
+      "countryId": this.companyForm.value.addressDetails?.countryId,
+
+      "currencyId": this.companyForm.value.currencyId,
+
+    };
+
+    const paymentCheckObj = {
+
+      "agentId": this.service.userDetails._id,
+
+      "currencyId" : this.companyForm.value.currencyId
+
+    }
+
+    console.log("pay payload", payload)
+
+    // return;
+
+    this.isPaymentLoading = true;
+
+    this.paymentFailedMsg = "";
+
+    this.service.postService({ url: `/pg/initiatePayment`, payload }).subscribe((res: any) => {
+
+      if (res.status == "ok") {
+        
+        const paymentRes = res.data;
+  
+        if (paymentRes.transaction?.url) {
+
+          console.log(paymentRes.transaction?.url);
+          
+          this.service.session({ method: "set", key: "paymentValue", value: JSON.stringify(paymentCheckObj) });
+
+          this.constructCompanyPayload();
+
+          console.log(paymentRes.transaction?.url);
+          
+          // return;
+          window.location.href = paymentRes.transaction?.url;
+
+          this.isPaymentLoading = false;
+
+        }
+        
+      }
+      
+    },
+      (error: any) => {
+
+        console.log(error);
+        
+        this.paymentFailedMsg = "Sorry, your given payment details are invalid. Please check your provided details.";
+
+        this.isPaymentLoading = false;
+    });
 
   }
+
 
   createCompany(payload : any) {
     
@@ -348,7 +472,13 @@ export class CompanyDetailsComponent {
 
         this.isLoading = false;
 
+        this.paymentInit = false;
+
         this.paymentFailedMsg = "";
+
+        this.service.session({ method: "remove", key: "paymentValue" });
+
+        this.service.session({ method: "remove", key: "companyPayload" });
 
         this.service.showToastr({ "data": { "message": "Company Details Created Successfully", "type": "success" } });
 
@@ -392,10 +522,23 @@ export class CompanyDetailsComponent {
 
     event.preventDefault();
 
-    if(this.companyForm.invalid) return this.formSubmitted = true;
+    if (this.companyForm.invalid) return this.formSubmitted = true;
+    
+    if(_.isEmpty(this.adminSettings)) return this.service.showToastr({ data : { message : "Sorry, Subscription details not found"}})
 
     this.showPreview = true;
 
+  }
+
+  addCompany() {
+    
+    let companyPayload: any = this.companyForm.value;
+
+    companyPayload['addressDetails'] = _.omit(companyPayload.addressDetails, ['countryName', 'stateName', 'cityName', 'areaName']);
+
+    companyPayload['ownerName'] = companyPayload.ownerName.replace(/[0-9]/g, '');
+
+    this.createCompany(companyPayload);
   }
 
 }

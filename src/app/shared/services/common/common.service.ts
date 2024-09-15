@@ -29,6 +29,8 @@ export class CommonService {
   };
   public userDetailsObs = new Subject();
 
+  public settingsSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+
   constructor(private router: Router, public apiservice: ApiService, private snackBar: MatSnackBar, public decimalPipe: DecimalPipe, public fb: FormBuilder, public _loading: LoadingService) {
 
   }
@@ -74,6 +76,30 @@ export class CommonService {
     return this.getService({ "url": "/me", "options": { "loaderState": true } });
 
   }
+
+  // Getting admin configurations
+ loadAdminSettings(): Observable<any> {
+   
+    return new Observable((observer) => {
+
+      this.getService({ url: "/admin/configs" }).subscribe((res: any) => {
+        
+        if (res.status === "ok" && !_.isEmpty(res.data)) {          
+          observer.next(res.data);
+          observer.complete();
+        } else {
+          observer.error('No Settings found');
+        }
+      }, (error: any) => {
+        
+        observer.error(error);
+
+      });
+
+    });
+  }
+
+
 
   getPosition(): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -130,6 +156,31 @@ export class CommonService {
 
   getCustomerImgUrl({ event = {}, customerDetail = {} }: { event: any,  customerDetail: any}): string {
     return event.target.src = customerDetail.gender ? './assets/images/'+customerDetail.gender+'-user-profile.png' : './assets/images/male-user-profile.png';
+  }
+
+  getCompanyDetails(): Observable<any> {
+   
+    return new Observable((observer) => {
+
+      this.getService({ url: "/setup/company" }).subscribe((res: any) => {
+        
+        if (res.status === "ok" && !_.isEmpty(res.data)) {
+          this.companyDetails = _.first(res.data);          
+          const filteredDetails = _.omit(this.companyDetails, 'currencyId');
+          this.session({ "method": "set", "key": "CompanyDetails", "value": JSON.stringify(filteredDetails) });
+          
+          observer.next(filteredDetails);
+          observer.complete();
+        } else {
+          observer.error('No data found or status not ok');
+        }
+      }, (error: any) => {
+        
+        observer.error(error);
+
+      });
+
+    });
   }
 
   // POST API Method While Pass JSON Data
@@ -369,6 +420,11 @@ export class CommonService {
         "label": "Customers",
         "url": "customers",
         "icon": "bi-person-vcard"
+    },
+    {
+        "label": "Wallet",
+        "url": "wallet",
+        "icon": "bi-wallet"
     },
     {
         "label": "Reports",

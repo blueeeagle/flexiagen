@@ -42,6 +42,7 @@
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "node_modules/boxicons/css/boxicons.min.css",
               "node_modules/ngx-spinner/animations/square-jelly-box.css",
+              "node_modules/boxicons/css/boxicons.min.css",
               "src/styles/custom.scss",
               "src/styles/styles.scss"
             ],
@@ -122,6 +123,7 @@
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "node_modules/boxicons/css/boxicons.min.css",
               "node_modules/ngx-spinner/animations/square-jelly-box.css",
+              "node_modules/boxicons/css/boxicons.min.css",
               "src/styles/custom.scss",
               "src/styles/styles.scss"
             ],
