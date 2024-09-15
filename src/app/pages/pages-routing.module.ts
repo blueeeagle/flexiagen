@@ -26,7 +26,12 @@ const routes: Routes = [
       {
         path : "customers",
         loadChildren: () => import('./customers/customers.module').then(m => m.CustomersModule)
-      },      
+      }, 
+      
+      {
+        path : "wallet",
+        loadChildren: () => import('./wallet/wallet.module').then(m => m.WalletModule)
+      },  
       {
         path : "notification",
         loadChildren: () => import('./notification/notification.module').then(m => m.NotificationModule)

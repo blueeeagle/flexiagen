@@ -422,6 +422,11 @@ export class CommonService {
         "icon": "bi-person-vcard"
     },
     {
+        "label": "Wallet",
+        "url": "wallet",
+        "icon": "bi-wallet"
+    },
+    {
         "label": "Reports",
         "url": "reports",
         "icon": "bi bi-bar-chart"
